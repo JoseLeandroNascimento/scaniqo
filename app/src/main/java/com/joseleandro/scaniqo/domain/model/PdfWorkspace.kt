@@ -1,0 +1,82 @@
+package com.joseleandro.scaniqo.domain.model
+
+import java.io.IOException
+import kotlinx.serialization.Serializable
+
+class PdfPasswordRequiredException : IOException("Informe a senha correta do PDF.")
+
+class PdfImportException(message: String, cause: Throwable? = null) : IOException(message, cause)
+
+@Serializable
+enum class PageAlignment { CENTER, TOP, BOTTOM, LEFT, RIGHT }
+
+@Serializable
+enum class PageScaleMode { FIT, FILL }
+
+@Serializable
+enum class PdfImageFilter {
+    ORIGINAL, AUTO, GRAYSCALE, BLACK_WHITE, ENHANCE,
+    SHADOW_REMOVAL, ILLUMINATION, WHITEN, ADAPTIVE_BLACK_WHITE, DENOISE, SHARPEN, BLEED_THROUGH
+}
+
+@Serializable
+enum class PdfExportQuality { HIGH_QUALITY, BALANCED, SMALL }
+
+/** Pontos normalizados da captura; a origem fica no canto superior esquerdo. */
+@Serializable
+data class PdfPoint(val x: Float, val y: Float)
+
+@Serializable
+data class PdfPerspective(
+    val topLeft: PdfPoint = PdfPoint(0f, 0f),
+    val topRight: PdfPoint = PdfPoint(1f, 0f),
+    val bottomRight: PdfPoint = PdfPoint(1f, 1f),
+    val bottomLeft: PdfPoint = PdfPoint(0f, 1f)
+)
+
+@Serializable
+data class PdfPageLayout(
+    val alignment: PageAlignment = PageAlignment.CENTER,
+    val scaleMode: PageScaleMode = PageScaleMode.FIT,
+    val rotationQuarterTurns: Int = 0,
+    val contentScale: Float = 1f,
+    val imageFilter: PdfImageFilter = PdfImageFilter.ORIGINAL,
+    val filterIntensity: Float = 1f,
+    val straightenDegrees: Float = 0f,
+    val perspective: PdfPerspective? = null,
+    val curvature: Float = 0f,
+    val rasterizeText: Boolean = false
+)
+
+/** Coordenadas proporcionais à folha, com origem no canto superior esquerdo. */
+@Serializable
+data class PdfSignaturePlacement(
+    val id: String,
+    val imageUri: String,
+    val x: Float = .3f,
+    val y: Float = .7f,
+    val width: Float = .3f,
+    val height: Float = .12f
+)
+
+@Serializable
+data class PdfPageSpec(
+    val id: String,
+    val sourceUri: String,
+    val sourcePageIndex: Int,
+    val layout: PdfPageLayout = PdfPageLayout(),
+    val signatures: List<PdfSignaturePlacement> = emptyList()
+)
+
+@Serializable
+data class PdfWorkspace(
+    val documentId: Long,
+    val workspaceId: String,
+    val directoryUri: String,
+    val pages: List<PdfPageSpec>,
+    val showPageNumbers: Boolean = false,
+    val isProtected: Boolean = false,
+    val protectionKeyId: String? = null,
+    val exportQuality: PdfExportQuality = PdfExportQuality.HIGH_QUALITY,
+    val ocrEnabled: Boolean = false
+)

@@ -1,0 +1,14 @@
+<resources>
+    <string name="merge_tools_progress_title">Mesclando PDFs</string>
+    <string name="merge_tools_progress_body">Preparando as novas páginas. Você pode cancelar sem alterar o documento.</string>
+    <string name="merge_tools_success">PDFs mesclados. Salve para concluir as alterações.</string>
+    <string name="merge_tools_error">Não foi possível mesclar os PDFs. Verifique se os arquivos são válidos e permitem edição. Nenhuma página foi adicionada.</string>
+    <string name="merge_tools_limit_error">O limite é de 100 páginas e 50 MB para o conjunto de PDFs. Selecione menos arquivos.</string>
+    <string name="merge_tools_password_title">Este PDF tem senha</string>
+    <string name="merge_tools_password_label">Senha do PDF</string>
+    <string name="merge_tools_password_error">A senha não abriu este PDF. Tente novamente.</string>
+    <string name="merge_tools_password_protected">O resultado usará a proteção do documento aberto. O arquivo selecionado continuará intacto.</string>
+    <string name="merge_tools_password_unprotected">O documento aberto está sem proteção. As páginas serão incluídas nele, e o arquivo selecionado continuará intacto.</string>
+    <string name="merge_tools_selected_file">PDF selecionado</string>
+    <string name="merge_tools_confirm">Mesclar</string>
+</resources>

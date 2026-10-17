@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_preview_options">Escolha o efeito</string>
+    <string name="filter_preview_samples">Miniaturas desta página em intensidade máxima.</string>
+    <string name="filter_preview_loading">Preparando os efeitos…</string>
+    <string name="filter_preview_thumbnails_error">Não foi possível carregar as miniaturas.</string>
+    <string name="filter_preview_retry">Tentar novamente</string>
+    <string name="filter_preview_thumbnail_error">Prévia indisponível</string>
+    <string name="filter_preview_thumbnail_description">Prévia do filtro %1$s</string>
+    <string name="filter_preview_native_preserved">Esta página contém texto ou vetores. Para visualizar os efeitos, permita a conversão em imagem abaixo.</string>
+    <string name="filter_preview_live_hint">Confira o resultado antes de aplicar. A intensidade altera apenas a prévia maior.</string>
+</resources>

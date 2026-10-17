@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window colors mirror the Compose palette before the first frame is drawn. -->
+    <color name="scaniqo_window_background">#FBF9F3</color>
+    <color name="scaniqo_window_accent">#245A73</color>
+</resources>
