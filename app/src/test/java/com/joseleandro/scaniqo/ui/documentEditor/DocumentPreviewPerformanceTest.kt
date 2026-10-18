@@ -8,8 +8,8 @@ import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfMergeSource
-import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
+import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
@@ -19,6 +19,7 @@ import com.joseleandro.scaniqo.domain.model.SignatureModel
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
+import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

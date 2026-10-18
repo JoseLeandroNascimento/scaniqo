@@ -8,8 +8,13 @@ import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.repository.DocumentRepository
 import com.joseleandro.scaniqo.domain.repository.TagRepository
-import com.joseleandro.scaniqo.ui.documentEditor.DocumentsEffect
-import com.joseleandro.scaniqo.ui.documentEditor.DocumentsEvent
+import com.joseleandro.scaniqo.ui.documentCommon.effect.DocumentActionEffect
+import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
+import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMessage
+import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMetadataUiState
+import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentNameError
+import com.joseleandro.scaniqo.ui.documents.event.DocumentsEvent
+import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,8 +48,8 @@ class DocumentsViewModel(
     val uiState: StateFlow<DocumentsUiState> = mutableUiState.asStateFlow()
 
     // Um único consumidor executa os efeitos; a recomposição não repete intents.
-    private val effectChannel = Channel<DocumentsEffect>(Channel.UNLIMITED)
-    val effects: Flow<DocumentsEffect> = effectChannel.receiveAsFlow()
+    private val effectChannel = Channel<DocumentActionEffect>(Channel.UNLIMITED)
+    val effects: Flow<DocumentActionEffect> = effectChannel.receiveAsFlow()
 
     private var observationJob: Job? = null
 
@@ -57,40 +62,48 @@ class DocumentsViewModel(
             is DocumentsEvent.SelectTag -> updateState {
                 it.copy(selectedTagId = validTagId(event.tagId))
             }
-            DocumentsEvent.StartScan -> startScan()
-            DocumentsEvent.ImportStarted -> {
+            DocumentsEvent.RetryLoad -> {
+                if (uiState.value.loadError) observeDocuments()
+            }
+        }
+    }
+
+    fun onDocumentAction(event: DocumentActionEvent) {
+        when (event) {
+            DocumentActionEvent.StartScan -> startScan()
+            DocumentActionEvent.ImportStarted -> {
                 if (canStartAction()) updateState { it.copy(isPreparingScan = true, message = null) }
             }
-            is DocumentsEvent.ImportPrepared -> updateState {
+            is DocumentActionEvent.ImportPrepared -> updateState {
                 it.copy(
                     isPreparingScan = false,
-                    editor = DocumentEditorUiState(
+                    editor = DocumentMetadataUiState(
                         draft = event.scan,
                         name = event.name.take(DOCUMENT_NAME_MAX_LENGTH),
                         tagId = it.selectedTagId,
                     ),
                 )
             }
-            DocumentsEvent.ImportCancelled -> updateState { it.copy(isPreparingScan = false) }
-            is DocumentsEvent.ScanCompleted -> prepareScan(event.pageUris)
-            DocumentsEvent.ScanCancelled -> finishScanner()
-            DocumentsEvent.ScanFailed -> finishScanner(DocumentMessage.SCAN_ERROR)
-            is DocumentsEvent.EditMetadata -> openEditor(event.document)
-            is DocumentsEvent.NameChanged -> updateEditor {
+            DocumentActionEvent.ImportCancelled -> updateState { it.copy(isPreparingScan = false) }
+            is DocumentActionEvent.ScanCompleted -> prepareScan(event.pageUris)
+            DocumentActionEvent.ScanCancelled -> finishScanner()
+            DocumentActionEvent.ScanFailed -> finishScanner(DocumentMessage.SCAN_ERROR)
+            is DocumentActionEvent.EditMetadata -> openEditor(event.document)
+            is DocumentActionEvent.NameChanged -> updateEditor {
                 it.copy(name = event.name, nameError = null, saveError = false)
             }
-            is DocumentsEvent.TagChanged -> updateEditor {
+            is DocumentActionEvent.TagChanged -> updateEditor {
                 it.copy(tagId = validTagId(event.tagId), saveError = false)
             }
-            DocumentsEvent.SaveDocument -> saveDocument()
-            DocumentsEvent.DismissEditor -> dismissEditor()
-            is DocumentsEvent.RequestDelete -> {
+            DocumentActionEvent.SaveDocument -> saveDocument()
+            DocumentActionEvent.DismissEditor -> dismissEditor()
+            is DocumentActionEvent.RequestDelete -> {
                 if (canStartAction()) {
                     updateState { it.copy(pendingDeletion = event.document, message = null) }
                 }
             }
-            DocumentsEvent.ConfirmDelete -> deleteDocument()
-            DocumentsEvent.DismissDelete -> {
+            DocumentActionEvent.ConfirmDelete -> deleteDocument()
+            DocumentActionEvent.DismissDelete -> {
                 if (!isBusy()) {
                     updateState {
                         it.copy(
@@ -102,22 +115,19 @@ class DocumentsViewModel(
                     }
                 }
             }
-            is DocumentsEvent.Download -> requestDownload(event.document)
-            is DocumentsEvent.ExportDestinationSelected -> exportDocument(event.uri)
-            DocumentsEvent.ExportFailed -> {
+            is DocumentActionEvent.Download -> requestDownload(event.document)
+            is DocumentActionEvent.ExportDestinationSelected -> exportDocument(event.uri)
+            DocumentActionEvent.ExportFailed -> {
                 pendingDownloadId = null
                 updateState {
                     it.copy(busyDocumentId = null, message = DocumentMessage.EXPORT_ERROR)
                 }
             }
-            is DocumentsEvent.Share -> shareDocument(event.document)
-            DocumentsEvent.ShareFailed -> updateState {
+            is DocumentActionEvent.Share -> shareDocument(event.document)
+            DocumentActionEvent.ShareFailed -> updateState {
                 it.copy(message = DocumentMessage.SHARE_ERROR)
             }
-            DocumentsEvent.DismissMessage -> updateState { it.copy(message = null) }
-            DocumentsEvent.RetryLoad -> {
-                if (uiState.value.loadError) observeDocuments()
-            }
+            DocumentActionEvent.DismissMessage -> updateState { it.copy(message = null) }
         }
     }
 
@@ -158,7 +168,7 @@ class DocumentsViewModel(
     private fun startScan() {
         if (!canStartAction()) return
         updateState { it.copy(isScanning = true, message = null) }
-        effectChannel.trySend(DocumentsEffect.LaunchScanner)
+        effectChannel.trySend(DocumentActionEffect.LaunchScanner)
     }
 
     private fun finishScanner(message: DocumentMessage? = null) {
@@ -180,7 +190,7 @@ class DocumentsViewModel(
                     .format(Date(draft.createdAt))
                 updateState {
                     it.copy(
-                        editor = DocumentEditorUiState(
+                        editor = DocumentMetadataUiState(
                             draft = draft,
                             name = "Documento $date",
                             tagId = it.selectedTagId,
@@ -201,7 +211,7 @@ class DocumentsViewModel(
         if (!canStartAction()) return
         updateState {
             it.copy(
-                editor = DocumentEditorUiState(
+                editor = DocumentMetadataUiState(
                     documentId = document.id,
                     name = document.name,
                     tagId = validTagId(document.tagId),
@@ -211,7 +221,7 @@ class DocumentsViewModel(
         }
     }
 
-    private fun updateEditor(update: (DocumentEditorUiState) -> DocumentEditorUiState) {
+    private fun updateEditor(update: (DocumentMetadataUiState) -> DocumentMetadataUiState) {
         if (isBusy()) return
         updateState { state -> state.copy(editor = state.editor?.let(update)) }
     }
@@ -321,7 +331,7 @@ class DocumentsViewModel(
         if (!canStartAction()) return
         pendingDownloadId = document.id
         updateState { it.copy(busyDocumentId = document.id, message = null) }
-        effectChannel.trySend(DocumentsEffect.ChooseDownloadLocation(pdfFileName(document.name)))
+        effectChannel.trySend(DocumentActionEffect.ChooseDownloadLocation(pdfFileName(document.name)))
     }
 
     private fun exportDocument(targetUri: String?) {
@@ -354,7 +364,7 @@ class DocumentsViewModel(
         viewModelScope.launch {
             try {
                 val uri = repository.prepareShare(document)
-                effectChannel.send(DocumentsEffect.SharePdf(uri, pdfFileName(document.name)))
+                effectChannel.send(DocumentActionEffect.SharePdf(uri, pdfFileName(document.name)))
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {
@@ -375,10 +385,7 @@ class DocumentsViewModel(
     private fun validTagId(tagId: Long?): Long? =
         tagId?.takeIf { id -> uiState.value.tags.any { it.id == id } }
 
-    private fun isBusy(): Boolean = uiState.value.let {
-        it.isScanning || it.isPreparingScan || it.isDeleting ||
-            it.busyDocumentId != null || it.editor?.isSaving == true
-    }
+    private fun isBusy(): Boolean = uiState.value.actions.isBusy
 
     private fun canStartAction(): Boolean =
         !isBusy() && uiState.value.editor == null && uiState.value.pendingDeletion == null
@@ -408,7 +415,7 @@ class DocumentsViewModel(
         savedStateHandle[DRAFT_PROTECTION_KEY_ID] = draft?.protectionKeyId
     }
 
-    private fun restoreEditor(): DocumentEditorUiState? {
+    private fun restoreEditor(): DocumentMetadataUiState? {
         if (savedStateHandle.get<Boolean>(HAS_EDITOR) != true) return null
         val id = savedStateHandle.get<Long>(EDITOR_ID)
         val draft = savedStateHandle.get<String>(DRAFT_PDF_URI)?.let { uri ->
@@ -422,7 +429,7 @@ class DocumentsViewModel(
             )
         }
         if (id == null && draft == null) return null
-        return DocumentEditorUiState(
+        return DocumentMetadataUiState(
             documentId = id,
             draft = draft,
             name = savedStateHandle[EDITOR_NAME] ?: "",

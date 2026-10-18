@@ -35,9 +35,9 @@ import com.joseleandro.scaniqo.core.utils.documentDate
 import com.joseleandro.scaniqo.core.utils.documentFileSize
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.TagModel
-import com.joseleandro.scaniqo.ui.components.DocumentTagLabel
-import com.joseleandro.scaniqo.ui.documentEditor.DocumentThumbnail
-import com.joseleandro.scaniqo.ui.documentEditor.DocumentsEvent
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentTagLabel
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 
 @Composable
 internal fun DocumentCard(
@@ -46,7 +46,7 @@ internal fun DocumentCard(
     isBusy: Boolean,
     actionsEnabled: Boolean,
     onOpen: () -> Unit,
-    onEvent: (DocumentsEvent) -> Unit,
+    onEvent: (DocumentActionEvent) -> Unit,
 ) {
     var showMenu by remember(document.id) { mutableStateOf(false) }
     Surface(
@@ -129,7 +129,7 @@ internal fun DocumentCard(
                                 },
                                 onClick = {
                                     showMenu = false; onEvent(
-                                    DocumentsEvent.Download(
+                                    DocumentActionEvent.Download(
                                         document
                                     )
                                 )
@@ -144,7 +144,7 @@ internal fun DocumentCard(
                                     )
                                 },
                                 onClick = {
-                                    showMenu = false; onEvent(DocumentsEvent.Share(document))
+                                    showMenu = false; onEvent(DocumentActionEvent.Share(document))
                                 },
                             )
                             DropdownMenuItem(
@@ -163,7 +163,7 @@ internal fun DocumentCard(
                                 },
                                 onClick = {
                                     showMenu = false; onEvent(
-                                    DocumentsEvent.RequestDelete(
+                                    DocumentActionEvent.RequestDelete(
                                         document
                                     )
                                 )

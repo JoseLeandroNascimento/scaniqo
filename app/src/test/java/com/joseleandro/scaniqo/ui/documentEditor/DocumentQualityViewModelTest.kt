@@ -24,6 +24,7 @@ import com.joseleandro.scaniqo.domain.model.SignatureModel
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
+import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers

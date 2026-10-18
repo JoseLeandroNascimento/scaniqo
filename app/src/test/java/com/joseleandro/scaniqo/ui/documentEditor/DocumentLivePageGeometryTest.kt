@@ -5,6 +5,9 @@ import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PageScaleMode
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentLiveRect
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentLiveTransform
+import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentLivePageGeometry
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test

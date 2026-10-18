@@ -15,8 +15,8 @@ import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageQuality
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
-import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
+import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.model.SignatureFont
@@ -24,6 +24,8 @@ import com.joseleandro.scaniqo.domain.model.SignatureModel
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
+import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,8 +42,8 @@ import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test

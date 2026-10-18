@@ -6,8 +6,6 @@ import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultState
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PageAlignment
-import com.joseleandro.scaniqo.domain.model.PdfPerspective
-import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfFilterThumbnails
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfMergeSource
@@ -15,7 +13,9 @@ import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageQuality
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
+import com.joseleandro.scaniqo.domain.model.PdfPerspective
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
+import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.model.SignatureFont
@@ -23,6 +23,8 @@ import com.joseleandro.scaniqo.domain.model.SignatureModel
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
+import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

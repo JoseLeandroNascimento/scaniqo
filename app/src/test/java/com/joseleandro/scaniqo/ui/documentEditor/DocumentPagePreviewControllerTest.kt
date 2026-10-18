@@ -5,6 +5,8 @@ import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentPagePreviewController
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentPagePreviewState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable

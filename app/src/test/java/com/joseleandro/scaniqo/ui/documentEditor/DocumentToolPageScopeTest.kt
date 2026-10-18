@@ -1,6 +1,8 @@
 package com.joseleandro.scaniqo.ui.documentEditor
 
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentPageScope
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentPageScopeMode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

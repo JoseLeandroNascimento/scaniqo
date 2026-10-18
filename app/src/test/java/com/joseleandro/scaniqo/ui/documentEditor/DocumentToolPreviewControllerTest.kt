@@ -8,6 +8,8 @@ import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentToolPreviewController
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolPreviewState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable

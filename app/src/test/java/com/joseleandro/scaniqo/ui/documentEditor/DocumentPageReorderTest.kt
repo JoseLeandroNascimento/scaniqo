@@ -1,5 +1,9 @@
 package com.joseleandro.scaniqo.ui.documentEditor
 
+import com.joseleandro.scaniqo.ui.documentEditor.model.PageDragBounds
+import com.joseleandro.scaniqo.ui.documentEditor.model.PageReorderDrag
+import com.joseleandro.scaniqo.ui.documentEditor.util.movePageOrder
+import com.joseleandro.scaniqo.ui.documentEditor.util.pageDragScrollSpeed
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

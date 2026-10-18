@@ -7,6 +7,13 @@ import com.joseleandro.scaniqo.domain.model.PageScaleMode
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
+import com.joseleandro.scaniqo.ui.documentEditor.util.DocumentLayoutRotationGesture
+import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutAlignmentAt
+import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutHandleRotation
+import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutHandleScale
+import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutRotation
+import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutScale
+import com.joseleandro.scaniqo.ui.documentEditor.util.withLayoutAdjustmentsFrom
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

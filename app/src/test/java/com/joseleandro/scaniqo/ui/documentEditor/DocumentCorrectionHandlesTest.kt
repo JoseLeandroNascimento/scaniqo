@@ -2,6 +2,7 @@ package com.joseleandro.scaniqo.ui.documentEditor
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
+import com.joseleandro.scaniqo.ui.documentEditor.util.documentCorrectionHandleValue
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -6,6 +6,8 @@ import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentFilterThumbnailController
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentFilterThumbnailState
 import java.io.IOException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
