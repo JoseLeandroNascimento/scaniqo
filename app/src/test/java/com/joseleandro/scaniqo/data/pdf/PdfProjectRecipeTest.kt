@@ -2,6 +2,7 @@ package com.joseleandro.scaniqo.data.pdf
 
 import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PageScaleMode
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
@@ -34,6 +35,27 @@ class PdfProjectRecipeTest {
     }
 
     @Test
+    fun `receita persiste recorte sem distorcao e mascara sem modificar perspectiva legada`() {
+        val legacyPerspective = PdfPerspective(topLeft = PdfPoint(.05f, .08f))
+        val recipe = PdfProjectRecipe(pages = listOf(
+            RecipePage("legada", 0, PdfPageLayout(perspective = legacyPerspective)),
+            RecipePage("recortada", 1, PdfPageLayout(
+                crop = PdfCropBounds(.2f, .1f, .8f, .7f),
+                backgroundMask = PdfPerspective(
+                    PdfPoint(.1f, .05f), PdfPoint(.9f, .1f),
+                    PdfPoint(.95f, .9f), PdfPoint(.1f, .95f),
+                ),
+            )),
+        ))
+        val restored = Json.decodeFromString<PdfProjectRecipe>(Json.encodeToString(recipe))
+        restored.validate()
+        assertEquals(recipe, restored)
+        assertEquals(legacyPerspective, restored.pages[0].layout.perspective)
+        assertEquals(null, restored.pages[0].layout.crop)
+        assertEquals(null, restored.pages[1].layout.perspective)
+    }
+
+    @Test
     fun `receita anterior mantém originais e OCR desabilitado`() {
         val legacy = """{"pages":[{"id":"a","sourcePageIndex":0,"layout":{}}]}"""
         val recipe = Json.decodeFromString<PdfProjectRecipe>(legacy)
@@ -41,6 +63,15 @@ class PdfProjectRecipeTest {
         assertEquals(PdfExportQuality.HIGH_QUALITY, recipe.exportQuality)
         assertEquals(false, recipe.ocrEnabled)
         assertEquals(PdfPageLayout(), recipe.pages.single().layout)
+    }
+
+    @Test
+    fun `assinatura anterior sem rotacao continua com angulo zero`() {
+        val legacy = """{"pages":[{"id":"a","sourcePageIndex":0,"layout":{},"signatures":[{"id":"s","filename":"s.png","x":0.2,"y":0.3,"width":0.4,"height":0.1}]}]}"""
+        val signature = Json.decodeFromString<PdfProjectRecipe>(legacy).pages.single().signatures.single()
+
+        assertEquals(0f, signature.rotationDegrees, 0f)
+        assertEquals(false, signature.stretchToBounds)
     }
 
     @Test
@@ -82,7 +113,8 @@ class PdfProjectRecipeTest {
                         imageFilter = PdfImageFilter.AUTO
                     ),
                     signatures = listOf(
-                        RecipeSignature("assinatura", "signature_123.png", .2f, .3f, .4f, .1f)
+                        RecipeSignature("assinatura", "signature_123.png", .2f, .3f, .4f, .1f,
+                            rotationDegrees = -37f, stretchToBounds = true)
                     )
                 ),
                 RecipePage("pagina-a", 0, PdfPageLayout())

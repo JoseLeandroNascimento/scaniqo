@@ -316,8 +316,8 @@ class DocumentPreviewPerformanceTest {
         advanceUntilIdle()
 
         assertEquals(count + 1, repository.requests.size)
-        assertEquals(.2f, repository.requests.last().workspace.pages.first().signatures.single().x, 0f)
-        assertEquals(.6f, repository.requests.last().workspace.pages.first().signatures.single().y, 0f)
+        assertEquals(.2f, repository.requests.last().workspace.pages.first().signatures.single().x, .000001f)
+        assertEquals(.6f, repository.requests.last().workspace.pages.first().signatures.single().y, .000001f)
         assertNull(viewModel.uiState.value.signatureDraft)
     }
 

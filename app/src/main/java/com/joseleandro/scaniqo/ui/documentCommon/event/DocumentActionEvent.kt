@@ -5,8 +5,8 @@ import com.joseleandro.scaniqo.domain.model.ScannedDocument
 
 /** Ações de documento reutilizadas pela lista, pelo editor e pelos contratos Android. */
 sealed interface DocumentActionEvent {
-    data object StartScan : DocumentActionEvent
-    data object ImportStarted : DocumentActionEvent
+    data class StartScan(val defaultTagId: Long? = null) : DocumentActionEvent
+    data class ImportStarted(val defaultTagId: Long? = null) : DocumentActionEvent
     data class ImportPrepared(val scan: ScannedDocument, val name: String) : DocumentActionEvent
     data object ImportCancelled : DocumentActionEvent
     data class ScanCompleted(val pageUris: List<String>) : DocumentActionEvent
@@ -26,4 +26,5 @@ sealed interface DocumentActionEvent {
     data class Share(val document: DocumentModel) : DocumentActionEvent
     data object ShareFailed : DocumentActionEvent
     data object DismissMessage : DocumentActionEvent
+    data object RetryTags : DocumentActionEvent
 }

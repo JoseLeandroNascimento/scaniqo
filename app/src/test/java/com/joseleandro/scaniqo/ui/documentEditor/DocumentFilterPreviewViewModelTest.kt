@@ -85,7 +85,7 @@ class DocumentFilterPreviewViewModelTest {
         assertEquals(3f, preview.straightenDegrees, 0f)
         assertEquals(.2f, preview.curvature, 0f)
         assertEquals(committed, viewModel.uiState.value.workspace)
-        assertEquals("page-1", viewModel.uiState.value.filterPreviewPageId)
+        assertEquals("page-1", viewModel.uiState.value.filterPreview.pageId)
     }
 
     @Test fun rapidFilterChangesPrepareOnlyLastDraft() = runTest(dispatcher) {
@@ -118,7 +118,7 @@ class DocumentFilterPreviewViewModelTest {
         advanceUntilIdle()
         assertEquals(PdfImageFilter.DENOISE, repository.calls.last().page.layout.imageFilter)
         assertEquals(.6f, repository.calls.last().page.layout.filterIntensity, 0f)
-        assertTrue(viewModel.uiState.value.filterPreviewShowingOriginal)
+        assertTrue(viewModel.uiState.value.filterPreview.showingOriginal)
         assertEquals(committed, viewModel.uiState.value.workspace)
     }
 
@@ -128,8 +128,8 @@ class DocumentFilterPreviewViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.FILTERS))
         viewModel.onEvent(DocumentToolsEvent.LoadFilterThumbnails("page-1"))
         advanceUntilIdle()
-        assertEquals(PdfImageFilter.entries.size, viewModel.uiState.value.filterThumbnails.size)
-        assertTrue(viewModel.uiState.value.filterThumbnailsRequireRasterization)
+        assertEquals(PdfImageFilter.entries.size, viewModel.uiState.value.filterThumbnails.images.size)
+        assertTrue(viewModel.uiState.value.filterThumbnails.requiresRasterization)
         for (intensity in listOf(.2f, .5f, .8f)) {
             viewModel.onEvent(DocumentToolsEvent.PreviewFilter("page-1",
                 PdfPageLayout(imageFilter = PdfImageFilter.ENHANCE, filterIntensity = intensity)))
@@ -142,7 +142,7 @@ class DocumentFilterPreviewViewModelTest {
         assertEquals(2, repository.thumbnailCalls)
         assertEquals(listOf(false, true), repository.thumbnailRasterizationRequests)
         // A permissão muda a amostra; a fonte continua contendo texto ou vetores.
-        assertTrue(viewModel.uiState.value.filterThumbnailsRequireRasterization)
+        assertTrue(viewModel.uiState.value.filterThumbnails.requiresRasterization)
     }
 
     @Test fun dismissCancelsPendingDraftAndThumbnailsWithoutCommitting() = runTest(dispatcher) {
@@ -158,10 +158,10 @@ class DocumentFilterPreviewViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.DismissTool)
         gate.complete(Unit)
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.filterPreview)
-        assertNull(viewModel.uiState.value.filterThumbnailsPageId)
-        assertTrue(viewModel.uiState.value.filterThumbnails.isEmpty())
-        assertFalse(viewModel.uiState.value.isLoadingFilterThumbnails)
+        assertNull(viewModel.uiState.value.filterPreview.preview)
+        assertNull(viewModel.uiState.value.filterThumbnails.pageId)
+        assertTrue(viewModel.uiState.value.filterThumbnails.images.isEmpty())
+        assertFalse(viewModel.uiState.value.filterThumbnails.isLoading)
         assertEquals(original, viewModel.uiState.value.workspace)
     }
 
@@ -173,15 +173,15 @@ class DocumentFilterPreviewViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.LoadFilterThumbnails("page-1", rasterizeText = true))
         viewModel.onEvent(DocumentToolsEvent.PreviewFilter("page-1", PdfPageLayout(imageFilter = PdfImageFilter.WHITEN)))
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.filterThumbnails.isNotEmpty())
-        assertTrue(viewModel.uiState.value.filterPreview != null)
+        assertTrue(viewModel.uiState.value.filterThumbnails.images.isNotEmpty())
+        assertTrue(viewModel.uiState.value.filterPreview.preview != null)
         passwords.lock()
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value.isLocked)
-        assertTrue(viewModel.uiState.value.filterThumbnails.isEmpty())
-        assertNull(viewModel.uiState.value.filterPreview)
-        assertNull(viewModel.uiState.value.filterPreviewPageId)
+        assertTrue(viewModel.uiState.value.filterThumbnails.images.isEmpty())
+        assertNull(viewModel.uiState.value.filterPreview.preview)
+        assertNull(viewModel.uiState.value.filterPreview.pageId)
     }
 
     @Test fun applyDraftToSelectedPagesClearsPreviewAndCreatesOnlyOneUndo() = runTest(dispatcher) {
@@ -196,7 +196,7 @@ class DocumentFilterPreviewViewModelTest {
         advanceUntilIdle()
         assertEquals(setOf("page-2", "page-4"), viewModel.uiState.value.workspace!!.pages
             .filter { it.layout.imageFilter == PdfImageFilter.ENHANCE }.map { it.id }.toSet())
-        assertNull(viewModel.uiState.value.filterPreview)
+        assertNull(viewModel.uiState.value.filterPreview.preview)
         assertNull(viewModel.uiState.value.tool)
         viewModel.onEvent(DocumentToolsEvent.Undo)
         advanceUntilIdle()
@@ -299,17 +299,17 @@ class DocumentFilterPreviewViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.FILTERS))
         viewModel.onEvent(DocumentToolsEvent.LoadFilterThumbnails("page-1", rasterizeText = true))
         advanceUntilIdle()
-        val thumbnails = viewModel.uiState.value.filterThumbnails
+        val thumbnails = viewModel.uiState.value.filterThumbnails.images
         for (filter in listOf(PdfImageFilter.AUTO, PdfImageFilter.ENHANCE, PdfImageFilter.ORIGINAL)) {
             viewModel.onEvent(DocumentToolsEvent.SelectGlobalFilter(filter))
-            assertEquals(thumbnails, viewModel.uiState.value.filterThumbnails)
+            assertEquals(thumbnails, viewModel.uiState.value.filterThumbnails.images)
             viewModel.onEvent(DocumentToolsEvent.LoadFilterThumbnails("page-1", rasterizeText = true))
             advanceUntilIdle()
         }
         assertEquals(1, repository.thumbnailCalls)
         viewModel.onEvent(DocumentToolsEvent.Undo)
         advanceUntilIdle()
-        assertEquals(thumbnails, viewModel.uiState.value.filterThumbnails)
+        assertEquals(thumbnails, viewModel.uiState.value.filterThumbnails.images)
         assertEquals(DocumentTool.FILTERS, viewModel.uiState.value.tool)
     }
 

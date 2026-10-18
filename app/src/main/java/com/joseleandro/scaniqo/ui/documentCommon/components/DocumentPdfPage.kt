@@ -20,16 +20,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +59,7 @@ fun DocumentPdfPage(
     modifier: Modifier = Modifier,
     contentKey: String = "$pdfUri:$pageIndex",
     pageNumber: Int = pageIndex + 1,
+    onImageBitmapChanged: ((ImageBitmap?) -> Unit)? = null,
 ) {
     // Uma identidade estável mantém a folha visível até a nova versão terminar de decodificar.
     // A chave muda ao trocar de página e a composição é descartada ao bloquear o documento.
@@ -68,6 +72,7 @@ fun DocumentPdfPage(
             modifier = modifier,
             retainPrevious = true,
             pageNumber = pageNumber,
+            onImageBitmapChanged = onImageBitmapChanged,
         )
     }
 }
@@ -131,6 +136,7 @@ private fun DocumentPageImage(
     modifier: Modifier,
     retainPrevious: Boolean = false,
     pageNumber: Int = pageIndex + 1,
+    onImageBitmapChanged: ((ImageBitmap?) -> Unit)? = null,
 ) {
     if (LocalInspectionMode.current) {
         DocumentPaperPreview(modifier)
@@ -172,6 +178,21 @@ private fun DocumentPageImage(
         }
         // Bitmaps exibidos são liberados pelo GC quando a página sai da composição.
         // Reciclá-los em onDispose poderia atingir um frame ainda sendo desenhado.
+    }
+
+    // A lupa compartilha exatamente a folha exibida; movimentar uma assinatura não decodifica o PDF.
+    if (onImageBitmapChanged != null) {
+        val currentCallback by rememberUpdatedState(onImageBitmapChanged)
+        val bitmap = when (val current = state) {
+            is PageImageState.Ready -> current.bitmap
+            is PageImageState.Error -> current.previous
+            PageImageState.Loading -> null
+        }
+        val image = remember(bitmap) { bitmap?.asImageBitmap() }
+        DisposableEffect(image) {
+            currentCallback(image)
+            onDispose { currentCallback(null) }
+        }
     }
 
     Box(

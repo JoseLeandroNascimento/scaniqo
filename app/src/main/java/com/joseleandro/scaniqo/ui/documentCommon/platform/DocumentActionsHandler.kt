@@ -1,4 +1,4 @@
-package com.joseleandro.scaniqo.ui.documents.platform
+package com.joseleandro.scaniqo.ui.documentCommon.platform
 
 import android.content.ClipData
 import android.content.Intent
@@ -18,18 +18,27 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanner
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.ui.documentCommon.effect.DocumentActionEffect
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
-import com.joseleandro.scaniqo.ui.documentCommon.platform.findActivity
-import com.joseleandro.scaniqo.ui.documentCommon.platform.rememberDocumentScannerLauncher
-import com.joseleandro.scaniqo.ui.documents.DocumentsViewModel
+import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentCreationResult
+import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.koinInject
 
 /** Mantém um único consumidor dos efeitos Android, mesmo ao navegar entre lista e PDF. */
 @Composable
 fun DocumentActionsHandler(
-    viewModel: DocumentsViewModel,
+    viewModel: DocumentActionsViewModel,
+    onDocumentCreated: (DocumentCreationResult) -> Unit,
     scanner: GmsDocumentScanner = koinInject(),
 ) {
     val context = LocalContext.current
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val documentCreated by rememberUpdatedState(onDocumentCreated)
+    LaunchedEffect(state.pendingCreation?.documentId) {
+        state.pendingCreation?.let { creation ->
+            documentCreated(creation)
+            viewModel.acknowledgeCreation(creation.documentId)
+        }
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val shareChooserTitle by rememberUpdatedState(stringResource(R.string.document_share_chooser))
     val launchScanner = rememberDocumentScannerLauncher(

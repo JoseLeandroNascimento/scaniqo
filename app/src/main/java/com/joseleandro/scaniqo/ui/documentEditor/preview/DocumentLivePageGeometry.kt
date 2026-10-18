@@ -1,12 +1,12 @@
 package com.joseleandro.scaniqo.ui.documentEditor.preview
 
 import com.joseleandro.scaniqo.data.pdf.PdfPageGeometry
+import com.joseleandro.scaniqo.data.pdf.PdfSignatureGeometry
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentLivePageNumber
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentLiveRect
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentLiveTransform
-import kotlin.math.min
 
 
 /** Usa a mesma geometria da exportação, convertendo apenas a origem inferior esquerda do PDF. */
@@ -50,24 +50,10 @@ internal object DocumentLivePageGeometry {
         imageWidth: Int,
         imageHeight: Int
     ): DocumentLiveRect {
-        require(imageWidth > 0 && imageHeight > 0)
-        require(
-            listOf(
-                signature.x,
-                signature.y,
-                signature.width,
-                signature.height
-            ).all { it.isFinite() && it in 0f..1f })
-        require(signature.width > 0f && signature.height > 0f)
-        require(signature.x + signature.width <= 1.001f && signature.y + signature.height <= 1.001f)
-        val boxWidth = signature.width * PdfPageGeometry.WIDTH
-        val boxHeight = signature.height * PdfPageGeometry.HEIGHT
-        val scale = min(boxWidth / imageWidth, boxHeight / imageHeight)
-        val width = imageWidth * scale
-        val height = imageHeight * scale
-        val left = signature.x * PdfPageGeometry.WIDTH + (boxWidth - width) / 2
-        val top = signature.y * PdfPageGeometry.HEIGHT + (boxHeight - height) / 2
-        return DocumentLiveRect(left, top, left + width, top + height)
+        val bounds = PdfSignatureGeometry.bounds(signature, imageWidth, imageHeight)
+        return DocumentLiveRect(
+            bounds.left, bounds.top, bounds.left + bounds.width, bounds.top + bounds.height,
+        )
     }
 
     /** Mesmos 10 pontos, linha de base a 15 pontos e fundo a 12 pontos usados no PDF. */

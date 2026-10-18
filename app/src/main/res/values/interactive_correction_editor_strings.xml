@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="correction_editor_straighten">Endireitar</string>
-    <string name="correction_editor_perspective">Perspectiva</string>
+    <string name="correction_editor_perspective">Recortar</string>
     <string name="correction_editor_curve">Curvatura</string>
     <string name="correction_editor_angle">Inclinação</string>
     <string name="correction_editor_auto">Auto</string>

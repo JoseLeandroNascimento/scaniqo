@@ -8,4 +8,5 @@ data class DocumentToolPreviewState(
     val isRendering: Boolean = false,
     val error: Boolean = false,
     val showingOriginal: Boolean = false,
+    val pageId: String? = null,
 )

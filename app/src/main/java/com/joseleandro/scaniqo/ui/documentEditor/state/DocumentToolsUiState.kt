@@ -2,7 +2,6 @@ package com.joseleandro.scaniqo.ui.documentEditor.state
 
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
-import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
@@ -17,28 +16,12 @@ data class DocumentToolsUiState(
     val selectedPageId: String? = null,
     val previewUri: String? = null,
     val pagePreviews: Map<String, DocumentPagePreviewState> = emptyMap(),
-    val layoutPreview: PdfPagePreview? = null,
-    val layoutLivePreview: DocumentLivePreviewState = DocumentLivePreviewState(),
-    val layoutPreviewPageId: String? = null,
-    val isPreviewingLayout: Boolean = false,
-    val layoutPreviewError: Boolean = false,
-    val layoutPreviewShowingOriginal: Boolean = false,
-    val correctionsPreview: PdfPagePreview? = null,
-    val correctionsLivePreview: DocumentLivePreviewState = DocumentLivePreviewState(),
-    val correctionsPreviewPageId: String? = null,
-    val isPreviewingCorrections: Boolean = false,
-    val correctionsPreviewError: Boolean = false,
-    val correctionsPreviewShowingOriginal: Boolean = false,
-    val filterPreview: PdfPagePreview? = null,
-    val filterPreviewPageId: String? = null,
-    val isPreviewingFilter: Boolean = false,
-    val filterPreviewError: Boolean = false,
-    val filterPreviewShowingOriginal: Boolean = false,
-    val filterThumbnails: Map<PdfImageFilter, String> = emptyMap(),
-    val filterThumbnailsPageId: String? = null,
-    val isLoadingFilterThumbnails: Boolean = false,
-    val filterThumbnailsError: Boolean = false,
-    val filterThumbnailsRequireRasterization: Boolean = false,
+    val layoutPreview: DocumentToolPreviewState = DocumentToolPreviewState(),
+    val correctionsPreview: DocumentToolPreviewState = DocumentToolPreviewState(),
+    val correctionSource: DocumentCaptureSourceState = DocumentCaptureSourceState(),
+    val correctionCapturePreview: DocumentLivePreviewState = DocumentLivePreviewState(),
+    val filterPreview: DocumentToolPreviewState = DocumentToolPreviewState(),
+    val filterThumbnails: DocumentFilterThumbnailState = DocumentFilterThumbnailState(),
     val isLoading: Boolean = false,
     val isRendering: Boolean = false,
     val isSaving: Boolean = false,
@@ -46,12 +29,7 @@ data class DocumentToolsUiState(
     val isCopyingSignature: Boolean = false,
     val isDiscarding: Boolean = false,
     val isScanning: Boolean = false,
-    val isPickingPdfMerge: Boolean = false,
-    val isAwaitingMergeUnlock: Boolean = false,
-    val isMerging: Boolean = false,
-    val mergePasswordUri: String? = null,
-    val mergePasswordName: String? = null,
-    val mergePasswordError: Boolean = false,
+    val merge: DocumentMergeUiState = DocumentMergeUiState.Idle,
     val isLocked: Boolean = false,
     val loadError: Boolean = false,
     val recoveryRequired: Boolean = false,
@@ -60,6 +38,8 @@ data class DocumentToolsUiState(
     val qualityReport: PdfQualityReport? = null,
     val isAnalyzing: Boolean = false,
     val analysisError: Boolean = false,
+    /** Conclusão da análise solicitada na correção, mesmo quando o relatório não mudou. */
+    val correctionAnalysisRequestId: String? = null,
     val isComparingOriginal: Boolean = false,
     val displayedComparisonPageId: String? = null,
     val canUndo: Boolean = false,
@@ -72,7 +52,7 @@ data class DocumentToolsUiState(
 ) {
     val isBusy: Boolean
         get() = isLoading || isSaving || isAppending || isCopyingSignature || isDiscarding || isScanning ||
-            isPickingPdfMerge || isAwaitingMergeUnlock || isMerging || mergePasswordUri != null || isAnalyzing
+            merge != DocumentMergeUiState.Idle || isAnalyzing
     val canEdit: Boolean
         get() = workspace != null && !isLocked && !isBusy
     val selectedPageIndex: Int
@@ -94,6 +74,7 @@ data class DocumentToolsUiState(
     val canCompare: Boolean
         get() = workspace?.pages?.find { it.id == selectedPageId }?.layout?.let {
             (it.imageFilter != PdfImageFilter.ORIGINAL && it.filterIntensity > 0f) ||
-                it.straightenDegrees != 0f || it.perspective != null || it.curvature != 0f
+                it.straightenDegrees != 0f || it.perspective != null || it.curvature != 0f ||
+                it.crop?.isIdentity() == false || it.backgroundMask != null
         } == true
 }

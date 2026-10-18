@@ -24,6 +24,7 @@ import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentMergeDialogs
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentPasswordRecoveryDialog
 import com.joseleandro.scaniqo.ui.documentEditor.effect.DocumentToolsEffect
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.security.PasswordUnlockHandler
 import org.koin.compose.koinInject
 
@@ -33,6 +34,11 @@ fun DocumentToolsHandler(
     viewModel: DocumentToolsViewModel,
     onNavigateBack: () -> Unit,
     onNavigateSignatures: () -> Unit,
+    onNavigateSignatureEditor: (Long) -> Unit,
+    onNavigateMergeEditor: (Long) -> Unit,
+    onNavigateEditorTool: (Long, DocumentTool) -> Unit,
+    onEditorToolApplied: (Long, DocumentTool) -> Unit,
+    onMergeCompleted: (Long) -> Unit,
     onNavigatePasswordSettings: () -> Unit,
     vault: PasswordVault = koinInject(),
     scanner: GmsDocumentScanner = koinInject(),
@@ -41,6 +47,11 @@ fun DocumentToolsHandler(
     val lifecycle = LocalLifecycleOwner.current
     val navigateBack by rememberUpdatedState(onNavigateBack)
     val navigateSignatures by rememberUpdatedState(onNavigateSignatures)
+    val navigateSignatureEditor by rememberUpdatedState(onNavigateSignatureEditor)
+    val navigateMergeEditor by rememberUpdatedState(onNavigateMergeEditor)
+    val mergeCompleted by rememberUpdatedState(onMergeCompleted)
+    val navigateEditorTool by rememberUpdatedState(onNavigateEditorTool)
+    val editorToolApplied by rememberUpdatedState(onEditorToolApplied)
     val navigatePasswordSettings by rememberUpdatedState(onNavigatePasswordSettings)
     var unlockRequested by rememberSaveable { mutableStateOf(false) }
     var recoveryRequested by rememberSaveable { mutableStateOf(false) }
@@ -72,6 +83,11 @@ fun DocumentToolsHandler(
                     DocumentToolsEffect.NeedUnlock -> unlockRequested = true
                     DocumentToolsEffect.NeedDocumentPassword -> recoveryRequested = true
                     DocumentToolsEffect.NavigateSignatures -> navigateSignatures()
+                    is DocumentToolsEffect.NavigateSignatureEditor -> navigateSignatureEditor(effect.documentId)
+                    is DocumentToolsEffect.NavigateMergeEditor -> navigateMergeEditor(effect.documentId)
+                    is DocumentToolsEffect.MergeCompleted -> mergeCompleted(effect.documentId)
+                    is DocumentToolsEffect.NavigateEditorTool -> navigateEditorTool(effect.documentId, effect.tool)
+                    is DocumentToolsEffect.EditorToolApplied -> editorToolApplied(effect.documentId, effect.tool)
                     DocumentToolsEffect.NavigatePasswordSettings -> navigatePasswordSettings()
                     DocumentToolsEffect.NavigateBack -> navigateBack()
                 }

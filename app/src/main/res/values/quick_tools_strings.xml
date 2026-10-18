@@ -1,0 +1,21 @@
+<resources>
+    <string name="quick_tools_import">Importar PDF</string>
+    <string name="quick_tools_import_hint">Do seu aparelho</string>
+    <string name="quick_tools_merge">Mesclar PDFs</string>
+    <string name="quick_tools_merge_hint">Junte e organize</string>
+    <string name="quick_tools_sign">Assinar documento</string>
+    <string name="quick_tools_sign_hint">Posicione sua assinatura</string>
+    <string name="quick_merge_title">Mesclar PDFs</string>
+    <string name="quick_merge_working">Preparando seu novo PDF…</string>
+    <string name="quick_merge_name">Documentos mesclados</string>
+    <string name="quick_merge_password">Senha de %1$s</string>
+    <string name="quick_merge_password_label">Senha do PDF</string>
+    <string name="quick_merge_password_wrong">Senha incorreta. Tente novamente.</string>
+    <string name="quick_merge_continue">Continuar</string>
+    <string name="quick_merge_picker_error">Não foi possível abrir o seletor de arquivos.</string>
+    <string name="quick_sign_choose">Qual documento você quer assinar?</string>
+    <string name="quick_sign_description">Escolha um PDF para posicionar, girar e ajustar sua assinatura.</string>
+    <string name="quick_sign_empty">Importe ou digitalize um documento para começar.</string>
+    <string name="quick_sign_search">Buscar documento</string>
+    <string name="quick_sign_no_results">Nenhum documento encontrado.</string>
+</resources>

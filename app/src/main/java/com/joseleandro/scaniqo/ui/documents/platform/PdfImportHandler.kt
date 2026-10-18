@@ -17,7 +17,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
-import com.joseleandro.scaniqo.ui.documents.DocumentsViewModel
+import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
+import androidx.compose.runtime.rememberUpdatedState
 import com.joseleandro.scaniqo.ui.documents.PdfImportViewModel
 import com.joseleandro.scaniqo.ui.documents.components.PdfImportDialogs
 import com.joseleandro.scaniqo.ui.documents.effect.PdfImportEffect
@@ -29,12 +30,14 @@ import kotlinx.coroutines.withContext
 @Composable
 fun PdfImportHandler(
     viewModel: PdfImportViewModel,
-    documents: DocumentsViewModel,
+    actionsViewModel: DocumentActionsViewModel,
+    defaultTagId: Long?,
     vault: PasswordVault,
     showDialogs: Boolean,
     onPasswordSettings: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedTagId by rememberUpdatedState(defaultTagId)
     val vaultState by vault.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
@@ -59,13 +62,13 @@ fun PdfImportHandler(
             viewModel.effects.collect { effect ->
                 when (effect) {
                     PdfImportEffect.PickFile -> {
-                        documents.onDocumentAction(DocumentActionEvent.ImportStarted)
+                        actionsViewModel.onDocumentAction(DocumentActionEvent.ImportStarted(defaultTagId = selectedTagId))
                         try { picker.launch(arrayOf("application/pdf")) }
                         catch (_: Exception) { viewModel.cancel() }
                     }
                     PdfImportEffect.Cancelled -> {
                         password = ""
-                        documents.onDocumentAction(DocumentActionEvent.ImportCancelled)
+                        actionsViewModel.onDocumentAction(DocumentActionEvent.ImportCancelled)
                     }
                 }
             }
@@ -74,7 +77,7 @@ fun PdfImportHandler(
     LaunchedEffect(state.pending) {
         state.pending?.let { pending ->
             password = ""
-            documents.onDocumentAction(DocumentActionEvent.ImportPrepared(pending.scan, pending.name))
+            actionsViewModel.onDocumentAction(DocumentActionEvent.ImportPrepared(pending.scan, pending.name))
             viewModel.completeDelivery(pending.scan.pdfUri)
         }
     }

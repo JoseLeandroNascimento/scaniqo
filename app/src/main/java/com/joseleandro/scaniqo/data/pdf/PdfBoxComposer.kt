@@ -3,6 +3,8 @@ package com.joseleandro.scaniqo.data.pdf
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import com.joseleandro.scaniqo.domain.model.PdfCaptureSource
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfInteractivePixels
 import com.joseleandro.scaniqo.domain.model.PdfImportException
@@ -32,7 +34,6 @@ import java.util.UUID
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
@@ -170,6 +171,73 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
         }
     }
 
+    /** Fornece a imagem bruta, mantendo margens e layout do PDF fora dos controles de captura. */
+    suspend fun renderCaptureSource(
+        workspace: PdfWorkspace, pageId: String, maxSide: Int,
+    ): PdfCaptureSource? {
+        require(maxSide in 128..PdfInteractivePageRenderer.MAX_SIDE)
+        val spec = workspace.pages.firstOrNull { it.id == pageId }
+            ?: throw IllegalArgumentException("A página não está mais disponível.")
+        val source = files.source(workspace, spec.sourceUri)
+        val native = inspectContent(source, spec.sourcePageIndex)
+        val bounds = native.captureBounds ?: return null
+        return interactiveRenderer.render(
+            source, spec.sourceUri, spec.sourcePageIndex, PdfPageLayout(crop = bounds), maxSide,
+        ).use { rendered ->
+            currentCoroutineContext().ensureActive()
+            val bitmap = rendered.bitmap
+            val pixels = IntArray(bitmap.width * bitmap.height)
+            bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+            PdfCaptureSource(
+                PdfInteractivePixels(bitmap.width, bitmap.height, pixels, rendered.width, rendered.height), bounds,
+                preservesNativeContent = native.shouldPreserve,
+            )
+        }
+    }
+
+    /**
+     * A janela visual não muda a receita: processa a mesma página da exportação e só então
+     * extrai seus pixels visíveis. Isso preserva centro/escala de correções já existentes.
+     */
+    suspend fun renderCaptureResult(
+        workspace: PdfWorkspace, pageId: String, maxSide: Int,
+    ): PdfInteractivePixels? {
+        require(maxSide in 128..PdfInteractivePageRenderer.MAX_SIDE)
+        val spec = workspace.pages.firstOrNull { it.id == pageId }
+            ?: throw IllegalArgumentException("A página não está mais disponível.")
+        spec.layout.validateImageProcessing()
+        val source = files.source(workspace, spec.sourceUri)
+        val native = inspectContent(source, spec.sourcePageIndex)
+        val capture = native.captureBounds ?: return null
+        val renderArea = spec.layout.crop ?: PdfCropBounds()
+        val visible = PdfCaptureGeometry.intersect(capture, renderArea) ?: return null
+        val local = PdfCaptureGeometry.relativeTo(visible, renderArea)
+        if (local.isIdentity()) return renderInteractivePixels(workspace, pageId, maxSide)
+        val renderSide = PdfCaptureGeometry.resultMaxSide(
+            native.sourceWidth, native.sourceHeight, renderArea, visible, maxSide,
+        )
+        val effective = effectivePreviewPage(spec, source)
+        return PdfFilteredPageRenderer(mapOf(spec.sourceUri to source)).use { renderer ->
+            renderer.render(spec.sourceUri, spec.sourcePageIndex, effective.layout, renderSide,
+                captureBounds = native.captureBounds).use { rendered ->
+                currentCoroutineContext().ensureActive()
+                val bitmap = rendered.bitmap
+                val left = (local.left * bitmap.width).roundToInt().coerceIn(0, bitmap.width - 1)
+                val top = (local.top * bitmap.height).roundToInt().coerceIn(0, bitmap.height - 1)
+                val right = (local.right * bitmap.width).roundToInt().coerceIn(left + 1, bitmap.width)
+                val bottom = (local.bottom * bitmap.height).roundToInt().coerceIn(top + 1, bitmap.height)
+                val width = right - left
+                val height = bottom - top
+                val pixels = IntArray(width * height)
+                bitmap.getPixels(pixels, 0, width, left, top, width, height)
+                currentCoroutineContext().ensureActive()
+                PdfInteractivePixels(width, height, pixels,
+                    rendered.width * (local.right - local.left),
+                    rendered.height * (local.bottom - local.top))
+            }
+        }
+    }
+
     /** Entrega os pixels à interface sem JPEG intermediário, composição de PDF ou gravação em disco. */
     suspend fun renderInteractivePixels(
         workspace: PdfWorkspace,
@@ -185,6 +253,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
         val effective = effectivePreviewPage(spec, source)
         return interactiveRenderer.render(
             source, spec.sourceUri, spec.sourcePageIndex, effective.layout, maxSide,
+            captureBounds = captureBoundsFor(effective, source),
         ).use { rendered ->
             currentCoroutineContext().ensureActive()
             val bitmap = rendered.bitmap
@@ -208,6 +277,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
             straightenDegrees = 0f,
             perspective = null,
             curvature = 0f,
+            backgroundMask = null,
         ))
     }
 
@@ -228,7 +298,8 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
             val page = PDPage(PDRectangle(PdfPageGeometry.WIDTH, PdfPageGeometry.HEIGHT))
             output.addPage(page)
             val image = cachedImage(output, key, cache) {
-                interactiveRenderer.render(source, spec.sourceUri, spec.sourcePageIndex, effective.layout)
+                interactiveRenderer.render(source, spec.sourceUri, spec.sourcePageIndex, effective.layout,
+                captureBounds = captureBoundsFor(effective, source))
             }
             val layout = spec.layout
             val margin = PdfPageGeometry.marginFor(layout)
@@ -357,7 +428,14 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                     require(spec.sourcePageIndex in 0 until source.numberOfPages)
                     val sourcePage = source.getPage(spec.sourcePageIndex)
                     if (sourcePage.resources == null) sourcePage.resources = PDResources()
-                    val box = sourcePage.cropBox
+                    val layout = if (originalsOnly) PdfPageLayout() else spec.layout
+                    layout.validateImageProcessing()
+                    val originalBox = sourcePage.cropBox
+                    val croppedBox = PdfCropGeometry.sourceBox(
+                        originalBox.lowerLeftX, originalBox.lowerLeftY, originalBox.width, originalBox.height,
+                        sourcePage.rotation, layout.crop,
+                    )
+                    val box = PDRectangle(croppedBox.x, croppedBox.y, croppedBox.width, croppedBox.height)
                     val rotated = ((sourcePage.rotation % 180) + 180) % 180 != 0
                     val width = if (originalsOnly) {
                         if (rotated) box.height else box.width
@@ -368,8 +446,6 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                     require(width.isFinite() && height.isFinite() && width > 0 && height > 0)
                     val page = PDPage(PDRectangle(width, height))
                     output.addPage(page)
-                    val layout = if (originalsOnly) PdfPageLayout() else spec.layout
-                    layout.validateImageProcessing()
                     val needsProcessing = layout.needsImageProcessing()
                     val native = if (needsProcessing || (!originalsOnly && forExport && workspace.ocrEnabled)) {
                         inspectContent(requireNotNull(sourceFiles[spec.sourceUri]), source, spec.sourcePageIndex)
@@ -403,7 +479,8 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                             stream.drawForm(form)
                         } else if (pageCache != null) {
                             val cached = previewImage(
-                                output, spec, requireNotNull(sourceFiles[spec.sourceUri]), rasterizer, pageCache
+                                output, spec, requireNotNull(sourceFiles[spec.sourceUri]), rasterizer, pageCache,
+                                captureBounds = native?.captureBounds,
                             )
                             val transform = PdfPageGeometry.placement(
                                 0f, 0f, cached.width, cached.height, 0,
@@ -420,7 +497,8 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                             cache.beginPreview(setOf(key))
                             val cached = cachedImage(output, key, cache) {
                                 rasterizer.render(
-                                    spec.sourceUri, spec.sourcePageIndex, layout, settings.maxImageSide
+                                    spec.sourceUri, spec.sourcePageIndex, layout, settings.maxImageSide,
+                                    captureBounds = native?.captureBounds,
                                 )
                             }
                             stream.transform(PdfPageGeometry.placement(
@@ -468,9 +546,15 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
         source: File,
         renderer: PdfFilteredPageRenderer,
         cache: PdfPreviewPageCache,
+        captureBounds: PdfCropBounds?,
     ): CachedImage = cachedImage(output, PdfRasterKey.from(source, spec), cache) {
-        renderer.render(spec.sourceUri, spec.sourcePageIndex, spec.layout, maxSide = 1800)
+        renderer.render(spec.sourceUri, spec.sourcePageIndex, spec.layout, maxSide = 1800,
+            captureBounds = captureBounds)
     }
+
+    private suspend fun captureBoundsFor(spec: PdfPageSpec, source: File): PdfCropBounds? =
+        if (spec.layout.backgroundMask == null) null else inspectContent(source, spec.sourcePageIndex).captureBounds
+
 
     private suspend fun cachedImage(
         output: PDDocument,
@@ -612,14 +696,14 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
         } ?: throw IOException("Não foi possível ler a assinatura.")
         try {
             val image = LosslessFactory.createFromImage(document, bitmap)
-            val boxWidth = signature.width * PdfPageGeometry.WIDTH
-            val boxHeight = signature.height * PdfPageGeometry.HEIGHT
-            val scale = min(boxWidth / bitmap.width, boxHeight / bitmap.height)
-            val width = bitmap.width * scale
-            val height = bitmap.height * scale
-            val x = signature.x * PdfPageGeometry.WIDTH + (boxWidth - width) / 2
-            val y = (1 - signature.y) * PdfPageGeometry.HEIGHT - boxHeight + (boxHeight - height) / 2
-            stream.drawImage(image, x, y, width, height)
+            val transform = PdfSignatureGeometry.pdfTransform(signature, bitmap.width, bitmap.height)
+            stream.saveGraphicsState()
+            try {
+                stream.transform(transform.toMatrix())
+                stream.drawImage(image, 0f, 0f, 1f, 1f)
+            } finally {
+                stream.restoreGraphicsState()
+            }
         } finally {
             bitmap.recycle()
         }

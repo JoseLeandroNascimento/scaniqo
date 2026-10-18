@@ -2,6 +2,7 @@ package com.joseleandro.scaniqo.data.pdf
 
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
+import com.joseleandro.scaniqo.domain.model.isValidBackgroundMask
 import kotlin.math.abs
 
 /** Valida também receitas restauradas, que não passaram pelos limites dos controles da tela. */
@@ -18,10 +19,15 @@ internal fun PdfPageLayout.validateImageProcessing() {
     require(perspective == null || PdfImageCorrections.isValidPerspective(perspective)) {
         "Selecione os quatro cantos da folha sem cruzar as bordas."
     }
+    require(crop == null || crop.isValid()) { "O recorte deve ficar dentro da captura." }
+    require(backgroundMask == null || backgroundMask.isValidBackgroundMask()) {
+        "Selecione o documento sem cruzar as bordas."
+    }
 }
 
 internal fun PdfPageLayout.needsImageProcessing(): Boolean =
     (imageFilter != PdfImageFilter.ORIGINAL && filterIntensity > 0f) ||
         abs(straightenDegrees) > .01f ||
         (perspective != null && !PdfImageCorrections.isIdentityPerspective(perspective)) ||
+        (backgroundMask != null && !PdfImageCorrections.isIdentityPerspective(backgroundMask)) ||
         abs(curvature) > .001f

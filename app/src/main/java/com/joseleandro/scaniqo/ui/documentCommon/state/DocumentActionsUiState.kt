@@ -3,9 +3,12 @@ package com.joseleandro.scaniqo.ui.documentCommon.state
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.TagModel
 
-/** Projeção imutável das ações compartilhadas; não mantém uma segunda fonte de estado. */
+/** Estado das operações compartilhadas, mantido exclusivamente por DocumentActionsViewModel. */
 data class DocumentActionsUiState(
     val tags: List<TagModel> = emptyList(),
+    val isLoadingTags: Boolean = true,
+    val tagsLoadError: Boolean = false,
+    val pendingCreation: DocumentCreationResult? = null,
     val editor: DocumentMetadataUiState? = null,
     val pendingDeletion: DocumentModel? = null,
     val isDeleting: Boolean = false,

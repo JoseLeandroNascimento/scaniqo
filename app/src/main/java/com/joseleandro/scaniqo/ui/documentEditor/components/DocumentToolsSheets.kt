@@ -2,21 +2,15 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,22 +29,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
-import com.joseleandro.scaniqo.domain.model.DocumentModel
-import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
-import com.joseleandro.scaniqo.domain.model.SignatureModel
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.util.titleRes
-import com.joseleandro.scaniqo.ui.signatures.SignatureImage
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,16 +47,16 @@ import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 internal fun DocumentToolsSheets(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
-    documents: List<DocumentModel> = emptyList(),
 ) {
     val tool = state.tool
-    if (tool != null && tool != DocumentTool.FILTERS && state.workspace != null && !state.isLocked) {
+    if ((tool == DocumentTool.QUALITY || tool == DocumentTool.PROTECTION) &&
+        state.workspace != null && !state.isLocked) {
         ModalBottomSheet(
             onDismissRequest = { if (!state.isBusy) onEvent(DocumentToolsEvent.DismissTool) },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             containerColor = MaterialTheme.colorScheme.surface,
         ) {
-            DocumentToolSheetContent(state, onEvent, documents)
+            DocumentToolSheetContent(state, onEvent)
         }
     }
     if (state.pendingDeletePageId != null) {
@@ -110,15 +99,12 @@ internal fun DocumentToolsSheets(
 private fun DocumentToolSheetContent(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
-    documents: List<DocumentModel> = emptyList(),
 ) {
     val tool = state.tool ?: return
-    val interactive = tool == DocumentTool.LAYOUT || tool == DocumentTool.CORRECTIONS
     Column(
         modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = if (interactive) 12.dp else 20.dp)
-            .padding(bottom = if (interactive) 8.dp else 20.dp),
-        verticalArrangement = Arrangement.spacedBy(if (interactive) 8.dp else 20.dp),
+            .padding(horizontal = 20.dp, vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Row(
             Modifier.fillMaxWidth(),
@@ -144,118 +130,14 @@ private fun DocumentToolSheetContent(
             }
         }
         when (tool) {
-            DocumentTool.LAYOUT -> DocumentLayoutSheetContent(state, onEvent)
+            DocumentTool.LAYOUT -> Unit // Ajustar usa a tela dedicada.
             DocumentTool.FILTERS -> Unit // Os filtros ficam na faixa do visualizador.
-            DocumentTool.CORRECTIONS -> DocumentCorrectionsSheetContent(state, onEvent)
+            DocumentTool.CORRECTIONS -> Unit // Corrigir usa a tela dedicada.
             DocumentTool.QUALITY -> DocumentQualitySheetContent(state, onEvent)
-            DocumentTool.PAGES -> DocumentPagesSheetContent(state, onEvent)
-            DocumentTool.MERGE -> DocumentMergeSheetContent(state, onEvent, documents)
-            DocumentTool.SIGNATURES -> SignatureOptions(state, onEvent)
+            DocumentTool.PAGES -> Unit // Páginas usa a tela dedicada.
+            DocumentTool.MERGE -> Unit // Mesclagem usa a tela compartilhada.
+            DocumentTool.SIGNATURES -> Unit // Assinaturas usam a tela dedicada.
             DocumentTool.PROTECTION -> ProtectionOptions(state, onEvent)
-        }
-    }
-}
-
-/** A biblioteca e as assinaturas da página rolam juntas, inclusive com fonte ampliada. */
-@Composable
-private fun SignatureOptions(state: DocumentToolsUiState, onEvent: (DocumentToolsEvent) -> Unit) {
-    val placed = state.workspace?.pages?.getOrNull(state.selectedPageIndex)?.signatures.orEmpty()
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth().heightIn(max = 660.dp),
-        contentPadding = PaddingValues(bottom = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Text(
-                stringResource(R.string.tools_signatures_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        item {
-            OutlinedButton(
-                onClick = { onEvent(DocumentToolsEvent.ManageSignatures) },
-                enabled = state.canEdit,
-                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-            ) { Text(stringResource(R.string.tools_manage_signatures)) }
-        }
-        item {
-            Text(
-                stringResource(R.string.tool_sheet_saved_signatures),
-                modifier = Modifier.padding(top = 12.dp).semantics { heading() },
-                style = MaterialTheme.typography.titleSmall,
-            )
-        }
-        if (state.signatures.isEmpty()) {
-            item {
-                Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    Text(
-                        stringResource(R.string.tools_signatures_empty),
-                        Modifier.fillMaxWidth().padding(20.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-        }
-        items(state.signatures, key = { "library_" + it.id }) { signature ->
-            Surface(
-                onClick = { onEvent(DocumentToolsEvent.InsertSignature(signature.id)) },
-                enabled = state.canEdit,
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 80.dp).padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SignatureImage(signature.imageUri, Modifier.width(80.dp).height(48.dp))
-                    Text(
-                        signature.name,
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Icon(painterResource(R.drawable.add_24px), null)
-                }
-            }
-        }
-        if (placed.isNotEmpty()) {
-            item {
-                Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    HorizontalDivider()
-                    Text(
-                        stringResource(R.string.tool_sheet_placed_signatures),
-                        Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                }
-            }
-        }
-        items(placed, key = { "placed_" + it.id }) { placement ->
-            Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 80.dp).padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    SignatureImage(placement.imageUri, Modifier.weight(1f).height(56.dp))
-                    IconButton(
-                        onClick = { onEvent(DocumentToolsEvent.EditSignature(state.selectedPageId ?: return@IconButton, placement.id)) },
-                        enabled = state.canEdit,
-                    ) {
-                        Icon(painterResource(R.drawable.edit_24px), stringResource(R.string.tools_signature_edit, placed.indexOf(placement) + 1))
-                    }
-                    IconButton(
-                        onClick = { onEvent(DocumentToolsEvent.RemoveSignature(state.selectedPageId ?: return@IconButton, placement.id)) },
-                        enabled = state.canEdit,
-                    ) {
-                        Icon(painterResource(R.drawable.delete_24px), stringResource(R.string.tools_signature_remove), tint = MaterialTheme.colorScheme.error)
-                    }
-                }
-            }
         }
     }
 }
@@ -304,9 +186,7 @@ private fun ProtectionOptions(state: DocumentToolsUiState, onEvent: (DocumentToo
 /** O mesmo conteúdo do sheet é verificado com pouco espaço e fonte ampliada. */
 private class DocumentToolPreviewProvider : PreviewParameterProvider<DocumentTool> {
     override val values = sequenceOf(
-        DocumentTool.LAYOUT, DocumentTool.CORRECTIONS,
-        DocumentTool.PAGES, DocumentTool.MERGE, DocumentTool.QUALITY,
-        DocumentTool.SIGNATURES, DocumentTool.PROTECTION,
+        DocumentTool.QUALITY, DocumentTool.PROTECTION,
     )
 }
 
@@ -325,9 +205,6 @@ private fun DocumentToolSheetContentPreview(
                     ),
                     selectedPageId = "page-1",
                     tool = tool,
-                    correctionsPreview = PdfPagePreview("preview", 0),
-                    correctionsPreviewPageId = "page-1",
-                    signatures = listOf(SignatureModel("signature", "Assinatura pessoal", "preview", 3f)),
                 ),
                 onEvent = {},
             )

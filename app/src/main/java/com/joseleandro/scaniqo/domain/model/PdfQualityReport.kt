@@ -12,5 +12,7 @@ data class PdfPageQuality(
     val isBlurry: Boolean = false,
     val isLowResolution: Boolean = false,
     val mayBeClipped: Boolean = false,
-    val suggestedStraightenDegrees: Float = 0f
+    val suggestedStraightenDegrees: Float = 0f,
+    /** Contorno sugerido da captura original; só é aplicado após confirmação no editor. */
+    val suggestedCrop: PdfPerspective? = null
 )

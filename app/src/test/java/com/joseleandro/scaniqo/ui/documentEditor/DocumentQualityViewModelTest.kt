@@ -7,6 +7,7 @@ import com.joseleandro.scaniqo.core.security.PasswordVaultState
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PageScaleMode
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfMergeSource
@@ -160,6 +161,114 @@ class DocumentQualityViewModelTest {
         assertFalse(viewModel.uiState.value.canUndo)
     }
 
+    @Test fun manualCropReplacesLegacyWarpAndKeepsOtherEditsUntilUndo() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.SelectPage("page-2"))
+        viewModel.onEvent(DocumentToolsEvent.ApplyFilter(PdfImageFilter.WHITEN, false, .6f, true))
+        val legacy = PdfPerspective(topLeft = PdfPoint(.08f, .06f))
+        viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(false, 2f, legacy, .1f, true))
+        advanceUntilIdle()
+        val before = viewModel.uiState.value.workspace!!
+        val crop = PdfCropBounds(.1f, .2f, .9f, .7f)
+        val mask = PdfPerspective(
+            PdfPoint(.12f, .12f), PdfPoint(.88f, .08f),
+            PdfPoint(.92f, .92f), PdfPoint(.06f, .88f),
+        )
+
+        viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(
+            false, 2f, legacy, .1f, crop = crop, backgroundMask = mask,
+        ))
+        advanceUntilIdle()
+
+        val after = viewModel.uiState.value.workspace!!
+        assertEquals(before.pages[0], after.pages[0])
+        assertEquals(before.pages[2], after.pages[2])
+        assertEquals(
+            before.pages[1].layout.copy(perspective = null, crop = crop, backgroundMask = mask),
+            after.pages[1].layout,
+        )
+        assertEquals(after, repository.previews.last())
+        assertTrue(viewModel.uiState.value.canCompare)
+        assertTrue(repository.saves.isEmpty())
+
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(before, viewModel.uiState.value.workspace)
+    }
+
+    @Test fun cropAndMaskOfASmallCaptureInsideA4ReachTheSavedRecipe() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val crop = PdfCropBounds(.401f, .401f, .405f, .408f)
+        val mask = PdfPerspective(
+            PdfPoint(.402f, .402f), PdfPoint(.404f, .402f),
+            PdfPoint(.404f, .407f), PdfPoint(.402f, .407f),
+        )
+        viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(
+            false, 0f, null, 0f, crop = crop, backgroundMask = mask,
+        ))
+        advanceUntilIdle()
+        val changed = viewModel.uiState.value.workspace!!
+        assertEquals(crop, changed.pages.first().layout.crop)
+        assertEquals(mask, changed.pages.first().layout.backgroundMask)
+        assertTrue(changed.pages.drop(1).all { it.layout == PdfPageLayout() })
+        viewModel.onEvent(DocumentToolsEvent.Save)
+        advanceUntilIdle()
+        assertEquals(changed, repository.saves.single())
+    }
+
+    @Test fun invalidCropOrBackgroundMaskCannotReplaceAValidEdit() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val crop = PdfCropBounds(.1f, .2f, .9f, .8f)
+        viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(false, 0f, null, 0f, crop = crop))
+        advanceUntilIdle()
+        val before = viewModel.uiState.value.workspace
+        val invalidCrops = listOf(
+            PdfCropBounds(left = Float.NaN),
+            PdfCropBounds(left = .8f, right = .2f),
+            PdfCropBounds(top = -.1f),
+            PdfCropBounds(bottom = Float.POSITIVE_INFINITY),
+        )
+        invalidCrops.forEach {
+            viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(true, 5f, null, .2f, crop = it))
+        }
+        viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(
+            true, 5f, null, .2f, crop = crop,
+            backgroundMask = PdfPerspective(
+                PdfPoint(0f, 0f), PdfPoint(1f, 1f), PdfPoint(1f, 0f), PdfPoint(0f, 1f),
+            ),
+        ))
+        advanceUntilIdle()
+
+        assertEquals(before, viewModel.uiState.value.workspace)
+        assertTrue(repository.saves.isEmpty())
+    }
+
+    @Test fun cropAndBackgroundMaskSurviveSaveAndRemovingGlobalFilter() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val crop = PdfCropBounds(.2f, .1f, .8f, .9f)
+        val mask = PdfPerspective(topLeft = PdfPoint(.1f, .1f))
+        viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(
+            true, 0f, null, 0f, rasterizeText = true, crop = crop, backgroundMask = mask,
+        ))
+        viewModel.onEvent(DocumentToolsEvent.SelectGlobalFilter(PdfImageFilter.ENHANCE))
+        viewModel.onEvent(DocumentToolsEvent.SelectGlobalFilter(PdfImageFilter.ORIGINAL))
+        advanceUntilIdle()
+        val workspace = viewModel.uiState.value.workspace!!
+        assertTrue(workspace.pages.all {
+            it.layout.crop == crop && it.layout.backgroundMask == mask &&
+                it.layout.rasterizeText && it.layout.imageFilter == PdfImageFilter.ORIGINAL
+        })
+
+        viewModel.onEvent(DocumentToolsEvent.Save)
+        advanceUntilIdle()
+        assertEquals(workspace, repository.saves.single())
+        assertFalse(viewModel.uiState.value.hasChanges)
+    }
+
     @Test fun automaticImprovementUsesSuggestedAngleOnlyInSelectedScope() = runTest(dispatcher) {
         viewModel.load(document)
         advanceUntilIdle()
@@ -305,6 +414,92 @@ class DocumentQualityViewModelTest {
         advanceUntilIdle()
         assertEquals(states[10], viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.canUndo)
+    }
+
+    @Test fun cropDetectionPublishesDistinctCompletionEvenForIdenticalReportsWithoutApplyingIt() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        repository.report = PdfQualityReport(listOf(PdfPageQuality("page-1", suggestedCrop = crop)))
+        for (request in listOf("first-crop", "second-crop")) {
+            viewModel.onEvent(DocumentToolsEvent.AnalyzeCorrectionPage("page-1", request))
+            advanceUntilIdle()
+            assertEquals(request, viewModel.uiState.value.correctionAnalysisRequestId)
+            assertEquals(crop, viewModel.uiState.value.qualityReport!!.pages.single().suggestedCrop)
+            assertEquals(original, viewModel.uiState.value.workspace)
+            assertFalse(viewModel.uiState.value.hasChanges)
+            assertFalse(viewModel.uiState.value.canUndo)
+            assertTrue(repository.saves.isEmpty())
+        }
+        assertEquals(2, repository.analysisCalls)
+    }
+
+    @Test fun suggestedCropRequiresExplicitApplyAndCanBeUndoneForOnlyChosenPage() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace!!
+        repository.report = PdfQualityReport(listOf(PdfPageQuality("page-2", suggestedCrop = crop)))
+        viewModel.onEvent(DocumentToolsEvent.AnalyzeCorrectionPage("page-2", "crop-page-2"))
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+
+        viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(
+            allPages = false, straightenDegrees = 0f, perspective = crop, curvature = 0f,
+            pageIds = setOf("page-2"),
+        ))
+        advanceUntilIdle()
+        val updated = viewModel.uiState.value.workspace!!
+        assertEquals(original.pages[0], updated.pages[0])
+        assertEquals(original.pages[2], updated.pages[2])
+        assertEquals(crop, updated.pages[1].layout.perspective)
+        assertEquals(original.pages[1].sourceUri, updated.pages[1].sourceUri)
+        assertTrue(repository.saves.isEmpty())
+
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+    }
+
+    @Test fun failedCropDetectionDoesNotReusePriorSuccessAndRetryHasOwnCompletion() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        repository.report = PdfQualityReport(listOf(PdfPageQuality("page-1", suggestedCrop = crop)))
+        viewModel.onEvent(DocumentToolsEvent.AnalyzeCorrectionPage("page-1", "old"))
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        repository.failAnalysis = true
+        viewModel.onEvent(DocumentToolsEvent.AnalyzeCorrectionPage("page-1", "failed"))
+        assertNull(viewModel.uiState.value.correctionAnalysisRequestId)
+        advanceUntilIdle()
+        assertEquals("failed", viewModel.uiState.value.correctionAnalysisRequestId)
+        assertTrue(viewModel.uiState.value.analysisError)
+        assertEquals(original, viewModel.uiState.value.workspace)
+
+        repository.failAnalysis = false
+        viewModel.onEvent(DocumentToolsEvent.AnalyzeCorrectionPage("page-1", "retried"))
+        advanceUntilIdle()
+        assertEquals("retried", viewModel.uiState.value.correctionAnalysisRequestId)
+        assertFalse(viewModel.uiState.value.analysisError)
+        assertEquals(original, viewModel.uiState.value.workspace)
+    }
+
+    @Test fun cancelledCropDetectionDropsLateReportAndItsCompletionToken() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        repository.analysisGate = CompletableDeferred()
+        repository.returnAfterCancellation = true
+        repository.report = PdfQualityReport(listOf(PdfPageQuality("page-1", suggestedCrop = crop)))
+        viewModel.onEvent(DocumentToolsEvent.AnalyzeCorrectionPage("page-1", "cancelled"))
+        runCurrent()
+        viewModel.onEvent(DocumentToolsEvent.CancelAnalysis)
+        repository.analysisGate!!.complete(Unit)
+        advanceUntilIdle()
+        assertEquals(1, repository.analysisCancellations)
+        assertNull(viewModel.uiState.value.correctionAnalysisRequestId)
+        assertNull(viewModel.uiState.value.qualityReport)
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.isAnalyzing)
     }
 
     @Test fun analysisPublishesSuggestionsWithoutDeletingPagesOrChangingRecipe() = runTest(dispatcher) {
@@ -545,6 +740,11 @@ class DocumentQualityViewModelTest {
         assertFalse(viewModel.uiState.value.canUndo)
     }
 
+    private val crop = PdfPerspective(
+        PdfPoint(.1f, .1f), PdfPoint(.9f, .12f),
+        PdfPoint(.88f, .9f), PdfPoint(.12f, .88f),
+    )
+
     private class QualityPasswords : PasswordAccess {
         override val state = MutableStateFlow(PasswordVaultState(isConfigured = true))
         override val activeKeyId = "key"
@@ -569,6 +769,7 @@ class DocumentQualityViewModelTest {
         var analysisCalls = 0
         var analysisCancellations = 0
         var failAnalysis = false
+        var returnAfterCancellation = false
         var analysisGate: CompletableDeferred<Unit>? = null
         var report = PdfQualityReport((1..3).map { PdfPageQuality("page-$it") })
         val previews = mutableListOf<PdfWorkspace>()
@@ -598,7 +799,7 @@ class DocumentQualityViewModelTest {
                 analysisGate?.await()
             } catch (cancelled: CancellationException) {
                 analysisCancellations++
-                throw cancelled
+                if (!returnAfterCancellation) throw cancelled
             }
             if (failAnalysis) error("Não foi possível analisar a captura")
             return report

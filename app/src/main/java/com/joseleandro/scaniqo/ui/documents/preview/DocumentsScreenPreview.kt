@@ -7,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.TagIcon
 import com.joseleandro.scaniqo.domain.model.TagModel
+import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
 import com.joseleandro.scaniqo.ui.documents.DocumentsScreen
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -44,11 +45,14 @@ private fun DocumentsScreenPreview() {
                     ),
                 ),
             ),
+            actionsState = DocumentActionsUiState(isLoadingTags = false),
             onEvent = {},
             onDocumentAction = {},
             onOpenMenu = {},
             onImportPdf = {},
             onOpenDocument = {},
+            onMergePdfs = {},
+            onSignDocument = {},
         )
     }
 }

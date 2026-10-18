@@ -116,6 +116,30 @@ class SignaturesViewModelTest {
         assertTrue(model.uiState.value.editor!!.strokes.isEmpty())
     }
 
+    @Test fun documentCreationDeliversTheSavedSignatureOnlyToItsOriginalDocument() = runTest(dispatcher) {
+        model.onEvent(SignaturesEvent.CreateForDocument(documentId = 42))
+        model.onEvent(SignaturesEvent.InputChanged(SignatureInput.TYPE))
+        model.onEvent(SignaturesEvent.TextChanged("Maria"))
+        model.onEvent(SignaturesEvent.Save)
+        runCurrent()
+
+        assertEquals(SignatureDocumentSelection(42, "new"), model.uiState.value.pendingDocumentSelection)
+        model.onEvent(SignaturesEvent.AcknowledgeDocumentSelection("another-signature"))
+        assertNotNull(model.uiState.value.pendingDocumentSelection)
+        model.onEvent(SignaturesEvent.AcknowledgeDocumentSelection("new"))
+        assertNull(model.uiState.value.pendingDocumentSelection)
+    }
+
+    @Test fun normalLibraryCreationDoesNotAutomaticallyApplyToADocument() = runTest(dispatcher) {
+        model.onEvent(SignaturesEvent.Create)
+        model.onEvent(SignaturesEvent.InputChanged(SignatureInput.TYPE))
+        model.onEvent(SignaturesEvent.TextChanged("Maria"))
+        model.onEvent(SignaturesEvent.Save)
+        runCurrent()
+        assertNull(model.uiState.value.pendingDocumentSelection)
+        assertEquals(1, model.uiState.value.signatures.size)
+    }
+
     /** Permite exercitar falhas e concorrência sem depender de bitmaps Android. */
     private class FakeSignatures : SignatureRepository {
         val items = MutableStateFlow<List<SignatureModel>>(emptyList())

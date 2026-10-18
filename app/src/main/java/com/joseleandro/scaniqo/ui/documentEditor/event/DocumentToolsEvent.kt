@@ -3,10 +3,12 @@ package com.joseleandro.scaniqo.ui.documentEditor.event
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PageScaleMode
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
+import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 
 sealed interface DocumentToolsEvent {
@@ -24,9 +26,12 @@ sealed interface DocumentToolsEvent {
         val pageId: String,
         val layout: PdfPageLayout,
         val showOriginal: Boolean = false,
+        val captureOnly: Boolean = false,
     ) : DocumentToolsEvent
 
     data object ClearCorrectionsPreview : DocumentToolsEvent
+    data class LoadCorrectionSource(val pageId: String, val force: Boolean = false) : DocumentToolsEvent
+    data object ClearCorrectionSource : DocumentToolsEvent
     data class PreviewFilter(
         val pageId: String,
         val layout: PdfPageLayout,
@@ -41,6 +46,7 @@ sealed interface DocumentToolsEvent {
     ) : DocumentToolsEvent
 
     data class OpenTool(val tool: DocumentTool) : DocumentToolsEvent
+    data class ActivateEditorTool(val tool: DocumentTool) : DocumentToolsEvent
     data object DismissTool : DocumentToolsEvent
     data class SelectGlobalFilter(val imageFilter: PdfImageFilter) : DocumentToolsEvent
     data class ApplyLayout(
@@ -67,11 +73,13 @@ sealed interface DocumentToolsEvent {
         val curvature: Float,
         val rasterizeText: Boolean = false,
         val pageIds: Set<String>? = null,
+        val crop: PdfCropBounds? = null,
+        val backgroundMask: PdfPerspective? = null,
     ) : DocumentToolsEvent
 
     data class AutoImprove(val allPages: Boolean) : DocumentToolsEvent
     data object AnalyzeQuality : DocumentToolsEvent
-    data class AnalyzeCorrectionPage(val pageId: String) : DocumentToolsEvent
+    data class AnalyzeCorrectionPage(val pageId: String, val requestId: String? = null) : DocumentToolsEvent
     data object CancelAnalysis : DocumentToolsEvent
     data class SetExportOptions(val quality: PdfExportQuality, val ocrEnabled: Boolean) :
         DocumentToolsEvent
@@ -95,6 +103,8 @@ sealed interface DocumentToolsEvent {
         val insertionIndex: Int,
     ) : DocumentToolsEvent
 
+    data class MergeItems(val items: List<DocumentMergeItem>, val insertionIndex: Int) : DocumentToolsEvent
+    data class MergeOrderedItems(val items: List<DocumentMergeItem>) : DocumentToolsEvent
     data class MergePdfsSelected(val uris: List<String>) : DocumentToolsEvent
     data object MergePdfsCancelled : DocumentToolsEvent
     data object MergePdfsFailed : DocumentToolsEvent
@@ -115,6 +125,20 @@ sealed interface DocumentToolsEvent {
     data class EditSignature(val pageId: String, val placementId: String) : DocumentToolsEvent
     data class MoveSignature(val x: Float, val y: Float) : DocumentToolsEvent
     data class ResizeSignature(val width: Float) : DocumentToolsEvent
+    data class TransformSignature(
+        val x: Float,
+        val y: Float,
+        val width: Float,
+        val rotationDegrees: Float,
+        val height: Float? = null,
+        val stretchToBounds: Boolean? = null,
+    ) : DocumentToolsEvent
+    data class CropSignature(
+        val left: Float,
+        val top: Float,
+        val right: Float,
+        val bottom: Float,
+    ) : DocumentToolsEvent
     data object ConfirmSignature : DocumentToolsEvent
     data object CancelSignature : DocumentToolsEvent
     data class RemoveSignature(val pageId: String, val placementId: String) : DocumentToolsEvent

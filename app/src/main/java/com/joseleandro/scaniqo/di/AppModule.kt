@@ -7,6 +7,11 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.joseleandro.scaniqo.core.navigation.NavigationViewModel
 import com.joseleandro.scaniqo.core.security.PasswordAccess
 import com.joseleandro.scaniqo.core.security.PasswordVault
+import com.joseleandro.scaniqo.data.backup.AndroidDocumentBackupRepository
+import com.joseleandro.scaniqo.data.backup.GoogleDriveBackupRemote
+import com.joseleandro.scaniqo.domain.repository.DocumentBackupRepository
+import com.joseleandro.scaniqo.domain.repository.DriveBackupRemote
+import com.joseleandro.scaniqo.ui.backup.DriveBackupViewModel
 import com.joseleandro.scaniqo.data.datasource.DocumentDatasource
 import com.joseleandro.scaniqo.data.datasource.DocumentDatasourceImpl
 import com.joseleandro.scaniqo.data.datasource.TagDatasource
@@ -25,6 +30,9 @@ import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
 import com.joseleandro.scaniqo.domain.repository.TagRepository
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentToolsViewModel
+import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerViewModel
+import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
+import com.joseleandro.scaniqo.ui.documentMerge.DocumentQuickMergeViewModel
 import com.joseleandro.scaniqo.ui.documents.DocumentsViewModel
 import com.joseleandro.scaniqo.ui.documents.PdfImportViewModel
 import com.joseleandro.scaniqo.ui.signatures.SignaturesViewModel
@@ -39,9 +47,15 @@ val appModule = module {
 
     viewModelOf(::TagsViewModel)
     viewModelOf(::DocumentsViewModel)
+    viewModelOf(::DocumentActionsViewModel)
+    viewModelOf(::DocumentViewerViewModel)
     viewModelOf(::DocumentToolsViewModel)
     viewModelOf(::PdfImportViewModel)
+    viewModelOf(::DocumentQuickMergeViewModel)
     viewModelOf(::SignaturesViewModel)
+    viewModelOf(::DriveBackupViewModel)
+    single<DocumentBackupRepository> { AndroidDocumentBackupRepository(androidContext(), get(), get()) }
+    single<DriveBackupRemote> { GoogleDriveBackupRemote() }
     single { PasswordVault(androidContext()) }
     single<PasswordAccess> { get<PasswordVault>() }
     single<SignatureRepository> { AndroidSignatureRepository(androidContext()) }

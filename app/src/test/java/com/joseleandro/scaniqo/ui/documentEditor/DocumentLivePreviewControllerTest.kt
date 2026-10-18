@@ -2,6 +2,8 @@ package com.joseleandro.scaniqo.ui.documentEditor
 
 import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PageScaleMode
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
+import com.joseleandro.scaniqo.domain.model.PdfPoint
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfInteractivePixels
@@ -158,6 +160,32 @@ class DocumentLivePreviewControllerTest {
             assertEquals(count + 2, harness.calls.size)
             assertEquals(page, harness.calls.last().page)
         }
+    }
+
+    @Test fun movingOnlyCropOrBackgroundBoundaryRegeneratesResultAndThenDeduplicates() = runTest {
+        val harness = Harness(this)
+        val original = workspace()
+        val crop = PdfCropBounds(.1f, .2f, .9f, .8f)
+        val mask = PdfPerspective(
+            PdfPoint(.1f, .1f), PdfPoint(.9f, .1f),
+            PdfPoint(.9f, .9f), PdfPoint(.1f, .9f),
+        )
+        val layouts = listOf(
+            PdfPageLayout(crop = crop),
+            PdfPageLayout(crop = crop.copy(left = .2f)),
+            PdfPageLayout(crop = crop.copy(left = .2f), backgroundMask = mask),
+            PdfPageLayout(crop = crop.copy(left = .2f), backgroundMask = mask.copy(topLeft = PdfPoint(.15f, .1f))),
+        )
+        layouts.forEachIndexed { index, layout ->
+            harness.controller.request(original.withLayout(layout), "page-1")
+            advanceUntilIdle()
+            assertEquals((index + 1) * 2, harness.calls.size)
+            assertEquals(layout, harness.calls.last().page.layout)
+            assertSame(harness.calls.last().pixels, harness.state.pixels)
+        }
+        harness.controller.request(original.withLayout(layouts.last()), "page-1")
+        advanceUntilIdle()
+        assertEquals(8, harness.calls.size)
     }
 
     @Test fun identicalRequestsAreDeduplicatedButForceRegeneratesCompletedPixels() = runTest {

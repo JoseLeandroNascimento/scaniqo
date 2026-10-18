@@ -59,6 +59,9 @@ internal fun DocumentMetadataSheet(
     onTagChange: (Long?) -> Unit,
     onSave: () -> Unit,
     onDismiss: () -> Unit,
+    isLoadingTags: Boolean = false,
+    tagsLoadError: Boolean = false,
+    onRetryTags: () -> Unit = {},
 ) {
     val isSaving by rememberUpdatedState(editor.isSaving)
     val sheetState = rememberModalBottomSheetState(
@@ -77,6 +80,9 @@ internal fun DocumentMetadataSheet(
             onTagChange = onTagChange,
             onSave = onSave,
             onDismiss = onDismiss,
+            isLoadingTags = isLoadingTags,
+            tagsLoadError = tagsLoadError,
+            onRetryTags = onRetryTags,
         )
     }
 }
@@ -89,8 +95,12 @@ private fun DocumentMetadataContent(
     onTagChange: (Long?) -> Unit,
     onSave: () -> Unit,
     onDismiss: () -> Unit,
+    isLoadingTags: Boolean = false,
+    tagsLoadError: Boolean = false,
+    onRetryTags: () -> Unit = {},
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
+    val canSave = !editor.isSaving && (editor.tagId == null || (!isLoadingTags && !tagsLoadError))
     val nameError = when (editor.nameError) {
         DocumentNameError.REQUIRED -> stringResource(R.string.document_name_required)
         DocumentNameError.TOO_LONG -> stringResource(R.string.document_name_too_long, DOCUMENT_NAME_MAX_LENGTH)
@@ -145,7 +155,7 @@ private fun DocumentMetadataContent(
                     imeAction = ImeAction.Done,
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    if (!editor.isSaving) {
+                    if (canSave) {
                         keyboard?.hide()
                         onSave()
                     }
@@ -181,12 +191,33 @@ private fun DocumentMetadataContent(
                     selectedTagId = editor.tagId,
                     nullOptionLabel = stringResource(R.string.documents_no_tag),
                     onSelect = onTagChange,
-                    enabled = !editor.isSaving,
+                    enabled = !editor.isSaving && !isLoadingTags && !tagsLoadError,
                     background = MaterialTheme.colorScheme.surface,
                     contentPadding = PaddingValues(horizontal = 20.dp),
                     listState = tagListState,
                 )
-                if (tags.isEmpty()) {
+                if (isLoadingTags) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                        Text(stringResource(R.string.tags_loading), style = MaterialTheme.typography.bodySmall)
+                    }
+                } else if (tagsLoadError) {
+                    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                        Text(
+                            stringResource(R.string.tags_load_error_title),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        )
+                        TextButton(onClick = onRetryTags, enabled = !editor.isSaving) {
+                            Text(stringResource(R.string.documents_retry))
+                        }
+                    }
+                } else if (tags.isEmpty()) {
                     Text(
                         stringResource(R.string.document_no_tags_available),
                         modifier = Modifier.padding(horizontal = 20.dp),
@@ -212,7 +243,7 @@ private fun DocumentMetadataContent(
                 keyboard?.hide()
                 onSave()
             },
-            enabled = !editor.isSaving,
+            enabled = canSave,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
             shape = MaterialTheme.shapes.large,
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),

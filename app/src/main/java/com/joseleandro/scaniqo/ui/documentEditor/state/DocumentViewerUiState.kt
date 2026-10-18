@@ -6,6 +6,7 @@ import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
 /** Dados necessários para visualizar um documento e escolher PDFs para mesclar. */
 data class DocumentViewerUiState(
     val document: DocumentModel? = null,
+    val requestedDocumentId: Long? = null,
     val availableDocuments: List<DocumentModel> = emptyList(),
     val actions: DocumentActionsUiState = DocumentActionsUiState(),
     val isLoading: Boolean = true,

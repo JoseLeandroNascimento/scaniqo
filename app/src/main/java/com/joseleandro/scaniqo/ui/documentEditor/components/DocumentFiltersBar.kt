@@ -30,6 +30,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.domain.model.PdfFilterThumbnails
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
@@ -37,6 +38,7 @@ import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documentEditor.model.documentFilterChoices
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentFilterThumbnailState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
@@ -52,9 +54,9 @@ internal fun DocumentFiltersBar(
     val page = workspace.pages.getOrNull(state.selectedPageIndex) ?: return
     val currentEvent by rememberUpdatedState(onEvent)
     val canEdit = state.canEdit && enabled
-    val thumbnailsForPage = state.filterThumbnailsPageId == page.id
-    val thumbnails = state.filterThumbnails.takeIf { thumbnailsForPage }.orEmpty()
-    val isLoading = state.isLoadingFilterThumbnails || !thumbnailsForPage
+    val thumbnailsForPage = state.filterThumbnails.pageId == page.id
+    val thumbnails = state.filterThumbnails.images.takeIf { thumbnailsForPage }.orEmpty()
+    val isLoading = state.filterThumbnails.isLoading || !thumbnailsForPage
     val background = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
 
     // As amostras partem da fonte original; trocar o filtro não invalida esta chave.
@@ -118,7 +120,7 @@ internal fun DocumentFiltersBar(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 fadeColor = background,
             )
-            if (thumbnailsForPage && state.filterThumbnailsError) {
+            if (thumbnailsForPage && state.filterThumbnails.error) {
                 Row(
                     Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -140,7 +142,7 @@ internal fun DocumentFiltersBar(
                     }
                 }
             }
-            if (thumbnailsForPage && state.filterThumbnailsRequireRasterization) {
+            if (thumbnailsForPage && state.filterThumbnails.requiresRasterization) {
                 Text(
                     stringResource(R.string.filter_bar_native_hint),
                     Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -175,8 +177,10 @@ private fun DocumentFiltersBarPreview() {
                 ),
                 selectedPageId = "page-1",
                 tool = DocumentTool.FILTERS,
-                filterThumbnailsPageId = "page-1",
-                filterThumbnails = documentFilterChoices.associateWith { "preview-$it" },
+                filterThumbnails = DocumentFilterThumbnailState(
+                    pageId = "page-1",
+                    result = PdfFilterThumbnails(documentFilterChoices.associateWith { "preview-$it" }),
+                ),
             ),
             onEvent = {},
         )

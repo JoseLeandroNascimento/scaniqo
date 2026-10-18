@@ -390,7 +390,7 @@ fun DocumentViewerScreen(
     }
     if (sameSession && !locked) {
         DocumentActionOverlays(uiState.actions, onDocumentAction)
-        DocumentToolsSheets(toolsState, onToolsEvent, documents = uiState.availableDocuments)
+        DocumentToolsSheets(toolsState, onToolsEvent)
     } else if (toolsState.confirmDiscard) {
         DocumentToolsSheets(toolsState.copy(tool = null), onToolsEvent)
     }

@@ -11,6 +11,7 @@ import com.joseleandro.scaniqo.data.local.document.DocumentFileStore
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfFilterThumbnails
+import com.joseleandro.scaniqo.domain.model.PdfCaptureSource
 import com.joseleandro.scaniqo.domain.model.PdfInteractivePixels
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
 import com.joseleandro.scaniqo.domain.model.PdfImportException
@@ -21,6 +22,8 @@ import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPasswordRequiredException
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
+import com.joseleandro.scaniqo.domain.model.PdfSignatureCrop
+import com.joseleandro.scaniqo.domain.model.PdfSignatureImage
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.repository.DocumentRepository
@@ -248,9 +251,54 @@ class AndroidPdfEditorRepository(
         }
     }
 
+    override suspend fun mergePdfs(sources: List<PdfMergeSource>): ScannedDocument {
+        require(sources.size >= 2) { "Selecione pelo menos dois PDFs." }
+        var temporary: PdfWorkspace? = null
+        var project: File? = null
+        var generated: ScannedDocument? = null
+        try {
+            return withContext(ioDispatcher) {
+                operationMutex.withLock {
+                    files.initialize()
+                    val directory = files.createWorkspace()
+                    val empty = PdfWorkspace(0, directory.name, files.uri(directory), emptyList())
+                        .also { temporary = it }
+                    val merged = PdfMergeBatch(directory, files::uri)
+                        .append(empty, sources, 0L, prepare = ::prepareMergedSource)
+                    temporary = merged
+                    val target = files.createDocument().also { project = it }
+                    writeProject(merged, target, password = null).also {
+                        generated = it
+                        currentCoroutineContext().ensureActive()
+                    }
+                }
+            }
+        } catch (failure: Throwable) {
+            cleanup(failure) {
+                generated?.let { documentRepository.discardScan(it) }
+                    ?: project?.let { documentFileStore.deleteOwnedDocument(files.uri(File(it, "document.pdf"))) }
+            }
+            throw failure
+        } finally {
+            cleanupTemporary { temporary?.let { discard(it) } }
+        }
+    }
+
     override suspend fun appendPdfs(
         workspace: PdfWorkspace,
         sources: List<PdfMergeSource>
+    ): PdfWorkspace = appendPdfBatch(workspace, sources, currentDocumentIndex = 0)
+
+    override suspend fun appendPdfsOrdered(
+        workspace: PdfWorkspace,
+        sources: List<PdfMergeSource>,
+        currentDocumentIndex: Int,
+    ): PdfWorkspace = appendPdfBatch(workspace, sources, currentDocumentIndex)
+
+    private suspend fun appendPdfBatch(
+        workspace: PdfWorkspace,
+        sources: List<PdfMergeSource>,
+        currentDocumentIndex: Int,
     ): PdfWorkspace {
         var batch: PdfMergeBatch? = null
         try {
@@ -261,7 +309,7 @@ class AndroidPdfEditorRepository(
                     val existingBytes = workspace.pages.map { it.sourceUri }.distinct()
                         .sumOf { files.source(workspace, it).length() }
                     val transaction = PdfMergeBatch(directory, files::uri).also { batch = it }
-                    transaction.append(workspace, sources, existingBytes) { preparation ->
+                    transaction.append(workspace, sources, existingBytes, currentDocumentIndex) { preparation ->
                         prepareMergedSource(preparation)
                     }
                 }
@@ -354,6 +402,52 @@ class AndroidPdfEditorRepository(
         }
     }
 
+    override suspend fun cropSignature(
+        workspace: PdfWorkspace,
+        imageUri: String,
+        crop: PdfSignatureCrop,
+    ): PdfSignatureImage {
+        var target: File? = null
+        try {
+            return withContext(ioDispatcher) {
+                operationMutex.withLock {
+                    files.initialize()
+                    val directory = files.directory(workspace)
+                    val source = files.file(imageUri)
+                    require(source.parentFile == directory.canonicalFile) { "A assinatura não pertence à edição." }
+                    require(crop.isValid) { "Selecione uma área válida da assinatura." }
+                    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                    BitmapFactory.decodeFile(source.path, bounds)
+                    require(bounds.outWidth > 0 && bounds.outHeight > 0) { "A assinatura não está disponível." }
+                    var sample = 1
+                    while (maxOf(bounds.outWidth, bounds.outHeight).toLong() > 2048L * sample) sample *= 2
+                    currentCoroutineContext().ensureActive()
+                    val bitmap = BitmapFactory.decodeFile(
+                        source.path, BitmapFactory.Options().apply { inSampleSize = sample },
+                    ) ?: error("Não foi possível ler a assinatura.")
+                    var cropped: Bitmap? = null
+                    try {
+                        val area = crop.pixels(bitmap.width, bitmap.height)
+                        val result = Bitmap.createBitmap(bitmap, area.x, area.y, area.width, area.height)
+                            .also { cropped = it }
+                        val output = File(directory, "signature_${UUID.randomUUID()}.png").also { target = it }
+                        output.outputStream().use { stream ->
+                            check(result.compress(Bitmap.CompressFormat.PNG, 100, stream)) { "Não foi possível recortar a assinatura." }
+                        }
+                        currentCoroutineContext().ensureActive()
+                        PdfSignatureImage(files.uri(output), result.width.toFloat() / result.height)
+                    } finally {
+                        cropped?.takeUnless { it === bitmap }?.recycle()
+                        bitmap.recycle()
+                    }
+                }
+            }
+        } catch (failure: Throwable) {
+            cleanup(failure) { target?.delete() }
+            throw failure
+        }
+    }
+
     override suspend fun preview(
         workspace: PdfWorkspace,
         retainedPreviewUri: String?
@@ -389,6 +483,26 @@ class AndroidPdfEditorRepository(
         } catch (failure: Throwable) {
             cleanup(failure) { target?.delete() }
             throw failure
+        }
+    }
+
+    override suspend fun renderCaptureSource(
+        workspace: PdfWorkspace, pageId: String, maxSide: Int,
+    ): PdfCaptureSource? = withContext(ioDispatcher) {
+        operationMutex.withLock {
+            files.initialize()
+            currentCoroutineContext().ensureActive()
+            composer.renderCaptureSource(workspace, pageId, maxSide)
+        }
+    }
+
+    override suspend fun renderCaptureResult(
+        workspace: PdfWorkspace, pageId: String, maxSide: Int,
+    ): PdfInteractivePixels? = withContext(ioDispatcher) {
+        operationMutex.withLock {
+            files.initialize()
+            currentCoroutineContext().ensureActive()
+            composer.renderCaptureResult(workspace, pageId, maxSide)
         }
     }
 
@@ -680,7 +794,8 @@ class AndroidPdfEditorRepository(
             pages = workspace.pages.mapIndexed { index, page ->
                 RecipePage(page.id, indices[index], page.layout, page.signatures.map {
                     RecipeSignature(
-                        it.id, requireNotNull(copiedSignatures[it.imageUri]), it.x, it.y, it.width, it.height
+                        it.id, requireNotNull(copiedSignatures[it.imageUri]), it.x, it.y, it.width, it.height,
+                        it.rotationDegrees, it.stretchToBounds
                     )
                 })
             },
@@ -785,7 +900,8 @@ class AndroidPdfEditorRepository(
                         files.uri(copy).also { copies[signature.filename] = it }
                     }
                     PdfSignaturePlacement(
-                        signature.id, uri, signature.x, signature.y, signature.width, signature.height
+                        signature.id, uri, signature.x, signature.y, signature.width, signature.height,
+                        signature.rotationDegrees, signature.stretchToBounds
                     )
                 }
             )

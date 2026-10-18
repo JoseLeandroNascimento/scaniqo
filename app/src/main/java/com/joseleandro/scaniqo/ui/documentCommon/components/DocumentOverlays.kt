@@ -9,6 +9,9 @@ import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMetadataUiState
 internal fun DocumentOverlays(
     editor: DocumentMetadataUiState?,
     tags: List<TagModel>,
+    isLoadingTags: Boolean,
+    tagsLoadError: Boolean,
+    onRetryTags: () -> Unit,
     pendingDeletion: DocumentModel?,
     isDeleting: Boolean,
     deleteError: Boolean,
@@ -23,6 +26,9 @@ internal fun DocumentOverlays(
         DocumentMetadataSheet(
             editor = it,
             tags = tags,
+            isLoadingTags = isLoadingTags,
+            tagsLoadError = tagsLoadError,
+            onRetryTags = onRetryTags,
             onNameChange = onNameChange,
             onTagChange = onTagChange,
             onSave = onSave,

@@ -14,6 +14,9 @@ internal fun DocumentActionOverlays(
     DocumentOverlays(
         editor = state.editor,
         tags = state.tags,
+        isLoadingTags = state.isLoadingTags,
+        tagsLoadError = state.tagsLoadError,
+        onRetryTags = { onEvent(DocumentActionEvent.RetryTags) },
         pendingDeletion = state.pendingDeletion,
         isDeleting = state.isDeleting,
         deleteError = state.message == DocumentMessage.DELETE_ERROR,

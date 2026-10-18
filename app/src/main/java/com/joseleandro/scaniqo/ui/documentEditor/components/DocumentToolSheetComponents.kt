@@ -24,6 +24,7 @@ internal fun DocumentToolActions(
     compact: Boolean = false,
     onReset: () -> Unit,
     onApply: () -> Unit,
+    applyEnabled: Boolean = true,
 ) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(if (compact) 8.dp else 12.dp)) {
         if (!compact) HorizontalDivider()
@@ -31,7 +32,7 @@ internal fun DocumentToolActions(
             TextButton(onClick = onReset, enabled = enabled, modifier = Modifier.weight(1f).heightIn(min = if (compact) 48.dp else 52.dp)) {
                 Text(stringResource(R.string.tools_reset_compact), textAlign = TextAlign.Center)
             }
-            Button(onClick = onApply, enabled = enabled, modifier = Modifier.weight(1.5f).heightIn(min = if (compact) 48.dp else 52.dp)) {
+            Button(onClick = onApply, enabled = enabled && applyEnabled, modifier = Modifier.weight(1.5f).heightIn(min = if (compact) 48.dp else 52.dp)) {
                 Text(applyLabel ?: stringResource(R.string.tools_apply_compact), textAlign = TextAlign.Center)
             }
         }

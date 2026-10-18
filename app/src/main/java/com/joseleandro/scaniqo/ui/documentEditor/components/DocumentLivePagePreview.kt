@@ -152,7 +152,7 @@ internal fun DocumentLivePagePreview(
             signatureAssets.images[placement.imageUri]?.let { bitmap ->
                 val bounds =
                     DocumentLivePageGeometry.signatureRect(placement, bitmap.width, bitmap.height)
-                LiveSignature(bitmap, RectF(bounds.left, bounds.top, bounds.right, bounds.bottom))
+                LiveSignature(bitmap, RectF(bounds.left, bounds.top, bounds.right, bounds.bottom), placement.rotationDegrees)
             }
         }
     }
@@ -192,7 +192,13 @@ internal fun DocumentLivePagePreview(
                     }
                     // Estas camadas não recebem a matriz, nem o recorte das margens da captura.
                     placedSignatures.forEach { signature ->
-                        canvas.drawBitmap(signature.bitmap, null, signature.destination, imagePaint)
+                        val signatureSave = canvas.save()
+                        try {
+                            canvas.rotate(signature.rotationDegrees, signature.destination.centerX(), signature.destination.centerY())
+                            canvas.drawBitmap(signature.bitmap, null, signature.destination, imagePaint)
+                        } finally {
+                            canvas.restoreToCount(signatureSave)
+                        }
                     }
                     if (showPageNumbers) footer?.let { number ->
                         val background = number.geometry.background
@@ -242,7 +248,7 @@ private data class LiveSignatureAssets(
     val error: Boolean = false
 )
 
-private data class LiveSignature(val bitmap: Bitmap, val destination: RectF)
+private data class LiveSignature(val bitmap: Bitmap, val destination: RectF, val rotationDegrees: Float)
 private data class LiveFooter(
     val text: String,
     val geometry: DocumentLivePageNumber,

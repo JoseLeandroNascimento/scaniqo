@@ -24,6 +24,7 @@ internal class PdfMergeBatch(
         workspace: PdfWorkspace,
         sources: List<PdfMergeSource>,
         existingBytes: Long,
+        currentDocumentIndex: Int = 0,
         prepare: suspend (Preparation) -> Int
     ): PdfWorkspace {
         check(!started)
@@ -31,13 +32,15 @@ internal class PdfMergeBatch(
         require(sources.isNotEmpty() && sources.all { it.uri.isNotBlank() }) {
             "Selecione pelo menos um PDF válido."
         }
+        require(currentDocumentIndex in 0..sources.size)
         checkPageCount(workspace.pages.size + sources.size)
         if (existingBytes !in 0..PdfWorkspaceFiles.MAX_BYTES) throw sizeLimit()
         val prepared = mutableMapOf<String, Prepared>()
         val appended = mutableListOf<PdfPageSpec>()
         var totalBytes = existingBytes
+        var beforeCurrentPages = 0
         try {
-            sources.forEach { source ->
+            sources.forEachIndexed { sourceIndex, source ->
                 currentCoroutineContext().ensureActive()
                 val remainingPages = PdfWorkspaceFiles.MAX_PAGES - workspace.pages.size - appended.size
                 if (remainingPages < 1) throw pageLimit()
@@ -64,9 +67,12 @@ internal class PdfMergeBatch(
                         UUID.randomUUID().toString(), uriForFile(item.file), index
                     )
                 }
+                if (sourceIndex < currentDocumentIndex) beforeCurrentPages = appended.size
             }
             currentCoroutineContext().ensureActive()
-            return workspace.copy(pages = workspace.pages + appended)
+            return workspace.copy(
+                pages = appended.take(beforeCurrentPages) + workspace.pages + appended.drop(beforeCurrentPages),
+            )
         } catch (failure: Throwable) {
             withContext(NonCancellable) {
                 try {

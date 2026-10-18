@@ -1,5 +1,6 @@
 package com.joseleandro.scaniqo.data.pdf
 
+import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPageQuality
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
@@ -29,7 +30,9 @@ internal class PdfQualityAnalyzer(
                         requireNotNull(sourceFiles[spec.sourceUri]),
                         requireNotNull(documents[spec.sourceUri]), spec.sourcePageIndex
                     ).also { contentCache[key] = it }
-                    renderer.render(spec.sourceUri, spec.sourcePageIndex, maxSide = 1000).use { rendered ->
+                    val capture = native.captureBounds
+                    renderer.render(spec.sourceUri, spec.sourcePageIndex,
+                        layout = PdfPageLayout(crop = capture), maxSide = 1000).use { rendered ->
                         val bitmap = rendered.bitmap
                         val pixels = IntArray(bitmap.width * bitmap.height)
                         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
@@ -47,6 +50,10 @@ internal class PdfQualityAnalyzer(
                             mayBeClipped = metrics.mayBeClipped,
                             suggestedStraightenDegrees = if (native.shouldPreserve) 0f else {
                                 PdfImageCorrections.estimateStraightenDegrees(pixels, bitmap.width, bitmap.height)
+                            },
+                            suggestedCrop = if (capture == null) null else {
+                                PdfDocumentBoundsDetector.detect(pixels, bitmap.width, bitmap.height)
+                                    ?.let { PdfCaptureGeometry.toSource(it, capture) }
                             },
                         )
                     }

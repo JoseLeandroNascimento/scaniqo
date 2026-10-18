@@ -17,7 +17,6 @@ import java.io.IOException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 /** Amostras pequenas da página real; nenhum PDF intermediário é criado para os filtros. */
@@ -45,7 +44,8 @@ internal class PdfFilterThumbnailRenderer(
         val cache = caches.getOrPut(workspace.workspaceId) { PdfFilterThumbnailCache(directory) }
         val batch = cache.getOrCreate(key, force) { targets ->
             // O aviso descreve a fonte, mesmo quando as amostras já mostram a conversão em imagem.
-            val requiresRasterization = composer.inspectContent(source, page.sourcePageIndex).shouldPreserve
+            val native = composer.inspectContent(source, page.sourcePageIndex)
+            val requiresRasterization = native.shouldPreserve
             val preserveNative = !rasterizeText && requiresRasterization
             val layout = page.layout.copy(
                 imageFilter = PdfImageFilter.ORIGINAL,
@@ -54,10 +54,12 @@ internal class PdfFilterThumbnailRenderer(
                 straightenDegrees = if (preserveNative) 0f else page.layout.straightenDegrees,
                 perspective = if (preserveNative) null else page.layout.perspective,
                 curvature = if (preserveNative) 0f else page.layout.curvature,
+                backgroundMask = if (preserveNative) null else page.layout.backgroundMask,
             )
             PdfFilteredPageRenderer(mapOf(page.sourceUri to source)).use { renderer ->
                 // A fonte e as correções são calculadas uma vez, antes de percorrer as opções.
-                renderer.render(page.sourceUri, page.sourcePageIndex, layout, MAX_SIDE).use { rendered ->
+                renderer.render(page.sourceUri, page.sourcePageIndex, layout, MAX_SIDE,
+                    captureBounds = native.captureBounds).use { rendered ->
                     val bitmap = rendered.bitmap
                     val pixels = IntArray(bitmap.width * bitmap.height)
                     bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
@@ -145,14 +147,16 @@ internal class PdfFilterThumbnailRenderer(
                 ) { "A posição da assinatura é inválida." }
                 val bitmap = decodeSignature(signatureFiles[position])
                 try {
-                    val width = signature.width * PdfPageGeometry.WIDTH
-                    val height = signature.height * PdfPageGeometry.HEIGHT
-                    val scale = min(width / bitmap.width, height / bitmap.height)
-                    val drawnWidth = bitmap.width * scale
-                    val drawnHeight = bitmap.height * scale
-                    val left = signature.x * PdfPageGeometry.WIDTH + (width - drawnWidth) / 2
-                    val top = signature.y * PdfPageGeometry.HEIGHT + (height - drawnHeight) / 2
-                    canvas.drawBitmap(bitmap, null, RectF(left, top, left + drawnWidth, top + drawnHeight), paint)
+                    val bounds = PdfSignatureGeometry.bounds(signature, bitmap.width, bitmap.height)
+                    val saved = canvas.save()
+                    try {
+                        canvas.rotate(signature.rotationDegrees, bounds.centerX, bounds.centerY)
+                        canvas.drawBitmap(bitmap, null, RectF(
+                            bounds.left, bounds.top, bounds.left + bounds.width, bounds.top + bounds.height,
+                        ), paint)
+                    } finally {
+                        canvas.restoreToCount(saved)
+                    }
                 } finally {
                     bitmap.recycle()
                 }

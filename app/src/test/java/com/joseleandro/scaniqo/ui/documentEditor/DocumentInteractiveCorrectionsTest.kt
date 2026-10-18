@@ -7,6 +7,8 @@ import com.joseleandro.scaniqo.core.security.PasswordVaultState
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PageScaleMode
+import com.joseleandro.scaniqo.domain.model.PdfCaptureSource
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfInteractivePixels
 import com.joseleandro.scaniqo.domain.model.PdfMergeSource
@@ -42,6 +44,7 @@ import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -71,6 +74,89 @@ class DocumentInteractiveCorrectionsTest {
         Dispatchers.resetMain()
     }
 
+    @Test fun captureSourceAndResultStaySeparateFromThePdfSheetAndCommittedRecipe() = runTest(dispatcher) {
+        repository.supportsCapturePreview = true
+        repository.supportsLivePreview = true
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.LoadCorrectionSource("page-1"))
+        advanceUntilIdle()
+        assertTrue(repository.captureSourceCalls.isEmpty())
+        viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.CORRECTIONS))
+        viewModel.onEvent(DocumentToolsEvent.LoadCorrectionSource("page-1"))
+        advanceUntilIdle()
+        val raw = viewModel.uiState.value.correctionSource.source!!
+        val pdfCalls = repository.calls.size
+        val crop = PdfCropBounds(.2f, .3f, .8f, .7f)
+        viewModel.onEvent(DocumentToolsEvent.PreviewCorrections(
+            "page-1", PdfPageLayout(crop = crop), captureOnly = true,
+        ))
+        advanceUntilIdle()
+
+        assertSame(raw, viewModel.uiState.value.correctionSource.source)
+        assertEquals(PdfCropBounds(.1f, .25f, .9f, .75f), raw.bounds)
+        assertEquals(crop, repository.captureResultCalls.last().page.layout.crop)
+        assertEquals(600f, viewModel.uiState.value.correctionCapturePreview.pixels!!.sourceWidth, 0f)
+        assertEquals(400f, viewModel.uiState.value.correctionCapturePreview.pixels!!.sourceHeight, 0f)
+        assertEquals(pdfCalls, repository.calls.size)
+        assertTrue(repository.pixelCalls.isEmpty())
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.hasChanges)
+
+        viewModel.onEvent(DocumentToolsEvent.PreviewCorrections(
+            "page-1", PdfPageLayout(straightenDegrees = 2f),
+        ))
+        advanceUntilIdle()
+        assertNull(viewModel.uiState.value.correctionCapturePreview.pixels)
+        assertNotNull(viewModel.uiState.value.correctionsPreview.live.pixels)
+        assertSame(raw, viewModel.uiState.value.correctionSource.source)
+    }
+
+    @Test fun unsupportedCaptureNeverFallsBackToSelectingOrProcessingTheWholePdf() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.CORRECTIONS))
+        val pdfCalls = repository.calls.size
+        viewModel.onEvent(DocumentToolsEvent.LoadCorrectionSource("page-1"))
+        viewModel.onEvent(DocumentToolsEvent.PreviewCorrections(
+            "page-1", PdfPageLayout(), captureOnly = true,
+        ))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.correctionSource.unsupported)
+        assertTrue(viewModel.uiState.value.correctionCapturePreview.unsupported)
+        assertNull(viewModel.uiState.value.correctionSource.source)
+        assertNull(viewModel.uiState.value.correctionCapturePreview.pixels)
+        assertEquals(pdfCalls, repository.calls.size)
+        assertTrue(repository.pixelCalls.isEmpty())
+    }
+
+    @Test fun lockingDocumentClearsCaptureSourceAndResultAndBlocksReload() = runTest(dispatcher) {
+        passwords.unlock()
+        repository.supportsCapturePreview = true
+        viewModel.load(document.copy(protectionKeyId = "key"))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.CORRECTIONS))
+        viewModel.onEvent(DocumentToolsEvent.LoadCorrectionSource("page-1"))
+        viewModel.onEvent(DocumentToolsEvent.PreviewCorrections(
+            "page-1", PdfPageLayout(), captureOnly = true,
+        ))
+        advanceUntilIdle()
+        assertNotNull(viewModel.uiState.value.correctionSource.source)
+        assertNotNull(viewModel.uiState.value.correctionCapturePreview.pixels)
+        val loads = repository.captureSourceCalls.size
+
+        passwords.lock()
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.LoadCorrectionSource("page-1"))
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.isLocked)
+        assertNull(viewModel.uiState.value.correctionSource.source)
+        assertNull(viewModel.uiState.value.correctionCapturePreview.pixels)
+        assertEquals(loads, repository.captureSourceCalls.size)
+    }
+
     @Test fun layoutGesturesDebounceWithoutChangingRecipeOrUndo() = runTest(dispatcher) {
         viewModel.load(document)
         advanceUntilIdle()
@@ -91,8 +177,8 @@ class DocumentInteractiveCorrectionsTest {
         assertEquals(original, viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.hasChanges)
         assertFalse(viewModel.uiState.value.canUndo)
-        assertEquals("page-1", viewModel.uiState.value.layoutPreviewPageId)
-        assertFalse(viewModel.uiState.value.isPreviewingLayout)
+        assertEquals("page-1", viewModel.uiState.value.layoutPreview.pageId)
+        assertFalse(viewModel.uiState.value.layoutPreview.isRendering)
     }
 
     @Test fun layoutDraftPreservesEachPagesFilterCorrectionsAndSignatures() = runTest(dispatcher) {
@@ -146,12 +232,12 @@ class DocumentInteractiveCorrectionsTest {
         val draft = PdfPageLayout(alignment = PageAlignment.TOP, rotationQuarterTurns = 1)
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-1", draft))
         advanceUntilIdle()
-        val editedUri = viewModel.uiState.value.layoutPreview!!.uri
+        val editedUri = viewModel.uiState.value.layoutPreview.preview!!.uri
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-1", draft, showOriginal = true))
         advanceUntilIdle()
         assertEquals(committed.pages.first(), repository.calls.last().page)
-        assertTrue(viewModel.uiState.value.layoutPreviewShowingOriginal)
-        assertTrue(editedUri != viewModel.uiState.value.layoutPreview!!.uri)
+        assertTrue(viewModel.uiState.value.layoutPreview.showingOriginal)
+        assertTrue(editedUri != viewModel.uiState.value.layoutPreview.preview!!.uri)
         assertEquals(committed, viewModel.uiState.value.workspace)
     }
 
@@ -165,7 +251,7 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-75", PdfPageLayout(rotationQuarterTurns = 1)))
         advanceUntilIdle()
         assertEquals(listOf("page-75"), repository.calls.drop(count).map { it.page.id })
-        assertEquals("page-75", viewModel.uiState.value.layoutPreviewPageId)
+        assertEquals("page-75", viewModel.uiState.value.layoutPreview.pageId)
         assertEquals("page-1", viewModel.uiState.value.selectedPageId)
         assertFalse(viewModel.uiState.value.hasChanges)
     }
@@ -187,8 +273,8 @@ class DocumentInteractiveCorrectionsTest {
         gate.complete(Unit)
         advanceUntilIdle()
         assertEquals(3, repository.calls.last().page.layout.rotationQuarterTurns)
-        assertEquals(repository.calls.last().uri, viewModel.uiState.value.layoutPreview!!.uri)
-        assertTrue(staleUri != viewModel.uiState.value.layoutPreview!!.uri)
+        assertEquals(repository.calls.last().uri, viewModel.uiState.value.layoutPreview.preview!!.uri)
+        assertTrue(staleUri != viewModel.uiState.value.layoutPreview.preview!!.uri)
         assertFalse(viewModel.uiState.value.hasChanges)
     }
 
@@ -200,13 +286,13 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-1", PdfPageLayout(rotationQuarterTurns = 1)))
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.ClearLayoutPreview)
-        assertNull(viewModel.uiState.value.layoutPreview)
-        assertNull(viewModel.uiState.value.layoutPreviewPageId)
+        assertNull(viewModel.uiState.value.layoutPreview.preview)
+        assertNull(viewModel.uiState.value.layoutPreview.pageId)
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-2", PdfPageLayout(contentScale = 1.5f)))
         viewModel.onEvent(DocumentToolsEvent.RequestBack)
         advanceUntilIdle()
         assertNull(viewModel.uiState.value.tool)
-        assertNull(viewModel.uiState.value.layoutPreview)
+        assertNull(viewModel.uiState.value.layoutPreview.preview)
         assertEquals(committed, viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.canUndo)
     }
@@ -225,11 +311,11 @@ class DocumentInteractiveCorrectionsTest {
         runCurrent()
         passwords.lock()
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
-        assertNull(viewModel.uiState.value.layoutPreviewPageId)
+        assertNull(viewModel.uiState.value.layoutPreview.pageId)
         gate.complete(Unit)
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value.isLocked)
-        assertNull(viewModel.uiState.value.layoutPreview)
+        assertNull(viewModel.uiState.value.layoutPreview.preview)
         assertEquals(committed, viewModel.uiState.value.workspace)
     }
 
@@ -251,7 +337,7 @@ class DocumentInteractiveCorrectionsTest {
             rotationQuarterTurns = -1, contentScale = 3f, pageIds = setOf("page-2", "page-4"),
         ))
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.layoutPreview)
+        assertNull(viewModel.uiState.value.layoutPreview.preview)
         assertNull(viewModel.uiState.value.tool)
         assertTrue(viewModel.uiState.value.workspace!!.pages
             .filter { it.id in setOf("page-2", "page-4") }.all { it.layout == previewed })
@@ -289,7 +375,7 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("missing", PdfPageLayout()))
         advanceUntilIdle()
         assertEquals(count, repository.calls.size)
-        assertNull(viewModel.uiState.value.layoutPreview)
+        assertNull(viewModel.uiState.value.layoutPreview.preview)
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-1", PdfPageLayout(contentScale = Float.NaN)))
         advanceUntilIdle()
         assertEquals(1f, repository.calls.last().page.layout.contentScale, 0f)
@@ -435,8 +521,8 @@ class DocumentInteractiveCorrectionsTest {
         assertEquals(original, viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.hasChanges)
         assertFalse(viewModel.uiState.value.canUndo)
-        assertEquals("page-1", viewModel.uiState.value.correctionsPreviewPageId)
-        assertFalse(viewModel.uiState.value.isPreviewingCorrections)
+        assertEquals("page-1", viewModel.uiState.value.correctionsPreview.pageId)
+        assertFalse(viewModel.uiState.value.correctionsPreview.isRendering)
     }
 
     @Test fun draftOriginalComparisonUsesCommittedPageIncludingExistingFilter() = runTest(dispatcher) {
@@ -457,7 +543,7 @@ class DocumentInteractiveCorrectionsTest {
         ))
         advanceUntilIdle()
         assertEquals(committed.pages.first(), repository.calls.last().page)
-        assertTrue(viewModel.uiState.value.correctionsPreviewShowingOriginal)
+        assertTrue(viewModel.uiState.value.correctionsPreview.showingOriginal)
         assertEquals(committed, viewModel.uiState.value.workspace)
     }
 
@@ -469,8 +555,8 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.PreviewCorrections("page-1", PdfPageLayout(straightenDegrees = 5f)))
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.ClearCorrectionsPreview)
-        assertNull(viewModel.uiState.value.correctionsPreview)
-        assertNull(viewModel.uiState.value.correctionsPreviewPageId)
+        assertNull(viewModel.uiState.value.correctionsPreview.preview)
+        assertNull(viewModel.uiState.value.correctionsPreview.pageId)
         assertEquals(original, viewModel.uiState.value.workspace)
 
         viewModel.onEvent(DocumentToolsEvent.PreviewCorrections("page-1", PdfPageLayout(curvature = .2f)))
@@ -478,7 +564,7 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.DismissTool)
         advanceUntilIdle()
         assertNull(viewModel.uiState.value.tool)
-        assertNull(viewModel.uiState.value.correctionsPreview)
+        assertNull(viewModel.uiState.value.correctionsPreview.preview)
         assertEquals(original, viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.hasChanges)
     }
@@ -496,7 +582,7 @@ class DocumentInteractiveCorrectionsTest {
             false, 6f, null, 0f, pageIds = setOf("page-1", "page-3"),
         ))
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.correctionsPreview)
+        assertNull(viewModel.uiState.value.correctionsPreview.preview)
         assertNull(viewModel.uiState.value.tool)
         assertTrue(viewModel.uiState.value.canUndo)
         viewModel.onEvent(DocumentToolsEvent.Undo)
@@ -522,8 +608,8 @@ class DocumentInteractiveCorrectionsTest {
         gate.complete(Unit)
         advanceUntilIdle()
         assertEquals(8f, repository.calls.last().page.layout.straightenDegrees, 0f)
-        assertEquals(repository.calls.last().uri, viewModel.uiState.value.correctionsPreview!!.uri)
-        assertTrue(staleUri != viewModel.uiState.value.correctionsPreview!!.uri)
+        assertEquals(repository.calls.last().uri, viewModel.uiState.value.correctionsPreview.preview!!.uri)
+        assertTrue(staleUri != viewModel.uiState.value.correctionsPreview.preview!!.uri)
         assertFalse(viewModel.uiState.value.hasChanges)
     }
 
@@ -541,12 +627,12 @@ class DocumentInteractiveCorrectionsTest {
         runCurrent()
         passwords.lock()
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
-        assertNull(viewModel.uiState.value.correctionsPreview)
-        assertNull(viewModel.uiState.value.correctionsPreviewPageId)
+        assertNull(viewModel.uiState.value.correctionsPreview.preview)
+        assertNull(viewModel.uiState.value.correctionsPreview.pageId)
         gate.complete(Unit)
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value.isLocked)
-        assertNull(viewModel.uiState.value.correctionsPreview)
+        assertNull(viewModel.uiState.value.correctionsPreview.preview)
         assertTrue(viewModel.uiState.value.pagePreviews.isEmpty())
         assertEquals(original, viewModel.uiState.value.workspace)
     }
@@ -585,7 +671,7 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.PreviewCorrections("missing", PdfPageLayout(straightenDegrees = 3f)))
         advanceUntilIdle()
         assertEquals(count, repository.calls.size)
-        assertNull(viewModel.uiState.value.correctionsPreview)
+        assertNull(viewModel.uiState.value.correctionsPreview.preview)
     }
 
     @Test fun automaticImprovementAnalyzesOnlySelectedPageUnlessAllWasRequested() = runTest(dispatcher) {
@@ -623,7 +709,7 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-1", PdfPageLayout(contentScale = .8f)))
         runCurrent()
         assertEquals(listOf(480), repository.pixelCalls.map { it.maxSide })
-        assertNotNull(viewModel.uiState.value.layoutLivePreview.pixels)
+        assertNotNull(viewModel.uiState.value.layoutPreview.live.pixels)
 
         repeat(30) { index ->
             viewModel.onEvent(DocumentToolsEvent.PreviewLayout(
@@ -639,8 +725,8 @@ class DocumentInteractiveCorrectionsTest {
 
         assertEquals(listOf(480, 1100), repository.pixelCalls.map { it.maxSide })
         assertEquals(pdfCount, repository.calls.size)
-        assertNull(viewModel.uiState.value.layoutPreview)
-        assertFalse(viewModel.uiState.value.isPreviewingLayout)
+        assertNull(viewModel.uiState.value.layoutPreview.preview)
+        assertFalse(viewModel.uiState.value.layoutPreview.isRendering)
         assertEquals(original, viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.hasChanges)
         assertFalse(viewModel.uiState.value.canUndo)
@@ -664,14 +750,14 @@ class DocumentInteractiveCorrectionsTest {
         assertEquals(3f, repository.pixelCalls.last().page.layout.straightenDegrees, 0f)
         assertEquals(1100, repository.pixelCalls.last().maxSide)
         assertEquals(pdfCount, repository.calls.size)
-        assertNotNull(viewModel.uiState.value.correctionsLivePreview.pixels)
-        assertFalse(viewModel.uiState.value.isPreviewingCorrections)
+        assertNotNull(viewModel.uiState.value.correctionsPreview.live.pixels)
+        assertFalse(viewModel.uiState.value.correctionsPreview.isRendering)
         assertEquals(original, viewModel.uiState.value.workspace)
 
         viewModel.onEvent(DocumentToolsEvent.ApplyCorrections(false, 3f, null, 0f, rasterizeText = true))
         advanceUntilIdle()
 
-        assertNull(viewModel.uiState.value.correctionsLivePreview.pixels)
+        assertNull(viewModel.uiState.value.correctionsPreview.live.pixels)
         assertEquals(pdfCount + 1, repository.calls.size)
         assertEquals(3f, viewModel.uiState.value.workspace!!.pages.first().layout.straightenDegrees, 0f)
         assertTrue(viewModel.uiState.value.hasChanges)
@@ -686,18 +772,18 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.LAYOUT))
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-1", PdfPageLayout()))
         advanceUntilIdle()
-        assertNotNull(viewModel.uiState.value.layoutLivePreview.pixels)
+        assertNotNull(viewModel.uiState.value.layoutPreview.live.pixels)
 
         viewModel.onEvent(DocumentToolsEvent.PreviewLayout("page-2", PdfPageLayout()))
-        assertNull(viewModel.uiState.value.layoutLivePreview.pixels)
+        assertNull(viewModel.uiState.value.layoutPreview.live.pixels)
         advanceUntilIdle()
-        assertEquals("page-2", viewModel.uiState.value.layoutLivePreview.pageId)
-        assertEquals(1, viewModel.uiState.value.layoutLivePreview.pixels!!.pixels.single())
+        assertEquals("page-2", viewModel.uiState.value.layoutPreview.live.pageId)
+        assertEquals(1, viewModel.uiState.value.layoutPreview.live.pixels!!.pixels.single())
 
         viewModel.onEvent(DocumentToolsEvent.DismissTool)
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.layoutLivePreview.pixels)
-        assertNull(viewModel.uiState.value.layoutLivePreview.pageId)
+        assertNull(viewModel.uiState.value.layoutPreview.live.pixels)
+        assertNull(viewModel.uiState.value.layoutPreview.live.pageId)
         assertEquals(original, viewModel.uiState.value.workspace)
     }
 
@@ -709,7 +795,7 @@ class DocumentInteractiveCorrectionsTest {
         viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.CORRECTIONS))
         viewModel.onEvent(DocumentToolsEvent.PreviewCorrections("page-1", PdfPageLayout(straightenDegrees = 1f)))
         advanceUntilIdle()
-        assertNotNull(viewModel.uiState.value.correctionsLivePreview.pixels)
+        assertNotNull(viewModel.uiState.value.correctionsPreview.live.pixels)
         val gate = CompletableDeferred<Unit>()
         repository.nextPixelGate = gate
         repository.ignorePixelCancellation = true
@@ -718,14 +804,14 @@ class DocumentInteractiveCorrectionsTest {
 
         passwords.lock()
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
-        assertNull(viewModel.uiState.value.correctionsLivePreview.pixels)
+        assertNull(viewModel.uiState.value.correctionsPreview.live.pixels)
         gate.complete(Unit)
         advanceUntilIdle()
 
         assertTrue(viewModel.uiState.value.isLocked)
-        assertNull(viewModel.uiState.value.correctionsLivePreview.pixels)
-        assertNull(viewModel.uiState.value.correctionsLivePreview.pageId)
-        assertFalse(viewModel.uiState.value.isPreviewingCorrections)
+        assertNull(viewModel.uiState.value.correctionsPreview.live.pixels)
+        assertNull(viewModel.uiState.value.correctionsPreview.live.pageId)
+        assertFalse(viewModel.uiState.value.correctionsPreview.isRendering)
     }
 
     private data class PixelCall(val page: PdfPageSpec, val maxSide: Int)
@@ -734,6 +820,9 @@ class DocumentInteractiveCorrectionsTest {
     private class InteractiveRepository : PdfEditorRepository {
         val calls = mutableListOf<Call>()
         val pixelCalls = mutableListOf<PixelCall>()
+        val captureSourceCalls = mutableListOf<String>()
+        val captureResultCalls = mutableListOf<PixelCall>()
+        var supportsCapturePreview = false
         var supportsLivePreview = false
         var nextPixelGate: CompletableDeferred<Unit>? = null
         var ignorePixelCancellation = false
@@ -773,6 +862,22 @@ class DocumentInteractiveCorrectionsTest {
             val ignoreCancellation = ignorePixelCancellation.also { ignorePixelCancellation = false }
             if (ignoreCancellation) withContext(NonCancellable) { gate?.await() } else gate?.await()
             return PdfInteractivePixels(1, 1, intArrayOf(page.sourcePageIndex), 595f, 842f)
+        }
+        override suspend fun renderCaptureSource(
+            workspace: PdfWorkspace, pageId: String, maxSide: Int,
+        ): PdfCaptureSource? {
+            captureSourceCalls += pageId
+            if (!supportsCapturePreview) return null
+            return PdfCaptureSource(
+                PdfInteractivePixels(2, 2, IntArray(4) { 7 }, 600f, 400f),
+                PdfCropBounds(.1f, .25f, .9f, .75f),
+            )
+        }
+        override suspend fun renderCaptureResult(
+            workspace: PdfWorkspace, pageId: String, maxSide: Int,
+        ): PdfInteractivePixels? {
+            captureResultCalls += PixelCall(workspace.pages.first { it.id == pageId }, maxSide)
+            return if (supportsCapturePreview) PdfInteractivePixels(2, 2, IntArray(4) { 9 }, 600f, 400f) else null
         }
         override suspend fun analyze(workspace: PdfWorkspace): PdfQualityReport {
             analyses += workspace

@@ -14,6 +14,8 @@ import com.joseleandro.scaniqo.domain.model.PdfMergePasswordRequiredException
 import com.joseleandro.scaniqo.domain.model.PdfMergeSource
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
+import com.joseleandro.scaniqo.domain.model.PdfSignatureCrop
+import com.joseleandro.scaniqo.domain.model.PdfSignatureImage
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.model.SignatureFont
@@ -21,8 +23,10 @@ import com.joseleandro.scaniqo.domain.model.SignatureModel
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
+import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentEditor.effect.DocumentToolsEffect
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentMergeUiState
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentToolsMessage
 import kotlinx.coroutines.CompletableDeferred
@@ -457,6 +461,9 @@ class DocumentToolsViewModelTest {
         advanceUntilIdle()
         val initial = viewModel.uiState.value.signatureDraft!!
         assertEquals("file:///workspace/copied-signature.png", initial.imageUri)
+        assertTrue(initial.width >= .5f)
+        assertEquals(.5f, initial.x + initial.width / 2f, .0001f)
+        assertEquals(3f, initial.width * 595f / (initial.height * 842f), .0001f)
         assertTrue(repository.previews.last().pages.all { it.signatures.isEmpty() })
         assertFalse(viewModel.uiState.value.hasChanges)
 
@@ -602,14 +609,14 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 3))
         runCurrent()
         assertEquals(DocumentToolsEffect.LaunchPdfMergePicker, effect.await())
-        assertTrue(viewModel.uiState.value.isPickingPdfMerge)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
 
         viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://second", "content://first")))
         advanceUntilIdle()
         val state = viewModel.uiState.value
         assertEquals(listOf("content://second", "content://first"), state.workspace!!.pages.takeLast(2).map { it.sourceUri })
         assertEquals("merged-0", state.selectedPageId)
-        assertEquals(DocumentTool.PAGES, state.tool)
+        assertNull(state.tool)
         assertEquals(DocumentToolsMessage.MERGED, state.message)
         assertTrue(state.hasChanges)
         assertFalse(state.isBusy)
@@ -681,23 +688,23 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 3))
         viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://one", "content://two")))
         advanceUntilIdle()
-        assertEquals("content://one", viewModel.uiState.value.mergePasswordUri)
-        assertFalse(viewModel.uiState.value.mergePasswordError)
+        assertEquals("content://one", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
+        assertFalse((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.incorrect == true)
         assertFalse(viewModel.uiState.value.canEdit)
 
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("wrong"))
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.mergePasswordError)
+        assertTrue((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.incorrect == true)
         assertEquals(original, viewModel.uiState.value.workspace)
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("first"))
         advanceUntilIdle()
-        assertEquals("content://two", viewModel.uiState.value.mergePasswordUri)
-        assertFalse(viewModel.uiState.value.mergePasswordError)
+        assertEquals("content://two", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
+        assertFalse((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.incorrect == true)
         assertEquals(original, viewModel.uiState.value.workspace)
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("second"))
         advanceUntilIdle()
         assertEquals(5, viewModel.uiState.value.workspace!!.pages.size)
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         assertFalse(viewModel.uiState.value.isBusy)
         assertFalse(viewModel.uiState.value.workspace!!.isProtected)
     }
@@ -713,7 +720,7 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.CancelMergePassword)
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("password"))
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         assertFalse(viewModel.uiState.value.isBusy)
         assertEquals(original, viewModel.uiState.value.workspace)
         assertEquals(1, repository.mergeCount)
@@ -751,13 +758,13 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 3))
         runCurrent()
         assertEquals(DocumentToolsEffect.NeedUnlock, unlockEffect.await())
-        assertFalse(viewModel.uiState.value.isPickingPdfMerge)
+        assertFalse(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
         passwords.unlock()
         val pickerEffect = async { viewModel.effects.first() }
         viewModel.onEvent(DocumentToolsEvent.AuthenticationSucceeded)
         runCurrent()
         assertEquals(DocumentToolsEffect.LaunchPdfMergePicker, pickerEffect.await())
-        assertTrue(viewModel.uiState.value.isPickingPdfMerge)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
         viewModel.onEvent(DocumentToolsEvent.MergePdfsCancelled)
         advanceUntilIdle()
     }
@@ -771,7 +778,7 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 3))
         viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://slow")))
         runCurrent()
-        assertTrue(viewModel.uiState.value.isMerging)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Merging)
         viewModel.onEvent(DocumentToolsEvent.MovePageTo("page-1", 2))
         viewModel.onEvent(DocumentToolsEvent.ReorderPages(listOf("page-3", "page-2", "page-1")))
         viewModel.onEvent(DocumentToolsEvent.SetNumbering(true))
@@ -813,16 +820,16 @@ class DocumentToolsViewModelTest {
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("first"))
         advanceUntilIdle()
-        assertEquals("content://two", viewModel.uiState.value.mergePasswordUri)
+        assertEquals("content://two", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         passwords.lock()
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         passwords.unlock()
         viewModel.onEvent(DocumentToolsEvent.AuthenticationSucceeded)
         advanceUntilIdle()
-        assertEquals("content://one", viewModel.uiState.value.mergePasswordUri)
-        assertFalse(viewModel.uiState.value.mergePasswordError)
+        assertEquals("content://one", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
+        assertFalse((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.incorrect == true)
         assertEquals(3, viewModel.uiState.value.workspace!!.pages.size)
     }
 
@@ -836,12 +843,12 @@ class DocumentToolsViewModelTest {
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("first"))
         advanceUntilIdle()
-        assertEquals("content://two", viewModel.uiState.value.mergePasswordUri)
+        assertEquals("content://two", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
 
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("second"))
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         assertFalse(viewModel.uiState.value.isBusy)
         assertFalse(viewModel.uiState.value.isLocked)
         assertEquals(original, viewModel.uiState.value.workspace)
@@ -849,7 +856,7 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 3))
         viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://one", "content://two")))
         advanceUntilIdle()
-        assertEquals("content://one", viewModel.uiState.value.mergePasswordUri)
+        assertEquals("content://one", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
     }
 
     @Test fun unprotectedBackgroundCancelsRunningMergeThatContainsPassword() = runTest(dispatcher) {
@@ -864,14 +871,14 @@ class DocumentToolsViewModelTest {
         repository.mergeGate = gate
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("first"))
         runCurrent()
-        assertTrue(viewModel.uiState.value.isMerging)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Merging)
 
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
         gate.complete(Unit)
         advanceUntilIdle()
         assertEquals(original, viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.isBusy)
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         assertFalse(viewModel.uiState.value.hasChanges)
     }
 
@@ -881,7 +888,7 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 3))
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.isPickingPdfMerge)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
         viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://normal")))
         advanceUntilIdle()
         assertEquals(4, viewModel.uiState.value.workspace!!.pages.size)
@@ -897,10 +904,16 @@ class DocumentToolsViewModelTest {
             val existing = viewModel.uiState.value.workspace!!.pages
             val previewsBefore = repository.previews.size
             viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.MERGE))
-            assertEquals(DocumentTool.MERGE, viewModel.uiState.value.tool)
+            assertNull(viewModel.uiState.value.tool)
+            assertEquals(DocumentToolsEffect.NavigateMergeEditor(20L + insertionIndex), viewModel.effects.first())
 
-            viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex))
-            viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://first", "content://second")))
+            viewModel.onEvent(DocumentToolsEvent.MergeItems(
+                listOf(
+                    DocumentMergeItem("content://first", "Primeiro.pdf"),
+                    DocumentMergeItem("content://second", "Segundo.pdf"),
+                ),
+                insertionIndex,
+            ))
             advanceUntilIdle()
             val state = viewModel.uiState.value
             val pages = state.workspace!!.pages
@@ -913,8 +926,9 @@ class DocumentToolsViewModelTest {
             assertEquals("merged-0", state.selectedPageId)
             assertEquals(insertionIndex, state.selectedPageIndex)
             assertEquals(previewsBefore + 1, repository.previews.size)
-            assertEquals(DocumentTool.PAGES, state.tool)
+            assertNull(state.tool)
             assertTrue(state.hasChanges)
+            assertEquals(DocumentToolsEffect.MergeCompleted(20L + insertionIndex), viewModel.effects.first())
         }
         assertTrue(repository.saves.isEmpty())
     }
@@ -927,7 +941,7 @@ class DocumentToolsViewModelTest {
             viewModel.onEvent(DocumentToolsEvent.MergePdfs(index))
             viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://ignored")))
             advanceUntilIdle()
-            assertFalse(viewModel.uiState.value.isPickingPdfMerge)
+            assertFalse(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
             assertFalse(viewModel.uiState.value.isBusy)
             assertEquals(original, viewModel.uiState.value.workspace)
             assertEquals(DocumentToolsMessage.MERGE_ERROR, viewModel.uiState.value.message)
@@ -985,10 +999,10 @@ class DocumentToolsViewModelTest {
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("wrong"))
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.mergePasswordError)
+        assertTrue((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.incorrect == true)
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("first"))
         advanceUntilIdle()
-        assertEquals("content://two", viewModel.uiState.value.mergePasswordUri)
+        assertEquals("content://two", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
 
         passwords.lock()
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
@@ -996,7 +1010,7 @@ class DocumentToolsViewModelTest {
         passwords.unlock()
         viewModel.onEvent(DocumentToolsEvent.AuthenticationSucceeded)
         advanceUntilIdle()
-        assertEquals("content://one", viewModel.uiState.value.mergePasswordUri)
+        assertEquals("content://one", (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("first"))
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("second"))
@@ -1014,11 +1028,11 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 2))
-        assertFalse(viewModel.uiState.value.isPickingPdfMerge)
+        assertFalse(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
         passwords.unlock()
         viewModel.onEvent(DocumentToolsEvent.AuthenticationSucceeded)
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.isPickingPdfMerge)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
         viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://new")))
         advanceUntilIdle()
         assertEquals(listOf("page-1", "page-2", "merged-0", "page-3"), viewModel.uiState.value.workspace!!.pages.map { it.id })
@@ -1045,13 +1059,13 @@ class DocumentToolsViewModelTest {
             assertEquals(original!!.pages.take(insertionIndex) + inserted + original.pages.drop(insertionIndex), state.workspace.pages)
             assertEquals(inserted.first().id, state.selectedPageId)
             assertEquals(insertionIndex, state.selectedPageIndex)
-            assertEquals(DocumentTool.PAGES, state.tool)
+            assertNull(state.tool)
             assertEquals(DocumentToolsMessage.MERGED, state.message)
             assertEquals(previewsBefore + 1, repository.previews.size)
             assertTrue(state.canUndo)
             assertTrue(state.hasChanges)
             assertFalse(state.isBusy)
-            assertFalse(state.isPickingPdfMerge)
+            assertFalse(state.merge is DocumentMergeUiState.Picking)
             assertEquals(3, state.document!!.pageCount)
 
             viewModel.onEvent(DocumentToolsEvent.Undo)
@@ -1130,7 +1144,7 @@ class DocumentToolsViewModelTest {
                 listOf(document.copy(id = 8, pdfUri = "file:///ignored.pdf")), insertionIndex = 0,
             ),
         )
-        assertTrue(viewModel.uiState.value.isPickingPdfMerge)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
         viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://chosen")))
         advanceUntilIdle()
 
@@ -1152,7 +1166,7 @@ class DocumentToolsViewModelTest {
             ),
         )
         runCurrent()
-        assertTrue(viewModel.uiState.value.isMerging)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Merging)
         viewModel.onEvent(
             DocumentToolsEvent.MergeAppDocuments(
                 listOf(document.copy(id = 9, pdfUri = "file:///ignored.pdf")), insertionIndex = 0,
@@ -1184,7 +1198,7 @@ class DocumentToolsViewModelTest {
 
         assertEquals(listOf("old-key", "new-key"), passwords.requestedKeys)
         assertEquals(listOf(old.pdfUri, normal.pdfUri, newest.pdfUri), viewModel.uiState.value.workspace!!.pages.takeLast(3).map { it.sourceUri })
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         assertNull(viewModel.uiState.value.workspace!!.protectionKeyId)
         assertFalse(viewModel.uiState.value.workspace!!.isProtected)
         assertEquals(DocumentToolsMessage.MERGED, viewModel.uiState.value.message)
@@ -1201,8 +1215,8 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergeAppDocuments(listOf(source), insertionIndex = 1))
         advanceUntilIdle()
         assertEquals(0, repository.mergeCount)
-        assertEquals(source.pdfUri, viewModel.uiState.value.mergePasswordUri)
-        assertEquals(source.name, viewModel.uiState.value.mergePasswordName)
+        assertEquals(source.pdfUri, (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
+        assertEquals(source.name, (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.name)
         assertFalse(viewModel.uiState.value.recoveryRequired)
 
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("manual-secret"))
@@ -1210,8 +1224,8 @@ class DocumentToolsViewModelTest {
         assertEquals(1, repository.mergeCount)
         assertEquals(source.pdfUri, viewModel.uiState.value.workspace!!.pages[1].sourceUri)
         assertEquals(DocumentToolsMessage.MERGED, viewModel.uiState.value.message)
-        assertNull(viewModel.uiState.value.mergePasswordUri)
-        assertNull(viewModel.uiState.value.mergePasswordName)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.name)
         assertFalse(viewModel.uiState.value.isBusy)
     }
 
@@ -1225,8 +1239,8 @@ class DocumentToolsViewModelTest {
         viewModel.onEvent(DocumentToolsEvent.MergeAppDocuments(listOf(source), insertionIndex = 2))
         advanceUntilIdle()
         assertEquals(1, repository.mergeCount)
-        assertEquals(source.pdfUri, viewModel.uiState.value.mergePasswordUri)
-        assertEquals(source.name, viewModel.uiState.value.mergePasswordName)
+        assertEquals(source.pdfUri, (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
+        assertEquals(source.name, (viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.name)
 
         viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("manual-secret"))
         advanceUntilIdle()
@@ -1234,7 +1248,7 @@ class DocumentToolsViewModelTest {
         assertEquals(listOf("source-key"), passwords.requestedKeys)
         assertEquals(source.pdfUri, viewModel.uiState.value.workspace!!.pages[2].sourceUri)
         assertEquals(DocumentToolsMessage.MERGED, viewModel.uiState.value.message)
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         assertFalse(viewModel.uiState.value.isBusy)
     }
 
@@ -1250,8 +1264,8 @@ class DocumentToolsViewModelTest {
         assertEquals(DocumentToolsEffect.NeedUnlock, effect.await())
         assertEquals(0, repository.mergeCount)
         assertTrue(passwords.requestedKeys.isEmpty())
-        assertFalse(viewModel.uiState.value.isPickingPdfMerge)
-        assertTrue(viewModel.uiState.value.isAwaitingMergeUnlock)
+        assertFalse(viewModel.uiState.value.merge is DocumentMergeUiState.Picking)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.AwaitingUnlock)
         assertTrue(viewModel.uiState.value.isBusy)
         assertFalse(viewModel.uiState.value.canEdit)
         viewModel.onEvent(
@@ -1267,7 +1281,7 @@ class DocumentToolsViewModelTest {
         assertEquals(listOf("source-key"), passwords.requestedKeys)
         assertEquals(listOf("page-1", "merged-0", "page-2", "page-3"), viewModel.uiState.value.workspace!!.pages.map { it.id })
         assertEquals(1, viewModel.uiState.value.selectedPageIndex)
-        assertFalse(viewModel.uiState.value.isAwaitingMergeUnlock)
+        assertFalse(viewModel.uiState.value.merge is DocumentMergeUiState.AwaitingUnlock)
         assertFalse(viewModel.uiState.value.isBusy)
     }
 
@@ -1280,7 +1294,7 @@ class DocumentToolsViewModelTest {
         runCurrent()
 
         viewModel.onEvent(DocumentToolsEvent.AuthenticationDismissed)
-        assertFalse(viewModel.uiState.value.isAwaitingMergeUnlock)
+        assertFalse(viewModel.uiState.value.merge is DocumentMergeUiState.AwaitingUnlock)
         passwords.unlock()
         viewModel.onEvent(DocumentToolsEvent.AuthenticationSucceeded)
         advanceUntilIdle()
@@ -1303,7 +1317,7 @@ class DocumentToolsViewModelTest {
         repository.mergeIgnoresCancellation = true
         viewModel.onEvent(DocumentToolsEvent.MergeAppDocuments(listOf(source), insertionIndex = 1))
         runCurrent()
-        assertTrue(viewModel.uiState.value.isMerging)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Merging)
 
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
         gate.complete(Unit)
@@ -1329,7 +1343,7 @@ class DocumentToolsViewModelTest {
         repository.mergeGate = gate
         viewModel.onEvent(DocumentToolsEvent.MergeAppDocuments(listOf(source), insertionIndex = 2))
         runCurrent()
-        assertTrue(viewModel.uiState.value.isMerging)
+        assertTrue(viewModel.uiState.value.merge is DocumentMergeUiState.Merging)
 
         passwords.lock()
         viewModel.onEvent(DocumentToolsEvent.Backgrounded)
@@ -1350,7 +1364,7 @@ class DocumentToolsViewModelTest {
         assertEquals(listOf("page-1", "page-2", "merged-0", "page-3"), viewModel.uiState.value.workspace!!.pages.map { it.id })
         assertEquals("key-1", viewModel.uiState.value.workspace!!.protectionKeyId)
         assertEquals(DocumentToolsMessage.MERGED, viewModel.uiState.value.message)
-        assertNull(viewModel.uiState.value.mergePasswordUri)
+        assertNull((viewModel.uiState.value.merge as? DocumentMergeUiState.PasswordRequired)?.uri)
         assertFalse(viewModel.uiState.value.isLocked)
         assertFalse(viewModel.uiState.value.isBusy)
     }
@@ -1383,6 +1397,312 @@ class DocumentToolsViewModelTest {
         assertFalse(viewModel.uiState.value.canUndo)
     }
 
+    @Test fun mergePhasesAreExclusiveAndCancellationRejectsLatePasswordResult() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        repository.requiredMergePasswords = mapOf("content://protected" to "secret")
+        val firstAttempt = CompletableDeferred<Unit>()
+        repository.mergeGate = firstAttempt
+
+        viewModel.onEvent(DocumentToolsEvent.MergePdfs(insertionIndex = 1))
+        assertEquals(DocumentMergeUiState.Picking, viewModel.uiState.value.merge)
+        assertFalse(viewModel.uiState.value.canEdit)
+
+        viewModel.onEvent(DocumentToolsEvent.MergePdfsSelected(listOf("content://protected")))
+        runCurrent()
+        assertEquals(DocumentMergeUiState.Merging, viewModel.uiState.value.merge)
+        assertTrue(viewModel.uiState.value.isBusy)
+
+        firstAttempt.complete(Unit)
+        advanceUntilIdle()
+        assertEquals(
+            DocumentMergeUiState.PasswordRequired(uri = "content://protected", name = null),
+            viewModel.uiState.value.merge,
+        )
+        assertFalse(viewModel.uiState.value.canEdit)
+
+        val passwordAttempt = CompletableDeferred<Unit>()
+        repository.mergeGate = passwordAttempt
+        repository.mergeIgnoresCancellation = true
+        viewModel.onEvent(DocumentToolsEvent.SubmitMergePassword("secret"))
+        runCurrent()
+        assertEquals(DocumentMergeUiState.Merging, viewModel.uiState.value.merge)
+
+        viewModel.onEvent(DocumentToolsEvent.CancelPdfMerge)
+        assertEquals(DocumentMergeUiState.Idle, viewModel.uiState.value.merge)
+        assertTrue(viewModel.uiState.value.canEdit)
+        passwordAttempt.complete(Unit)
+        advanceUntilIdle()
+
+        assertEquals(DocumentMergeUiState.Idle, viewModel.uiState.value.merge)
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.hasChanges)
+        assertFalse(viewModel.uiState.value.canUndo)
+    }
+
+
+    @Test fun signatureToolOpensDedicatedScreenWithoutChangingTheWorkspace() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.OpenTool(DocumentTool.SIGNATURES))
+
+        assertEquals(DocumentToolsEffect.NavigateSignatureEditor(document.id), viewModel.effects.first())
+        assertNull(viewModel.uiState.value.tool)
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.hasChanges)
+    }
+
+    @Test fun signatureTransformCommitsInOneUndoStepWithoutSavingTheDocument() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Minha assinatura", "file:///signature.png", 3f))
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        val draft = viewModel.uiState.value.signatureDraft!!
+
+        viewModel.onEvent(DocumentToolsEvent.TransformSignature(.3f, .4f, .5f, 45f))
+        val transformed = viewModel.uiState.value.signatureDraft!!
+        assertEquals(45f, transformed.rotationDegrees, .0001f)
+        assertEquals(draft.height / draft.width, transformed.height / transformed.width, .0001f)
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.canUndo)
+
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        advanceUntilIdle()
+        assertEquals(transformed, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+        assertTrue(viewModel.uiState.value.canUndo)
+        assertTrue(repository.saves.isEmpty())
+
+        viewModel.onEvent(DocumentToolsEvent.EditSignature("page-1", transformed.id))
+        assertEquals(DocumentToolsEffect.NavigateSignatureEditor(document.id), viewModel.effects.first())
+        viewModel.onEvent(DocumentToolsEvent.CancelSignature)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.hasChanges)
+    }
+
+    @Test fun independentSignatureDimensionsSurviveMovesProportionalResizeAndCommit() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Minha assinatura", "file:///signature.png", 3f))
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+
+        viewModel.onEvent(DocumentToolsEvent.TransformSignature(
+            .2f, .3f, .55f, 25f, height = .22f, stretchToBounds = true,
+        ))
+        val resized = viewModel.uiState.value.signatureDraft!!
+        assertEquals(.55f, resized.width, .0001f)
+        assertEquals(.22f, resized.height, .0001f)
+        assertEquals(25f, resized.rotationDegrees, .0001f)
+        assertTrue(resized.stretchToBounds)
+        assertEquals(original, viewModel.uiState.value.workspace)
+
+        viewModel.onEvent(DocumentToolsEvent.MoveSignature(.1f, .4f))
+        viewModel.onEvent(DocumentToolsEvent.ResizeSignature(.6f))
+        val moved = viewModel.uiState.value.signatureDraft!!
+        assertEquals(resized.height / resized.width, moved.height / moved.width, .0001f)
+        assertTrue(moved.stretchToBounds)
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        advanceUntilIdle()
+        assertEquals(moved, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+    }
+
+    @Test fun tallAndWideSignaturesStartInsideThePageWithoutChangingTheirAspect() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        for (aspect in listOf(.2f, 12f)) {
+            signatures.values.value = listOf(SignatureModel("signature", "Assinatura", "file:///signature.png", aspect))
+            advanceUntilIdle()
+            viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+            advanceUntilIdle()
+            val draft = viewModel.uiState.value.signatureDraft!!
+            assertEquals(aspect, draft.width * 595f / (draft.height * 842f), .0001f)
+            assertEquals(.5f, draft.x + draft.width / 2f, .0001f)
+            assertTrue(draft.x >= 0f && draft.y >= 0f)
+            assertTrue(draft.x + draft.width <= 1f && draft.y + draft.height <= 1f)
+            viewModel.onEvent(DocumentToolsEvent.CancelSignature)
+            advanceUntilIdle()
+        }
+    }
+
+    @Test fun croppingCreatesOnlyADraftAndRetainsTheLibraryAndUndoSource() = runTest(dispatcher) {
+        val library = SignatureModel("signature", "Minha assinatura", "file:///signature.png", 3f)
+        signatures.values.value = listOf(library)
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace!!
+        val placed = original.pages.first().signatures.single()
+        viewModel.onEvent(DocumentToolsEvent.EditSignature("page-1", placed.id))
+        viewModel.onEvent(DocumentToolsEvent.TransformSignature(
+            placed.x, placed.y, placed.width, 30f, height = .25f, stretchToBounds = true,
+        ))
+        val beforeCrop = viewModel.uiState.value.signatureDraft!!
+        viewModel.onEvent(DocumentToolsEvent.CropSignature(.25f, 0f, .75f, 1f))
+        assertTrue(viewModel.uiState.value.isCopyingSignature)
+        advanceUntilIdle()
+
+        val cropped = viewModel.uiState.value.signatureDraft!!
+        assertEquals("file:///workspace/cropped-signature.png", cropped.imageUri)
+        assertEquals(30f, cropped.rotationDegrees, .0001f)
+        assertEquals(beforeCrop.height / beforeCrop.width * 2f, cropped.height / cropped.width, .0001f)
+        assertTrue(cropped.stretchToBounds)
+        assertEquals(PdfSignatureCrop(.25f, 0f, .75f, 1f), repository.lastCrop)
+        assertEquals(placed.imageUri, repository.lastCropImageUri)
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertEquals(listOf(library), signatures.values.value)
+
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        advanceUntilIdle()
+        assertEquals(cropped, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+    }
+
+    @Test fun croppingLegacySignatureUsesTheCroppedImageAspect() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Assinatura", "file:///signature.png", 3f))
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.CropSignature(.25f, 0f, .75f, 1f))
+        advanceUntilIdle()
+        val cropped = viewModel.uiState.value.signatureDraft!!
+        assertFalse(cropped.stretchToBounds)
+        assertEquals(repository.cropAspectRatio, cropped.width * 595f / (cropped.height * 842f), .0001f)
+    }
+
+    @Test fun identityCropDoesNotUndoIndependentSignatureDimensions() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Assinatura", "file:///signature.png", 3f))
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.TransformSignature(
+            .2f, .3f, .5f, 0f, height = .2f, stretchToBounds = true,
+        ))
+        val beforeCrop = viewModel.uiState.value.signatureDraft!!
+        viewModel.onEvent(DocumentToolsEvent.CropSignature(0f, 0f, 1f, 1f))
+        advanceUntilIdle()
+        val cropped = viewModel.uiState.value.signatureDraft!!
+        assertEquals(beforeCrop.width, cropped.width, .0001f)
+        assertEquals(beforeCrop.height, cropped.height, .0001f)
+        assertEquals(beforeCrop.x, cropped.x, .0001f)
+        assertEquals(beforeCrop.y, cropped.y, .0001f)
+        assertTrue(cropped.stretchToBounds)
+    }
+
+    @Test fun canceledCropCannotRestoreItsDraftAfterTheFileReturns() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Minha assinatura", "file:///signature.png", 3f))
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        val gate = CompletableDeferred<Unit>()
+        repository.cropGate = gate
+
+        viewModel.onEvent(DocumentToolsEvent.CropSignature(.25f, 0f, .75f, 1f))
+        runCurrent()
+        viewModel.onEvent(DocumentToolsEvent.CancelSignature)
+        gate.complete(Unit)
+        advanceUntilIdle()
+
+        assertNull(viewModel.uiState.value.signatureDraft)
+        assertFalse(viewModel.uiState.value.isCopyingSignature)
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.hasChanges)
+    }
+
+    @Test fun dedicatedToolsNavigateButRestoringTheScreenDoesNotNavigateAgain() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        for (tool in listOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES)) {
+            viewModel.onEvent(DocumentToolsEvent.OpenTool(tool))
+            assertEquals(DocumentToolsEffect.NavigateEditorTool(document.id, tool), viewModel.effects.first())
+            assertEquals(tool, viewModel.uiState.value.tool)
+            viewModel.onEvent(DocumentToolsEvent.DismissTool)
+
+            val unexpected = async { viewModel.effects.first() }
+            viewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(tool))
+            runCurrent()
+            assertEquals(tool, viewModel.uiState.value.tool)
+            assertFalse(unexpected.isCompleted)
+            unexpected.cancel()
+            viewModel.onEvent(DocumentToolsEvent.DismissTool)
+        }
+    }
+
+    @Test fun layoutApplyClosesOnlyForValidTargetsAndKeepsUndoInTheSharedWorkspace() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(DocumentTool.LAYOUT))
+        val completion = async { viewModel.effects.first() }
+        viewModel.onEvent(DocumentToolsEvent.ApplyLayout(
+            PageAlignment.LEFT, PageScaleMode.FIT, false, pageIds = emptySet(),
+        ))
+        runCurrent()
+        assertFalse(completion.isCompleted)
+        assertEquals(DocumentTool.LAYOUT, viewModel.uiState.value.tool)
+        assertEquals(original, viewModel.uiState.value.workspace)
+
+        // Confirmar o layout original também encerra a etapa sem criar histórico artificial.
+        viewModel.onEvent(DocumentToolsEvent.ApplyLayout(
+            PageAlignment.CENTER, PageScaleMode.FIT, false, pageIds = setOf("page-1"),
+        ))
+        assertEquals(DocumentToolsEffect.EditorToolApplied(document.id, DocumentTool.LAYOUT), completion.await())
+        assertNull(viewModel.uiState.value.tool)
+        assertFalse(viewModel.uiState.value.canUndo)
+
+        viewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(DocumentTool.LAYOUT))
+        viewModel.onEvent(DocumentToolsEvent.ApplyLayout(
+            PageAlignment.LEFT, PageScaleMode.FIT, false, pageIds = setOf("page-1"),
+        ))
+        assertEquals(DocumentToolsEffect.EditorToolApplied(document.id, DocumentTool.LAYOUT), viewModel.effects.first())
+        assertTrue(viewModel.uiState.value.canUndo)
+        assertTrue(viewModel.uiState.value.hasChanges)
+        assertTrue(repository.saves.isEmpty())
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+    }
+
+    @Test fun leavingThePageScreenPreservesImmediateEditsAndTheirUndoHistory() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace!!
+        viewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(DocumentTool.PAGES))
+        viewModel.onEvent(DocumentToolsEvent.ReorderPages(original.pages.map { it.id }.reversed()))
+        viewModel.onEvent(DocumentToolsEvent.SetNumbering(true))
+        viewModel.onEvent(DocumentToolsEvent.DismissTool)
+        advanceUntilIdle()
+
+        assertNull(viewModel.uiState.value.tool)
+        assertEquals(original.pages.map { it.id }.reversed(), viewModel.uiState.value.workspace!!.pages.map { it.id })
+        assertTrue(viewModel.uiState.value.workspace!!.showPageNumbers)
+        assertTrue(viewModel.uiState.value.hasChanges)
+        assertTrue(repository.saves.isEmpty())
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+    }
+
     private class FakePasswords : PasswordAccess {
         override val state = MutableStateFlow(PasswordVaultState(isConfigured = true))
         override val activeKeyId = "key-1"
@@ -1410,6 +1730,10 @@ class DocumentToolsViewModelTest {
     }
 
     private class FakePdfEditorRepository : PdfEditorRepository {
+        var cropGate: CompletableDeferred<Unit>? = null
+        var cropAspectRatio = 1.5f
+        var lastCrop: PdfSignatureCrop? = null
+        var lastCropImageUri: String? = null
         var openCount = 0
         var appendCount = 0
         var mergeCount = 0
@@ -1468,6 +1792,12 @@ class DocumentToolsViewModelTest {
         }
         override suspend fun copySignature(workspace: PdfWorkspace, imageUri: String): String =
             "file:///workspace/copied-signature.png"
+        override suspend fun cropSignature(workspace: PdfWorkspace, imageUri: String, crop: PdfSignatureCrop): PdfSignatureImage {
+            lastCropImageUri = imageUri
+            lastCrop = crop
+            cropGate?.await()
+            return PdfSignatureImage("file:///workspace/cropped-signature.png", cropAspectRatio)
+        }
         override suspend fun preview(workspace: PdfWorkspace, retainedPreviewUri: String?): String {
             if (failPreview) error("Unable to render preview")
             previews += workspace

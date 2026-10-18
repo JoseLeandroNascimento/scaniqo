@@ -88,6 +88,7 @@ import kotlinx.coroutines.isActive
 internal fun DocumentPagesSheetContent(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val workspace = state.workspace ?: return
     val pageIds = remember(workspace.pages) { workspace.pages.map { it.id } }
@@ -118,7 +119,7 @@ internal fun DocumentPagesSheetContent(
     LaunchedEffect(pageIds, state.canEdit) {
         if (!state.canEdit || drag?.initialOrder?.let { it != pageIds } == true) updateDrag(null)
     }
-    LaunchedEffect(drag?.pageId) {
+    LaunchedEffect(drag?.itemId) {
         if (drag == null) return@LaunchedEffect
         var previousFrame = withFrameNanos { it }
         while (isActive && drag != null) {
@@ -160,9 +161,8 @@ internal fun DocumentPagesSheetContent(
 
     // Os controles acompanham a rolagem: teclado e fontes grandes não deixam a lista sem espaço.
     Box(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(max = 660.dp)
+        modifier
+            .fillMaxSize()
             .clipToBounds()
             .pointerInput(workspace.workspaceId, state.canEdit, pageIds.size > 1) {
                 // O detector fica no pai estável: reciclar um item não interrompe o gesto.
@@ -287,7 +287,7 @@ internal fun DocumentPagesSheetContent(
                 }
             }
             itemsIndexed(order, key = { _, id -> id }) { index, id ->
-                val isDragged = drag?.pageId == id
+                val isDragged = drag?.itemId == id
                 PageOrderRow(
                     position = index + 1,
                     selected = id == state.selectedPageId,
@@ -327,12 +327,12 @@ internal fun DocumentPagesSheetContent(
         drag?.let { moving ->
             // A miniatura continua apontando para a ordem da prévia, não para o rascunho.
             PageOrderRow(
-                position = moving.order.indexOf(moving.pageId) + 1,
+                position = moving.order.indexOf(moving.itemId) + 1,
                 selected = true,
                 thumbnail = {
                     DocumentWorkspaceThumbnail(
                         state,
-                        moving.pageId,
+                        moving.itemId,
                         onEvent,
                         Modifier.fillMaxSize()
                     )

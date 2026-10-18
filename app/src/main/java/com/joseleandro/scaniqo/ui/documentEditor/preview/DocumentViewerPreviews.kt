@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.joseleandro.scaniqo.domain.model.DocumentModel
+import com.joseleandro.scaniqo.domain.model.PdfFilterThumbnails
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
@@ -15,6 +16,7 @@ import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerScreen
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documentEditor.model.documentFilterChoices
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentFilterThumbnailState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentPagePreviewState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentViewerUiState
@@ -137,8 +139,10 @@ private fun DocumentViewerPreviewContent(
                 hasChanges = hasChanges,
                 canUndo = hasChanges,
                 tool = DocumentTool.FILTERS.takeIf { filtersOpen },
-                filterThumbnailsPageId = "one",
-                filterThumbnails = documentFilterChoices.associateWith { "preview-$it" },
+                filterThumbnails = DocumentFilterThumbnailState(
+                    pageId = "one",
+                    result = PdfFilterThumbnails(documentFilterChoices.associateWith { "preview-$it" }),
+                ),
             ),
             onToolsEvent = {},
         )

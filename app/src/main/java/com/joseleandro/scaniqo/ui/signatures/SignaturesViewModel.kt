@@ -27,6 +27,7 @@ data class SignatureEditorState(
     val removeLightBackground: Boolean = false,
     val isSaving: Boolean = false,
     val error: String? = null,
+    val targetDocumentId: Long? = null,
 )
 
 data class SignaturesUiState(
@@ -40,10 +41,13 @@ data class SignaturesUiState(
     val isBusy: Boolean = false,
     val error: String? = null,
     val message: String? = null,
+    val pendingDocumentSelection: SignatureDocumentSelection? = null,
 )
 
 sealed interface SignaturesEvent {
     data object Create : SignaturesEvent
+    data class CreateForDocument(val documentId: Long) : SignaturesEvent
+    data class AcknowledgeDocumentSelection(val signatureId: String) : SignaturesEvent
     data object DismissEditor : SignaturesEvent
     data class NameChanged(val name: String) : SignaturesEvent
     data class InputChanged(val input: SignatureInput) : SignaturesEvent
@@ -77,6 +81,12 @@ class SignaturesViewModel(private val repository: SignatureRepository) : ViewMod
     fun onEvent(event: SignaturesEvent) {
         when (event) {
             SignaturesEvent.Create -> if (!state.value.isBusy && state.value.editor == null) state.update { it.copy(editor = SignatureEditorState()) }
+            is SignaturesEvent.CreateForDocument -> if (!state.value.isBusy && state.value.editor == null) {
+                state.update { it.copy(editor = SignatureEditorState(targetDocumentId = event.documentId)) }
+            }
+            is SignaturesEvent.AcknowledgeDocumentSelection -> state.update {
+                if (it.pendingDocumentSelection?.signatureId == event.signatureId) it.copy(pendingDocumentSelection = null) else it
+            }
             SignaturesEvent.DismissEditor -> edit { null }
             is SignaturesEvent.NameChanged -> edit { it.copy(name = event.name.take(80), error = null) }
             is SignaturesEvent.InputChanged -> edit { it.copy(input = event.input, error = null) }
@@ -136,7 +146,7 @@ class SignaturesViewModel(private val repository: SignatureRepository) : ViewMod
         state.update { it.copy(editor = editor.copy(isSaving = true, error = null)) }
         viewModelScope.launch {
             try {
-                when (editor.input) {
+                val created = when (editor.input) {
                     SignatureInput.DRAW -> repository.createDrawing(editor.name, editor.strokes)
                     SignatureInput.TYPE -> repository.createTyped(editor.name, editor.text, editor.font, editor.colorArgb)
                     SignatureInput.IMAGE -> repository.importImage(
@@ -144,7 +154,15 @@ class SignaturesViewModel(private val repository: SignatureRepository) : ViewMod
                         editor.removeLightBackground,
                     )
                 }
-                state.update { it.copy(editor = null, message = "Assinatura salva") }
+                state.update {
+                    it.copy(
+                        editor = null,
+                        message = "Assinatura salva",
+                        pendingDocumentSelection = editor.targetDocumentId?.let { documentId ->
+                            SignatureDocumentSelection(documentId, created.id)
+                        },
+                    )
+                }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) {
                 state.update { it.copy(editor = it.editor?.copy(error = error.message ?: "Não foi possível salvar a assinatura.")) }

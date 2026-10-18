@@ -3,30 +3,35 @@ package com.joseleandro.scaniqo.ui.documentEditor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joseleandro.scaniqo.core.security.PasswordAccess
-import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultRecoveryException
 import com.joseleandro.scaniqo.core.security.PasswordVersionMissingException
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
-import com.joseleandro.scaniqo.domain.model.PdfMergeLimitException
-import com.joseleandro.scaniqo.domain.model.PdfMergePasswordRequiredException
-import com.joseleandro.scaniqo.domain.model.PdfMergeSource
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPasswordRequiredException
+import com.joseleandro.scaniqo.domain.model.PdfSignatureCrop
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.domain.model.isValidBackgroundMask
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
+import com.joseleandro.scaniqo.ui.documentEditor.coordinator.DocumentMergeContext
+import com.joseleandro.scaniqo.ui.documentEditor.coordinator.DocumentMergeCoordinator
 import com.joseleandro.scaniqo.ui.documentEditor.effect.DocumentToolsEffect
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentToolsMessage
+import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentCaptureSourceController
+import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentLivePreviewController
 import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentFilterThumbnailController
 import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentPagePreviewController
 import com.joseleandro.scaniqo.ui.documentEditor.preview.DocumentToolPreviewController
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentMergeUiState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentPagePreviewState
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolPreviewState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.util.isValidSelection
+import com.joseleandro.scaniqo.ui.documentEditor.util.transformSignaturePlacement
 import com.joseleandro.scaniqo.ui.documentEditor.util.withoutImageEnhancements
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -62,36 +67,43 @@ class DocumentToolsViewModel(
         viewModelScope, ::renderInteractivePixels, ::renderPage,
     ) { preview ->
         mutableState.update { state ->
-            state.copy(
-                layoutPreview = preview.preview,
-                layoutLivePreview = preview.live,
-                isPreviewingLayout = preview.isRendering,
-                layoutPreviewError = preview.error,
-                layoutPreviewShowingOriginal = preview.showingOriginal,
-            )
+            state.copy(layoutPreview = preview.copy(pageId = state.layoutPreview.pageId))
         }
     }
     private val correctionsPreviews = DocumentToolPreviewController(
         viewModelScope, ::renderInteractivePixels, ::renderPage,
     ) { preview ->
         mutableState.update { state ->
-            state.copy(
-                correctionsPreview = preview.preview,
-                correctionsLivePreview = preview.live,
-                isPreviewingCorrections = preview.isRendering,
-                correctionsPreviewError = preview.error,
-                correctionsPreviewShowingOriginal = preview.showingOriginal,
-            )
+            state.copy(correctionsPreview = preview.copy(pageId = state.correctionsPreview.pageId))
         }
+    }
+    private var correctionCaptureOnly = false
+    private val correctionSources = DocumentCaptureSourceController(
+        scope = viewModelScope,
+        load = { workspace, pageId ->
+            ioMutex.withLock { repository.renderCaptureSource(workspace, pageId) }
+        },
+        onChanged = { source -> mutableState.update { it.copy(correctionSource = source) } },
+    )
+    private val captureCorrections = DocumentLivePreviewController(
+        viewModelScope,
+        { workspace, pageId, maxSide ->
+            ioMutex.withLock { repository.renderCaptureResult(workspace, pageId, maxSide) }
+        },
+    ) { preview ->
+        mutableState.update { it.copy(correctionCapturePreview = preview) }
     }
     private val filterPreviews = DocumentPagePreviewController(viewModelScope, ::renderPage) { previews ->
         mutableState.update { state ->
-            val preview = previews[state.filterPreviewPageId]
+            val preview = previews[state.filterPreview.pageId]
             state.copy(
-                filterPreview = preview?.preview,
-                isPreviewingFilter = preview?.isRendering == true,
-                filterPreviewError = preview?.error == true,
-                filterPreviewShowingOriginal = preview?.showingOriginal == true,
+                filterPreview = DocumentToolPreviewState(
+                    pageId = state.filterPreview.pageId,
+                    preview = preview?.preview,
+                    isRendering = preview?.isRendering == true,
+                    error = preview?.error == true,
+                    showingOriginal = preview?.showingOriginal == true,
+                ),
             )
         }
     }
@@ -101,15 +113,7 @@ class DocumentToolsViewModel(
             ioMutex.withLock { repository.filterThumbnails(workspace, pageId, rasterize, force) }
         },
         onChanged = { thumbnails ->
-            mutableState.update {
-                it.copy(
-                    filterThumbnails = thumbnails.result?.images.orEmpty(),
-                    filterThumbnailsPageId = thumbnails.pageId,
-                    isLoadingFilterThumbnails = thumbnails.isLoading,
-                    filterThumbnailsError = thumbnails.error,
-                    filterThumbnailsRequireRasterization = thumbnails.result?.requiresRasterization == true,
-                )
-            }
+            mutableState.update { it.copy(filterThumbnails = thumbnails) }
         },
     )
     private var baseline: PdfWorkspace? = null
@@ -120,15 +124,54 @@ class DocumentToolsViewModel(
     private var session = 0L
     private var pendingProtection: Boolean? = null
     private var pendingScans: List<String>? = null
-    private var mergeJob: Job? = null
-    private var mergeRevision = 0L
-    private var pendingMergePicker = false
-    private var pendingMergeInsertionIndex: Int? = null
-    // As senhas de arquivos externos vivem somente durante esta operação, nunca no UiState.
-    private var pendingMergeSources: List<PdfMergeSource>? = null
-    // Documentos do app guardam somente a versão da chave; a senha é obtida em cada tentativa.
-    private var pendingMergeProtectionKeys: Map<String, String> = emptyMap()
-    private var pendingMergeDocumentNames: Map<String, String> = emptyMap()
+    private val mergeCoordinator = DocumentMergeCoordinator(
+        scope = viewModelScope,
+        passwords = passwords,
+        ioMutex = ioMutex,
+        context = {
+            val state = uiState.value
+            DocumentMergeContext(
+                document = state.document,
+                workspace = state.workspace,
+                session = session,
+                isBusy = state.isBusy,
+                isLocked = state.isLocked,
+                hasSignatureDraft = state.signatureDraft != null,
+                requiresAuthentication = requiresAuthentication(),
+            )
+        },
+        append = repository::appendPdfs,
+        appendOrdered = repository::appendPdfsOrdered,
+        onStateChanged = { merge ->
+            mutableState.update {
+                if (merge == DocumentMergeUiState.Idle) it.copy(merge = merge)
+                else it.copy(merge = merge, tool = null, message = null)
+            }
+        },
+        onEffect = { effectChannel.trySend(it) },
+        onMessage = { message -> mutableState.update { it.copy(message = message) } },
+        onWorkStarted = {
+            pausePreviews()
+            mutableState.update { it.copy(isRendering = false) }
+        },
+        onMerged = { previous, updated, firstAddedPageId ->
+            rememberUndo(previous)
+            mutableState.update {
+                it.copy(
+                    workspace = updated,
+                    canUndo = true,
+                    isComparingOriginal = false,
+                    qualityReport = null,
+                    selectedPageId = firstAddedPageId,
+                    hasChanges = updated != baseline,
+                    message = DocumentToolsMessage.MERGED,
+                    tool = null,
+                )
+            }
+            effectChannel.trySend(DocumentToolsEffect.MergeCompleted(updated.documentId))
+        },
+        onWorkFinished = { renderPreview() },
+    )
 
     init {
         viewModelScope.launch {
@@ -146,8 +189,8 @@ class DocumentToolsViewModel(
             passwords.state.collect { state ->
                 if (!state.isUnlocked && requiresAuthentication() && !uiState.value.isLocked) {
                     lockWorkspace()
-                } else if (!state.isUnlocked && pendingMergeProtectionKeys.isNotEmpty() && uiState.value.isMerging) {
-                    clearMerge()
+                } else if (!state.isUnlocked && mergeCoordinator.hasProtectedSources && uiState.value.merge == DocumentMergeUiState.Merging) {
+                    mergeCoordinator.clear()
                     renderPreview()
                 }
             }
@@ -164,11 +207,7 @@ class DocumentToolsViewModel(
         val previous = current.workspace
         session++
         openJob?.cancel()
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
+        pausePreviews()
         baseline = null
         pagePreviews.clear()
         clearToolPreviews()
@@ -178,7 +217,7 @@ class DocumentToolsViewModel(
         sourceProtectionKeyId = document.protectionKeyId
         pendingProtection = null
         pendingScans = null
-        clearMerge()
+        mergeCoordinator.clear()
         mutableState.value = DocumentToolsUiState(
             document = document,
             signatures = current.signatures,
@@ -232,8 +271,33 @@ class DocumentToolsViewModel(
             DocumentToolsEvent.ClearLayoutPreview -> clearLayoutPreview()
             is DocumentToolsEvent.PreviewCorrections -> previewCorrections(event)
             DocumentToolsEvent.ClearCorrectionsPreview -> clearCorrectionsPreview()
+            is DocumentToolsEvent.LoadCorrectionSource -> {
+                val state = uiState.value
+                if (state.canEdit && state.tool == DocumentTool.CORRECTIONS) {
+                    state.workspace?.let { correctionSources.request(it, event.pageId, event.force) }
+                }
+            }
+            DocumentToolsEvent.ClearCorrectionSource -> correctionSources.clear()
+            is DocumentToolsEvent.ActivateEditorTool -> activateEditorTool(event.tool)
             is DocumentToolsEvent.OpenTool -> if (canChange() && uiState.value.signatureDraft == null) {
+                if (event.tool in setOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES)) {
+                    activateEditorTool(event.tool)
+                    uiState.value.document?.id?.let { effectChannel.trySend(DocumentToolsEffect.NavigateEditorTool(it, event.tool)) }
+                    return
+                }
                 clearToolPreviews()
+                if (event.tool == DocumentTool.MERGE) {
+                    mutableState.update { it.copy(tool = null) }
+                    uiState.value.document?.id?.let { effectChannel.trySend(DocumentToolsEffect.NavigateMergeEditor(it)) }
+                    renderPreview()
+                    return
+                }
+                if (event.tool == DocumentTool.SIGNATURES) {
+                    mutableState.update { it.copy(tool = null) }
+                    uiState.value.document?.id?.let { effectChannel.trySend(DocumentToolsEffect.NavigateSignatureEditor(it)) }
+                    renderPreview()
+                    return
+                }
                 val closeFilters = event.tool == DocumentTool.FILTERS && uiState.value.tool == DocumentTool.FILTERS
                 if (event.tool == DocumentTool.LAYOUT || event.tool == DocumentTool.CORRECTIONS) pagePreviews.pause()
                 mutableState.update { it.copy(tool = event.tool.takeUnless { closeFilters }) }
@@ -246,7 +310,7 @@ class DocumentToolsViewModel(
                 renderPreview()
             }
             is DocumentToolsEvent.SelectGlobalFilter -> selectGlobalFilter(event.imageFilter)
-            is DocumentToolsEvent.ApplyLayout -> applyLayout(event)
+            is DocumentToolsEvent.ApplyLayout -> applyEditorTool(DocumentTool.LAYOUT) { applyLayout(event) }
             is DocumentToolsEvent.ApplyFilter -> applyPageLayouts(event.allPages, event.pageIds) {
                 it.copy(
                     imageFilter = event.imageFilter,
@@ -254,10 +318,10 @@ class DocumentToolsViewModel(
                     rasterizeText = event.rasterizeText,
                 )
             }
-            is DocumentToolsEvent.ApplyCorrections -> applyCorrections(event)
+            is DocumentToolsEvent.ApplyCorrections -> applyEditorTool(DocumentTool.CORRECTIONS) { applyCorrections(event) }
             is DocumentToolsEvent.AutoImprove -> analyzeQuality(event.allPages)
             DocumentToolsEvent.AnalyzeQuality -> analyzeQuality()
-            is DocumentToolsEvent.AnalyzeCorrectionPage -> analyzeQuality(pageId = event.pageId)
+            is DocumentToolsEvent.AnalyzeCorrectionPage -> analyzeQuality(pageId = event.pageId, requestId = event.requestId)
             DocumentToolsEvent.CancelAnalysis -> cancelAnalysis()
             is DocumentToolsEvent.SetExportOptions -> if (canChange() && uiState.value.signatureDraft == null) {
                 change { it.copy(exportQuality = event.quality, ocrEnabled = event.ocrEnabled) }
@@ -294,24 +358,26 @@ class DocumentToolsViewModel(
             DocumentToolsEvent.ScanFailed -> mutableState.update {
                 it.copy(isScanning = false, message = DocumentToolsMessage.SCAN_ERROR)
             }
-            is DocumentToolsEvent.MergePdfs -> launchMergePicker(event.insertionIndex)
-            is DocumentToolsEvent.MergeAppDocuments -> mergeAppDocuments(event)
-            is DocumentToolsEvent.MergePdfsSelected -> acceptMergeSelection(event.uris)
-            DocumentToolsEvent.MergePdfsCancelled -> if (uiState.value.isPickingPdfMerge) clearMerge()
-            DocumentToolsEvent.MergePdfsFailed -> if (uiState.value.isPickingPdfMerge) {
-                clearMerge()
+            is DocumentToolsEvent.MergePdfs -> mergeCoordinator.launchPicker(event.insertionIndex)
+            is DocumentToolsEvent.MergeAppDocuments -> mergeCoordinator.mergeDocuments(event.documents, event.insertionIndex)
+            is DocumentToolsEvent.MergeItems -> mergeCoordinator.mergeItems(event.items, event.insertionIndex)
+            is DocumentToolsEvent.MergeOrderedItems -> mergeCoordinator.mergeOrderedItems(event.items)
+            is DocumentToolsEvent.MergePdfsSelected -> mergeCoordinator.acceptSelection(event.uris)
+            DocumentToolsEvent.MergePdfsCancelled -> if (uiState.value.merge == DocumentMergeUiState.Picking) mergeCoordinator.clear()
+            DocumentToolsEvent.MergePdfsFailed -> if (uiState.value.merge == DocumentMergeUiState.Picking) {
+                mergeCoordinator.clear()
                 mutableState.update { it.copy(message = DocumentToolsMessage.MERGE_ERROR) }
             }
             DocumentToolsEvent.CancelPdfMerge, DocumentToolsEvent.CancelMergePassword -> {
-                clearMerge()
+                mergeCoordinator.clear()
                 if (!uiState.value.isLocked) renderPreview()
             }
-            is DocumentToolsEvent.SubmitMergePassword -> submitMergePassword(event.password)
+            is DocumentToolsEvent.SubmitMergePassword -> mergeCoordinator.submitPassword(event.password)
             is DocumentToolsEvent.SetProtection -> setProtection(event.enabled)
             DocumentToolsEvent.Unlock -> effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
             DocumentToolsEvent.AuthenticationSucceeded -> unlock()
-            DocumentToolsEvent.AuthenticationDismissed -> if (uiState.value.isAwaitingMergeUnlock) {
-                clearMerge()
+            DocumentToolsEvent.AuthenticationDismissed -> if (uiState.value.merge == DocumentMergeUiState.AwaitingUnlock) {
+                mergeCoordinator.clear()
                 if (!uiState.value.isLocked) renderPreview()
             }
             DocumentToolsEvent.RequestPasswordRecovery -> effectChannel.trySend(DocumentToolsEffect.NeedDocumentPassword)
@@ -337,19 +403,19 @@ class DocumentToolsViewModel(
             is DocumentToolsEvent.InsertSignature -> insertSignature(event.signatureId)
             is DocumentToolsEvent.EditSignature -> editSignature(event.pageId, event.placementId)
             is DocumentToolsEvent.MoveSignature -> updateSignature { draft ->
-                draft.copy(
-                    x = (event.x.takeIf { it.isFinite() } ?: draft.x).coerceIn(0f, 1f - draft.width),
-                    y = (event.y.takeIf { it.isFinite() } ?: draft.y).coerceIn(0f, 1f - draft.height),
-                )
+                transformSignaturePlacement(draft, x = event.x, y = event.y)
             }
             is DocumentToolsEvent.ResizeSignature -> updateSignature { draft ->
-                val ratio = draft.height / draft.width
-                val maxWidth = minOf(0.85f, 0.85f / ratio)
-                val minWidth = minOf(0.04f, maxWidth / 2f)
-                val width = (event.width.takeIf { it.isFinite() } ?: draft.width).coerceIn(minWidth, maxWidth)
-                val height = width * ratio
-                draft.copy(width = width, height = height, x = draft.x.coerceAtMost(1f - width), y = draft.y.coerceAtMost(1f - height))
+                transformSignaturePlacement(draft, width = event.width)
             }
+            is DocumentToolsEvent.TransformSignature -> updateSignature { draft ->
+                transformSignaturePlacement(
+                    draft, event.x, event.y, event.width, event.rotationDegrees,
+                    height = event.height,
+                    stretchToBounds = event.stretchToBounds ?: draft.stretchToBounds,
+                )
+            }
+            is DocumentToolsEvent.CropSignature -> cropSignature(event)
             DocumentToolsEvent.ConfirmSignature -> commitSignature()
             DocumentToolsEvent.CancelSignature -> {
                 mutableState.update { it.copy(signatureDraft = null, signaturePageId = null) }
@@ -371,10 +437,9 @@ class DocumentToolsViewModel(
             DocumentToolsEvent.CancelDiscard -> mutableState.update { it.copy(confirmDiscard = false) }
             DocumentToolsEvent.Backgrounded -> when {
                 requiresAuthentication() -> lockWorkspace()
-                uiState.value.mergePasswordUri != null || pendingMergeProtectionKeys.isNotEmpty() ||
-                    pendingMergeSources?.any { it.password != null } == true -> {
+                mergeCoordinator.hasSensitiveData -> {
                     // Sem cofre para retomar com autenticação, descarte toda credencial da mesclagem.
-                    clearMerge()
+                    mergeCoordinator.clear()
                     renderPreview()
                 }
             }
@@ -443,7 +508,8 @@ class DocumentToolsViewModel(
         change { workspace ->
             workspace.copy(pages = workspace.pages.map { page ->
                 val layout = page.layout
-                val hasCorrections = layout.straightenDegrees != 0f || layout.perspective != null || layout.curvature != 0f
+                val hasCorrections = layout.straightenDegrees != 0f || layout.perspective != null ||
+                layout.curvature != 0f || layout.backgroundMask != null
                 page.copy(layout = layout.copy(
                     imageFilter = filter,
                     filterIntensity = 1f,
@@ -456,9 +522,26 @@ class DocumentToolsViewModel(
         renderPreview()
     }
 
-    private fun applyLayout(event: DocumentToolsEvent.ApplyLayout) {
+    private fun activateEditorTool(tool: DocumentTool) {
+        if (tool !in setOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES)) return
+        if (!canChange() || uiState.value.signatureDraft != null) return
+        if (uiState.value.tool == tool) return
+        clearToolPreviews()
+        if (tool != DocumentTool.PAGES) pagePreviews.pause()
+        mutableState.update { it.copy(tool = tool) }
+        renderPreview()
+    }
+
+    private fun applyEditorTool(tool: DocumentTool, apply: () -> Boolean) {
+        val state = uiState.value
+        if (apply() && state.tool == tool) {
+            state.document?.id?.let { effectChannel.trySend(DocumentToolsEffect.EditorToolApplied(it, tool)) }
+        }
+    }
+
+    private fun applyLayout(event: DocumentToolsEvent.ApplyLayout): Boolean {
         // Ajustes geométricos preservam o filtro próprio de cada página, inclusive ao redefinir.
-        applyPageLayouts(event.allPages, event.pageIds) { current ->
+        return applyPageLayouts(event.allPages, event.pageIds) { current ->
             current.copy(
                 alignment = event.alignment,
                 scaleMode = event.scaleMode,
@@ -469,13 +552,17 @@ class DocumentToolsViewModel(
         }
     }
 
-    private fun applyCorrections(event: DocumentToolsEvent.ApplyCorrections) {
-        if (event.perspective?.isValidSelection() == false) return
-        applyPageLayouts(event.allPages, event.pageIds) { current ->
+    private fun applyCorrections(event: DocumentToolsEvent.ApplyCorrections): Boolean {
+        if (event.crop?.isValid() == false || event.perspective?.isValidSelection() == false ||
+            event.backgroundMask?.isValidBackgroundMask() == false
+        ) return false
+        return applyPageLayouts(event.allPages, event.pageIds) { current ->
             current.copy(
                 straightenDegrees = (event.straightenDegrees.takeIf(Float::isFinite) ?: current.straightenDegrees)
                     .coerceIn(-15f, 15f),
-                perspective = event.perspective,
+                perspective = event.perspective.takeIf { event.crop == null },
+            crop = event.crop?.takeUnless { it.isIdentity() },
+            backgroundMask = event.backgroundMask,
                 curvature = (event.curvature.takeIf(Float::isFinite) ?: current.curvature).coerceIn(-1f, 1f),
                 // Corrigir a geometria não pode desligar a conversão exigida pelo filtro já aplicado.
                 rasterizeText = event.rasterizeText ||
@@ -485,18 +572,16 @@ class DocumentToolsViewModel(
     }
 
     /** A análise é cancelável e usa as fontes privadas; nenhum alerta apaga páginas sozinho. */
-    private fun analyzeQuality(improveAllPages: Boolean? = null, pageId: String? = null) {
+    private fun analyzeQuality(improveAllPages: Boolean? = null, pageId: String? = null, requestId: String? = null) {
         val state = uiState.value
         val workspace = state.workspace ?: return
         if (!state.canEdit || state.signatureDraft != null) return
         val operationSession = session
         val revision = ++analysisRevision
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
-        mutableState.update { it.copy(isAnalyzing = true, analysisError = false, isRendering = false) }
+        pausePreviews()
+        mutableState.update {
+            it.copy(isAnalyzing = true, analysisError = false, isRendering = false, correctionAnalysisRequestId = null)
+        }
         analysisJob = viewModelScope.launch {
             try {
                 // Melhorar uma folha não precisa analisar todas as outras capturas.
@@ -507,7 +592,9 @@ class DocumentToolsViewModel(
                 require(analysisWorkspace.pages.isNotEmpty())
                 val report = ioMutex.withLock { repository.analyze(analysisWorkspace) }
                 if (revision != analysisRevision || operationSession != session || uiState.value.isLocked) return@launch
-                mutableState.update { it.copy(qualityReport = report, isAnalyzing = false) }
+                mutableState.update {
+                    it.copy(qualityReport = report, isAnalyzing = false, correctionAnalysisRequestId = requestId)
+                }
                 if (improveAllPages != null) {
                     val pages = report.pages.associateBy { it.pageId }
                     change { current ->
@@ -529,7 +616,7 @@ class DocumentToolsViewModel(
                 throw cancelled
             } catch (_: Exception) {
                 if (revision == analysisRevision && operationSession == session) {
-                    mutableState.update { it.copy(analysisError = true) }
+                    mutableState.update { it.copy(analysisError = true, correctionAnalysisRequestId = requestId) }
                 }
             } finally {
                 if (revision == analysisRevision && operationSession == session) {
@@ -545,7 +632,7 @@ class DocumentToolsViewModel(
         analysisRevision++
         analysisJob?.cancel()
         analysisJob = null
-        mutableState.update { it.copy(isAnalyzing = false) }
+        mutableState.update { it.copy(isAnalyzing = false, correctionAnalysisRequestId = null) }
         if (resumePreview && !uiState.value.isLocked) renderPreview()
     }
 
@@ -572,22 +659,26 @@ class DocumentToolsViewModel(
         renderPreview()
     }
 
-    private fun applyPageLayouts(allPages: Boolean, pageIds: Set<String>? = null, transform: (PdfPageLayout) -> PdfPageLayout) {
+    private fun applyPageLayouts(allPages: Boolean, pageIds: Set<String>? = null, transform: (PdfPageLayout) -> PdfPageLayout): Boolean {
         val state = uiState.value
-        val workspace = state.workspace ?: return
-        if (!state.canEdit || state.signatureDraft != null) return
-        if (pageIds != null && pageIds.none { id -> workspace.pages.any { it.id == id } }) return
+        val workspace = state.workspace ?: return false
+        if (!state.canEdit || state.signatureDraft != null) return false
+        val targets = workspace.pages.filter {
+            pageIds?.contains(it.id) ?: (allPages || it.id == state.selectedPageId)
+        }.mapTo(mutableSetOf()) { it.id }
+        if (targets.isEmpty()) return false
         clearToolPreviews()
         // A mesma receita alimenta a prévia e o salvamento, sem transformar o PDF original.
         change { value ->
             value.copy(pages = value.pages.map { page ->
-                if (pageIds?.contains(page.id) ?: (allPages || page.id == state.selectedPageId)) {
+                if (page.id in targets) {
                     page.copy(layout = transform(page.layout))
                 } else page
             })
         }
         mutableState.update { it.copy(tool = null) }
         renderPreview()
+        return true
     }
 
     private fun change(transform: (PdfWorkspace) -> PdfWorkspace) {
@@ -665,11 +756,7 @@ class DocumentToolsViewModel(
             mutableState.update { it.copy(message = DocumentToolsMessage.APPEND_ERROR) }
             return
         }
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
+        pausePreviews()
         mutableState.update { it.copy(isAppending = true, message = null) }
         val operationSession = session
         viewModelScope.launch {
@@ -691,223 +778,6 @@ class DocumentToolsViewModel(
                     if (!uiState.value.isLocked) renderPreview()
                 }
             }
-        }
-    }
-
-    private fun mergeAppDocuments(event: DocumentToolsEvent.MergeAppDocuments) {
-        val state = uiState.value
-        val workspace = state.workspace ?: return
-        if (state.isBusy || state.signatureDraft != null) return
-        if (event.insertionIndex !in 0..workspace.pages.size) {
-            clearMerge()
-            mutableState.update { it.copy(message = DocumentToolsMessage.MERGE_ERROR) }
-            return
-        }
-        val documents = event.documents
-            .filter { it.id != state.document?.id && it.pdfUri != state.document?.pdfUri && it.pdfUri.isNotBlank() }
-            .distinctBy { it.id }
-            .distinctBy { it.pdfUri }
-        if (documents.isEmpty()) return
-        clearMerge()
-        pendingMergeInsertionIndex = event.insertionIndex
-        pendingMergeSources = documents.map { PdfMergeSource(it.pdfUri) }
-        pendingMergeProtectionKeys = documents.mapNotNull { document ->
-            document.protectionKeyId?.let { document.pdfUri to it }
-        }.toMap()
-        pendingMergeDocumentNames = documents.associate { it.pdfUri to it.name }
-        if (state.isLocked || (requiresAuthentication() && !passwords.state.value.isUnlocked) ||
-            mergeSourcesNeedUnlock()
-        ) requestMergeUnlock() else appendPdfs()
-    }
-
-    private fun mergeSourcesNeedUnlock(): Boolean = passwords.state.value.let {
-        pendingMergeProtectionKeys.isNotEmpty() && it.isConfigured && !it.recoveryRequired && !it.isUnlocked
-    }
-
-    private fun requestMergeUnlock() {
-        mutableState.update { it.copy(isAwaitingMergeUnlock = true, tool = null, message = null) }
-        effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
-    }
-
-    private fun launchMergePicker(insertionIndex: Int) {
-        val state = uiState.value
-        val workspace = state.workspace ?: return
-        if (state.isBusy || state.signatureDraft != null) return
-        if (insertionIndex !in 0..workspace.pages.size) {
-            clearMerge()
-            mutableState.update { it.copy(message = DocumentToolsMessage.MERGE_ERROR) }
-            return
-        }
-        pendingMergeProtectionKeys = emptyMap()
-        pendingMergeDocumentNames = emptyMap()
-        pendingMergeInsertionIndex = insertionIndex
-        if (state.isLocked || (requiresAuthentication() && !passwords.state.value.isUnlocked)) {
-            pendingMergePicker = true
-            effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
-            return
-        }
-        pendingMergePicker = false
-        mutableState.update { it.copy(isPickingPdfMerge = true, tool = null, message = null) }
-        effectChannel.trySend(DocumentToolsEffect.LaunchPdfMergePicker)
-    }
-
-    private fun acceptMergeSelection(uris: List<String>) {
-        if (!uiState.value.isPickingPdfMerge) return
-        val workspace = uiState.value.workspace
-        val insertionIndex = pendingMergeInsertionIndex
-        if (workspace == null || insertionIndex == null || insertionIndex !in 0..workspace.pages.size) {
-            clearMerge()
-            mutableState.update { it.copy(message = DocumentToolsMessage.MERGE_ERROR) }
-            return
-        }
-        mutableState.update { it.copy(isPickingPdfMerge = false) }
-        val sources = uris.filter { it.isNotBlank() }.distinct().map { PdfMergeSource(it) }
-        if (sources.isEmpty()) {
-            clearMerge()
-            return
-        }
-        pendingMergeSources = sources
-        if (uiState.value.isLocked || (requiresAuthentication() && !passwords.state.value.isUnlocked)) {
-            effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
-        } else appendPdfs()
-    }
-
-    private fun submitMergePassword(password: String) {
-        val state = uiState.value
-        val uri = state.mergePasswordUri ?: return
-        if (state.isLocked || state.isMerging) return
-        pendingMergeSources = pendingMergeSources?.map {
-            if (it.uri == uri) it.copy(password = password) else it
-        } ?: return
-        mutableState.update { it.copy(mergePasswordUri = null, mergePasswordName = null, mergePasswordError = false) }
-        appendPdfs()
-    }
-
-    private fun appendPdfs() {
-        val state = uiState.value
-        val workspace = state.workspace ?: return
-        val sources = pendingMergeSources ?: return
-        val insertionIndex = pendingMergeInsertionIndex
-        if (!state.canEdit || state.signatureDraft != null) return
-        if (insertionIndex == null || insertionIndex !in 0..workspace.pages.size) {
-            clearMerge()
-            mutableState.update { it.copy(message = DocumentToolsMessage.MERGE_ERROR) }
-            return
-        }
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
-        val operationSession = session
-        val operationRevision = ++mergeRevision
-        val protectionKeys = pendingMergeProtectionKeys
-        mutableState.update { it.copy(isMerging = true, isRendering = false, tool = null, message = null) }
-        mergeJob = viewModelScope.launch {
-            val attemptedPasswords = sources.filter { it.password != null }.mapTo(mutableSetOf()) { it.uri }
-            try {
-                val appended = ioMutex.withLock {
-                    // Essas cópias com senha não escapam da tentativa nem são publicadas no UiState.
-                    val resolvedSources = sources.map { source ->
-                        val key = protectionKeys[source.uri]
-                        if (key == null || source.password != null) source else {
-                            if (!passwords.state.value.isConfigured || passwords.state.value.recoveryRequired) {
-                                throw PdfMergePasswordRequiredException(source.uri)
-                            }
-                            try {
-                                passwords.withPassword(key) { password ->
-                                    attemptedPasswords += source.uri
-                                    source.copy(password = password)
-                                }
-                            } catch (_: PasswordVersionMissingException) {
-                                throw PdfMergePasswordRequiredException(source.uri)
-                            } catch (_: PasswordVaultRecoveryException) {
-                                throw PdfMergePasswordRequiredException(source.uri)
-                            }
-                        }
-                    }
-                    repository.appendPdfs(workspace, resolvedSources)
-                }
-                if (operationSession != session || operationRevision != mergeRevision) return@launch
-                check(appended.pages.take(workspace.pages.size) == workspace.pages)
-                val addedPages = appended.pages.drop(workspace.pages.size)
-                check(addedPages.isNotEmpty())
-                // A posição é aplicada apenas à receita, preservando a ordem interna dos dois blocos.
-                val updated = appended.copy(
-                    pages = workspace.pages.take(insertionIndex) + addedPages + workspace.pages.drop(insertionIndex),
-                )
-                pendingMergeSources = null
-                pendingMergeInsertionIndex = null
-                pendingMergeProtectionKeys = emptyMap()
-                pendingMergeDocumentNames = emptyMap()
-                rememberUndo(workspace)
-                mutableState.update {
-                    it.copy(
-                        workspace = updated,
-                        canUndo = true,
-                        isComparingOriginal = false,
-                        qualityReport = null,
-                        selectedPageId = addedPages.first().id,
-                        hasChanges = updated != baseline,
-                        message = DocumentToolsMessage.MERGED,
-                        tool = DocumentTool.PAGES,
-                    )
-                }
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (required: PdfMergePasswordRequiredException) {
-                if (operationSession == session && operationRevision == mergeRevision) {
-                    // A nova tentativa reaproveita apenas senhas já confirmadas de outros arquivos.
-                    val incorrect = required.uri in attemptedPasswords
-                    // A chave antiga pode ter sido perdida ou a senha do PDF pode ser diferente.
-                    pendingMergeProtectionKeys = pendingMergeProtectionKeys - required.uri
-                    pendingMergeSources = sources.map {
-                        if (it.uri == required.uri) it.copy(password = null) else it
-                    }
-                    mutableState.update {
-                        it.copy(
-                            mergePasswordUri = required.uri,
-                            mergePasswordName = pendingMergeDocumentNames[required.uri],
-                            mergePasswordError = incorrect,
-                        )
-                    }
-                }
-            } catch (_: PasswordVaultLockedException) {
-                if (operationSession == session && operationRevision == mergeRevision) requestMergeUnlock()
-            } catch (failure: Exception) {
-                if (operationSession == session && operationRevision == mergeRevision) {
-                    pendingMergeSources = null
-                    pendingMergeInsertionIndex = null
-                    pendingMergeProtectionKeys = emptyMap()
-                    pendingMergeDocumentNames = emptyMap()
-                    mutableState.update {
-                        it.copy(message = if (failure is PdfMergeLimitException) DocumentToolsMessage.MERGE_LIMIT_ERROR else DocumentToolsMessage.MERGE_ERROR)
-                    }
-                }
-            } finally {
-                if (operationSession == session && operationRevision == mergeRevision) {
-                    mergeJob = null
-                    mutableState.update { it.copy(isMerging = false) }
-                    if (!uiState.value.isLocked) renderPreview()
-                }
-            }
-        }
-    }
-
-    private fun clearMerge() {
-        mergeRevision++
-        mergeJob?.cancel()
-        mergeJob = null
-        pendingMergePicker = false
-        pendingMergeSources = null
-        pendingMergeInsertionIndex = null
-        pendingMergeProtectionKeys = emptyMap()
-        pendingMergeDocumentNames = emptyMap()
-        mutableState.update {
-            it.copy(
-                isMerging = false, isPickingPdfMerge = false, isAwaitingMergeUnlock = false,
-                mergePasswordUri = null, mergePasswordName = null, mergePasswordError = false,
-            )
         }
     }
 
@@ -933,7 +803,7 @@ class DocumentToolsViewModel(
 
     private fun unlock() {
         if (!passwords.state.value.isUnlocked) return
-        mutableState.update { it.copy(isLocked = false, loadError = false, isAwaitingMergeUnlock = false) }
+        mutableState.update { it.copy(isLocked = false, loadError = false) }
         if (uiState.value.workspace == null) {
             uiState.value.document?.let(::open)
         } else {
@@ -941,8 +811,7 @@ class DocumentToolsViewModel(
             val scans = pendingScans
             pendingScans = null
             when {
-                pendingMergePicker -> pendingMergeInsertionIndex?.let(::launchMergePicker)
-                pendingMergeSources != null -> appendPdfs()
+                mergeCoordinator.resumeAfterUnlock() -> Unit
                 scans != null -> appendScans(scans)
                 else -> renderPreview()
             }
@@ -958,21 +827,14 @@ class DocumentToolsViewModel(
         clearToolPreviews()
         visiblePages.clear()
         // O retorno do seletor pode bloquear o cofre; mantenha as URIs, mas descarte senhas externas.
-        mergeRevision++
-        mergeJob?.cancel()
-        mergeJob = null
-        pendingMergeSources = pendingMergeSources?.map { it.copy(password = null) }
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
+        mergeCoordinator.onWorkspaceLocked()
+        pausePreviews()
         mutableState.update {
             it.copy(
                 isLocked = true, previewUri = null, isRendering = false, tool = null,
                 qualityReport = null, isComparingOriginal = false, analysisError = false,
                 displayedComparisonPageId = null,
-                pendingDeletePageId = null, isMerging = false, mergePasswordUri = null, mergePasswordName = null, mergePasswordError = false,
+                pendingDeletePageId = null,
             )
         }
         val workspace = uiState.value.workspace ?: return
@@ -988,14 +850,10 @@ class DocumentToolsViewModel(
         val page = uiState.value.selectedPageId ?: return
         if (!signature.aspectRatio.isFinite() || signature.aspectRatio <= 0f) return
         val ratio = (595f / 842f) / signature.aspectRatio
-        val width = minOf(0.3f, 0.6f / ratio)
+        val width = minOf(0.52f, 0.35f / ratio)
         val height = width * ratio
         val operationSession = session
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
+        pausePreviews()
         mutableState.update { it.copy(isCopyingSignature = true, message = null) }
         viewModelScope.launch {
             try {
@@ -1006,7 +864,7 @@ class DocumentToolsViewModel(
                     it.copy(
                         signatureDraft = PdfSignaturePlacement(
                             UUID.randomUUID().toString(), imageUri,
-                            0.35f, 0.7f.coerceAtMost(1f - height), width, height,
+                            (1f - width) / 2f, 0.62f - height / 2f, width, height,
                         ),
                         signaturePageId = page,
                         tool = null,
@@ -1034,6 +892,48 @@ class DocumentToolsViewModel(
             it.copy(signatureDraft = placement, signaturePageId = pageId, selectedPageId = pageId, tool = null)
         }
         renderPreview()
+        uiState.value.document?.id?.let { effectChannel.trySend(DocumentToolsEffect.NavigateSignatureEditor(it)) }
+    }
+
+    private fun cropSignature(event: DocumentToolsEvent.CropSignature) {
+        if (!canChange()) return
+        val state = uiState.value
+        val workspace = state.workspace ?: return
+        val draft = state.signatureDraft ?: return
+        val crop = PdfSignatureCrop(event.left, event.top, event.right, event.bottom)
+        if (!crop.isValid) return
+        val operationSession = session
+        pausePreviews()
+        mutableState.update { it.copy(isCopyingSignature = true, message = null) }
+        viewModelScope.launch {
+            try {
+                val image = ioMutex.withLock { repository.cropSignature(workspace, draft.imageUri, crop) }
+                if (operationSession != session || uiState.value.signatureDraft != draft) return@launch
+                require(image.aspectRatio.isFinite() && image.aspectRatio > 0f)
+                val height = if (draft.stretchToBounds) {
+                    draft.height * (crop.bottom - crop.top) / (crop.right - crop.left)
+                } else {
+                    draft.width * (595f / 842f) / image.aspectRatio
+                }
+                val cropped = transformSignaturePlacement(
+                    // Mantém a proporção escolhida pelo usuário, inclusive após esticar a assinatura.
+                    draft.copy(imageUri = image.imageUri, height = height),
+                    y = draft.y + (draft.height - height) / 2f,
+                )
+                mutableState.update { it.copy(signatureDraft = cropped) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (operationSession == session && uiState.value.signatureDraft == draft) {
+                    mutableState.update { it.copy(message = DocumentToolsMessage.SIGNATURES_ERROR) }
+                }
+            } finally {
+                if (operationSession == session) {
+                    mutableState.update { it.copy(isCopyingSignature = false) }
+                    if (!uiState.value.isLocked) renderPreview()
+                }
+            }
+        }
     }
 
     private fun updateSignature(transform: (PdfSignaturePlacement) -> PdfSignaturePlacement) {
@@ -1089,9 +989,9 @@ class DocumentToolsViewModel(
         ioMutex.withLock {
             val state = uiState.value
             val retained = state.pagePreviews.values.mapNotNull { it.preview?.uri }.toMutableSet()
-            state.layoutPreview?.uri?.let(retained::add)
-            state.correctionsPreview?.uri?.let(retained::add)
-            state.filterPreview?.uri?.let(retained::add)
+            state.layoutPreview.preview?.uri?.let(retained::add)
+            state.correctionsPreview.preview?.uri?.let(retained::add)
+            state.filterPreview.preview?.uri?.let(retained::add)
             repository.renderPagePreview(workspace, pageId, retainedPreviewUris = retained)
         }
 
@@ -1121,8 +1021,8 @@ class DocumentToolsViewModel(
             contentScale = (event.layout.contentScale.takeIf(Float::isFinite) ?: page.layout.contentScale)
                 .coerceIn(0.25f, 2f),
         )
-        if (state.layoutPreviewPageId != event.pageId) clearLayoutPreview()
-        mutableState.update { it.copy(layoutPreviewPageId = event.pageId) }
+        if (state.layoutPreview.pageId != event.pageId) clearLayoutPreview()
+        mutableState.update { it.copy(layoutPreview = it.layoutPreview.copy(pageId = event.pageId)) }
         val snapshot = workspace.copy(pages = workspace.pages.map {
             if (it.id == page.id) it.copy(layout = layout) else it
         })
@@ -1134,20 +1034,28 @@ class DocumentToolsViewModel(
         val workspace = state.workspace ?: return
         if (!state.canEdit || state.tool != DocumentTool.CORRECTIONS) return
         val page = workspace.pages.firstOrNull { it.id == event.pageId } ?: return
-        if (event.layout.perspective?.isValidSelection() == false) return
+        if (event.layout.crop?.isValid() == false || event.layout.perspective?.isValidSelection() == false ||
+            event.layout.backgroundMask?.isValidBackgroundMask() == false
+        ) return
         val layout = if (event.showOriginal) page.layout else page.layout.copy(
             straightenDegrees = (event.layout.straightenDegrees.takeIf(Float::isFinite) ?: 0f).coerceIn(-15f, 15f),
-            perspective = event.layout.perspective,
+            perspective = event.layout.perspective.takeIf { event.layout.crop == null },
+            crop = event.layout.crop?.takeUnless { it.isIdentity() },
+            backgroundMask = event.layout.backgroundMask,
             curvature = (event.layout.curvature.takeIf(Float::isFinite) ?: 0f).coerceIn(-1f, 1f),
             rasterizeText = event.layout.rasterizeText ||
                 (page.layout.rasterizeText && page.layout.imageFilter != PdfImageFilter.ORIGINAL && page.layout.filterIntensity > 0f),
         )
-        if (state.correctionsPreviewPageId != event.pageId) clearCorrectionsPreview()
-        mutableState.update { it.copy(correctionsPreviewPageId = event.pageId) }
+        if (state.correctionsPreview.pageId != event.pageId || correctionCaptureOnly != event.captureOnly) {
+            clearCorrectionsPreview()
+        }
+        correctionCaptureOnly = event.captureOnly
+        mutableState.update { it.copy(correctionsPreview = it.correctionsPreview.copy(pageId = event.pageId)) }
         val snapshot = workspace.copy(pages = workspace.pages.map {
             if (it.id == page.id) it.copy(layout = layout) else it
         })
-        correctionsPreviews.request(snapshot, page.id, showingOriginal = event.showOriginal, debounceMillis = 120)
+        if (event.captureOnly) captureCorrections.request(snapshot, page.id)
+        else correctionsPreviews.request(snapshot, page.id, showingOriginal = event.showOriginal, debounceMillis = 120)
     }
 
     private fun previewFilter(event: DocumentToolsEvent.PreviewFilter) {
@@ -1160,10 +1068,10 @@ class DocumentToolsViewModel(
             filterIntensity = (event.layout.filterIntensity.takeIf(Float::isFinite) ?: 1f).coerceIn(0f, 1f),
             rasterizeText = event.layout.rasterizeText,
         )
-        if (state.filterPreviewPageId != event.pageId) {
+        if (state.filterPreview.pageId != event.pageId) {
             filterPreviews.clear()
         }
-        mutableState.update { it.copy(filterPreviewPageId = event.pageId) }
+        mutableState.update { it.copy(filterPreview = it.filterPreview.copy(pageId = event.pageId)) }
         val snapshot = workspace.copy(pages = workspace.pages.map {
             if (it.id == page.id) it.copy(layout = layout) else it
         })
@@ -1173,15 +1081,21 @@ class DocumentToolsViewModel(
     private fun clearFilterPreview() {
         filterPreviews.clear()
         filterThumbnails.clear()
-        mutableState.update {
-            it.copy(
-                filterPreview = null, filterPreviewPageId = null, isPreviewingFilter = false,
-                filterPreviewError = false, filterPreviewShowingOriginal = false,
-            )
-        }
+        mutableState.update { it.copy(filterPreview = DocumentToolPreviewState()) }
+    }
+
+    private fun pausePreviews() {
+        pagePreviews.pause()
+        layoutPreviews.pause()
+        correctionsPreviews.pause()
+        captureCorrections.pause()
+        correctionSources.pause()
+        filterPreviews.pause()
+        filterThumbnails.pause()
     }
 
     private fun clearToolPreviews() {
+        correctionSources.clear()
         clearLayoutPreview()
         clearCorrectionsPreview()
         clearFilterPreview()
@@ -1189,21 +1103,14 @@ class DocumentToolsViewModel(
 
     private fun clearLayoutPreview() {
         layoutPreviews.clear()
-        mutableState.update {
-            it.copy(
-                layoutPreview = null, layoutPreviewPageId = null, isPreviewingLayout = false,
-                layoutPreviewError = false, layoutPreviewShowingOriginal = false,
-            )
-        }
+        mutableState.update { it.copy(layoutPreview = DocumentToolPreviewState()) }
     }
 
     private fun clearCorrectionsPreview() {
+        correctionCaptureOnly = false
+        captureCorrections.clear()
         correctionsPreviews.clear()
-        mutableState.update {
-            it.copy(correctionsPreview = null, correctionsPreviewPageId = null,
-                isPreviewingCorrections = false, correctionsPreviewError = false,
-                correctionsPreviewShowingOriginal = false)
-        }
+        mutableState.update { it.copy(correctionsPreview = DocumentToolPreviewState()) }
     }
 
     private fun save() {
@@ -1218,11 +1125,7 @@ class DocumentToolsViewModel(
             effectChannel.trySend(DocumentToolsEffect.NavigatePasswordSettings)
             return
         }
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
+        pausePreviews()
         mutableState.update { it.copy(isSaving = true, isRendering = false, tool = null, message = null, isComparingOriginal = false) }
         val operationSession = session
         viewModelScope.launch {
@@ -1274,12 +1177,8 @@ class DocumentToolsViewModel(
     private fun close() {
         if (uiState.value.isBusy) return
         val workspace = uiState.value.workspace
-        clearMerge()
-        pagePreviews.pause()
-        layoutPreviews.pause()
-        correctionsPreviews.pause()
-        filterPreviews.pause()
-        filterThumbnails.pause()
+        mergeCoordinator.clear()
+        pausePreviews()
         mutableState.update { it.copy(isDiscarding = true, previewUri = null, confirmDiscard = false) }
         val closingSession = session
         viewModelScope.launch {
@@ -1307,7 +1206,7 @@ class DocumentToolsViewModel(
         pagePreviews.clear()
         clearToolPreviews()
         cancelAnalysis(resumePreview = false)
-        clearMerge()
+        mergeCoordinator.clear()
         effectChannel.close()
         super.onCleared()
     }

@@ -240,6 +240,73 @@ class PdfMergeBatchTest {
         assertFalse(source.toString().contains("segredo123"))
     }
 
+
+    @Test
+    fun `bloco atual ocupa inicio meio ou fim preservando receitas e protecao`() = runBlocking {
+        for (currentIndex in 0..2) {
+            val fixture = fixture(pageCount = 2)
+            val requests = mutableListOf<PdfMergeBatch.Preparation>()
+            val result = fixture.batch.append(
+                fixture.workspace,
+                listOf(PdfMergeSource("pdf-a"), PdfMergeSource("pdf-b")),
+                10L,
+                currentDocumentIndex = currentIndex,
+            ) { request ->
+                requests += request
+                prepare(request)
+                if (request.source.uri == "pdf-a") 2 else 1
+            }
+            val added = requests.map { request ->
+                result.pages.filter { it.sourceUri == request.output.toURI().toString() }
+            }
+            assertEquals(
+                added.take(currentIndex).flatten() + fixture.workspace.pages + added.drop(currentIndex).flatten(),
+                result.pages,
+            )
+            assertEquals(listOf("pdf-a", "pdf-b"), requests.map { it.source.uri })
+            assertEquals(5, result.pages.size)
+            assertEquals(5, result.pages.map { it.id }.distinct().size)
+            assertEquals(fixture.workspace, result.copy(pages = fixture.workspace.pages))
+            assertEquals("original", fixture.original.readText())
+        }
+    }
+
+    @Test
+    fun `falha depois do bloco atual desfaz tambem os arquivos anteriores ao bloco`() = runBlocking {
+        val fixture = fixture()
+        val failure = runCatching {
+            fixture.batch.append(
+                fixture.workspace, listOf(PdfMergeSource("antes"), PdfMergeSource("depois")),
+                10L, currentDocumentIndex = 1,
+            ) { request ->
+                prepare(request)
+                if (request.source.uri == "depois") throw PdfMergePasswordRequiredException("depois")
+                2
+            }
+        }.exceptionOrNull()
+
+        assertTrue(failure is PdfMergePasswordRequiredException)
+        assertRolledBack(fixture)
+    }
+
+    @Test
+    fun `posicao invalida do bloco atual falha antes de importar`() = runBlocking {
+        val fixture = fixture()
+        var prepared = false
+        val failure = runCatching {
+            fixture.batch.append(
+                fixture.workspace, listOf(PdfMergeSource("anexo")), 10L, currentDocumentIndex = 2,
+            ) {
+                prepared = true
+                1
+            }
+        }.exceptionOrNull()
+
+        assertTrue(failure is IllegalArgumentException)
+        assertFalse(prepared)
+        assertRolledBack(fixture)
+    }
+
     private fun prepare(request: PdfMergeBatch.Preparation, bytes: Int = 8) {
         request.incoming.writeText("arquivo recebido")
         request.output.writeBytes(ByteArray(bytes) { 42 })

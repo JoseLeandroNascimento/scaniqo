@@ -86,6 +86,12 @@ internal fun AppNavigationDrawer(
                 onClick = { onNavigate(AppRoute.Signatures) },
             )
             DrawerDestination(
+                label = stringResource(R.string.backup_title),
+                icon = R.drawable.ic_cloud_backup,
+                selected = currentRoute == AppRoute.DriveBackup,
+                onClick = { onNavigate(AppRoute.DriveBackup) },
+            )
+            DrawerDestination(
                 label = stringResource(R.string.menu_pdf_password),
                 icon = R.drawable.ic_tool_lock,
                 selected = currentRoute == AppRoute.PasswordSettings,

@@ -36,5 +36,7 @@ internal data class RecipeSignature(
     val x: Float,
     val y: Float,
     val width: Float,
-    val height: Float
+    val height: Float,
+    val rotationDegrees: Float = 0f,
+    val stretchToBounds: Boolean = false,
 )

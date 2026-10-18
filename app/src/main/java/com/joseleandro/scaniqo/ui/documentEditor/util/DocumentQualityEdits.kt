@@ -31,6 +31,8 @@ internal fun PdfWorkspace.withoutImageEnhancements(pageId: String? = null): PdfW
             straightenDegrees = 0f,
             perspective = null,
             curvature = 0f,
+            crop = null,
+            backgroundMask = null,
         ))
     },
 )

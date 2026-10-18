@@ -4,18 +4,14 @@ import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,11 +24,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -53,7 +49,10 @@ import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentLayoutControl
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentPageScope
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentPageScopeMode
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolPreviewState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
+import com.joseleandro.scaniqo.ui.documentEditor.util.DocumentPageScopeSaver
+import com.joseleandro.scaniqo.ui.documentEditor.util.PdfPageLayoutSaver
 import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutRotation
 import com.joseleandro.scaniqo.ui.documentEditor.util.withLayoutAdjustmentsFrom
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -64,23 +63,30 @@ import kotlin.math.roundToInt
 internal fun DocumentLayoutSheetContent(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
+    modifier: Modifier = Modifier,
+    onDraftChanged: (Boolean) -> Unit = {},
     initialControl: DocumentLayoutControl = DocumentLayoutControl.POSITION,
 ) {
     val workspace = state.workspace ?: return
     val initialPage = workspace.pages.getOrNull(state.selectedPageIndex) ?: return
-    // Navegar pela prévia não muda a página usada pela opção "Página atual".
-    val anchorPageId = remember(workspace.workspaceId) { initialPage.id }
-    var previewPageId by remember(workspace.workspaceId) { mutableStateOf(initialPage.id) }
-    var draft by remember(workspace.workspaceId) { mutableStateOf(initialPage.layout) }
-    var control by remember { mutableStateOf(initialControl) }
-    var scope by remember(workspace.workspaceId) { mutableStateOf(DocumentPageScope()) }
+    val anchorPageId = rememberSaveable(workspace.workspaceId) { initialPage.id }
+    var previewPageId by rememberSaveable(workspace.workspaceId) { mutableStateOf(initialPage.id) }
+    var draft by rememberSaveable(workspace.workspaceId, stateSaver = PdfPageLayoutSaver) {
+        mutableStateOf(initialPage.layout)
+    }
+    var control by rememberSaveable { mutableStateOf(initialControl) }
+    var scope by rememberSaveable(workspace.workspaceId, stateSaver = DocumentPageScopeSaver) {
+        mutableStateOf(DocumentPageScope())
+    }
     val targets = scope.targets(workspace.pages, anchorPageId)
     val page = workspace.pages.firstOrNull { it.id == previewPageId && it.id in targets }
         ?: workspace.pages.firstOrNull { it.id in targets } ?: initialPage
     val previewLayout = page.layout.withLayoutAdjustmentsFrom(draft)
-    val currentPreview = state.layoutPreview.takeIf { state.layoutPreviewPageId == page.id }
-    val livePreview = state.layoutLivePreview.takeIf { it.pageId == page.id }
-    val previewError = state.layoutPreviewError || livePreview?.error == true
+    val currentPreview = state.layoutPreview.preview.takeIf { state.layoutPreview.pageId == page.id }
+    val livePreview = state.layoutPreview.live.takeIf { it.pageId == page.id }
+    val previewError = state.layoutPreview.error || livePreview?.error == true
+    val changed = workspace.pages.any { it.id in targets && it.layout.withLayoutAdjustmentsFrom(draft) != it.layout }
+    SideEffect { onDraftChanged(changed) }
 
     LaunchedEffect(page.id, previewLayout, state.canEdit) {
         if (state.canEdit) onEvent(DocumentToolsEvent.PreviewLayout(page.id, previewLayout))
@@ -89,15 +95,9 @@ internal fun DocumentLayoutSheetContent(
         onDispose { onEvent(DocumentToolsEvent.ClearLayoutPreview) }
     }
 
-    BoxWithConstraints(Modifier
-        .fillMaxWidth()
-        .heightIn(max = 720.dp)) {
-        val fontScale = LocalDensity.current.fontScale.coerceAtLeast(1f)
-        // Reserva espaço para escopo e confirmação; telas muito baixas ainda permitem rolar.
-        val navigationHeight = if (targets.size > 1) 56.dp else 0.dp
-        val stageHeight = (maxHeight - (108.dp + 24.dp * fontScale) - navigationHeight)
-            .coerceIn(320.dp, 560.dp)
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    DocumentToolScreenLayout(
+        modifier = modifier,
+        header = {
             DocumentToolScopeMenu(
                 pages = workspace.pages,
                 currentPageId = anchorPageId,
@@ -105,111 +105,79 @@ internal fun DocumentLayoutSheetContent(
                 onScopeChange = { scope = it },
                 enabled = state.canEdit,
             )
-            Column(
-                Modifier
-                    .weight(1f, fill = false)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                DocumentInteractivePreviewStage(
-                    modifier = Modifier.height(stageHeight),
-                    tools = {
-                        DocumentLayoutControl.entries.forEach { option ->
-                            DocumentPreviewToolButton(
-                                label = stringResource(option.labelResource()),
-                                iconRes = option.iconResource(),
-                                selected = control == option,
-                                enabled = state.canEdit,
-                                onClick = { control = option },
-                            )
-                        }
-                    },
-                    controls = {
-                        when (control) {
-                            DocumentLayoutControl.POSITION -> LayoutPositionControls(
-                                draft,
-                                state.canEdit
-                            ) { draft = it }
-
-                            DocumentLayoutControl.ROTATION -> LayoutRotationControls(
-                                draft,
-                                state.canEdit
-                            ) { draft = it }
-
-                            DocumentLayoutControl.SIZE -> LayoutSizeControls(
-                                draft,
-                                state.canEdit
-                            ) { draft = it }
-                        }
-                    },
-                ) {
-                    DocumentInteractivePagePreview(
-                        page = page,
-                        preview = currentPreview,
-                        fallback = state.pagePreviews[page.id]?.preview,
-                        isLoading = state.isPreviewingLayout || livePreview?.isRendering == true ||
-                                (currentPreview == null && livePreview?.pixels == null && !previewError),
-                        hasError = previewError,
-                        onRetry = {
-                            onEvent(
-                                DocumentToolsEvent.PreviewLayout(
-                                    page.id,
-                                    previewLayout
-                                )
-                            )
-                        },
-                        enabled = state.canEdit,
-                        pageNumber = workspace.pages.indexOf(page) + 1,
-                        reserveHandleSpace = true,
-                        livePixels = livePreview?.pixels,
-                        liveLayout = previewLayout,
-                        workspaceId = workspace.workspaceId,
-                        pageCount = workspace.pages.size,
-                        showPageNumbers = workspace.showPageNumbers,
-                        overlay = {
-                            DocumentLayoutHandles(
-                                page.id, control, draft, state.canEdit,
-                                onLayoutChange = { draft = it },
-                            )
-                        },
-                    )
-                }
-                if (targets.size > 1) {
-                    DocumentToolTargetNavigation(
-                        pages = workspace.pages,
-                        targetIds = targets,
-                        previewPageId = page.id,
-                        onPageChange = { previewPageId = it },
-                        enabled = state.canEdit,
-                    )
-                }
+        },
+        tools = {
+            DocumentLayoutControl.entries.forEach { option ->
+                DocumentPreviewToolButton(
+                    label = stringResource(option.labelResource()),
+                    iconRes = option.iconResource(),
+                    selected = control == option,
+                    enabled = state.canEdit,
+                    onClick = { control = option },
+                )
             }
-            DocumentToolActions(
-                compact = true,
-                enabled = state.canEdit && targets.isNotEmpty(),
-                applyLabel = pluralStringResource(
-                    R.plurals.document_scope_apply_count,
-                    targets.size,
-                    targets.size
-                ),
-                onReset = { draft = draft.withLayoutAdjustmentsFrom(PdfPageLayout()) },
-                onApply = {
-                    onEvent(DocumentToolsEvent.SelectPage(page.id))
-                    onEvent(
-                        DocumentToolsEvent.ApplyLayout(
-                            alignment = draft.alignment,
-                            scaleMode = draft.scaleMode,
-                            allPages = scope.mode == DocumentPageScopeMode.ALL,
-                            pageIds = targets,
-                            rotationQuarterTurns = draft.rotationQuarterTurns,
-                            contentScale = draft.contentScale,
-                        )
+        },
+        controls = {
+            when (control) {
+                DocumentLayoutControl.POSITION -> LayoutPositionControls(draft, state.canEdit) { draft = it }
+                DocumentLayoutControl.ROTATION -> LayoutRotationControls(draft, state.canEdit) { draft = it }
+                DocumentLayoutControl.SIZE -> LayoutSizeControls(draft, state.canEdit) { draft = it }
+            }
+        },
+        preview = {
+            DocumentInteractivePagePreview(
+                page = page,
+                preview = currentPreview,
+                fallback = state.pagePreviews[page.id]?.preview,
+                isLoading = state.layoutPreview.isRendering || livePreview?.isRendering == true ||
+                    (currentPreview == null && livePreview?.pixels == null && !previewError),
+                hasError = previewError,
+                onRetry = { onEvent(DocumentToolsEvent.PreviewLayout(page.id, previewLayout)) },
+                enabled = state.canEdit,
+                pageNumber = workspace.pages.indexOf(page) + 1,
+                reserveHandleSpace = true,
+                livePixels = livePreview?.pixels,
+                liveLayout = previewLayout,
+                workspaceId = workspace.workspaceId,
+                pageCount = workspace.pages.size,
+                showPageNumbers = workspace.showPageNumbers,
+                overlay = {
+                    DocumentLayoutHandles(
+                        page.id, control, draft, state.canEdit,
+                        onLayoutChange = { draft = it },
                     )
                 },
             )
-        }
-    }
+        },
+        navigation = {
+            if (targets.size > 1) DocumentToolTargetNavigation(
+                pages = workspace.pages,
+                targetIds = targets,
+                previewPageId = page.id,
+                onPageChange = { previewPageId = it },
+                enabled = state.canEdit,
+            )
+        },
+        actions = {
+            DocumentToolActions(
+                compact = true,
+                enabled = state.canEdit && targets.isNotEmpty(),
+                applyLabel = pluralStringResource(R.plurals.document_scope_apply_count, targets.size, targets.size),
+                onReset = { draft = draft.withLayoutAdjustmentsFrom(PdfPageLayout()) },
+                onApply = {
+                    onEvent(DocumentToolsEvent.SelectPage(page.id))
+                    onEvent(DocumentToolsEvent.ApplyLayout(
+                        alignment = draft.alignment,
+                        scaleMode = draft.scaleMode,
+                        allPages = scope.mode == DocumentPageScopeMode.ALL,
+                        pageIds = targets,
+                        rotationQuarterTurns = draft.rotationQuarterTurns,
+                        contentScale = draft.contentScale,
+                    ))
+                },
+            )
+        },
+    )
 }
 
 @Composable
@@ -482,8 +450,10 @@ private fun DocumentLayoutPreviewContent(control: DocumentLayoutControl) {
                             (1..8).map { PdfPageSpec("page-$it", "preview", it - 1) },
                         ),
                         selectedPageId = "page-1",
-                        layoutPreview = PdfPagePreview("preview", 0),
-                        layoutPreviewPageId = "page-1",
+                        layoutPreview = DocumentToolPreviewState(
+                            preview = PdfPagePreview("preview", 0),
+                            pageId = "page-1",
+                        ),
                     ),
                     {},
                     initialControl = control,

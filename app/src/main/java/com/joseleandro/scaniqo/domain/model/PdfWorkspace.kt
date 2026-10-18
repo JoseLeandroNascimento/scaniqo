@@ -45,7 +45,11 @@ data class PdfPageLayout(
     val straightenDegrees: Float = 0f,
     val perspective: PdfPerspective? = null,
     val curvature: Float = 0f,
-    val rasterizeText: Boolean = false
+    val rasterizeText: Boolean = false,
+    /** Recorta a área real da fonte sem alterar as proporções do conteúdo. */
+    val crop: PdfCropBounds? = null,
+    /** Remove apenas o entorno da captura; não retifica nem desloca o documento. */
+    val backgroundMask: PdfPerspective? = null
 )
 
 /** Coordenadas proporcionais à folha, com origem no canto superior esquerdo. */
@@ -56,7 +60,11 @@ data class PdfSignaturePlacement(
     val x: Float = .3f,
     val y: Float = .7f,
     val width: Float = .3f,
-    val height: Float = .12f
+    val height: Float = .12f,
+    /** Rotação horária ao redor do centro, independente da orientação da página. */
+    val rotationDegrees: Float = 0f,
+    /** Preenche o retângulo editado; receitas anteriores preservam a proporção original. */
+    val stretchToBounds: Boolean = false,
 )
 
 @Serializable

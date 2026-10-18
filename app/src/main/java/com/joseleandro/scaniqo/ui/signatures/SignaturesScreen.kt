@@ -165,7 +165,7 @@ fun SignaturesScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SignatureEditorSheet(
+internal fun SignatureEditorSheet(
     editor: SignatureEditorState,
     onEvent: (SignaturesEvent) -> Unit,
     onPickImage: () -> Unit,

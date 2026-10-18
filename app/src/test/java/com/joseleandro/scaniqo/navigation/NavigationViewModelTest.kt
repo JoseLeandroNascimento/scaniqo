@@ -5,6 +5,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import com.joseleandro.scaniqo.core.navigation.AppRoute
 import com.joseleandro.scaniqo.core.navigation.NavigationViewModel
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -86,11 +87,36 @@ class NavigationViewModelTest {
     }
 
     @Test
+    fun signingFromTheLibraryReturnsToTheSameEditorBeforeTheLibrary() {
+        val id = Long.MAX_VALUE - 2
+        viewModel.navigateTo(AppRoute.DocumentViewer(id))
+        viewModel.navigateTo(AppRoute.DocumentSignature(id))
+        viewModel.navigateTo(AppRoute.DocumentSignature(id))
+
+        assertEquals(
+            listOf(AppRoute.Documents, AppRoute.DocumentViewer(id), AppRoute.DocumentSignature(id)),
+            viewModel.backStack,
+        )
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        val restored = Json.decodeFromString(serializer, Json.encodeToString(
+            serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+        ))
+        assertEquals(viewModel.backStack, restored.toList())
+        viewModel.goBack()
+        assertEquals(AppRoute.DocumentViewer(id), viewModel.backStack.last())
+        viewModel.goBack()
+        assertEquals(listOf(AppRoute.Documents), viewModel.backStack)
+    }
+
+    @Test
     fun serializingAndRestoringTheNavigationStackPreservesRoutesAndDocumentIds() {
         val documentId = Long.MAX_VALUE - 1
         viewModel.navigateTo(AppRoute.Tags)
+        viewModel.navigateTo(AppRoute.DriveBackup)
         viewModel.navigateTo(AppRoute.DocumentViewer(7))
         viewModel.navigateTo(AppRoute.DocumentViewer(documentId))
+        viewModel.navigateTo(AppRoute.DocumentMerge(documentId))
+        viewModel.navigateTo(AppRoute.DocumentMerge())
 
         // Exercita o mesmo serializer usado pela navegação, sem simular o ciclo de vida Android.
         val serializer = NavBackStackSerializer(AppRoute.serializer())
@@ -99,7 +125,30 @@ class NavigationViewModelTest {
         val restored = Json.decodeFromString(serializer, serialized)
 
         assertEquals(viewModel.backStack, restored.toList())
-        assertEquals(documentId, (restored.last() as AppRoute.DocumentViewer).documentId)
+        assertEquals(AppRoute.DocumentMerge(), restored.last())
+        assertEquals(documentId, (restored[restored.lastIndex - 1] as AppRoute.DocumentMerge).documentId)
+        viewModel.goBack()
+        assertEquals(AppRoute.DocumentMerge(documentId), viewModel.backStack.last())
+        viewModel.goBack()
+        assertEquals(AppRoute.DocumentViewer(documentId), viewModel.backStack.last())
+    }
+
+    @Test
+    fun editorToolScreensRestoreTheirTypeAndReturnToTheSameDocument() {
+        val id = Long.MAX_VALUE - 3
+        viewModel.navigateTo(AppRoute.DocumentViewer(id))
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        for (tool in listOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES)) {
+            val route = AppRoute.DocumentEditorTool(id, tool)
+            viewModel.navigateTo(route)
+            viewModel.navigateTo(route)
+            val restored = Json.decodeFromString(serializer, Json.encodeToString(
+                serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+            ))
+            assertEquals(listOf(AppRoute.Documents, AppRoute.DocumentViewer(id), route), restored.toList())
+            viewModel.goBack()
+            assertEquals(AppRoute.DocumentViewer(id), viewModel.backStack.last())
+        }
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.joseleandro.scaniqo.ui.documentEditor.preview
 
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfInteractivePixels
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
@@ -39,6 +40,7 @@ internal class DocumentLivePreviewController(
             nextIdentity, page.sourceUri, page.sourcePageIndex,
             layout.imageFilter, layout.filterIntensity, layout.rasterizeText,
             layout.straightenDegrees, layout.perspective, layout.curvature,
+            layout.crop, layout.backgroundMask,
         )
         if (!force && requested?.key == key && !state.error &&
             (worker != null || settling != null || refinement != null ||
@@ -217,6 +219,8 @@ internal class DocumentLivePreviewController(
         val straightenDegrees: Float,
         val perspective: PdfPerspective?,
         val curvature: Float,
+        val crop: PdfCropBounds?,
+        val backgroundMask: PdfPerspective?,
     )
 
     private data class Request(

@@ -4,4 +4,5 @@ package com.joseleandro.scaniqo.ui.documents.event
 sealed interface DocumentsEvent {
     data class SelectTag(val tagId: Long?) : DocumentsEvent
     data object RetryLoad : DocumentsEvent
+    data class DocumentCreated(val documentId: Long, val tagId: Long?) : DocumentsEvent
 }

@@ -57,6 +57,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.google.auth)
     implementation(libs.mlkit.document.scanner)
     implementation(libs.mlkit.text.recognition)
     implementation(libs.androidx.navigation3.runtime)

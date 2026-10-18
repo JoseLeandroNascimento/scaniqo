@@ -1,0 +1,63 @@
+GOOGLE DRIVE — CONFIGURAÇÃO DO SCANIQO
+
+A implementação usa Google Identity Services AuthorizationClient e a API REST
+Google Drive v3. Não usa o antigo SDK Android do Drive, Firebase, servidor próprio,
+client secret no APK ou tokens persistidos pelo app.
+
+Antes de testar com uma conta real:
+1. Crie ou selecione o projeto Google Cloud que será dono do Scaniqo.
+2. Ative a Google Drive API nesse projeto.
+3. Configure Google Auth Platform: nome do app, suporte, política de privacidade
+   e audiência. Se o projeto estiver em teste, cadastre as contas de teste.
+4. Crie um cliente OAuth do tipo Android com:
+   - Pacote: com.joseleandro.scaniqo
+   - SHA-1 do certificado que assina o APK instalado.
+   Use a tarefa Gradle :app:signingReport para obter o certificado debug.
+   Para a distribuição pelo Google Play, use também o certificado de assinatura
+   do app fornecido pelo Play Console (ele pode diferir da chave de upload).
+5. Declare somente o escopo:
+   https://www.googleapis.com/auth/drive.file
+6. Instale o APK em um aparelho/emulador com Google Play Services e conta Google.
+   Abra o menu lateral > Backup no Google Drive > Conectar Google Drive.
+
+O cliente Android é associado ao pacote e ao certificado no Google Cloud.
+Esta implementação não pede acesso offline de servidor e não precisa de um
+client secret ou refresh token. Não acrescente segredos ao repositório.
+Erro de configuração do OAuth (código 10) normalmente indica pacote/certificado,
+projeto ou consentimento configurados incorretamente.
+
+FLUXO DISPONÍVEL
+- Backup manual dos documentos já salvos, nomes, tags e arquivos de edição dos
+  documentos sem senha. ZIP visível na pasta "Scaniqo backups" do Google Drive.
+- Cada backup é uma nova cópia datada; versões antigas não são apagadas pelo app.
+- Restauração adiciona novas cópias. Não sobrescreve documentos existentes.
+- PDFs protegidos incluem somente o PDF cifrado. Fontes de edição, miniaturas
+  e imagens auxiliares de assinatura desses PDFs são excluídas. A senha original
+  será pedida ao abrir a cópia restaurada.
+- O cofre, suas chaves e senhas, a biblioteca de assinaturas e rascunhos ainda
+  não salvos no editor não entram no backup.
+- Nomes e tags do manifesto não são cifrados pelo formato ZIP.
+- Backup máximo: 2 GiB; PDF individual: 50 MiB; até 100 páginas por documento.
+- Operação em primeiro plano; manter o app aberto. Não há envio periódico
+  automático ou retomada entre encerramentos do processo nesta versão.
+- Cancelamento/falhas limpam os temporários; restauração interrompida durante
+  a execução desfaz as cópias já inseridas. Encerramento abrupto do processo pode
+  deixar cópias parciais já importadas; originais permanecem preservados.
+- Desconectar revoga a autorização Google; backups existentes permanecem no Drive.
+
+VALIDAÇÃO EM CONTA REAL
+1. Salvar um PDF normal, um projeto com recorte/assinatura e um PDF protegido.
+2. Conectar e autorizar somente o escopo de arquivos do app.
+3. Fazer backup, conferir a pasta no Drive e atualizar a lista.
+4. Restaurar em outra instalação autorizada no mesmo projeto/conta.
+5. Conferir nomes, tags, PDF e continuidade de edição do projeto sem senha.
+6. Abrir o PDF protegido com a senha original e verificar que o cofre não viajou.
+7. Verificar cancelamento, internet indisponível, falta de espaço e reconexão.
+
+FONTES OFICIAIS
+https://developer.android.com/identity/authorization
+https://developers.google.com/workspace/drive/api/guides/enable-drive-api
+https://developers.google.com/workspace/drive/api/guides/api-specific-auth
+https://developers.google.com/workspace/drive/api/guides/manage-uploads
+
+Nenhuma conta Google real foi acessada durante a implementação.

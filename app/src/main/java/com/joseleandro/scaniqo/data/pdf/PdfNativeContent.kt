@@ -1,15 +1,19 @@
 package com.joseleandro.scaniqo.data.pdf
 
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.tom_roush.pdfbox.contentstream.PDContentStream
 import com.tom_roush.pdfbox.contentstream.operator.Operator
+import com.tom_roush.pdfbox.cos.COSArray
+import com.tom_roush.pdfbox.cos.COSBase
+import com.tom_roush.pdfbox.cos.COSName
 import com.tom_roush.pdfbox.cos.COSNumber
 import com.tom_roush.pdfbox.cos.COSStream
+import com.tom_roush.pdfbox.cos.COSString
 import com.tom_roush.pdfbox.pdfparser.PDFStreamParser
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDResources
 import com.tom_roush.pdfbox.pdmodel.graphics.form.PDFormXObject
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject
-import com.tom_roush.pdfbox.text.PDFTextStripper
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlin.math.abs
@@ -20,6 +24,9 @@ internal data class PdfNativeContent(
     val hasText: Boolean,
     val hasVectors: Boolean,
     val largestImageSide: Int,
+    val captureBounds: PdfCropBounds? = null,
+    val sourceWidth: Float = 0f,
+    val sourceHeight: Float = 0f,
 ) {
     val shouldPreserve: Boolean get() = hasText || hasVectors
 
@@ -27,73 +34,147 @@ internal data class PdfNativeContent(
         suspend fun inspect(document: PDDocument, pageIndex: Int): PdfNativeContent {
             currentCoroutineContext().ensureActive()
             val page = document.getPage(pageIndex)
-            val text = PDFTextStripper().apply {
-                startPage = pageIndex + 1
-                endPage = pageIndex + 1
-            }.getText(document).any { !it.isWhitespace() }
+            var text = false
             var largestImage = 0
-            var vectors = containsVectors(page)
+            var vectors = false
             val visited = mutableSetOf<COSStream>()
-            suspend fun visit(resources: PDResources?, depth: Int) {
-                if (resources == null) return
+            suspend fun visit(content: PDContentStream, resources: PDResources?, depth: Int) {
                 if (depth > 16) {
-                    vectors = true // Conteúdo muito aninhado permanece vetorial por precaução.
+                    vectors = true
                     return
                 }
-                for (name in resources.xObjectNames) {
-                    currentCoroutineContext().ensureActive()
-                    when (val value = resources.getXObject(name)) {
-                        is PDImageXObject -> largestImage = max(largestImage, max(value.width, value.height))
-                        is PDFormXObject -> if (visited.add(value.cosObject)) {
-                            vectors = vectors || containsVectors(value)
-                            visit(value.resources, depth + 1)
+                vectors = vectors || containsVectors(content)
+                val parser = PDFStreamParser(content)
+                parser.parse()
+                val operands = mutableListOf<COSBase>()
+                for ((index, token) in parser.tokens.withIndex()) {
+                    if (index % 128 == 0) currentCoroutineContext().ensureActive()
+                    if (token !is Operator) {
+                        if (token is COSBase) operands += token
+                        continue
+                    }
+                    if (token.name in listOf("Tj", "TJ", "'", "\"")) {
+                        // Inclui OCR invisível: preservação não depende de decodificar fontes.
+                        text = text || operands.any { value ->
+                            when (value) {
+                                is COSString -> value.bytes.isNotEmpty()
+                                is COSArray -> (0 until value.size()).any {
+                                    (value.getObject(it) as? COSString)?.bytes?.isNotEmpty() == true
+                                }
+                                else -> false
+                            }
+                        }
+                    } else if (token.name == "Do") {
+                        val name = operands.singleOrNull() as? COSName
+                        when (val value = name?.let { resources?.getXObject(it) }) {
+                            is PDImageXObject -> largestImage = max(largestImage, max(value.width, value.height))
+                            is PDFormXObject -> if (visited.add(value.cosObject)) {
+                                visit(value, value.resources ?: resources, depth + 1)
+                            }
+                        }
+                    } else if (token.name == "BI") {
+                        token.imageParameters?.let {
+                            largestImage = max(largestImage, max(
+                                it.getInt(COSName.W, COSName.WIDTH, 0),
+                                it.getInt(COSName.H, COSName.HEIGHT, 0),
+                            ))
                         }
                     }
+                    operands.clear()
                 }
             }
-            visit(page.resources, 0)
-            return PdfNativeContent(text, vectors, largestImage)
+            // Recursos registrados mas nunca desenhados não alteram a natureza da página.
+            visit(page, page.resources, 0)
+            val rotated = abs(page.rotation % 180) == 90
+            val box = page.cropBox
+            return PdfNativeContent(
+                text, vectors, largestImage,
+                captureBounds = PdfCaptureInspector.inspect(page),
+                sourceWidth = if (rotated) box.height else box.width,
+                sourceHeight = if (rotated) box.width else box.height,
+            )
         }
 
         internal fun containsVectors(content: PDContentStream): Boolean {
             val parser = PDFStreamParser(content)
             parser.parse()
-            var detailedPath = false
-            var whiteFill = false
-            val fillStack = mutableListOf<Boolean>()
-            val operands = mutableListOf<COSNumber>()
+            val path = PdfRectangularPath()
+            var state = FillState()
+            val stack = mutableListOf<FillState>()
+            val operands = mutableListOf<COSBase>()
+            var paintedContent = false
+            val pageBox = content.bBox?.let {
+                PdfContentBox(it.lowerLeftX, it.lowerLeftY, it.upperRightX, it.upperRightY)
+            }
             for (token in parser.tokens) {
-                if (token is COSNumber) operands += token
-                if (token !is Operator) continue
+                if (token !is Operator) {
+                    if (token is COSBase) operands += token
+                    continue
+                }
+                fun numbers(count: Int): List<Float>? =
+                    operands.takeIf { it.size == count }?.map { (it as? COSNumber)?.floatValue() ?: return null }
+                        ?.takeIf { it.all(Float::isFinite) }
+                fun white(space: String, values: List<Float>?) = when (space) {
+                    "DeviceGray" -> values?.size == 1 && values.all { it >= .99f }
+                    "DeviceRGB" -> values?.size == 3 && values.all { it >= .99f }
+                    "DeviceCMYK" -> values?.size == 4 && values.all { it <= .01f }
+                    else -> false
+                }
                 when (token.name) {
-                    "q" -> fillStack += whiteFill
-                    "Q" -> whiteFill = fillStack.removeLastOrNull() ?: false
-                    "g" -> whiteFill = operands.singleOrNull()?.floatValue()?.let { it >= .99f } == true
-                    "rg" -> whiteFill = operands.size == 3 && operands.all { it.floatValue() >= .99f }
-                    "k" -> whiteFill = operands.size == 4 && operands.all { it.floatValue() <= .01f }
-                    "sc", "scn" -> whiteFill = false
-                    "m", "l", "c", "v", "y" -> detailedPath = true
-                    "re" -> {
-                        // O retângulo branco da folha não deve impedir filtros em digitalizações.
-                        val box = content.bBox
-                        val width = operands.getOrNull(operands.size - 2)?.floatValue() ?: 0f
-                        val height = operands.lastOrNull()?.floatValue() ?: 0f
-                        if (!whiteFill || box == null ||
-                            abs(width * height) < box.width * box.height * .9f
-                        ) {
-                            detailedPath = true
-                        }
+                    "q" -> stack += state
+                    "Q" -> state = stack.removeLastOrNull() ?: return true
+                    "cm" -> {
+                        val v = numbers(6) ?: return true
+                        state = state.copy(transform = state.transform.then(
+                            PdfContentTransform(v[0], v[1], v[2], v[3], v[4], v[5])))
                     }
+                    "g", "rg", "k" -> {
+                        val space = when (token.name) {
+                            "g" -> "DeviceGray"; "rg" -> "DeviceRGB"; else -> "DeviceCMYK"
+                        }
+                        state = state.copy(colorSpace = space, white = white(space, numbers(operands.size)))
+                    }
+                    "cs" -> {
+                        val name = operands.singleOrNull() as? COSName
+                        val space = when (name?.name) {
+                            "DeviceGray", "DeviceRGB", "DeviceCMYK" -> name.name
+                            else -> name?.let { content.resources?.getColorSpace(it)?.name }.orEmpty()
+                        }
+                        state = state.copy(colorSpace = space, white = false)
+                    }
+                    "sc", "scn" -> state = state.copy(white = white(state.colorSpace, numbers(operands.size)))
+                    "re" -> {
+                        val v = numbers(4) ?: return true
+                        path.rectangle(state.transform.box(v[0], v[1], v[2], v[3]))
+                    }
+                    "m", "l" -> {
+                        val v = numbers(2) ?: return true
+                        val point = state.transform.point(v[0], v[1])
+                        if (token.name == "m") path.move(point) else path.line(point)
+                    }
+                    "c", "v", "y" -> path.curve()
                     "S", "s", "B", "B*", "b", "b*", "sh" -> return true
                     "f", "F", "f*" -> {
-                        if (detailedPath) return true
-                        detailedPath = false
+                        val bounds = path.bounds()
+                        val covered = if (bounds != null && pageBox != null) bounds.intersect(pageBox) else null
+                        // Apenas o fundo branco anterior ao conteúdo é descartável.
+                        if (paintedContent || !state.white || covered == null || pageBox == null ||
+                            covered.width * covered.height < pageBox.width * pageBox.height * .9f
+                        ) return true
+                        path.clear()
                     }
-                    "n" -> detailedPath = false
+                    "n" -> path.clear() // Clips não são desenhos.
+                    "Do", "BI", "Tj", "TJ", "'", "\"" -> paintedContent = true
                 }
                 operands.clear()
             }
-            return false
+            return stack.isNotEmpty()
         }
+
+        private data class FillState(
+            val transform: PdfContentTransform = PdfContentTransform(),
+            val colorSpace: String = "DeviceGray",
+            val white: Boolean = false,
+        )
     }
 }

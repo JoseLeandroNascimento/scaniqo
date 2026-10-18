@@ -32,6 +32,8 @@ import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverla
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
+import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
+import com.joseleandro.scaniqo.ui.documents.components.DocumentQuickTools
 import com.joseleandro.scaniqo.ui.documents.components.DocumentCard
 import com.joseleandro.scaniqo.ui.documents.components.DocumentTagFilters
 import com.joseleandro.scaniqo.ui.documents.components.DocumentsLoading
@@ -42,18 +44,21 @@ import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 @Composable
 fun DocumentsScreen(
     uiState: DocumentsUiState,
+    actionsState: DocumentActionsUiState,
     onEvent: (DocumentsEvent) -> Unit,
     onDocumentAction: (DocumentActionEvent) -> Unit,
     onOpenMenu: () -> Unit,
     onImportPdf: () -> Unit,
     onOpenDocument: (Long) -> Unit,
+    onMergePdfs: () -> Unit,
+    onSignDocument: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val toastState = rememberDocumentToastState(uiState.message) {
+    val toastState = rememberDocumentToastState(actionsState.message) {
         onDocumentAction(DocumentActionEvent.DismissMessage)
     }
-    val scanBusy = uiState.isScanning || uiState.isPreparingScan
-    val actionsBusy = uiState.actions.isBusy
+    val scanBusy = actionsState.isScanning || actionsState.isPreparingScan
+    val actionsBusy = actionsState.isBusy
     val visibleDocuments = uiState.visibleDocuments
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -75,7 +80,7 @@ fun DocumentsScreen(
         snackbarHost = { AppToastHost(toastState) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { if (!actionsBusy) onDocumentAction(DocumentActionEvent.StartScan) },
+                onClick = { if (!actionsBusy) onDocumentAction(DocumentActionEvent.StartScan(defaultTagId = uiState.selectedTagId)) },
                 modifier = Modifier.semantics { if (actionsBusy) disabled() },
                 icon = {
                     if (scanBusy) {
@@ -94,8 +99,8 @@ fun DocumentsScreen(
                     Text(
                         stringResource(
                             when {
-                                uiState.isPreparingScan -> R.string.documents_preparing
-                                uiState.isScanning -> R.string.documents_scanning
+                                actionsState.isPreparingScan -> R.string.documents_preparing
+                                actionsState.isScanning -> R.string.documents_scanning
                                 else -> R.string.documents_scan
                             },
                         ),
@@ -112,6 +117,14 @@ fun DocumentsScreen(
             contentPadding = PaddingValues(top = 8.dp, bottom = 112.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            item(key = "quick_tools") {
+                DocumentQuickTools(
+                    enabled = !actionsBusy && actionsState.editor == null && actionsState.pendingDeletion == null,
+                    onImport = onImportPdf,
+                    onMerge = onMergePdfs,
+                    onSign = onSignDocument,
+                )
+            }
             item(key = "filters") {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(
@@ -168,7 +181,7 @@ fun DocumentsScreen(
                         DocumentCard(
                             document = document,
                             tag = uiState.tags.firstOrNull { it.id == document.tagId },
-                            isBusy = uiState.busyDocumentId == document.id,
+                            isBusy = actionsState.busyDocumentId == document.id,
                             actionsEnabled = !actionsBusy,
                             onOpen = { if (!actionsBusy) onOpenDocument(document.id) },
                             onEvent = onDocumentAction,
@@ -178,5 +191,5 @@ fun DocumentsScreen(
             }
         }
     }
-    DocumentActionOverlays(uiState.actions, onDocumentAction)
+    DocumentActionOverlays(actionsState, onDocumentAction)
 }

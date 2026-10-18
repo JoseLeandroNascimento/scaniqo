@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentMergeUiState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import kotlinx.coroutines.Dispatchers
@@ -51,11 +52,12 @@ import kotlinx.coroutines.withContext
 /** O acesso aos arquivos e as senhas da mesclagem existem apenas durante esta edição. */
 @Composable
 internal fun DocumentMergeDialogs(state: DocumentToolsUiState, onEvent: (DocumentToolsEvent) -> Unit) {
-    val passwordUri = state.mergePasswordUri
-    if (passwordUri != null) {
+    val passwordRequest = state.merge as? DocumentMergeUiState.PasswordRequired
+    if (passwordRequest != null) {
+        val passwordUri = passwordRequest.uri
         SecureWindow()
         val resolver = LocalContext.current.applicationContext.contentResolver
-        val fallbackName = state.mergePasswordName ?: stringResource(R.string.merge_tools_selected_file)
+        val fallbackName = passwordRequest.name ?: stringResource(R.string.merge_tools_selected_file)
         val name by produceState(fallbackName, passwordUri, fallbackName) {
             value = fallbackName
             value = withContext(Dispatchers.IO) {
@@ -74,12 +76,12 @@ internal fun DocumentMergeDialogs(state: DocumentToolsUiState, onEvent: (Documen
             MergePasswordDialog(
                 fileName = name,
                 protectedResult = state.workspace?.isProtected == true,
-                invalidPassword = state.mergePasswordError,
+                invalidPassword = passwordRequest.incorrect,
                 onSubmit = { onEvent(DocumentToolsEvent.SubmitMergePassword(it)) },
                 onCancel = { onEvent(DocumentToolsEvent.CancelMergePassword) },
             )
         }
-    } else if (state.isMerging) {
+    } else if (state.merge is DocumentMergeUiState.Merging) {
         AlertDialog(
             onDismissRequest = { onEvent(DocumentToolsEvent.CancelPdfMerge) },
             icon = { CircularProgressIndicator(Modifier.size(28.dp)) },

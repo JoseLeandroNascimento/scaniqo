@@ -1,5 +1,6 @@
 package com.joseleandro.scaniqo.data.pdf
 
+import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
@@ -24,6 +25,8 @@ internal data class PdfRasterKey(
     val curvature: Float,
     val maxSide: Int = 1800,
     val jpegQuality: Float = .9f,
+    val crop: PdfCropBounds? = null,
+    val backgroundMask: PdfPerspective? = null,
 ) {
     companion object {
         fun from(
@@ -35,6 +38,8 @@ internal data class PdfRasterKey(
             PdfSourceStamp.from(file), page.sourcePageIndex,
             page.layout.imageFilter, page.layout.filterIntensity,
             page.layout.straightenDegrees, page.layout.perspective, page.layout.curvature, maxSide, jpegQuality,
+            crop = page.layout.crop?.takeUnless { it.isIdentity() },
+            backgroundMask = page.layout.backgroundMask,
         )
     }
 }
