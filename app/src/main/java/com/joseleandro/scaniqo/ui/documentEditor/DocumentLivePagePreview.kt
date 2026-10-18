@@ -63,7 +63,12 @@ internal fun DocumentLivePagePreview(
             val next = withContext(Dispatchers.Default) {
                 require(pixels.width > 0 && pixels.height > 0)
                 require(pixels.width.toLong() * pixels.height == pixels.pixels.size.toLong())
-                prepared = Bitmap.createBitmap(pixels.pixels, pixels.width, pixels.height, Bitmap.Config.ARGB_8888)
+                prepared = Bitmap.createBitmap(
+                    pixels.pixels,
+                    pixels.width,
+                    pixels.height,
+                    Bitmap.Config.ARGB_8888
+                )
                 ensureActive()
                 LiveRaster(requireNotNull(prepared), pixels.sourceWidth, pixels.sourceHeight)
             }
@@ -123,13 +128,19 @@ internal fun DocumentLivePagePreview(
 
     val current = raster.image
     val matrix = remember(
-        current, layout.alignment, layout.scaleMode, layout.rotationQuarterTurns, layout.contentScale,
+        current,
+        layout.alignment,
+        layout.scaleMode,
+        layout.rotationQuarterTurns,
+        layout.contentScale,
     ) {
         current?.let {
             Matrix().apply {
-                setValues(DocumentLivePageGeometry.bitmapTransform(
-                    it.bitmap.width, it.bitmap.height, it.sourceWidth, it.sourceHeight, layout,
-                ).matrixValues())
+                setValues(
+                    DocumentLivePageGeometry.bitmapTransform(
+                        it.bitmap.width, it.bitmap.height, it.sourceWidth, it.sourceHeight, layout,
+                    ).matrixValues()
+                )
             }
         }
     }
@@ -137,7 +148,8 @@ internal fun DocumentLivePagePreview(
     val placedSignatures = remember(signatures, signatureAssets.images) {
         signatures.mapNotNull { placement ->
             signatureAssets.images[placement.imageUri]?.let { bitmap ->
-                val bounds = DocumentLivePageGeometry.signatureRect(placement, bitmap.width, bitmap.height)
+                val bounds =
+                    DocumentLivePageGeometry.signatureRect(placement, bitmap.width, bitmap.height)
                 LiveSignature(bitmap, RectF(bounds.left, bounds.top, bounds.right, bounds.bottom))
             }
         }
@@ -146,15 +158,26 @@ internal fun DocumentLivePagePreview(
     val paperPaint = remember { Paint().apply { color = android.graphics.Color.WHITE } }
     val description = stringResource(R.string.document_pdf_page_description, pageNumber)
     Box(modifier.background(Color.White), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.fillMaxSize().semantics { contentDescription = description }) {
+        Canvas(Modifier
+            .fillMaxSize()
+            .semantics { contentDescription = description }) {
             drawIntoCanvas { composeCanvas ->
                 val canvas = composeCanvas.nativeCanvas
                 val paperSave = canvas.save()
                 try {
                     // Os cálculos permanecem em pontos PDF, independentemente do tamanho do preview.
-                    canvas.scale(size.width / PdfPageGeometry.WIDTH, size.height / PdfPageGeometry.HEIGHT)
+                    canvas.scale(
+                        size.width / PdfPageGeometry.WIDTH,
+                        size.height / PdfPageGeometry.HEIGHT
+                    )
                     canvas.clipRect(0f, 0f, PdfPageGeometry.WIDTH, PdfPageGeometry.HEIGHT)
-                    canvas.drawRect(0f, 0f, PdfPageGeometry.WIDTH, PdfPageGeometry.HEIGHT, paperPaint)
+                    canvas.drawRect(
+                        0f,
+                        0f,
+                        PdfPageGeometry.WIDTH,
+                        PdfPageGeometry.HEIGHT,
+                        paperPaint
+                    )
                     if (current != null && matrix != null) {
                         val contentSave = canvas.save()
                         try {
@@ -171,8 +194,19 @@ internal fun DocumentLivePagePreview(
                     }
                     if (showPageNumbers) footer?.let { number ->
                         val background = number.geometry.background
-                        canvas.drawRect(background.left, background.top, background.right, background.bottom, paperPaint)
-                        canvas.drawText(number.text, number.geometry.left, number.geometry.baseline, number.paint)
+                        canvas.drawRect(
+                            background.left,
+                            background.top,
+                            background.right,
+                            background.bottom,
+                            paperPaint
+                        )
+                        canvas.drawText(
+                            number.text,
+                            number.geometry.left,
+                            number.geometry.baseline,
+                            number.paint
+                        )
                     }
                 } finally {
                     canvas.restoreToCount(paperSave)
@@ -182,7 +216,9 @@ internal fun DocumentLivePagePreview(
         if (current == null && !raster.error) CircularProgressIndicator()
         if (raster.error || signatureAssets.error) {
             Surface(
-                modifier = Modifier.align(Alignment.BottomCenter).padding(8.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(8.dp),
                 color = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer,
                 shape = MaterialTheme.shapes.small,
@@ -199,19 +235,29 @@ internal fun DocumentLivePagePreview(
 
 private data class LiveRaster(val bitmap: Bitmap, val sourceWidth: Float, val sourceHeight: Float)
 private data class LiveRasterState(val image: LiveRaster? = null, val error: Boolean = false)
-private data class LiveSignatureAssets(val images: Map<String, Bitmap> = emptyMap(), val error: Boolean = false)
+private data class LiveSignatureAssets(
+    val images: Map<String, Bitmap> = emptyMap(),
+    val error: Boolean = false
+)
+
 private data class LiveSignature(val bitmap: Bitmap, val destination: RectF)
-private data class LiveFooter(val text: String, val geometry: DocumentLivePageNumber, val paint: Paint)
+private data class LiveFooter(
+    val text: String,
+    val geometry: DocumentLivePageNumber,
+    val paint: Paint
+)
 
 /** A mesma resolução de assinatura da prévia PDF, mantendo transparência e proporção. */
 private fun decodeLiveSignature(context: Context, uri: String): Bitmap {
     val source = uri.toUri()
     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-    context.contentResolver.openInputStream(source)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+    context.contentResolver.openInputStream(source)
+        ?.use { BitmapFactory.decodeStream(it, null, bounds) }
     require(bounds.outWidth > 0 && bounds.outHeight > 0)
     var sample = 1
     while (maxOf(bounds.outWidth, bounds.outHeight).toLong() > 512L * sample) sample *= 2
     val options = BitmapFactory.Options().apply { inSampleSize = sample }
-    return context.contentResolver.openInputStream(source)?.use { BitmapFactory.decodeStream(it, null, options) }
+    return context.contentResolver.openInputStream(source)
+        ?.use { BitmapFactory.decodeStream(it, null, options) }
         ?: error("Não foi possível preparar a assinatura.")
 }

@@ -82,7 +82,9 @@ internal fun DocumentLayoutSheetContent(
         onDispose { onEvent(DocumentToolsEvent.ClearLayoutPreview) }
     }
 
-    BoxWithConstraints(Modifier.fillMaxWidth().heightIn(max = 720.dp)) {
+    BoxWithConstraints(Modifier
+        .fillMaxWidth()
+        .heightIn(max = 720.dp)) {
         val fontScale = LocalDensity.current.fontScale.coerceAtLeast(1f)
         // Reserva espaço para escopo e confirmação; telas muito baixas ainda permitem rolar.
         val navigationHeight = if (targets.size > 1) 56.dp else 0.dp
@@ -97,7 +99,9 @@ internal fun DocumentLayoutSheetContent(
                 enabled = state.canEdit,
             )
             Column(
-                Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
+                Modifier
+                    .weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -116,9 +120,20 @@ internal fun DocumentLayoutSheetContent(
                     },
                     controls = {
                         when (control) {
-                            DocumentLayoutControl.POSITION -> LayoutPositionControls(draft, state.canEdit) { draft = it }
-                            DocumentLayoutControl.ROTATION -> LayoutRotationControls(draft, state.canEdit) { draft = it }
-                            DocumentLayoutControl.SIZE -> LayoutSizeControls(draft, state.canEdit) { draft = it }
+                            DocumentLayoutControl.POSITION -> LayoutPositionControls(
+                                draft,
+                                state.canEdit
+                            ) { draft = it }
+
+                            DocumentLayoutControl.ROTATION -> LayoutRotationControls(
+                                draft,
+                                state.canEdit
+                            ) { draft = it }
+
+                            DocumentLayoutControl.SIZE -> LayoutSizeControls(
+                                draft,
+                                state.canEdit
+                            ) { draft = it }
                         }
                     },
                 ) {
@@ -127,9 +142,16 @@ internal fun DocumentLayoutSheetContent(
                         preview = currentPreview,
                         fallback = state.pagePreviews[page.id]?.preview,
                         isLoading = state.isPreviewingLayout || livePreview?.isRendering == true ||
-                            (currentPreview == null && livePreview?.pixels == null && !previewError),
+                                (currentPreview == null && livePreview?.pixels == null && !previewError),
                         hasError = previewError,
-                        onRetry = { onEvent(DocumentToolsEvent.PreviewLayout(page.id, previewLayout)) },
+                        onRetry = {
+                            onEvent(
+                                DocumentToolsEvent.PreviewLayout(
+                                    page.id,
+                                    previewLayout
+                                )
+                            )
+                        },
                         enabled = state.canEdit,
                         pageNumber = workspace.pages.indexOf(page) + 1,
                         reserveHandleSpace = true,
@@ -159,18 +181,24 @@ internal fun DocumentLayoutSheetContent(
             DocumentToolActions(
                 compact = true,
                 enabled = state.canEdit && targets.isNotEmpty(),
-                applyLabel = pluralStringResource(R.plurals.document_scope_apply_count, targets.size, targets.size),
+                applyLabel = pluralStringResource(
+                    R.plurals.document_scope_apply_count,
+                    targets.size,
+                    targets.size
+                ),
                 onReset = { draft = draft.withLayoutAdjustmentsFrom(PdfPageLayout()) },
                 onApply = {
                     onEvent(DocumentToolsEvent.SelectPage(page.id))
-                    onEvent(DocumentToolsEvent.ApplyLayout(
-                        alignment = draft.alignment,
-                        scaleMode = draft.scaleMode,
-                        allPages = scope.mode == DocumentPageScopeMode.ALL,
-                        pageIds = targets,
-                        rotationQuarterTurns = draft.rotationQuarterTurns,
-                        contentScale = draft.contentScale,
-                    ))
+                    onEvent(
+                        DocumentToolsEvent.ApplyLayout(
+                            alignment = draft.alignment,
+                            scaleMode = draft.scaleMode,
+                            allPages = scope.mode == DocumentPageScopeMode.ALL,
+                            pageIds = targets,
+                            rotationQuarterTurns = draft.rotationQuarterTurns,
+                            contentScale = draft.contentScale,
+                        )
+                    )
                 },
             )
         }
@@ -178,22 +206,35 @@ internal fun DocumentLayoutSheetContent(
 }
 
 @Composable
-private fun LayoutPositionControls(layout: PdfPageLayout, enabled: Boolean, onChange: (PdfPageLayout) -> Unit) {
+private fun LayoutPositionControls(
+    layout: PdfPageLayout,
+    enabled: Boolean,
+    onChange: (PdfPageLayout) -> Unit
+) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         LayoutControlCaption(
             hint = stringResource(R.string.gesture_drag_handle),
             value = stringResource(layout.alignment.labelResource()),
         )
         Row(
-            Modifier.fillMaxWidth().selectableGroup(),
+            Modifier
+                .fillMaxWidth()
+                .selectableGroup(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            listOf(PageAlignment.LEFT, PageAlignment.CENTER, PageAlignment.RIGHT, PageAlignment.TOP, PageAlignment.BOTTOM)
+            listOf(
+                PageAlignment.LEFT,
+                PageAlignment.CENTER,
+                PageAlignment.RIGHT,
+                PageAlignment.TOP,
+                PageAlignment.BOTTOM
+            )
                 .forEach { alignment ->
                     val selected = layout.alignment == alignment
                     val description = stringResource(alignment.labelResource())
                     Surface(
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier
+                            .size(48.dp)
                             .selectable(
                                 selected = selected,
                                 enabled = enabled,
@@ -209,10 +250,17 @@ private fun LayoutPositionControls(layout: PdfPageLayout, enabled: Boolean, onCh
                             selected -> MaterialTheme.colorScheme.onPrimaryContainer
                             else -> MaterialTheme.colorScheme.onSurfaceVariant
                         },
-                        border = if (selected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = .35f)) else null,
+                        border = if (selected) BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.primary.copy(alpha = .35f)
+                        ) else null,
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            Icon(painterResource(alignment.iconResource()), null, Modifier.size(24.dp))
+                            Icon(
+                                painterResource(alignment.iconResource()),
+                                null,
+                                Modifier.size(24.dp)
+                            )
                         }
                     }
                 }
@@ -221,20 +269,39 @@ private fun LayoutPositionControls(layout: PdfPageLayout, enabled: Boolean, onCh
 }
 
 @Composable
-private fun LayoutRotationControls(layout: PdfPageLayout, enabled: Boolean, onChange: (PdfPageLayout) -> Unit) {
+private fun LayoutRotationControls(
+    layout: PdfPageLayout,
+    enabled: Boolean,
+    onChange: (PdfPageLayout) -> Unit
+) {
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
-            onClick = { onChange(layout.copy(rotationQuarterTurns = documentLayoutRotation(layout.rotationQuarterTurns, -1))) },
+            onClick = {
+                onChange(
+                    layout.copy(
+                        rotationQuarterTurns = documentLayoutRotation(
+                            layout.rotationQuarterTurns,
+                            -1
+                        )
+                    )
+                )
+            },
             enabled = enabled,
         ) {
-            Icon(painterResource(R.drawable.ic_layout_rotate_left), stringResource(R.string.layout_interactive_rotate_left))
+            Icon(
+                painterResource(R.drawable.ic_layout_rotate_left),
+                stringResource(R.string.layout_interactive_rotate_left)
+            )
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.layout_interactive_rotate), style = MaterialTheme.typography.labelSmall)
+            Text(
+                stringResource(R.string.layout_interactive_rotate),
+                style = MaterialTheme.typography.labelSmall
+            )
             Text(
                 stringResource(R.string.tools_rotation_angle, layout.rotationQuarterTurns * 90),
                 style = MaterialTheme.typography.titleMedium,
@@ -242,19 +309,37 @@ private fun LayoutRotationControls(layout: PdfPageLayout, enabled: Boolean, onCh
             )
         }
         IconButton(
-            onClick = { onChange(layout.copy(rotationQuarterTurns = documentLayoutRotation(layout.rotationQuarterTurns, 1))) },
+            onClick = {
+                onChange(
+                    layout.copy(
+                        rotationQuarterTurns = documentLayoutRotation(
+                            layout.rotationQuarterTurns,
+                            1
+                        )
+                    )
+                )
+            },
             enabled = enabled,
         ) {
-            Icon(painterResource(R.drawable.ic_layout_rotate_right), stringResource(R.string.layout_interactive_rotate_right))
+            Icon(
+                painterResource(R.drawable.ic_layout_rotate_right),
+                stringResource(R.string.layout_interactive_rotate_right)
+            )
         }
     }
 }
 
 @Composable
-private fun LayoutSizeControls(layout: PdfPageLayout, enabled: Boolean, onChange: (PdfPageLayout) -> Unit) {
+private fun LayoutSizeControls(
+    layout: PdfPageLayout,
+    enabled: Boolean,
+    onChange: (PdfPageLayout) -> Unit
+) {
     Column {
         Row(
-            Modifier.fillMaxWidth().selectableGroup(),
+            Modifier
+                .fillMaxWidth()
+                .selectableGroup(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             PageScaleMode.entries.forEach { mode ->
@@ -262,7 +347,9 @@ private fun LayoutSizeControls(layout: PdfPageLayout, enabled: Boolean, onChange
                     selected = layout.scaleMode == mode,
                     onClick = { onChange(layout.copy(scaleMode = mode)) },
                     enabled = enabled,
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 48.dp),
                     label = {
                         Text(
                             stringResource(if (mode == PageScaleMode.FIT) R.string.tools_fit_compact else R.string.tools_fill_compact),
@@ -273,9 +360,15 @@ private fun LayoutSizeControls(layout: PdfPageLayout, enabled: Boolean, onChange
             }
         }
         val description = stringResource(R.string.tools_content_size)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Text(
-                stringResource(R.string.tools_content_size_value, (layout.contentScale * 100).roundToInt()),
+                stringResource(
+                    R.string.tools_content_size_value,
+                    (layout.contentScale * 100).roundToInt()
+                ),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -284,7 +377,9 @@ private fun LayoutSizeControls(layout: PdfPageLayout, enabled: Boolean, onChange
                 onValueChange = { onChange(layout.copy(contentScale = it)) },
                 valueRange = .25f..2f,
                 enabled = enabled,
-                modifier = Modifier.weight(1f).semantics { contentDescription = description },
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = description },
             )
         }
     }
@@ -297,8 +392,17 @@ private fun LayoutControlCaption(hint: String, value: String) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(hint, Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+        Text(
+            hint,
+            Modifier.weight(1f),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            value,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -331,7 +435,12 @@ private fun PageAlignment.iconResource() = when (this) {
 }
 
 @Preview(name = "Ajustar página", widthDp = 390, heightDp = 760, showBackground = true)
-@Preview(name = "Ajustar página escuro", widthDp = 390, heightDp = 760, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    name = "Ajustar página escuro",
+    widthDp = 390,
+    heightDp = 760,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Preview(name = "Ajustar fonte ampliada", widthDp = 360, heightDp = 760, fontScale = 1.3f)
 @Composable
 private fun DocumentLayoutSheetPreview() {
@@ -355,7 +464,10 @@ private fun DocumentLayoutPreviewContent(control: DocumentLayoutControl) {
     ScaniqoTheme {
         Surface {
             Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(stringResource(R.string.tools_layout), style = MaterialTheme.typography.titleLarge)
+                Text(
+                    stringResource(R.string.tools_layout),
+                    style = MaterialTheme.typography.titleLarge
+                )
                 DocumentLayoutSheetContent(
                     DocumentToolsUiState(
                         workspace = PdfWorkspace(

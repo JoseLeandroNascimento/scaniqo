@@ -54,7 +54,9 @@ internal fun documentLayoutScale(current: Float, zoom: Float): Float {
 internal class DocumentLayoutRotationGesture {
     private var remainder = 0f
 
-    fun reset() { remainder = 0f }
+    fun reset() {
+        remainder = 0f
+    }
 
     fun turn(deltaDegrees: Float): Int {
         if (!deltaDegrees.isFinite()) return 0
@@ -80,12 +82,17 @@ internal fun documentLayoutHandleScale(
     val width = paperSize.width.toFloat()
     val height = paperSize.height.toFloat()
     val direction = if (fromTopLeft) -1f else 1f
-    val factor = 1f + direction * 2f * (drag.x * width + drag.y * height) / (width * width + height * height)
+    val factor =
+        1f + direction * 2f * (drag.x * width + drag.y * height) / (width * width + height * height)
     return (initialScale * factor).coerceIn(.25f, 2f)
 }
 
 /** Cruza a fronteira entre -180° e 180° sem produzir um salto de uma volta inteira. */
-internal fun documentLayoutHandleRotation(previous: Offset, current: Offset, center: Offset): Float {
+internal fun documentLayoutHandleRotation(
+    previous: Offset,
+    current: Offset,
+    center: Offset
+): Float {
     val before = previous - center
     val after = current - center
     if (!before.x.isFinite() || !before.y.isFinite() || !after.x.isFinite() || !after.y.isFinite()) return 0f
@@ -131,25 +138,45 @@ internal fun Modifier.documentLayoutHandleGesture(
                         (position.x + amount.x / paperSize.width).coerceIn(0f, 1f),
                         (position.y + amount.y / paperSize.height).coerceIn(0f, 1f),
                     )
-                    latestOnChange(latestLayout.copy(alignment = documentLayoutAlignmentAt(position.x, position.y)))
+                    latestOnChange(
+                        latestLayout.copy(
+                            alignment = documentLayoutAlignmentAt(
+                                position.x,
+                                position.y
+                            )
+                        )
+                    )
                 }
+
                 DocumentLayoutHandle.ROTATE -> {
                     val current = previous + amount
-                    val turns = rotation.turn(documentLayoutHandleRotation(previous, current, center))
+                    val turns =
+                        rotation.turn(documentLayoutHandleRotation(previous, current, center))
                     previous = current
                     if (turns != 0) {
-                        latestOnChange(latestLayout.copy(
-                            rotationQuarterTurns = documentLayoutRotation(latestLayout.rotationQuarterTurns, turns),
-                        ))
+                        latestOnChange(
+                            latestLayout.copy(
+                                rotationQuarterTurns = documentLayoutRotation(
+                                    latestLayout.rotationQuarterTurns,
+                                    turns
+                                ),
+                            )
+                        )
                     }
                 }
+
                 DocumentLayoutHandle.SCALE_TOP_LEFT, DocumentLayoutHandle.SCALE_BOTTOM_RIGHT -> {
                     drag += amount
-                    latestOnChange(latestLayout.copy(
-                        contentScale = documentLayoutHandleScale(
-                            initialScale, drag, paperSize, handle == DocumentLayoutHandle.SCALE_TOP_LEFT,
-                        ),
-                    ))
+                    latestOnChange(
+                        latestLayout.copy(
+                            contentScale = documentLayoutHandleScale(
+                                initialScale,
+                                drag,
+                                paperSize,
+                                handle == DocumentLayoutHandle.SCALE_TOP_LEFT,
+                            ),
+                        )
+                    )
                 }
             }
         }
@@ -198,25 +225,36 @@ internal fun Modifier.documentLayoutGestures(
                             (position.x + amount.x / size.width).coerceIn(0f, 1f),
                             (position.y + amount.y / size.height).coerceIn(0f, 1f),
                         )
-                        latestOnChange(latestLayout.copy(
-                            alignment = documentLayoutAlignmentAt(position.x, position.y),
-                        ))
+                        latestOnChange(
+                            latestLayout.copy(
+                                alignment = documentLayoutAlignmentAt(position.x, position.y),
+                            )
+                        )
                     }
                 }
             }
+
             DocumentLayoutControl.ROTATION -> {
                 detectTransformGestures { _, _, _, angle ->
                     val turns = rotation.turn(angle)
-                    if (turns != 0) latestOnChange(latestLayout.copy(
-                        rotationQuarterTurns = documentLayoutRotation(latestLayout.rotationQuarterTurns, turns),
-                    ))
+                    if (turns != 0) latestOnChange(
+                        latestLayout.copy(
+                            rotationQuarterTurns = documentLayoutRotation(
+                                latestLayout.rotationQuarterTurns,
+                                turns
+                            ),
+                        )
+                    )
                 }
             }
+
             DocumentLayoutControl.SIZE -> {
                 detectTransformGestures { _, _, zoom, _ ->
-                    if (zoom != 1f) latestOnChange(latestLayout.copy(
-                        contentScale = documentLayoutScale(latestLayout.contentScale, zoom),
-                    ))
+                    if (zoom != 1f) latestOnChange(
+                        latestLayout.copy(
+                            contentScale = documentLayoutScale(latestLayout.contentScale, zoom),
+                        )
+                    )
                 }
             }
         }

@@ -34,6 +34,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.compose.koinInject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import androidx.core.net.toUri
 
 /** Mantém um único consumidor dos efeitos Android, mesmo ao navegar entre lista e PDF. */
 @Composable
@@ -111,7 +112,7 @@ fun DocumentActionsHandler(
                     }
                     is DocumentsEffect.SharePdf -> {
                         try {
-                            val uri = Uri.parse(effect.uri)
+                            val uri = effect.uri.toUri()
                             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                 type = "application/pdf"
                                 putExtra(Intent.EXTRA_STREAM, uri)

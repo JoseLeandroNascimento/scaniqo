@@ -113,7 +113,7 @@ private fun DocumentToolSheetContent(
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = if (interactive) 12.dp else 20.dp)
-            .padding(bottom = if (interactive) 8.dp else 16.dp),
+            .padding(bottom = if (interactive) 8.dp else 20.dp),
         verticalArrangement = Arrangement.spacedBy(if (interactive) 8.dp else 20.dp),
     ) {
         Row(

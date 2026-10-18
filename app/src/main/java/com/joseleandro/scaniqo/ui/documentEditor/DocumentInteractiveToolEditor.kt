@@ -75,33 +75,57 @@ internal fun DocumentToolScopeMenu(
     val targets = scope.targets(pages, currentPageId)
     val summary = when (scope.mode) {
         DocumentPageScopeMode.CURRENT -> stringResource(
-            R.string.interactive_scope_current_summary, pages.indexOfFirst { it.id == currentPageId } + 1,
+            R.string.interactive_scope_current_summary,
+            pages.indexOfFirst { it.id == currentPageId } + 1,
         )
+
         DocumentPageScopeMode.SELECTED -> pluralStringResource(
             R.plurals.interactive_scope_selected_summary, targets.size, targets.size,
         )
-        DocumentPageScopeMode.ALL -> stringResource(R.string.interactive_scope_all_summary, targets.size)
+
+        DocumentPageScopeMode.ALL -> stringResource(
+            R.string.interactive_scope_all_summary,
+            targets.size
+        )
     }
     val description = stringResource(R.string.interactive_scope_description, summary)
     Box(modifier) {
         TextButton(
             onClick = { expanded = true },
             enabled = enabled,
-            modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = description },
+            modifier = Modifier
+                .heightIn(min = 48.dp)
+                .semantics { contentDescription = description },
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         ) {
             Icon(painterResource(R.drawable.ic_tool_pages), null, Modifier.size(18.dp))
-            Text(summary, Modifier.padding(horizontal = 6.dp), style = MaterialTheme.typography.labelMedium)
-            Icon(painterResource(R.drawable.arrow_back_24px), null, Modifier.size(16.dp).rotate(270f))
+            Text(
+                summary,
+                Modifier.padding(horizontal = 6.dp),
+                style = MaterialTheme.typography.labelMedium
+            )
+            Icon(
+                painterResource(R.drawable.arrow_back_24px),
+                null,
+                Modifier
+                    .size(16.dp)
+                    .rotate(270f)
+            )
         }
         DropdownMenu(expanded = expanded && enabled, onDismissRequest = { expanded = false }) {
             DocumentPageScopeMode.entries.forEach { mode ->
                 DropdownMenuItem(
-                    text = { Text(stringResource(when (mode) {
-                        DocumentPageScopeMode.CURRENT -> R.string.interactive_scope_current
-                        DocumentPageScopeMode.SELECTED -> R.string.interactive_scope_choose
-                        DocumentPageScopeMode.ALL -> R.string.interactive_scope_all
-                    })) },
+                    text = {
+                        Text(
+                            stringResource(
+                                when (mode) {
+                                    DocumentPageScopeMode.CURRENT -> R.string.interactive_scope_current
+                                    DocumentPageScopeMode.SELECTED -> R.string.interactive_scope_choose
+                                    DocumentPageScopeMode.ALL -> R.string.interactive_scope_all
+                                }
+                            )
+                        )
+                    },
                     trailingIcon = {
                         if (mode == scope.mode) Icon(painterResource(R.drawable.ic_check_24), null)
                     },
@@ -152,14 +176,19 @@ internal fun DocumentToolTargetNavigation(
                 enabled = enabled && targetIndex > 0,
                 modifier = Modifier.size(48.dp),
             ) {
-                Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.corrections_preview_previous))
+                Icon(
+                    painterResource(R.drawable.arrow_back_24px),
+                    stringResource(R.string.corrections_preview_previous)
+                )
             }
         }
         TextButton(
             onClick = { choosing = true },
             enabled = enabled && targets.size > 1,
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
-            modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = description },
+            modifier = Modifier
+                .heightIn(min = 48.dp)
+                .semantics { contentDescription = description },
         ) {
             Text(
                 stringResource(R.string.interactive_preview_page, pageNumber),
@@ -201,17 +230,31 @@ internal fun DocumentInteractivePreviewStage(
     controls: @Composable () -> Unit,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerLow) {
+    Surface(
+        modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainerLow
+    ) {
         Column(Modifier.padding(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(
-                Modifier.weight(1f).fillMaxWidth(),
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(Modifier.weight(1f).fillMaxSize(), contentAlignment = Alignment.Center, content = content)
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                    content = content
+                )
                 Column(
-                    Modifier.width(48.dp)
-                        .verticalScroll(rememberScrollState()).selectableGroup(),
+                    Modifier
+                        .width(48.dp)
+                        .verticalScroll(rememberScrollState())
+                        .selectableGroup(),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     content = tools,
@@ -246,7 +289,8 @@ internal fun DocumentPreviewToolButton(
         state = rememberTooltipState(),
     ) {
         Surface(
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier
+                .size(48.dp)
                 .selectable(selected, enabled = enabled, role = Role.RadioButton, onClick = onClick)
                 .semantics { contentDescription = label },
             shape = MaterialTheme.shapes.medium,
@@ -256,7 +300,10 @@ internal fun DocumentPreviewToolButton(
                 selected -> MaterialTheme.colorScheme.onPrimaryContainer
                 else -> MaterialTheme.colorScheme.onSurfaceVariant
             },
-            border = if (selected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = .4f)) else null,
+            border = if (selected) BorderStroke(
+                1.dp,
+                MaterialTheme.colorScheme.primary.copy(alpha = .4f)
+            ) else null,
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(painterResource(iconRes), null, Modifier.size(24.dp))
@@ -286,9 +333,16 @@ internal fun DocumentInteractivePagePreview(
     overlay: @Composable BoxScope.() -> Unit = {},
 ) {
     val handleMargin = if (reserveHandleSpace) 24.dp else 6.dp
-    BoxWithConstraints(modifier.fillMaxSize().padding(handleMargin), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(
+        modifier
+            .fillMaxSize()
+            .padding(handleMargin),
+        contentAlignment = Alignment.Center
+    ) {
         val paperWidth = minOf(maxWidth, maxHeight * (595f / 842f)).coerceAtLeast(1.dp)
-        Box(Modifier.width(paperWidth).aspectRatio(595f / 842f)) {
+        Box(Modifier
+            .width(paperWidth)
+            .aspectRatio(595f / 842f)) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 shape = RectangleShape,
@@ -310,7 +364,8 @@ internal fun DocumentInteractivePagePreview(
                     } else {
                         DocumentPdfPage(
                             pdfUri = preview?.uri ?: fallback?.uri ?: page.sourceUri,
-                            pageIndex = preview?.pageIndex ?: fallback?.pageIndex ?: page.sourcePageIndex,
+                            pageIndex = preview?.pageIndex ?: fallback?.pageIndex
+                            ?: page.sourcePageIndex,
                             contentKey = "interactive-$workspaceId-${page.id}",
                             modifier = Modifier.fillMaxSize(),
                             pageNumber = pageNumber,
@@ -324,12 +379,17 @@ internal fun DocumentInteractivePagePreview(
         if (isLoading) {
             val description = stringResource(R.string.interactive_preview_busy)
             Surface(
-                modifier = Modifier.align(Alignment.TopStart).padding(4.dp),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(4.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 shape = MaterialTheme.shapes.small,
             ) {
                 CircularProgressIndicator(
-                    Modifier.padding(6.dp).size(16.dp).semantics { contentDescription = description },
+                    Modifier
+                        .padding(6.dp)
+                        .size(16.dp)
+                        .semantics { contentDescription = description },
                     strokeWidth = 2.dp,
                 )
             }
