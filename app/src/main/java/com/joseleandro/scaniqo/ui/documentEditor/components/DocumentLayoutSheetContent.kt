@@ -24,6 +24,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.setValue
@@ -74,6 +75,7 @@ internal fun DocumentLayoutSheetContent(
     var draft by rememberSaveable(workspace.workspaceId, stateSaver = PdfPageLayoutSaver) {
         mutableStateOf(initialPage.layout)
     }
+    val gestureStartLayout = remember(workspace.workspaceId) { mutableStateOf(draft) }
     var control by rememberSaveable { mutableStateOf(initialControl) }
     var scope by rememberSaveable(workspace.workspaceId, stateSaver = DocumentPageScopeSaver) {
         mutableStateOf(DocumentPageScope())
@@ -97,7 +99,9 @@ internal fun DocumentLayoutSheetContent(
 
     DocumentToolScreenLayout(
         modifier = modifier,
-        header = {
+        previewKey = page.id,
+        onGestureStart = { gestureStartLayout.value = draft },
+        onTransformStart = { draft = gestureStartLayout.value },        header = {
             DocumentToolScopeMenu(
                 pages = workspace.pages,
                 currentPageId = anchorPageId,

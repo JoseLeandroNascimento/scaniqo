@@ -5,14 +5,17 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -61,6 +64,8 @@ internal fun DocumentSignatureScreen(
     val page = workspace?.pages?.getOrNull(state.selectedPageIndex)
     val draft = state.signatureDraft?.takeIf { sameSession && state.signaturePageId == page?.id }
     var showCrop by rememberSaveable(draft?.id) { mutableStateOf(false) }
+    var showControls by rememberSaveable(documentId) { mutableStateOf(false) }
+    LaunchedEffect(draft?.id) { if (draft != null) showControls = false }
     var adjustmentMode by rememberSaveable(draft?.id) { mutableStateOf(initialAdjustmentMode) }
     var adjustmentActive by remember(draft?.id) { mutableStateOf(false) }
     val toast = rememberAppToastState()
@@ -97,7 +102,7 @@ internal fun DocumentSignatureScreen(
         },
         snackbarHost = { AppToastHost(toast) },
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
+        Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
             when {
                 state.isLocked && sameSession -> DocumentStatus(
                     title = stringResource(R.string.tools_locked_title),
@@ -114,31 +119,8 @@ internal fun DocumentSignatureScreen(
                 isLoadingDocument || !sameSession || page == null -> Box(
                     Modifier.fillMaxSize(), contentAlignment = Alignment.Center,
                 ) { CircularProgressIndicator() }
-                maxWidth > maxHeight -> {
-                    val controlsWidth = minOf(320.dp, maxWidth * .48f)
-                    Row(Modifier.fillMaxSize()) {
-                        DocumentSignaturePage(
-                            state = state, workspace = workspace, page = page, draft = draft,
-                            adjustmentMode = adjustmentMode,
-                            adjustmentActive = adjustmentActive && state.canEdit && !showCrop,
-                            onEvent = onEvent,
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                        )
-                        DocumentSignatureControls(
-                            state = state, page = page, draft = draft, onEvent = onEvent,
-                            adjustmentMode = adjustmentMode,
-                            onAdjustmentModeChange = { adjustmentMode = it; adjustmentActive = false },
-                            onAdjustmentActiveChange = { adjustmentActive = it },
-                            onCreateSignature = onCreateSignature,
-                            onCrop = { adjustmentActive = false; showCrop = true },
-                            onApply = onApply,
-                            modifier = Modifier.width(controlsWidth).fillMaxHeight(),
-                        )
-                    }
-                }
                 else -> {
-                    val controlsHeight = minOf(300.dp, maxHeight * .42f)
-                    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(Modifier.fillMaxSize()) {
                         DocumentSignaturePage(
                             state = state, workspace = workspace, page = page, draft = draft,
                             adjustmentMode = adjustmentMode,
@@ -146,18 +128,39 @@ internal fun DocumentSignatureScreen(
                             onEvent = onEvent,
                             modifier = Modifier.weight(1f).fillMaxWidth(),
                         )
-                        DocumentSignatureControls(
-                            state = state, page = page, draft = draft, onEvent = onEvent,
-                            adjustmentMode = adjustmentMode,
-                            onAdjustmentModeChange = { adjustmentMode = it; adjustmentActive = false },
-                            onAdjustmentActiveChange = { adjustmentActive = it },
-                            onCreateSignature = onCreateSignature,
-                            onCrop = { adjustmentActive = false; showCrop = true },
-                            onApply = onApply,
-                            modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth().heightIn(max = controlsHeight),
-                        )
+                        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            OutlinedButton(onClick = { showControls = true }, enabled = state.canEdit,
+                                modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
+                                Text(stringResource(if (draft == null) R.string.signature_library else R.string.preview_controls_show))
+                            }
+                            if (draft != null) Button(onClick = onApply,
+                                enabled = state.canEdit && !state.isRendering,
+                                modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
+                                Text(stringResource(R.string.signature_apply))
+                            }
+                        }
                     }
                 }
+            }
+        }
+    }
+    if (showControls && page != null && sameSession && !state.isLocked) {
+        ModalBottomSheet(
+            onDismissRequest = { showControls = false; adjustmentActive = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        ) {
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                DocumentSignatureControls(
+                    state = state, page = page, draft = draft, onEvent = onEvent,
+                    adjustmentMode = adjustmentMode,
+                    onAdjustmentModeChange = { adjustmentMode = it; adjustmentActive = false },
+                    onAdjustmentActiveChange = { adjustmentActive = it },
+                    onCreateSignature = { showControls = false; onCreateSignature() },
+                    onCrop = { adjustmentActive = false; showControls = false; showCrop = true },
+                    onApply = onApply,
+                    modifier = Modifier.fillMaxWidth().heightIn(max = maxHeight * .8f),
+                )
             }
         }
     }

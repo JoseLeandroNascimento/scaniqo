@@ -2,6 +2,8 @@ package com.joseleandro.scaniqo.data.pdf
 
 import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
+import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
@@ -96,6 +98,51 @@ class PdfReusablePreviewTest {
         file.delete()
 
         assertNull(cache.reusable(original))
+    }
+
+    @Test
+    fun `numero dinamico invalida somente paginas deslocadas`() {
+        val original = withTemplate("{pagina}")
+        val reordered = original.copy(pages = original.pages.reversed())
+
+        assertEquals(listOf(null, 1, null), snapshot(original).matchingPageIndices(reordered))
+        assertEquals(listOf(0, 1), snapshot(original).matchingPageIndices(
+            original.copy(pages = original.pages.take(2))
+        ))
+    }
+
+    @Test
+    fun `total dinamico invalida paginas quando quantidade muda mas permite reordenar`() {
+        val original = withTemplate("{total}")
+
+        assertEquals(listOf(2, 1, 0), snapshot(original).matchingPageIndices(
+            original.copy(pages = original.pages.reversed())
+        ))
+        assertEquals(listOf(null, null), snapshot(original).matchingPageIndices(
+            original.copy(pages = original.pages.take(2))
+        ))
+    }
+
+    @Test
+    fun `cache da folha nao devolve snapshot com numero ou total desatualizado`() {
+        val original = withTemplate("{pagina}/{total}")
+        val file = temporary.newFile()
+        val cache = PdfPreviewSnapshotCache()
+        cache.remember(original, file)
+
+        assertEquals(file to 0, cache.findPage(original, original.pages[0].id))
+        assertNull(cache.findPage(
+            original.copy(pages = original.pages.reversed()), original.pages[0].id
+        ))
+        assertNull(cache.findPage(
+            original.copy(pages = original.pages.take(2)), original.pages[0].id
+        ))
+    }
+
+    private fun withTemplate(text: String): PdfWorkspace = workspace(3).let { workspace ->
+        workspace.copy(pages = workspace.pages.map { page ->
+            page.copy(overlays = listOf(PdfOverlay("number", PdfOverlayKind.PAGE_NUMBER, text = text)))
+        })
     }
 
     private fun snapshot(workspace: PdfWorkspace) = PdfReusablePreview(

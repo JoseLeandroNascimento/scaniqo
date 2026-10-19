@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -166,12 +167,13 @@ private fun MergePasswordDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = submit, enabled = password.isNotEmpty()) {
-                Text(stringResource(R.string.merge_tools_confirm))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = cancel) { Text(stringResource(R.string.tools_cancel)) }
+            DialogActions(
+                confirmText = stringResource(R.string.merge_tools_confirm),
+                onConfirm = submit,
+                dismissText = stringResource(R.string.tools_cancel),
+                onDismiss = cancel,
+                confirmEnabled = password.isNotEmpty(),
+            )
         },
         properties = DialogProperties(securePolicy = SecureFlagPolicy.SecureOn),
     )

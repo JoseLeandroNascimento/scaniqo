@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -373,15 +374,15 @@ fun PasswordSettingsScreen(
             title = { Text(stringResource(R.string.password_deactivate_title)) },
             text = { Text(stringResource(R.string.password_deactivate_description)) },
             confirmButton = {
-                TextButton(onClick = {
-                    confirmDeactivate = false
-                    authorizeOrPerform(PasswordSettingsAction.DEACTIVATE)
-                }) { Text(stringResource(R.string.password_confirm_action)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmDeactivate = false }) {
-                    Text(stringResource(R.string.password_cancel))
-                }
+                DialogActions(
+                    confirmText = stringResource(R.string.password_confirm_action),
+                    onConfirm = {
+                        confirmDeactivate = false
+                        authorizeOrPerform(PasswordSettingsAction.DEACTIVATE)
+                    },
+                    dismissText = stringResource(R.string.password_cancel),
+                    onDismiss = { confirmDeactivate = false },
+                )
             },
         )
     }
@@ -392,15 +393,15 @@ fun PasswordSettingsScreen(
             title = { Text(stringResource(R.string.password_recreate_title)) },
             text = { Text(stringResource(R.string.password_recreate_description)) },
             confirmButton = {
-                TextButton(onClick = {
-                    confirmRecovery = false
-                    recoveryAccepted = true
-                }) { Text(stringResource(R.string.password_confirm_action)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmRecovery = false }) {
-                    Text(stringResource(R.string.password_cancel))
-                }
+                DialogActions(
+                    confirmText = stringResource(R.string.password_confirm_action),
+                    onConfirm = {
+                        confirmRecovery = false
+                        recoveryAccepted = true
+                    },
+                    dismissText = stringResource(R.string.password_cancel),
+                    onDismiss = { confirmRecovery = false },
+                )
             },
         )
     }

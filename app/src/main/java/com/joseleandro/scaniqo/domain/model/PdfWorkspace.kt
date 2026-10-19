@@ -73,7 +73,8 @@ data class PdfPageSpec(
     val sourceUri: String,
     val sourcePageIndex: Int,
     val layout: PdfPageLayout = PdfPageLayout(),
-    val signatures: List<PdfSignaturePlacement> = emptyList()
+    val signatures: List<PdfSignaturePlacement> = emptyList(),
+    val overlays: List<PdfOverlay> = emptyList()
 )
 
 @Serializable

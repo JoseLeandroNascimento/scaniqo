@@ -2,8 +2,8 @@ package com.joseleandro.scaniqo.ui.documentEditor
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +22,7 @@ import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentToolsMessage
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentToolsSheets
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
+import com.joseleandro.scaniqo.ui.documentEditor.model.hasEditorScreen
 
 /** Ajustes e correções mantêm um rascunho local; páginas atualizam a mesma sessão editável. */
 @Composable
@@ -33,7 +34,7 @@ fun DocumentEditorToolRoute(
     isActive: Boolean,
     onBack: () -> Unit,
 ) {
-    require(tool in setOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES))
+    require(tool.hasEditorScreen)
     val viewer by viewerViewModel.uiState.collectAsStateWithLifecycle()
     val state by toolsViewModel.uiState.collectAsStateWithLifecycle()
     val document = viewer.document?.takeIf { it.id == documentId }
@@ -102,6 +103,7 @@ fun DocumentEditorToolRoute(
             toolsViewModel.onEvent(DocumentToolsEvent.Retry)
         },
         snackbarHost = { AppToastHost(toast) },
+        hasLocalDraft = draftChanged,
     )
     if (confirmExit && isActive) {
         AlertDialog(
@@ -109,14 +111,14 @@ fun DocumentEditorToolRoute(
             title = { Text(stringResource(R.string.editor_tool_discard_title)) },
             text = { Text(stringResource(R.string.editor_tool_discard_body)) },
             confirmButton = {
-                TextButton(onClick = { confirmExit = false; leave() }, enabled = !state.isBusy) {
-                    Text(stringResource(R.string.tools_discard))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmExit = false }) {
-                    Text(stringResource(R.string.tools_keep_editing))
-                }
+                DialogActions(
+                    confirmText = stringResource(R.string.tools_discard),
+                    onConfirm = { confirmExit = false; leave() },
+                    dismissText = stringResource(R.string.tools_keep_editing),
+                    onDismiss = { confirmExit = false },
+                    confirmEnabled = !state.isBusy,
+                    destructive = true,
+                )
             },
         )
     }

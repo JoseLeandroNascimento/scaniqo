@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">Certificado digital</string>
+    <string name="certificate_intro">Assine uma cópia com um certificado instalado no Android ou confira as assinaturas de um PDF.</string>
+    <string name="certificate_pick_pdf">Selecionar PDF</string>
+    <string name="certificate_choose">Selecionar certificado</string>
+    <string name="certificate_change">Trocar certificado</string>
+    <string name="certificate_install">Instalar certificado no Android</string>
+    <string name="certificate_sign">Assinar cópia</string>
+    <string name="certificate_save">Salvar PDF assinado</string>
+    <string name="certificate_unsigned">Este PDF não possui assinatura digital.</string>
+    <string name="certificate_sign_unavailable">Este documento permite somente a conferência das assinaturas nesta ferramenta.</string>
+    <string name="certificate_verification_scope">A conferência verifica os bytes assinados e a validade atual do certificado. Confiança na autoridade, revogação e carimbo de tempo não são verificados.</string>
+    <string name="certificate_sign_scope">A assinatura usa SHA-256 e não inclui carimbo de tempo. A chave privada permanece sob o controle do Android.</string>
+    <string name="certificate_integrity_verified">Integridade da revisão conferida</string>
+    <string name="certificate_integrity_invalid">Integridade não confirmada</string>
+    <string name="certificate_integrity_unsupported">Formato de assinatura não compatível</string>
+    <string name="certificate_whole_file">A assinatura cobre todo o arquivo atual.</string>
+    <string name="certificate_earlier_revision">A assinatura não cobre todo o arquivo atual.</string>
+    <string name="certificate_current">Certificado dentro do período de validade.</string>
+    <string name="certificate_not_current">Certificado fora do período de validade ou não identificado.</string>
+    <string name="certificate_picker_error">Não foi possível abrir a seleção de certificados.</string>
+    <string name="certificate_file_error">Não foi possível abrir o seletor de arquivos.</string>
+    <string name="certificate_back">Voltar</string>
+    <string name="form_screen_title">Preencher formulário</string>
+    <string name="form_intro">Selecione o PDF original para preencher seus campos interativos. A cópia salva mantém os campos editáveis.</string>
+    <string name="form_flat_hint">Para PDFs digitalizados, use Preencher sobre a página.</string>
+    <string name="form_select">Selecionar formulário</string>
+    <string name="form_save_copy">Salvar cópia</string>
+    <string name="form_read_only">Somente leitura</string>
+    <string name="form_choice">Selecionar</string>
+    <string name="form_choice_empty">Nenhuma opção selecionada</string>
+    <string name="form_choice_done">Concluir</string>
+    <string name="form_choice_clear">Limpar seleção</string>
+    <string name="form_unsupported">%1$d campos não compatíveis serão preservados sem alteração.</string>
+    <string name="form_unsaved_title">Descartar preenchimento?</string>
+    <string name="form_unsaved_message">Os valores ainda não foram salvos em uma cópia.</string>
+    <string name="form_discard">Descartar</string>
+    <string name="form_keep_editing">Continuar preenchendo</string>
+</resources>

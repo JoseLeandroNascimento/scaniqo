@@ -4,8 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -108,19 +108,20 @@ fun DocumentSignatureRoute(
             title = { Text(stringResource(R.string.signature_cancel_title)) },
             text = { Text(stringResource(R.string.signature_cancel_body)) },
             confirmButton = {
-                TextButton(
-                    onClick = {
+                DialogActions(
+                    confirmText = stringResource(R.string.signature_cancel_confirm),
+                    onConfirm = {
                         if (active && !leaving) {
                             toolsViewModel.onEvent(DocumentToolsEvent.CancelSignature)
                             confirmExit = false
                             leave()
                         }
                     },
-                    enabled = !tools.isBusy,
-                ) { Text(stringResource(R.string.signature_cancel_confirm)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { confirmExit = false }) { Text(stringResource(R.string.signature_keep_editing)) }
+                    dismissText = stringResource(R.string.signature_keep_editing),
+                    onDismiss = { confirmExit = false },
+                    confirmEnabled = !tools.isBusy,
+                    destructive = true,
+                )
             },
         )
     }

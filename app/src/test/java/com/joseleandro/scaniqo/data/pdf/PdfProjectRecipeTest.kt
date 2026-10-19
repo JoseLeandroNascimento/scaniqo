@@ -8,11 +8,49 @@ import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
 import com.joseleandro.scaniqo.domain.model.PdfPoint
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
+import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class PdfProjectRecipeTest {
+    @Test
+    fun editableOverlaysRoundTripAndOldRecipesDefaultToEmpty() {
+        val overlay = PdfOverlay("note", PdfOverlayKind.TEXT, text = "Nome: José", x = .2f, opacity = .7f)
+        val recipe = PdfProjectRecipe(pages = listOf(RecipePage("page", 0, PdfPageLayout(), overlays = listOf(overlay))))
+        val restored = Json.decodeFromString<PdfProjectRecipe>(Json.encodeToString(recipe))
+        restored.validate()
+        assertEquals(recipe, restored)
+        val legacy = Json.decodeFromString<PdfProjectRecipe>("""{"pages":[{"id":"p","sourcePageIndex":0,"layout":{}}]}""")
+        assertEquals(emptyList<PdfOverlay>(), legacy.pages.single().overlays)
+    }
+
+    @Test
+    fun storedRecipeUsesUtf8AndCanBeReopened() {
+        val recipe = PdfProjectRecipe(pages = listOf(RecipePage("p", 0, PdfPageLayout(),
+            overlays = listOf(PdfOverlay("text", PdfOverlayKind.TEXT, text = "João — revisão")))))
+        val encoded = recipe.encodeForStorage(Json)
+        val restored = Json.decodeFromString<PdfProjectRecipe>(encoded.toString(Charsets.UTF_8))
+        restored.validate()
+        assertEquals(recipe, restored)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun oversizedOverlayRecipeCannotBeSaved() {
+        // O JSON cabe em 4 milhões de caracteres, mas ultrapassa o limite em bytes UTF-8.
+        val overlays = List(12) { PdfOverlay("text-$it", PdfOverlayKind.TEXT, text = "ã".repeat(2000)) }
+        PdfProjectRecipe(pages = List(100) {
+            RecipePage("p-$it", it, PdfPageLayout(), overlays = overlays)
+        }).encodeForStorage(Json)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun corruptOverlayCannotEnterEditableRecipe() {
+        PdfProjectRecipe(pages = listOf(RecipePage("p", 0, PdfPageLayout(),
+            overlays = listOf(PdfOverlay("bad", PdfOverlayKind.TEXT, width = -1f))))).validate()
+    }
+
     @Test
     fun `receita persiste filtros geometricos OCR e perfil sem alterar fontes`() {
         val recipe = PdfProjectRecipe(

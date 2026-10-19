@@ -37,10 +37,48 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+// PDFBox usa os mesmos assets do AAR no Android e como recursos de classpath nos testes JVM.
+val pdfBoxUnitTestAssets = configurations.create("pdfBoxUnitTestAssets") {
+    isCanBeConsumed = false
+    isTransitive = false
+}
+dependencies.add(pdfBoxUnitTestAssets.name, libs.pdfbox.android)
+
+val extractPdfBoxUnitTestAssets = tasks.register<Sync>("extractPdfBoxUnitTestAssets") {
+    from({ zipTree(pdfBoxUnitTestAssets.singleFile) }) {
+        include("assets/**")
+        eachFile {
+            relativePath = RelativePath(
+                true,
+                *relativePath.segments.drop(1).toTypedArray()
+            )
+        }
+        includeEmptyDirs = false
+    }
+    into(layout.buildDirectory.dir("generated/pdfboxUnitTestAssets"))
+}
+android.testOptions.unitTests.all { test ->
+    test.dependsOn(extractPdfBoxUnitTestAssets)
+    test.classpath += files(extractPdfBoxUnitTestAssets)
+    // Robolectric usa APIs Android reais nos testes de campos e camadas PDF.
+    test.jvmArgs(
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED",
+        "--add-opens=java.base/java.security=ALL-UNNAMED",
+        "--add-opens=java.base/java.text=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+    )
 }
 
 dependencies {
@@ -69,6 +107,10 @@ dependencies {
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.lifecycle.process)
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric) {
+        // PDFBox já fornece BC (jdk15to18). Duas variantes duplicam classes e quebram CMS.
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk18on")
+    }
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

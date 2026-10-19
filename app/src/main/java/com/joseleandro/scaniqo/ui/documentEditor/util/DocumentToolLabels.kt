@@ -12,4 +12,8 @@ internal fun DocumentTool.titleRes(): Int = when (this) {
     DocumentTool.MERGE -> R.string.toolbar_tool_merge
     DocumentTool.SIGNATURES -> R.string.tools_signatures
     DocumentTool.PROTECTION -> R.string.tools_protection
+    DocumentTool.FORMS -> R.string.overlay_forms
+    DocumentTool.ANNOTATIONS -> R.string.overlay_annotations
+    DocumentTool.WATERMARK -> R.string.overlay_watermark
+    DocumentTool.REDACTION -> R.string.overlay_redaction
 }

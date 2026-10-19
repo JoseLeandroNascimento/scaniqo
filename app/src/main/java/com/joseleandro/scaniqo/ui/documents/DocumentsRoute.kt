@@ -14,9 +14,11 @@ fun DocumentsRoute(
     actionsViewModel: DocumentActionsViewModel,
     onOpenMenu: () -> Unit,
     onImportPdf: () -> Unit,
+    onSearch: () -> Unit,
     onOpenDocument: (Long) -> Unit,
     onMergePdfs: () -> Unit,
     onSignDocument: () -> Unit,
+    onAllTools: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -31,9 +33,11 @@ fun DocumentsRoute(
         onDocumentAction = actionsViewModel::onDocumentAction,
         onOpenMenu = onOpenMenu,
         onImportPdf = onImportPdf,
+        onSearch = onSearch,
         onOpenDocument = onOpenDocument,
         onMergePdfs = onMergePdfs,
         onSignDocument = onSignDocument,
+        onAllTools = onAllTools,
         modifier = modifier,
     )
 }

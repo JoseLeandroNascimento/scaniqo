@@ -50,9 +50,11 @@ private fun DocumentsScreenPreview() {
             onDocumentAction = {},
             onOpenMenu = {},
             onImportPdf = {},
+            onSearch = {},
             onOpenDocument = {},
             onMergePdfs = {},
             onSignDocument = {},
+            onAllTools = {},
         )
     }
 }

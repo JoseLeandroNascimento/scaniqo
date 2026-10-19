@@ -48,6 +48,7 @@ import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverlays
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPreviewZoom
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
@@ -272,6 +273,7 @@ fun DocumentViewerScreen(
                             }
                         }
                         val pagePreview = toolsState.pagePreviews[page.id]
+                        var signatureBeforeGesture by remember(page.id) { mutableStateOf(toolsState.signatureDraft) }
                         val selected = page.id == toolsState.selectedPageId
                         val pageDescription =
                             stringResource(R.string.tools_select_page, pageIndex + 1)
@@ -328,7 +330,25 @@ fun DocumentViewerScreen(
                                     shadowElevation = 6.dp,
                                     border = BorderStroke(0.5.dp, Color.Black.copy(alpha = .12f)),
                                 ) {
-                                    Box {
+                                    DocumentPreviewZoom(
+                                        modifier = Modifier.fillMaxSize(), contentKey = page.id,
+                                        singleFingerPan = toolsState.signatureDraft == null,
+                                        contentAspectRatio = 595f / 842f,
+                                        onGestureStart = {
+                                            signatureBeforeGesture = toolsState.signatureDraft
+                                                ?.takeIf { toolsState.signaturePageId == page.id }
+                                        },
+                                        onTransformStart = {
+                                            signatureBeforeGesture?.takeIf { it.id == toolsState.signatureDraft?.id }
+                                                ?.let { original ->
+                                                    onToolsEvent(DocumentToolsEvent.TransformSignature(
+                                                        x = original.x, y = original.y, width = original.width,
+                                                        height = original.height, rotationDegrees = original.rotationDegrees,
+                                                        stretchToBounds = original.stretchToBounds,
+                                                    ))
+                                                }
+                                        },
+                                    ) {
                                         val preview = pagePreview?.preview
                                         if (preview != null) {
                                             DocumentPdfPage(

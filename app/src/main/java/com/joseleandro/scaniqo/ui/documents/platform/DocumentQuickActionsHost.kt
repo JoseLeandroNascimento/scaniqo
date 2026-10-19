@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -124,18 +125,20 @@ fun DocumentQuickActionsHost(
                 }
             },
             confirmButton = {
-                if (!state.isWorking) {
-                    TextButton(onClick = {
-                        if (prompt == null) mergeViewModel.retry()
-                        else { mergeViewModel.submitPassword(password); password = "" }
-                    }) {
-                        Text(stringResource(if (prompt == null) R.string.documents_retry else R.string.quick_merge_continue))
+                if (state.isWorking) {
+                    TextButton(onClick = { password = ""; mergeViewModel.cancel() }) {
+                        Text(stringResource(R.string.cancel))
                     }
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { password = ""; mergeViewModel.cancel() }) {
-                    Text(stringResource(R.string.cancel))
+                } else {
+                    DialogActions(
+                        confirmText = stringResource(if (prompt == null) R.string.documents_retry else R.string.quick_merge_continue),
+                        onConfirm = {
+                            if (prompt == null) mergeViewModel.retry()
+                            else { mergeViewModel.submitPassword(password); password = "" }
+                        },
+                        dismissText = stringResource(R.string.cancel),
+                        onDismiss = { password = ""; mergeViewModel.cancel() },
+                    )
                 }
             },
         )

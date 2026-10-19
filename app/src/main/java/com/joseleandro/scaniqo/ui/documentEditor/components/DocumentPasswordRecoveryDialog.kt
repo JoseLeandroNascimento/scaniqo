@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -92,13 +93,15 @@ internal fun DocumentPasswordRecoveryDialog(
             }
         },
         confirmButton = {
-            TextButton(
-                enabled = !saving && password.isNotEmpty() && state.isConfigured && !state.recoveryRequired,
-                onClick = { if (state.isUnlocked) recover() else authenticating = true },
-            ) { Text(if (saving) "Abrindo…" else "Abrir documento") }
-        },
-        dismissButton = {
-            TextButton(enabled = !saving, onClick = { password = ""; onDismiss() }) { Text("Cancelar") }
+            DialogActions(
+                confirmText = if (saving) "Abrindo…" else "Abrir documento",
+                onConfirm = { if (state.isUnlocked) recover() else authenticating = true },
+                dismissText = "Cancelar",
+                onDismiss = { password = ""; onDismiss() },
+                confirmEnabled = !saving && password.isNotEmpty() && state.isConfigured && !state.recoveryRequired,
+                dismissEnabled = !saving,
+                confirming = saving,
+            )
         },
     )
 }

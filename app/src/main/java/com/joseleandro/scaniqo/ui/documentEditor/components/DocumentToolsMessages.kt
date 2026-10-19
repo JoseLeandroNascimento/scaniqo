@@ -17,6 +17,8 @@ internal fun DocumentToolsMessages(
     toastState: AppToastState,
 ) {
     val resource = when (state.message) {
+        DocumentToolsMessage.FORM_VALUES_ERROR -> R.string.overlay_saved_values_error
+        DocumentToolsMessage.REDACTED_COPY_SAVED -> R.string.overlay_redacted_saved
         DocumentToolsMessage.SAVED -> R.string.tools_saved
         DocumentToolsMessage.SAVE_ERROR -> R.string.tools_save_error
         DocumentToolsMessage.SCAN_ERROR -> R.string.tools_scan_error
@@ -33,7 +35,7 @@ internal fun DocumentToolsMessages(
         if (text != null) {
             toastState.show(
                 text,
-                if (state.message == DocumentToolsMessage.SAVED || state.message == DocumentToolsMessage.MERGED) AppToastType.SUCCESS else AppToastType.ERROR,
+                if (state.message == DocumentToolsMessage.SAVED || state.message == DocumentToolsMessage.MERGED || state.message == DocumentToolsMessage.REDACTED_COPY_SAVED) AppToastType.SUCCESS else AppToastType.ERROR,
             )
             onEvent(DocumentToolsEvent.DismissMessage)
         }

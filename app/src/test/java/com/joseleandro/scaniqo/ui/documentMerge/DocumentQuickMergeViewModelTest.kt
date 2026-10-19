@@ -184,6 +184,32 @@ class DocumentQuickMergeViewModelTest {
     }
 
     @Test
+    fun newMergeDoesNotReceiveTheCancelledOperationsDraft() = runTest(dispatcher) {
+        val gate = CompletableDeferred<Unit>()
+        val oldDraft = editor.result.copy(pdfUri = "file:///old/merged.pdf")
+        editor.merge = {
+            withContext(NonCancellable) { gate.await() }
+            oldDraft
+        }
+        viewModel.merge(selection)
+        runCurrent()
+        viewModel.cancel()
+
+        editor.merge = { editor.result }
+        assertTrue(viewModel.merge(selection.reversed()))
+        runCurrent()
+        assertTrue(viewModel.uiState.value.isWorking)
+        gate.complete(Unit)
+        runCurrent()
+
+        assertEquals(editor.result, viewModel.uiState.value.pending)
+        assertEquals(selection.reversed().map { it.uri }, editor.requests.last().map { it.uri })
+        assertEquals(listOf(oldDraft), documents.discarded)
+        assertEquals(editor.result.pdfUri, savedState.get<String>("merge.pdf"))
+        assertFalse(viewModel.uiState.value.isWorking)
+    }
+
+    @Test
     fun backgroundingWipesManualPasswordsAndRetryAsksForThemAgain() = runTest(dispatcher) {
         editor.merge = { sources ->
             if (sources[0].password != "first-secret") throw PdfMergePasswordRequiredException(first.uri)

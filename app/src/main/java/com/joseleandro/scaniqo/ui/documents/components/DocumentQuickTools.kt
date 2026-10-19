@@ -36,6 +36,7 @@ internal fun DocumentQuickTools(
     onImport: () -> Unit,
     onMerge: () -> Unit,
     onSign: () -> Unit,
+    onAllTools: () -> Unit,
 ) {
     val listState = rememberLazyListState()
     val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
@@ -68,6 +69,14 @@ internal fun DocumentQuickTools(
                 R.string.quick_tools_sign_hint, enabled, onSign,
                 container = if (dark) Color(0xFF21483E) else Color(0xFFDDF3E9),
                 content = if (dark) Color(0xFFDDF3E9) else Color(0xFF21483E),
+            )
+        }
+        item(key = "all_tools") {
+            QuickToolCard(
+                R.drawable.ic_tag_tools, R.string.tools_hub_title,
+                R.string.tools_hub_hint, enabled, onAllTools,
+                container = if (dark) Color(0xFF4B4031) else Color(0xFFFFEED6),
+                content = if (dark) Color(0xFFFFEED6) else Color(0xFF4B4031),
             )
         }
     }

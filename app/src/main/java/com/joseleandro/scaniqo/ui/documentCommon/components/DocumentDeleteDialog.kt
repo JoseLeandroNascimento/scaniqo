@@ -2,18 +2,12 @@ package com.joseleandro.scaniqo.ui.documentCommon.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,25 +44,16 @@ internal fun DocumentDeleteDialog(
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = onConfirm,
-                enabled = !isDeleting,
-                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
-            ) {
-                if (isDeleting) {
-                    CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-                    Spacer(Modifier.width(8.dp))
-                }
-                Text(stringResource(if (isDeleting) R.string.document_deleting else R.string.document_delete))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                enabled = !isDeleting,
-            ) {
-                Text(stringResource(R.string.document_cancel))
-            }
+            DialogActions(
+                confirmText = stringResource(if (isDeleting) R.string.document_deleting else R.string.document_delete),
+                onConfirm = onConfirm,
+                dismissText = stringResource(R.string.document_cancel),
+                onDismiss = onDismiss,
+                confirmEnabled = !isDeleting,
+                dismissEnabled = !isDeleting,
+                confirming = isDeleting,
+                destructive = true,
+            )
         },
     )
 }

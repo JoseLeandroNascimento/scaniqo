@@ -23,8 +23,8 @@ internal data class PdfSinglePagePreviewKey(
             return PdfSinglePagePreviewKey(
                 PdfSourceStamp.from(source),
                 page.copy(signatures = page.signatures.toList()),
-                (index + 1).takeIf { workspace.showPageNumbers },
-                workspace.pages.size.takeIf { workspace.showPageNumbers },
+                (index + 1).takeIf { workspace.showPageNumbers || page.overlays.any { it.text.contains("{pagina}") } },
+                workspace.pages.size.takeIf { workspace.showPageNumbers || page.overlays.any { it.text.contains("{total}") } },
             )
         }
     }

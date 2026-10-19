@@ -7,18 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -30,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -382,22 +379,16 @@ private fun DeleteTagDialog(
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = onConfirm,
-                enabled = !isDeleting,
-                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
-            ) {
-                if (isDeleting) {
-                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-                    Spacer(Modifier.width(8.dp))
-                }
-                Text(stringResource(if (isDeleting) R.string.tag_deleting else R.string.excluir))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !isDeleting) {
-                Text(stringResource(R.string.cancel))
-            }
+            DialogActions(
+                confirmText = stringResource(if (isDeleting) R.string.tag_deleting else R.string.excluir),
+                onConfirm = onConfirm,
+                dismissText = stringResource(R.string.cancel),
+                onDismiss = onDismiss,
+                confirmEnabled = !isDeleting,
+                dismissEnabled = !isDeleting,
+                confirming = isDeleting,
+                destructive = true,
+            )
         },
     )
 }

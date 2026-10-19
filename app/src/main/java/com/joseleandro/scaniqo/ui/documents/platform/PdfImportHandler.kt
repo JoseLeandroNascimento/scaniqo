@@ -20,6 +20,7 @@ import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
 import androidx.compose.runtime.rememberUpdatedState
 import com.joseleandro.scaniqo.ui.documents.PdfImportViewModel
+import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
 import com.joseleandro.scaniqo.ui.documents.components.PdfImportDialogs
 import com.joseleandro.scaniqo.ui.documents.effect.PdfImportEffect
 import com.joseleandro.scaniqo.ui.security.PasswordUnlockHandler
@@ -35,9 +36,11 @@ fun PdfImportHandler(
     vault: PasswordVault,
     showDialogs: Boolean,
     onPasswordSettings: () -> Unit,
+    onToolImported: (Long, PdfImportDestination) -> Unit = { _, _ -> },
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedTagId by rememberUpdatedState(defaultTagId)
+    val toolImported by rememberUpdatedState(onToolImported)
     val vaultState by vault.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
@@ -74,14 +77,27 @@ fun PdfImportHandler(
             }
         }
     }
-    LaunchedEffect(state.pending) {
+    LaunchedEffect(state.pending, state.isLoading) {
         state.pending?.let { pending ->
             password = ""
-            actionsViewModel.onDocumentAction(DocumentActionEvent.ImportPrepared(pending.scan, pending.name))
-            viewModel.completeDelivery(pending.scan.pdfUri)
+            if (state.destination == null) {
+                actionsViewModel.onDocumentAction(DocumentActionEvent.ImportPrepared(pending.scan, pending.name))
+                viewModel.completeDelivery(pending.scan.pdfUri)
+            } else if (!state.isLoading) viewModel.saveForTool()
         }
     }
-    if (!showDialogs || !state.isActive || state.pending != null) return
+    LaunchedEffect(state.importedDocumentId, state.destination) {
+        val id = state.importedDocumentId
+        val destination = state.destination
+        if (id != null && destination != null) {
+            password = ""
+            actionsViewModel.onDocumentAction(DocumentActionEvent.ImportCancelled)
+            toolImported(id, destination)
+            viewModel.acknowledgeToolDelivery(id)
+        }
+    }
+    if (!showDialogs || !state.isActive || (state.pending != null && state.destination == null) ||
+        state.importedDocumentId != null) return
     SecureWindow(enabled = state.needsPassword || state.needsUnlock)
     if (state.needsUnlock) {
         PasswordUnlockHandler(

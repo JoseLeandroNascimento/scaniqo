@@ -101,7 +101,7 @@ internal fun DocumentToolsBar(
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    items(DocumentTool.entries, key = { it.name }) { tool ->
+                    items(DocumentTool.entries.filterNot { it == DocumentTool.ANNOTATIONS || it == DocumentTool.REDACTION || it == DocumentTool.WATERMARK }, key = { it.name }) { tool ->
                         DocumentToolButton(
                             tool = tool,
                             selected = state.tool == tool,
@@ -213,6 +213,10 @@ private fun DocumentToolButton(
                             DocumentTool.MERGE -> R.drawable.ic_tool_merge
                             DocumentTool.SIGNATURES -> R.drawable.ic_tool_signature
                             DocumentTool.PROTECTION -> R.drawable.ic_tool_lock
+                            DocumentTool.FORMS -> R.drawable.ic_tool_fill_page
+                            DocumentTool.ANNOTATIONS -> R.drawable.ic_tool_adjust
+                            DocumentTool.WATERMARK -> R.drawable.ic_tool_watermark
+                            DocumentTool.REDACTION -> R.drawable.ic_tool_lock
                         },
                     ),
                     contentDescription = null,

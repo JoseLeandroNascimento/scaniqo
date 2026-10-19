@@ -10,7 +10,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -108,10 +108,12 @@ fun PasswordUnlockHandler(
             title = { Text(stringResource(R.string.password_auth_error_title)) },
             text = { Text(stringResource(message)) },
             confirmButton = {
-                TextButton(onClick = { begin() }) { Text(stringResource(R.string.password_retry)) }
-            },
-            dismissButton = {
-                TextButton(onClick = currentDismiss) { Text(stringResource(R.string.password_close)) }
+                DialogActions(
+                    confirmText = stringResource(R.string.password_retry),
+                    onConfirm = { begin() },
+                    dismissText = stringResource(R.string.password_close),
+                    onDismiss = currentDismiss,
+                )
             },
         )
     }

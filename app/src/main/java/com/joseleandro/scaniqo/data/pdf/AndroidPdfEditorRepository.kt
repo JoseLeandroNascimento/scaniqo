@@ -1,6 +1,8 @@
 package com.joseleandro.scaniqo.data.pdf
 
 import android.content.Context
+import com.joseleandro.scaniqo.domain.model.AppSettings
+import com.joseleandro.scaniqo.domain.repository.AppSettingsRepository
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -9,11 +11,12 @@ import android.os.ParcelFileDescriptor
 import android.util.Log
 import com.joseleandro.scaniqo.data.local.document.DocumentFileStore
 import com.joseleandro.scaniqo.domain.model.DocumentModel
-import com.joseleandro.scaniqo.domain.model.PdfExportQuality
+import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.PdfFilterThumbnails
 import com.joseleandro.scaniqo.domain.model.PdfCaptureSource
 import com.joseleandro.scaniqo.domain.model.PdfInteractivePixels
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
+import com.joseleandro.scaniqo.domain.model.PdfRedactionArea
 import com.joseleandro.scaniqo.domain.model.PdfImportException
 import com.joseleandro.scaniqo.domain.model.PdfMergeLimitException
 import com.joseleandro.scaniqo.domain.model.PdfMergePasswordRequiredException
@@ -45,7 +48,8 @@ class AndroidPdfEditorRepository(
     context: Context,
     private val documentRepository: DocumentRepository,
     private val documentFileStore: DocumentFileStore,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val settingsRepository: AppSettingsRepository? = null,
 ) : PdfEditorRepository {
     private val files = PdfWorkspaceFiles(context)
     private val composer = PdfBoxComposer(files)
@@ -82,6 +86,7 @@ class AndroidPdfEditorRepository(
                         it.isFile && it.canonicalFile.parentFile == project.canonicalFile
                     }
                     val recipe = project?.let(::readRecipe)
+                    val defaults = settingsRepository?.settings?.value ?: AppSettings()
                     if (recipe != null && original == null) {
                         throw PdfImportException("As fontes originais deste documento não estão disponíveis.")
                     }
@@ -122,9 +127,9 @@ class AndroidPdfEditorRepository(
                         workspaceId = directory.name,
                         directoryUri = files.uri(directory),
                         pages = pages,
-                        showPageNumbers = recipe?.showPageNumbers ?: false,
-                        exportQuality = recipe?.exportQuality ?: PdfExportQuality.HIGH_QUALITY,
-                        ocrEnabled = recipe?.ocrEnabled ?: false,
+                        showPageNumbers = recipe?.showPageNumbers ?: defaults.pageNumbers,
+                        exportQuality = recipe?.exportQuality ?: defaults.exportQuality,
+                        ocrEnabled = recipe?.ocrEnabled ?: defaults.ocrEnabled,
                         isProtected = document.isProtected,
                         protectionKeyId = document.protectionKeyId
                     )
@@ -177,6 +182,7 @@ class AndroidPdfEditorRepository(
                         loaded.numberOfPages
                     }
                     incoming.delete()
+                    val defaults = settingsRepository?.settings?.value ?: AppSettings()
                     val workspace = PdfWorkspace(
                         documentId = 0,
                         workspaceId = directory.name,
@@ -185,7 +191,10 @@ class AndroidPdfEditorRepository(
                             PdfPageSpec(UUID.randomUUID().toString(), files.uri(source), it)
                         },
                         isProtected = protected,
-                        protectionKeyId = protectionKeyId.takeIf { protected }
+                        protectionKeyId = protectionKeyId.takeIf { protected },
+                        showPageNumbers = defaults.pageNumbers,
+                        exportQuality = defaults.exportQuality,
+                        ocrEnabled = defaults.ocrEnabled,
                     )
                     val target = files.createDocument().also { project = it }
                     writeProject(workspace, target, password.takeIf { protected })
@@ -261,8 +270,13 @@ class AndroidPdfEditorRepository(
                 operationMutex.withLock {
                     files.initialize()
                     val directory = files.createWorkspace()
-                    val empty = PdfWorkspace(0, directory.name, files.uri(directory), emptyList())
-                        .also { temporary = it }
+                    val defaults = settingsRepository?.settings?.value ?: AppSettings()
+                    val empty = PdfWorkspace(
+                        0, directory.name, files.uri(directory), emptyList(),
+                        showPageNumbers = defaults.pageNumbers,
+                        exportQuality = defaults.exportQuality,
+                        ocrEnabled = defaults.ocrEnabled,
+                    ).also { temporary = it }
                     val merged = PdfMergeBatch(directory, files::uri)
                         .append(empty, sources, 0L, prepare = ::prepareMergedSource)
                     temporary = merged
@@ -655,6 +669,47 @@ class AndroidPdfEditorRepository(
         }
     }
 
+    override suspend fun saveRedactedCopy(
+        workspace: PdfWorkspace,
+        areas: List<PdfRedactionArea>,
+        password: String?,
+        protectionKeyId: String?,
+    ): DocumentModel {
+        var project: File? = null
+        var generated: ScannedDocument? = null
+        try {
+            return withContext(ioDispatcher) {
+                operationMutex.withLock {
+                    val stored = checkNotNull(documentRepository.findById(workspace.documentId))
+                    val protected = stored.isProtected || workspace.isProtected
+                    val key = protectionKeyId ?: workspace.protectionKeyId ?: stored.protectionKeyId
+                    if (protected && (password.isNullOrBlank() || key == null)) throw PdfPasswordRequiredException()
+                    val ready = File(files.directory(workspace), "redaction_${UUID.randomUUID()}.pdf")
+                    try {
+                        // Sem OCR, mesmo temporariamente: os pixels são a única origem da saída.
+                        composer.compose(workspace.copy(ocrEnabled = false), ready, forExport = true)
+                        val target = files.createDocument().also { project = it }
+                        val pdf = File(target, "document.pdf")
+                        PdfRedactor.write(ready, pdf, workspace, areas, password.takeIf { protected })
+                        files.checkSize(pdf)
+                        val thumbnail = if (protected) null else createThumbnail(pdf, target)
+                        val scan = ScannedDocument(files.uri(pdf), workspace.pages.size, System.currentTimeMillis(),
+                            pdf.length(), thumbnail?.let(files::uri), key.takeIf { protected }).also { generated = it }
+                        currentCoroutineContext().ensureActive()
+                        val id = documentRepository.create(scan, stored.name.take(DOCUMENT_NAME_MAX_LENGTH - 12) + " — censurado", stored.tagId)
+                        checkNotNull(documentRepository.findById(id))
+                    } finally { ready.delete() }
+                }
+            }
+        } catch (failure: Throwable) {
+            cleanup(failure) {
+                generated?.let { documentRepository.discardScan(it) }
+                    ?: project?.let { documentFileStore.deleteOwnedDocument(files.uri(File(it, "document.pdf"))) }
+            }
+            throw failure
+        }
+    }
+
     override suspend fun discard(workspace: PdfWorkspace) {
         withContext(NonCancellable + ioDispatcher) {
             operationMutex.withLock {
@@ -797,13 +852,13 @@ class AndroidPdfEditorRepository(
                         it.id, requireNotNull(copiedSignatures[it.imageUri]), it.x, it.y, it.width, it.height,
                         it.rotationDegrees, it.stretchToBounds
                     )
-                })
+                }, page.overlays)
             },
             showPageNumbers = workspace.showPageNumbers,
             exportQuality = workspace.exportQuality,
             ocrEnabled = workspace.ocrEnabled,
         )
-        File(directory, "recipe.json").writeText(json.encodeToString(recipe))
+        File(directory, "recipe.json").writeBytes(recipe.encodeForStorage(json))
         currentCoroutineContext().ensureActive()
         // Documentos protegidos não deixam miniaturas legíveis no armazenamento permanente.
         val thumbnail = if (workspace.isProtected) null else createThumbnail(pdf, directory)
@@ -870,7 +925,7 @@ class AndroidPdfEditorRepository(
     private fun readRecipe(directory: File): PdfProjectRecipe? {
         val recipe = File(directory, "recipe.json")
         if (!recipe.isFile) return null
-        require(recipe.length() <= 4L * 1024 * 1024) { "A receita do documento é inválida." }
+        require(recipe.length() <= PdfProjectRecipe.MAX_BYTES) { "A receita do documento é inválida." }
         return json.decodeFromString<PdfProjectRecipe>(recipe.readText()).also {
             it.validate()
         }
@@ -903,7 +958,8 @@ class AndroidPdfEditorRepository(
                         signature.id, uri, signature.x, signature.y, signature.width, signature.height,
                         signature.rotationDegrees, signature.stretchToBounds
                     )
-                }
+                },
+                page.overlays
             )
         }
     }

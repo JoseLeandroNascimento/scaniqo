@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import com.joseleandro.scaniqo.domain.model.PdfPoint
 
@@ -20,12 +21,20 @@ internal class DocumentSignatureViewportState(initial: SignatureDocumentViewport
     var value by mutableStateOf(initial)
         private set
 
-    fun pan(deltaX: Float, deltaY: Float, width: Float, height: Float, margin: Float) {
-        value = panSignatureDocumentViewport(value, deltaX, deltaY, width, height, margin)
+    fun pan(deltaX: Float, deltaY: Float, width: Float, height: Float, margin: Float, maxZoom: Float = 3f) {
+        value = panSignatureDocumentViewport(value, deltaX, deltaY, width, height, margin, maxZoom)
     }
 
-    fun zoomTo(zoom: Float, width: Float, height: Float, margin: Float, focus: PdfPoint?) {
-        value = zoomSignatureDocumentViewport(value, zoom, width, height, margin, focus)
+    fun zoomTo(zoom: Float, width: Float, height: Float, margin: Float, focus: PdfPoint?, maxZoom: Float = 3f) {
+        value = zoomSignatureDocumentViewport(value, zoom, width, height, margin, focus, maxZoom)
+    }
+
+    fun focusOn(point: PdfPoint, zoom: Float, width: Float, height: Float, margin: Float, maxZoom: Float = 3f) {
+        value = focusSignatureDocumentViewport(value, point, zoom, width, height, margin, maxZoom)
+    }
+
+    fun transform(centroid: Offset, pan: Offset, zoomChange: Float, width: Float, height: Float, margin: Float, maxZoom: Float = 3f) {
+        value = transformSignatureDocumentViewport(value, centroid, pan, zoomChange, width, height, margin, maxZoom)
     }
 
     fun reset() { value = SignatureDocumentViewport() }
@@ -59,6 +68,7 @@ internal fun signatureDocumentViewportBounds(
     width: Float,
     height: Float,
     margin: Float,
+    maxZoom: Float = 3f,
 ): SignatureDocumentViewportBounds {
     val canvasWidth = width.takeIf { it.isFinite() && it > 0f } ?: 1f
     val canvasHeight = height.takeIf { it.isFinite() && it > 0f } ?: 1f
@@ -67,7 +77,7 @@ internal fun signatureDocumentViewportBounds(
     val availableHeight = (canvasHeight - 2f * safeMargin).coerceAtLeast(1f)
     val baseWidth = minOf(availableWidth, availableHeight * 595f / 842f)
     val baseHeight = baseWidth * 842f / 595f
-    val zoom = (viewport.zoom.takeIf(Float::isFinite) ?: 1f).coerceIn(1f, 3f)
+    val zoom = (viewport.zoom.takeIf(Float::isFinite) ?: 1f).coerceIn(1f, safeViewportMaxZoom(maxZoom))
     val maxPanX = ((baseWidth * zoom - availableWidth) / 2f).coerceAtLeast(0f) / baseWidth
     val maxPanY = ((baseHeight * zoom - availableHeight) / 2f).coerceAtLeast(0f) / baseHeight
     val current = SignatureDocumentViewport(
@@ -94,14 +104,15 @@ internal fun panSignatureDocumentViewport(
     width: Float,
     height: Float,
     margin: Float,
+    maxZoom: Float = 3f,
 ): SignatureDocumentViewport {
-    val current = signatureDocumentViewportBounds(viewport, width, height, margin)
+    val current = signatureDocumentViewportBounds(viewport, width, height, margin, maxZoom)
     return signatureDocumentViewportBounds(
         current.viewport.copy(
             panX = current.viewport.panX + (deltaX.takeIf(Float::isFinite) ?: 0f) / current.basePage.width,
             panY = current.viewport.panY + (deltaY.takeIf(Float::isFinite) ?: 0f) / current.basePage.height,
         ),
-        width, height, margin,
+        width, height, margin, maxZoom,
     ).viewport
 }
 
@@ -113,9 +124,10 @@ internal fun zoomSignatureDocumentViewport(
     height: Float,
     margin: Float,
     focus: PdfPoint? = null,
+    maxZoom: Float = 3f,
 ): SignatureDocumentViewport {
-    val current = signatureDocumentViewportBounds(viewport, width, height, margin)
-    val target = (zoom.takeIf(Float::isFinite) ?: current.viewport.zoom).coerceIn(1f, 3f)
+    val current = signatureDocumentViewportBounds(viewport, width, height, margin, maxZoom)
+    val target = (zoom.takeIf(Float::isFinite) ?: current.viewport.zoom).coerceIn(1f, safeViewportMaxZoom(maxZoom))
     val visibleFocus = focus?.takeIf {
         it.x.isFinite() && it.y.isFinite() &&
             current.page.left + it.x * current.page.width in 0f..width &&
@@ -131,6 +143,6 @@ internal fun zoomSignatureDocumentViewport(
             panX = current.viewport.panX + (anchor.x - .5f) * (current.viewport.zoom - target),
             panY = current.viewport.panY + (anchor.y - .5f) * (current.viewport.zoom - target),
         ),
-        width, height, margin,
+        width, height, margin, maxZoom,
     ).viewport
 }

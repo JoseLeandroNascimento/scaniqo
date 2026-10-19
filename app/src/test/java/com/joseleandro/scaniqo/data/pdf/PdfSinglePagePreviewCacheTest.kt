@@ -4,6 +4,8 @@ import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import java.io.File
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
@@ -20,6 +22,21 @@ import org.junit.rules.TemporaryFolder
 
 class PdfSinglePagePreviewCacheTest {
     @get:Rule val temporary = TemporaryFolder()
+
+    @Test fun customNumberingInvalidatesPreviewWhenPagesMoveOrTotalChanges() {
+        val source = temporary.newFile()
+        val original = workspace(source, count = 3)
+        val marked = original.copy(pages = original.pages.map { it.copy(overlays =
+            listOf(PdfOverlay("number", PdfOverlayKind.PAGE_NUMBER, text = "Página {pagina} de {total}"))) })
+        val page = marked.pages[1]
+        val key = PdfSinglePagePreviewKey.from(marked, page.id, source)
+        assertEquals(2, key.pageNumber)
+        assertEquals(3, key.pageCount)
+        val reordered = marked.copy(pages = listOf(page) + marked.pages.filterNot { it.id == page.id })
+        assertNotEquals(key, PdfSinglePagePreviewKey.from(reordered, page.id, source))
+        assertNotEquals(key, PdfSinglePagePreviewKey.from(marked.copy(pages = marked.pages.take(2)), page.id, source))
+    }
+
 
     @Test
     fun `folha individual mantem indice e contagem do documento completo`() {

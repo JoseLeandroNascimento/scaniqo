@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,7 +20,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -65,14 +65,14 @@ internal fun DocumentToolsSheets(
             title = { Text(stringResource(R.string.tools_delete_title)) },
             text = { Text(stringResource(R.string.tools_delete_body)) },
             confirmButton = {
-                TextButton(onClick = { onEvent(DocumentToolsEvent.ConfirmDeletePage) }, enabled = state.canEdit) {
-                    Text(stringResource(R.string.tools_delete), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onEvent(DocumentToolsEvent.DismissPageDeletion) }) {
-                    Text(stringResource(R.string.tools_cancel))
-                }
+                DialogActions(
+                    confirmText = stringResource(R.string.tools_delete),
+                    onConfirm = { onEvent(DocumentToolsEvent.ConfirmDeletePage) },
+                    dismissText = stringResource(R.string.tools_cancel),
+                    onDismiss = { onEvent(DocumentToolsEvent.DismissPageDeletion) },
+                    confirmEnabled = state.canEdit,
+                    destructive = true,
+                )
             },
         )
     }
@@ -82,14 +82,14 @@ internal fun DocumentToolsSheets(
             title = { Text(stringResource(R.string.tools_discard_title)) },
             text = { Text(stringResource(R.string.tools_discard_body)) },
             confirmButton = {
-                TextButton(onClick = { onEvent(DocumentToolsEvent.ConfirmDiscard) }, enabled = !state.isBusy) {
-                    Text(stringResource(R.string.tools_discard), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onEvent(DocumentToolsEvent.CancelDiscard) }) {
-                    Text(stringResource(R.string.tools_keep_editing))
-                }
+                DialogActions(
+                    confirmText = stringResource(R.string.tools_discard),
+                    onConfirm = { onEvent(DocumentToolsEvent.ConfirmDiscard) },
+                    dismissText = stringResource(R.string.tools_keep_editing),
+                    onDismiss = { onEvent(DocumentToolsEvent.CancelDiscard) },
+                    confirmEnabled = !state.isBusy,
+                    destructive = true,
+                )
             },
         )
     }
@@ -138,6 +138,7 @@ private fun DocumentToolSheetContent(
             DocumentTool.MERGE -> Unit // Mesclagem usa a tela compartilhada.
             DocumentTool.SIGNATURES -> Unit // Assinaturas usam a tela dedicada.
             DocumentTool.PROTECTION -> ProtectionOptions(state, onEvent)
+            DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION -> Unit
         }
     }
 }

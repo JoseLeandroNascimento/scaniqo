@@ -7,6 +7,7 @@ import com.joseleandro.scaniqo.domain.model.PdfInteractivePixels
 import com.joseleandro.scaniqo.domain.model.PdfMergeSource
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
+import com.joseleandro.scaniqo.domain.model.PdfRedactionArea
 import com.joseleandro.scaniqo.domain.model.PdfSignatureCrop
 import com.joseleandro.scaniqo.domain.model.PdfSignatureImage
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
@@ -94,5 +95,13 @@ interface PdfEditorRepository {
         protectionKeyId: String? = null,
         removeProtection: Boolean = false
     ): DocumentModel
+    /** Cria outro documento somente com pixels censurados, sem OCR, anexos, fontes ou receita original. */
+    suspend fun saveRedactedCopy(
+        workspace: PdfWorkspace,
+        areas: List<PdfRedactionArea>,
+        password: String? = null,
+        protectionKeyId: String? = null,
+    ): DocumentModel = throw UnsupportedOperationException("Censura indisponível.")
+
     suspend fun discard(workspace: PdfWorkspace)
 }

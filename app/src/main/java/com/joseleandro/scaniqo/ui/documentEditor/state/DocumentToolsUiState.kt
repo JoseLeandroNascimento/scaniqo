@@ -6,6 +6,7 @@ import com.joseleandro.scaniqo.domain.model.PdfQualityReport
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.domain.model.SignatureModel
+import com.joseleandro.scaniqo.domain.model.SavedFormValue
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentToolsMessage
 
@@ -16,6 +17,8 @@ data class DocumentToolsUiState(
     val selectedPageId: String? = null,
     val previewUri: String? = null,
     val pagePreviews: Map<String, DocumentPagePreviewState> = emptyMap(),
+    val overlayPreviewPageId: String? = null,
+    val overlayPreviewId: String? = null,
     val layoutPreview: DocumentToolPreviewState = DocumentToolPreviewState(),
     val correctionsPreview: DocumentToolPreviewState = DocumentToolPreviewState(),
     val correctionSource: DocumentCaptureSourceState = DocumentCaptureSourceState(),
@@ -48,6 +51,10 @@ data class DocumentToolsUiState(
     val confirmDiscard: Boolean = false,
     val signatureDraft: PdfSignaturePlacement? = null,
     val signaturePageId: String? = null,
+    val savedFormValues: List<SavedFormValue> = emptyList(),
+    val canStoreFormValues: Boolean = false,
+    val isUpdatingFormValues: Boolean = false,
+    val redactionSaveVersion: Int = 0,
     val message: DocumentToolsMessage? = null,
 ) {
     val isBusy: Boolean

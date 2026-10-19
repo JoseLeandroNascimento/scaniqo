@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPreviewZoom
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 
@@ -161,12 +162,15 @@ internal fun DocumentSavedPage(document: DocumentModel, pageIndex: Int) {
                 shadowElevation = 6.dp,
                 border = BorderStroke(.5.dp, Color.Black.copy(alpha = .12f)),
             ) {
-                DocumentPdfPage(
-                    pdfUri = document.pdfUri,
-                    pageIndex = pageIndex,
-                    contentKey = "saved-${document.id}-$pageIndex",
-                    modifier = Modifier.fillMaxSize(),
-                )
+                DocumentPreviewZoom(Modifier.fillMaxSize(), contentKey = "saved-${document.id}-$pageIndex",
+                    singleFingerPan = true, contentAspectRatio = 595f / 842f) {
+                    DocumentPdfPage(
+                        pdfUri = document.pdfUri,
+                        pageIndex = pageIndex,
+                        contentKey = "saved-${document.id}-$pageIndex",
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
             }
         }
     }

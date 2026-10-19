@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 /** A mesma seleção atende um PDF novo ou uma sessão de edição existente. */
 @Composable
@@ -42,13 +43,14 @@ fun DocumentMergeRoute(
     onBack: () -> Unit,
     onConfirm: (List<DocumentMergeItem>) -> Unit,
 ) {
-    val selection = rememberDocumentMergeSelectionState(target?.documentId)
+    val operationId = rememberSaveable(target?.documentId) { UUID.randomUUID().toString() }
+    val selection = rememberDocumentMergeSelectionState(operationId)
     LaunchedEffect(target?.currentDocument) {
         target?.currentDocument?.let(selection::includeCurrentDocument)
     }
-    var pendingUris by rememberSaveable(target?.documentId) { mutableStateOf(emptyList<String>()) }
-    var pickerError by remember { mutableStateOf<String?>(null) }
-    var leaving by remember { mutableStateOf(false) }
+    var pendingUris by rememberSaveable(operationId) { mutableStateOf(emptyList<String>()) }
+    var pickerError by remember(operationId) { mutableStateOf<String?>(null) }
+    var leaving by remember(operationId) { mutableStateOf(false) }
     val context = LocalContext.current
     val active by rememberUpdatedState(isActive)
     val canLeave by rememberUpdatedState(canNavigateBack)

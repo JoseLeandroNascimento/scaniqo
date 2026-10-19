@@ -51,12 +51,9 @@ internal object PdfImageOptimizer {
             image.cosObject.containsKey(COSName.MASK) ||
             max(image.width, image.height) < 500
         ) return image
-        // A subamostragem limita a memória mesmo quando o PDF contém fotos muito grandes.
-        var sample = 1
-        while (max(image.width, image.height).toLong() > settings.maxImageSide.toLong() * sample * 2) {
-            sample *= 2
-        }
-        val decoded = image.getImage(null, sample)
+        // JPEG usa amostragem nativa; o caminho amostrado do PDFBox Android
+        // interpreta incorretamente esse formato como pixels RGB brutos.
+        val decoded = PdfCompressionImageDecoder.decode(image, settings.maxImageSide)
         var scaled: Bitmap? = null
         try {
             currentCoroutineContext().ensureActive()

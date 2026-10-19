@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.joseleandro.scaniqo.domain.model.AppColorTheme
 
 @Composable
 fun ScaniqoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
     dimensions: ScaniqoDimensions = ScaniqoDimensions(),
+    colorTheme: AppColorTheme = AppColorTheme.ORIGINAL,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
@@ -23,8 +25,7 @@ fun ScaniqoTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> personalizedColorScheme(colorTheme, darkTheme)
     }
     val shapes = remember(dimensions) { scaniqoShapes(dimensions) }
 

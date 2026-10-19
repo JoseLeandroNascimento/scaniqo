@@ -322,6 +322,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                 stream.restoreGraphicsState()
                 require(spec.signatures.size <= 20) { "Use até 20 assinaturas por página." }
                 spec.signatures.forEach { drawSignature(output, stream, it, maxSide = 512) }
+                PdfOverlayLayer.draw(stream, spec.overlays, index + 1, workspace.pages.size)
                 if (workspace.showPageNumbers) drawPageNumber(stream, index + 1, workspace.pages.size)
             }
             currentCoroutineContext().ensureActive()
@@ -357,12 +358,15 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                 throw PdfImportException("As fontes do documento excedem 50 MB.")
             }
             val directory = files.directory(workspace)
-            val final = reusableFinal?.takeIf {
+            val hasDynamicOverlays = workspace.pages.any { page -> page.overlays.any {
+                it.text.contains("{pagina}") || it.text.contains("{total}")
+            } }
+            val final = reusableFinal?.takeUnless { hasDynamicOverlays }?.takeIf {
                 forExport && !originalsOnly && it.file.isFile &&
                     it.file.canonicalFile.parentFile == directory &&
                     it.file.name.startsWith("final_preview_") && it.file.name.endsWith(".pdf")
             }
-            val reusable = reusablePreview?.takeIf {
+            val reusable = reusablePreview?.takeUnless { hasDynamicOverlays }?.takeIf {
                 !forExport && !originalsOnly && it.file.isFile &&
                     it.file.canonicalFile.parentFile == directory &&
                     (it.file.name.startsWith("preview_") || it.file.name.startsWith("final_preview_")) &&
@@ -510,6 +514,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                         if (!originalsOnly) {
                             require(spec.signatures.size <= 20) { "Use até 20 assinaturas por página." }
                             spec.signatures.forEach { drawSignature(output, stream, it) }
+                            PdfOverlayLayer.draw(stream, spec.overlays, index + 1, workspace.pages.size)
                         }
                     }
                     if (!originalsOnly && workspace.showPageNumbers) {

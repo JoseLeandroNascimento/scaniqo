@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -160,24 +161,42 @@ internal fun DriveBackupScreen(
                 Text(stringResource(R.string.backup_scope_note))
             }
         },
-        confirmButton = { TextButton(onClick = { confirmBackup = false; onBackup() }) { Text(stringResource(R.string.backup_confirm)) } },
-        dismissButton = { TextButton(onClick = { confirmBackup = false }) { Text(stringResource(R.string.backup_cancel)) } },
+        confirmButton = {
+            DialogActions(
+                confirmText = stringResource(R.string.backup_confirm),
+                onConfirm = { confirmBackup = false; onBackup() },
+                dismissText = stringResource(R.string.backup_cancel),
+                onDismiss = { confirmBackup = false },
+            )
+        },
     )
     restore?.let { entry ->
         if (!state.isBusy) AlertDialog(
             onDismissRequest = { restore = null },
             title = { Text(stringResource(R.string.backup_restore_title)) },
             text = { Text(stringResource(R.string.backup_restore_body)) },
-            confirmButton = { TextButton(onClick = { restore = null; onRestore(entry) }) { Text(stringResource(R.string.backup_restore)) } },
-            dismissButton = { TextButton(onClick = { restore = null }) { Text(stringResource(R.string.backup_cancel)) } },
+            confirmButton = {
+                DialogActions(
+                    confirmText = stringResource(R.string.backup_restore),
+                    onConfirm = { restore = null; onRestore(entry) },
+                    dismissText = stringResource(R.string.backup_cancel),
+                    onDismiss = { restore = null },
+                )
+            },
         )
     }
     if (confirmDisconnect && !state.isBusy) AlertDialog(
         onDismissRequest = { confirmDisconnect = false },
         title = { Text(stringResource(R.string.backup_disconnect_title)) },
         text = { Text(stringResource(R.string.backup_disconnect_body)) },
-        confirmButton = { TextButton(onClick = { confirmDisconnect = false; onDisconnect() }) { Text(stringResource(R.string.backup_disconnect)) } },
-        dismissButton = { TextButton(onClick = { confirmDisconnect = false }) { Text(stringResource(R.string.backup_cancel)) } },
+        confirmButton = {
+            DialogActions(
+                confirmText = stringResource(R.string.backup_disconnect),
+                onConfirm = { confirmDisconnect = false; onDisconnect() },
+                dismissText = stringResource(R.string.backup_cancel),
+                onDismiss = { confirmDisconnect = false },
+            )
+        },
     )
 }
 

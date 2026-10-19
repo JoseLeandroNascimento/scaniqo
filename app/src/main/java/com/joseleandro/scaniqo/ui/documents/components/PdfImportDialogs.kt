@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -35,7 +36,7 @@ internal fun PdfImportDialogs(
             title = { Text("Importando PDF") },
             text = { Text("Preparando o documento para edição…") },
             confirmButton = {
-                TextButton(onClick = onCancel) { Text("Cancelar") }
+                if (!state.isSavingToLibrary) TextButton(onClick = onCancel) { Text("Cancelar") }
             },
         )
     } else if (state.needsPassword) {
@@ -62,12 +63,14 @@ internal fun PdfImportDialogs(
                 }
             },
             confirmButton = {
-                TextButton(
-                    enabled = isPasswordConfigured && password.isNotEmpty(),
-                    onClick = onSubmitPassword,
-                ) { Text("Importar") }
+                DialogActions(
+                    confirmText = "Importar",
+                    onConfirm = onSubmitPassword,
+                    dismissText = "Cancelar",
+                    onDismiss = onCancel,
+                    confirmEnabled = isPasswordConfigured && password.isNotEmpty(),
+                )
             },
-            dismissButton = { TextButton(onClick = onCancel) { Text("Cancelar") } },
         )
     } else if (state.error != null) {
         AlertDialog(

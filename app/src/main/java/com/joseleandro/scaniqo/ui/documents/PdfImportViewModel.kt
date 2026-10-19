@@ -10,6 +10,7 @@ import com.joseleandro.scaniqo.domain.repository.DocumentRepository
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.ui.documents.effect.PdfImportEffect
 import com.joseleandro.scaniqo.ui.documents.model.PendingPdfImport
+import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
 import com.joseleandro.scaniqo.ui.documents.state.PdfImportUiState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -31,9 +32,15 @@ class PdfImportViewModel(
     private val savedState: SavedStateHandle,
 ) : ViewModel() {
     private val restored = restorePending()
+    private val restoredDestination = savedState.get<String>("tool_destination")?.let { name ->
+        PdfImportDestination.entries.firstOrNull { it.name == name }
+    }
     private val state = MutableStateFlow(PdfImportUiState(
-        isActive = restored != null || savedState.get<Boolean>("awaiting_picker") == true,
+        isActive = restored != null || savedState.get<Boolean>("awaiting_picker") == true ||
+            savedState.get<Long>("tool_document_id") != null,
         pending = restored,
+        destination = restoredDestination,
+        importedDocumentId = savedState["tool_document_id"],
     ))
     val uiState = state.asStateFlow()
     private val channel = Channel<PdfImportEffect>(Channel.UNLIMITED)
@@ -44,15 +51,56 @@ class PdfImportViewModel(
     private var job: Job? = null
     private var generation = 0
 
-    fun chooseFile() {
+    fun chooseFile(destination: PdfImportDestination? = null) {
         if (state.value.isActive) return
         savedState["awaiting_picker"] = true
-        state.value = PdfImportUiState(isActive = true)
+        savedState["tool_destination"] = destination?.name
+        savedState.remove<Long>("tool_document_id")
+        state.value = PdfImportUiState(isActive = true, destination = destination)
         channel.trySend(PdfImportEffect.PickFile)
     }
 
+    /** O cadastro assume a cópia antes da navegação; uma retomada usa a URI idempotente do rascunho. */
+    fun saveForTool() {
+        val current = state.value
+        val pending = current.pending ?: return
+        val destination = current.destination ?: return
+        if (current.isLoading || current.importedDocumentId != null || current.error != null) return
+        state.update { it.copy(isLoading = true, isSavingToLibrary = true) }
+        job = viewModelScope.launch {
+            try {
+                // Depois de iniciar o cadastro, finalizamos a entrega para não deixar um PDF órfão.
+                withContext(NonCancellable) {
+                    val id = documents.create(pending.scan, pending.name, null)
+                    savedState["tool_document_id"] = id
+                    clearPending()
+                    state.value = PdfImportUiState(
+                        isActive = true, destination = destination, importedDocumentId = id,
+                    )
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                state.update { it.copy(
+                    isLoading = false, isSavingToLibrary = false,
+                    error = failure.message ?: "Não foi possível guardar o PDF importado.",
+                ) }
+            }
+        }
+    }
+
+    fun acknowledgeToolDelivery(documentId: Long) {
+        if (state.value.importedDocumentId != documentId) return
+        savedState.remove<Long>("tool_document_id")
+        savedState.remove<String>("tool_destination")
+        uri = null
+        pendingPassword = null
+        state.value = PdfImportUiState()
+    }
+
     fun fileSelected(uri: String?, filename: suspend () -> String = { "Documento importado" }) {
-        if (!state.value.isActive || state.value.isLoading) return
+        if (!state.value.isActive || state.value.isLoading || state.value.pending != null ||
+            state.value.importedDocumentId != null) return
         savedState["awaiting_picker"] = false
         if (uri == null) { cancel(); return }
         this.uri = uri
@@ -86,7 +134,7 @@ class PdfImportViewModel(
 
     /** A entrega só termina depois que o cadastro assumiu e persistiu o rascunho. */
     fun completeDelivery(pdfUri: String) {
-        if (state.value.pending?.scan?.pdfUri != pdfUri) return
+        if (state.value.destination != null || state.value.pending?.scan?.pdfUri != pdfUri) return
         clearPending()
         uri = null
         pendingPassword = null
@@ -94,12 +142,15 @@ class PdfImportViewModel(
     }
 
     fun cancel() {
+        if (state.value.isSavingToLibrary) return
         generation++
         job?.cancel()
         val pending = state.value.pending
         pendingPassword = null
         uri = null
         savedState["awaiting_picker"] = false
+        savedState.remove<String>("tool_destination")
+        savedState.remove<Long>("tool_document_id")
         clearPending()
         state.value = PdfImportUiState()
         if (pending != null) viewModelScope.launch {

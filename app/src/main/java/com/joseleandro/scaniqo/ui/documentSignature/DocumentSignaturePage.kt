@@ -1,7 +1,6 @@
 package com.joseleandro.scaniqo.ui.documentSignature
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -24,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,6 +50,7 @@ import com.joseleandro.scaniqo.domain.model.PdfPoint
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
+import com.joseleandro.scaniqo.ui.documentCommon.components.detectDocumentTransformGestures
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentSignatureGesture
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentSignatureOverlay
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
@@ -150,6 +151,9 @@ private fun DocumentSignatureViewportStage(
     content: @Composable BoxScope.() -> Unit,
 ) {
     var signatureImage by remember(draft?.id, draft?.imageUri) { mutableStateOf<ImageBitmap?>(null) }
+    val latestDraft by rememberUpdatedState(draft)
+    val latestEvent by rememberUpdatedState(onEvent)
+    val latestGestureChange by rememberUpdatedState(onGestureChange)
     val density = LocalDensity.current
     val documentLabel = stringResource(R.string.signature_document_zoom)
     val panLeft = stringResource(R.string.signature_document_pan_left)
@@ -159,7 +163,7 @@ private fun DocumentSignatureViewportStage(
     BoxWithConstraints(modifier) {
         val canvasWidth = constraints.maxWidth.toFloat()
         val canvasHeight = (constraints.maxHeight - with(density) { 48.dp.roundToPx() }).coerceAtLeast(1).toFloat()
-        val margin = with(density) { 24.dp.toPx() }
+        val margin = with(density) { 12.dp.toPx() }
         val bounds = signatureDocumentViewportBounds(viewport.value, canvasWidth, canvasHeight, margin)
         val zoomValue = stringResource(R.string.signature_document_zoom_value, (bounds.viewport.zoom * 100).roundToInt())
         fun pan(delta: Offset) {
@@ -189,11 +193,24 @@ private fun DocumentSignatureViewportStage(
                         )
                     }
                     .pointerInput(viewport, enabled, draft == null, canvasWidth, canvasHeight) {
-                        // Com uma assinatura, o Overlay decide pelo ponto inicial quem recebe o gesto.
-                        if (enabled && draft == null) detectDragGestures { change, delta ->
-                            change.consume()
-                            viewport.pan(delta.x, delta.y, canvasWidth, canvasHeight, margin)
-                        }
+                        var gestureBaseline: PdfSignaturePlacement? = null
+                        if (enabled) detectDocumentTransformGestures(
+                            allowSinglePan = { latestDraft == null && viewport.value.zoom > 1f },
+                            onGestureStart = { gestureBaseline = latestDraft },
+                            onTransformStart = {
+                                val baseline = gestureBaseline
+                                if (baseline != null && latestDraft?.id == baseline.id) {
+                                    latestEvent(DocumentToolsEvent.TransformSignature(
+                                        baseline.x, baseline.y, baseline.width, baseline.rotationDegrees,
+                                        baseline.height, baseline.stretchToBounds,
+                                    ))
+                                }
+                                latestGestureChange(null)
+                            },
+                            onTransform = { centroid, pan, factor ->
+                                viewport.transform(centroid, pan, factor, canvasWidth, canvasHeight, margin)
+                            },
+                        )
                     },
                 contentAlignment = Alignment.Center,
             ) {

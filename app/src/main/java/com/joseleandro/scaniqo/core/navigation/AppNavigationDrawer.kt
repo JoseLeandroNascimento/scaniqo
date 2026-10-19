@@ -69,6 +69,12 @@ internal fun AppNavigationDrawer(
                 icon = R.drawable.ic_document_import,
                 onClick = onImportPdf,
             )
+            DrawerDestination(
+                label = stringResource(R.string.tools_hub_title),
+                icon = R.drawable.ic_tag_tools,
+                selected = currentRoute == AppRoute.Tools,
+                onClick = { onNavigate(AppRoute.Tools) },
+            )
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 28.dp, vertical = 14.dp),
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f),
@@ -86,16 +92,11 @@ internal fun AppNavigationDrawer(
                 onClick = { onNavigate(AppRoute.Signatures) },
             )
             DrawerDestination(
-                label = stringResource(R.string.backup_title),
-                icon = R.drawable.ic_cloud_backup,
-                selected = currentRoute == AppRoute.DriveBackup,
-                onClick = { onNavigate(AppRoute.DriveBackup) },
-            )
-            DrawerDestination(
-                label = stringResource(R.string.menu_pdf_password),
-                icon = R.drawable.ic_tool_lock,
-                selected = currentRoute == AppRoute.PasswordSettings,
-                onClick = { onNavigate(AppRoute.PasswordSettings) },
+                label = stringResource(R.string.settings_title),
+                icon = R.drawable.ic_settings,
+                selected = currentRoute in setOf(AppRoute.Settings, AppRoute.Personalization,
+                    AppRoute.PdfPreferences, AppRoute.DriveBackup, AppRoute.PasswordSettings),
+                onClick = { onNavigate(AppRoute.Settings) },
             )
         }
     }

@@ -12,8 +12,12 @@ import com.joseleandro.scaniqo.domain.model.PdfPasswordRequiredException
 import com.joseleandro.scaniqo.domain.model.PdfSignatureCrop
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.ui.documentEditor.model.hasEditorScreen
 import com.joseleandro.scaniqo.domain.model.isValidBackgroundMask
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
+import com.joseleandro.scaniqo.domain.repository.FormValueRepository
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
 import com.joseleandro.scaniqo.ui.documentEditor.coordinator.DocumentMergeContext
 import com.joseleandro.scaniqo.ui.documentEditor.coordinator.DocumentMergeCoordinator
@@ -52,6 +56,7 @@ class DocumentToolsViewModel(
     private val repository: PdfEditorRepository,
     private val signatureRepository: SignatureRepository,
     private val passwords: PasswordAccess,
+    private val formValues: FormValueRepository? = null,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(DocumentToolsUiState())
     val uiState = mutableState.asStateFlow()
@@ -174,6 +179,7 @@ class DocumentToolsViewModel(
     )
 
     init {
+        loadFormValues()
         viewModelScope.launch {
             try {
                 signatureRepository.observeSignatures().collect { signatures ->
@@ -221,6 +227,8 @@ class DocumentToolsViewModel(
         mutableState.value = DocumentToolsUiState(
             document = document,
             signatures = current.signatures,
+            savedFormValues = current.savedFormValues,
+            canStoreFormValues = formValues != null,
             isLocked = document.protectionKeyId != null && !passwords.state.value.isUnlocked,
             recoveryRequired = document.protectionKeyId != null &&
                 (!passwords.state.value.isConfigured || passwords.state.value.recoveryRequired),
@@ -242,7 +250,8 @@ class DocumentToolsViewModel(
             is DocumentToolsEvent.SelectPage -> if (canChange() && uiState.value.signatureDraft == null) {
                 if (uiState.value.selectedPageId != event.pageId &&
                     uiState.value.workspace?.pages?.any { it.id == event.pageId } == true) {
-                    mutableState.update { it.copy(selectedPageId = event.pageId, isComparingOriginal = false) }
+                    mutableState.update { it.copy(selectedPageId = event.pageId, isComparingOriginal = false,
+                        overlayPreviewPageId = null, overlayPreviewId = null) }
                     renderPreview()
                 }
             }
@@ -257,6 +266,15 @@ class DocumentToolsViewModel(
                         renderPreview(force = true)
                     }
                 }
+            }
+            is DocumentToolsEvent.SetOverlayPreview -> {
+                val state = uiState.value
+                if (!state.canEdit || state.tool !in setOf(DocumentTool.FORMS, DocumentTool.WATERMARK)) return
+                val page = state.workspace?.pages?.firstOrNull { it.id == event.pageId } ?: return
+                if (event.overlayId != null && page.overlays.none { it.id == event.overlayId }) return
+                if (state.overlayPreviewPageId == event.pageId && state.overlayPreviewId == event.overlayId) return
+                mutableState.update { it.copy(overlayPreviewPageId = event.pageId, overlayPreviewId = event.overlayId) }
+                renderPreview()
             }
             is DocumentToolsEvent.PreviewFilter -> previewFilter(event)
             DocumentToolsEvent.ClearFilterPreview -> clearFilterPreview()
@@ -280,7 +298,7 @@ class DocumentToolsViewModel(
             DocumentToolsEvent.ClearCorrectionSource -> correctionSources.clear()
             is DocumentToolsEvent.ActivateEditorTool -> activateEditorTool(event.tool)
             is DocumentToolsEvent.OpenTool -> if (canChange() && uiState.value.signatureDraft == null) {
-                if (event.tool in setOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES)) {
+                if (event.tool.hasEditorScreen) {
                     activateEditorTool(event.tool)
                     uiState.value.document?.id?.let { effectChannel.trySend(DocumentToolsEffect.NavigateEditorTool(it, event.tool)) }
                     return
@@ -331,6 +349,24 @@ class DocumentToolsViewModel(
                 mutableState.update { it.copy(isComparingOriginal = event.enabled && it.canCompare) }
                 renderPreview()
             }
+            is DocumentToolsEvent.SaveFormValue -> updateFormValues { it.save(event.label, event.value) }
+            is DocumentToolsEvent.DeleteFormValue -> updateFormValues { it.delete(event.id) }
+            is DocumentToolsEvent.AddImageMark -> addImageMark(event)
+            is DocumentToolsEvent.PutOverlay -> if (event.overlay.isValid()) {
+                change { workspace ->
+                    workspace.copy(pages = workspace.pages.map { page ->
+                        if (page.id in event.pageIds && (page.overlays.size < 100 || page.overlays.any { it.id == event.overlay.id })) {
+                            page.copy(overlays = page.overlays.filterNot { it.id == event.overlay.id } + event.overlay)
+                        } else page
+                    })
+                }
+            }
+            is DocumentToolsEvent.RemoveOverlay -> change { workspace ->
+                workspace.copy(pages = workspace.pages.map { page ->
+                    if (page.id in event.pageIds) page.copy(overlays = page.overlays.filterNot { it.id == event.overlayId }) else page
+                })
+            }
+            is DocumentToolsEvent.SaveRedactedCopy -> saveRedactedCopy(event)
             DocumentToolsEvent.Undo -> undo()
             is DocumentToolsEvent.SetNumbering -> change { it.copy(showPageNumbers = event.enabled) }
             is DocumentToolsEvent.MovePage -> movePage(event.pageId, event.offset)
@@ -523,11 +559,11 @@ class DocumentToolsViewModel(
     }
 
     private fun activateEditorTool(tool: DocumentTool) {
-        if (tool !in setOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES)) return
+        if (!tool.hasEditorScreen) return
         if (!canChange() || uiState.value.signatureDraft != null) return
         if (uiState.value.tool == tool) return
         clearToolPreviews()
-        if (tool != DocumentTool.PAGES) pagePreviews.pause()
+        if (tool == DocumentTool.LAYOUT || tool == DocumentTool.CORRECTIONS) pagePreviews.pause()
         mutableState.update { it.copy(tool = tool) }
         renderPreview()
     }
@@ -964,8 +1000,16 @@ class DocumentToolsViewModel(
         val comparisonPageId = state.selectedPageId.takeIf { state.isComparingOriginal && state.canCompare }
         val comparison = if (comparisonPageId == null) workspace else workspace.withoutImageEnhancements(comparisonPageId)
         val draft = state.signatureDraft
-        val snapshot = if (draft == null) comparison else comparison.copy(pages = comparison.pages.map { page ->
+        val signatureSnapshot = if (draft == null) comparison else comparison.copy(pages = comparison.pages.map { page ->
             if (page.id == state.signaturePageId) page.copy(signatures = page.signatures.filterNot { it.id == draft.id }) else page
+        })
+        // Só a prévia omite a seleção; a receita e a exportação mantêm o conteúdo completo.
+        val snapshot = if (state.overlayPreviewId == null ||
+            state.tool !in setOf(DocumentTool.FORMS, DocumentTool.WATERMARK)) signatureSnapshot
+        else signatureSnapshot.copy(pages = signatureSnapshot.pages.map { page ->
+            if (page.id == state.overlayPreviewPageId) page.copy(
+                overlays = page.overlays.filterNot { it.id == state.overlayPreviewId }
+            ) else page
         })
         val existing = workspace.pages.mapTo(mutableSetOf()) { it.id }
         val requested = (listOfNotNull(state.selectedPageId) + visiblePages.keys).filter { it in existing }.toSet()
@@ -1095,6 +1139,7 @@ class DocumentToolsViewModel(
     }
 
     private fun clearToolPreviews() {
+        mutableState.update { it.copy(overlayPreviewPageId = null, overlayPreviewId = null) }
         correctionSources.clear()
         clearLayoutPreview()
         clearCorrectionsPreview()
@@ -1111,6 +1156,110 @@ class DocumentToolsViewModel(
         captureCorrections.clear()
         correctionsPreviews.clear()
         mutableState.update { it.copy(correctionsPreview = DocumentToolPreviewState()) }
+    }
+
+    private fun loadFormValues() {
+        val repository = formValues ?: return
+        viewModelScope.launch {
+            try {
+                val values = repository.list()
+                mutableState.update { it.copy(savedFormValues = values, canStoreFormValues = true) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                mutableState.update { it.copy(canStoreFormValues = true, message = DocumentToolsMessage.FORM_VALUES_ERROR) }
+            }
+        }
+    }
+
+    private fun updateFormValues(action: suspend (FormValueRepository) -> List<com.joseleandro.scaniqo.domain.model.SavedFormValue>) {
+        val repository = formValues ?: return
+        if (!uiState.value.canEdit || uiState.value.isUpdatingFormValues) return
+        mutableState.update { it.copy(isUpdatingFormValues = true) }
+        viewModelScope.launch {
+            try {
+                val values = action(repository)
+                mutableState.update { it.copy(savedFormValues = values) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                mutableState.update { it.copy(message = DocumentToolsMessage.FORM_VALUES_ERROR) }
+            } finally {
+                mutableState.update { it.copy(isUpdatingFormValues = false) }
+            }
+        }
+    }
+
+    private fun addImageMark(event: DocumentToolsEvent.AddImageMark) {
+        val state = uiState.value
+        val workspace = state.workspace ?: return
+        if (!state.canEdit || !PdfOverlay("image", PdfOverlayKind.TEXT, x = event.x, y = event.y,
+            width = event.width, height = event.height).isValid()) return
+        if (workspace.pages.none { it.id in event.pageIds } ||
+            workspace.pages.any { it.id in event.pageIds && it.signatures.size >= 20 }) return
+        val operationSession = session
+        pausePreviews()
+        mutableState.update { it.copy(isCopyingSignature = true, message = null) }
+        viewModelScope.launch {
+            try {
+                val copy = ioMutex.withLock { repository.copySignature(workspace, event.uri) }
+                if (operationSession != session) return@launch
+                mutableState.update { it.copy(isCopyingSignature = false) }
+                val image = PdfSignaturePlacement(UUID.randomUUID().toString(), copy,
+                    event.x, event.y, event.width, event.height)
+                change { current ->
+                    current.copy(pages = current.pages.map { page ->
+                        if (page.id in event.pageIds) page.copy(signatures = page.signatures + image) else page
+                    })
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (operationSession == session) mutableState.update { it.copy(message = DocumentToolsMessage.SIGNATURES_ERROR) }
+            } finally {
+                if (operationSession == session) {
+                    mutableState.update { it.copy(isCopyingSignature = false) }
+                    if (!uiState.value.isLocked) renderPreview()
+                }
+            }
+        }
+    }
+
+    private fun saveRedactedCopy(event: DocumentToolsEvent.SaveRedactedCopy) {
+        val state = uiState.value
+        val workspace = state.workspace ?: return
+        if (!state.canEdit || event.areas.isEmpty() || event.areas.any { !it.isValid() }) return
+        if (requiresAuthentication() && !passwords.state.value.isUnlocked) {
+            effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+            return
+        }
+        val operationSession = session
+        pausePreviews()
+        mutableState.update { it.copy(isSaving = true, message = null) }
+        viewModelScope.launch {
+            try {
+                ioMutex.withLock {
+                    val key = workspace.protectionKeyId ?: sourceProtectionKeyId
+                    if (workspace.isProtected || state.document?.isProtected == true) {
+                        passwords.withPassword(checkNotNull(key)) { password ->
+                            repository.saveRedactedCopy(workspace, event.areas, password, key)
+                        }
+                    } else repository.saveRedactedCopy(workspace, event.areas)
+                }
+                if (operationSession == session) mutableState.update {
+                    it.copy(message = DocumentToolsMessage.REDACTED_COPY_SAVED, redactionSaveVersion = it.redactionSaveVersion + 1)
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (operationSession == session) mutableState.update { it.copy(message = DocumentToolsMessage.SAVE_ERROR) }
+            } finally {
+                if (operationSession == session) {
+                    mutableState.update { it.copy(isSaving = false) }
+                    if (!uiState.value.isLocked) renderPreview()
+                }
+            }
+        }
     }
 
     private fun save() {
@@ -1192,7 +1341,8 @@ class DocumentToolsViewModel(
                 visiblePages.clear()
                 undoHistory.clear()
                 sourceProtectionKeyId = null
-                mutableState.value = DocumentToolsUiState(signatures = uiState.value.signatures)
+                mutableState.value = DocumentToolsUiState(signatures = uiState.value.signatures,
+                    savedFormValues = uiState.value.savedFormValues, canStoreFormValues = formValues != null)
                 effectChannel.send(DocumentToolsEffect.NavigateBack)
             } catch (cancelled: CancellationException) {
                 throw cancelled

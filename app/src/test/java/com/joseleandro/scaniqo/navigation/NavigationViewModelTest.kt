@@ -5,6 +5,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import com.joseleandro.scaniqo.core.navigation.AppRoute
 import com.joseleandro.scaniqo.core.navigation.NavigationViewModel
+import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
@@ -20,6 +21,70 @@ class NavigationViewModelTest {
         viewModel.goBack()
 
         assertEquals(listOf(AppRoute.Documents), viewModel.backStack)
+    }
+
+    @Test
+    fun openingASearchResultReturnsToSearchAndItsStackCanBeRestored() {
+        viewModel.navigateTo(AppRoute.DocumentSearch)
+        viewModel.navigateTo(AppRoute.DocumentViewer(7))
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        val stack = NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray())
+        val restored = Json.decodeFromString(serializer, Json.encodeToString(serializer, stack))
+
+        assertEquals(
+            listOf(AppRoute.Documents, AppRoute.DocumentSearch, AppRoute.DocumentViewer(7)),
+            restored.toList(),
+        )
+        viewModel.goBack()
+        assertEquals(AppRoute.DocumentSearch, viewModel.backStack.last())
+        viewModel.goBack()
+        assertEquals(listOf(AppRoute.Documents), viewModel.backStack)
+    }
+
+    @Test
+    fun everyUtilityRestoresItsSelectionAndReturnsToTheToolsHub() {
+        viewModel.navigateTo(AppRoute.Tools)
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        val destinations = PdfUtility.entries.map { AppRoute.PdfUtilityTool(it) } +
+            listOf(AppRoute.DocumentForms, AppRoute.DocumentCertificates)
+        for (destination in destinations) {
+            viewModel.navigateTo(destination)
+            val restored = Json.decodeFromString(serializer, Json.encodeToString(
+                serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+            ))
+            assertEquals(listOf(AppRoute.Documents, AppRoute.Tools, destination), restored.toList())
+            viewModel.goBack()
+            assertEquals(AppRoute.Tools, viewModel.backStack.last())
+        }
+        viewModel.goBack()
+        assertEquals(AppRoute.Documents, viewModel.backStack.last())
+    }
+
+    @Test
+    fun editingFromTheToolsHubKeepsTheViewerBetweenTheToolAndTheHub() {
+        viewModel.navigateTo(AppRoute.Tools)
+        viewModel.navigateTo(AppRoute.DocumentViewer(42))
+        viewModel.navigateTo(AppRoute.DocumentEditorTool(42, DocumentTool.ANNOTATIONS))
+        viewModel.goBack()
+        assertEquals(AppRoute.DocumentViewer(42), viewModel.backStack.last())
+        viewModel.goBack()
+        assertEquals(AppRoute.Tools, viewModel.backStack.last())
+    }
+
+    @Test
+    fun settingsSectionsRestoreTheirStackAndReturnToSettings() {
+        viewModel.navigateTo(AppRoute.Settings)
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        for (destination in listOf(AppRoute.Personalization, AppRoute.PdfPreferences,
+            AppRoute.DriveBackup, AppRoute.PasswordSettings)) {
+            viewModel.navigateTo(destination)
+            val restored = Json.decodeFromString(serializer, Json.encodeToString(
+                serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+            ))
+            assertEquals(listOf(AppRoute.Documents, AppRoute.Settings, destination), restored.toList())
+            viewModel.goBack()
+            assertEquals(AppRoute.Settings, viewModel.backStack.last())
+        }
     }
 
     @Test
@@ -138,7 +203,8 @@ class NavigationViewModelTest {
         val id = Long.MAX_VALUE - 3
         viewModel.navigateTo(AppRoute.DocumentViewer(id))
         val serializer = NavBackStackSerializer(AppRoute.serializer())
-        for (tool in listOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES)) {
+        for (tool in listOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES,
+            DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION)) {
             val route = AppRoute.DocumentEditorTool(id, tool)
             viewModel.navigateTo(route)
             viewModel.navigateTo(route)

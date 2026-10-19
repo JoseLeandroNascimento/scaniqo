@@ -33,8 +33,8 @@ import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
-import com.joseleandro.scaniqo.ui.documents.components.DocumentQuickTools
 import com.joseleandro.scaniqo.ui.documents.components.DocumentCard
+import com.joseleandro.scaniqo.ui.documents.components.DocumentQuickTools
 import com.joseleandro.scaniqo.ui.documents.components.DocumentTagFilters
 import com.joseleandro.scaniqo.ui.documents.components.DocumentsLoading
 import com.joseleandro.scaniqo.ui.documents.event.DocumentsEvent
@@ -49,9 +49,11 @@ fun DocumentsScreen(
     onDocumentAction: (DocumentActionEvent) -> Unit,
     onOpenMenu: () -> Unit,
     onImportPdf: () -> Unit,
+    onSearch: () -> Unit,
     onOpenDocument: (Long) -> Unit,
     onMergePdfs: () -> Unit,
     onSignDocument: () -> Unit,
+    onAllTools: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val toastState = rememberDocumentToastState(actionsState.message) {
@@ -71,8 +73,11 @@ fun DocumentsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onImportPdf, enabled = !actionsBusy) {
-                        Icon(painterResource(R.drawable.ic_document_import), "Importar PDF")
+                    IconButton(onClick = onSearch, enabled = !actionsBusy) {
+                        Icon(
+                            painterResource(R.drawable.ic_document_search),
+                            contentDescription = stringResource(R.string.document_search_title),
+                        )
                     }
                 },
             )
@@ -80,7 +85,13 @@ fun DocumentsScreen(
         snackbarHost = { AppToastHost(toastState) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { if (!actionsBusy) onDocumentAction(DocumentActionEvent.StartScan(defaultTagId = uiState.selectedTagId)) },
+                onClick = {
+                    if (!actionsBusy) onDocumentAction(
+                        DocumentActionEvent.StartScan(
+                            defaultTagId = uiState.selectedTagId
+                        )
+                    )
+                },
                 modifier = Modifier.semantics { if (actionsBusy) disabled() },
                 icon = {
                     if (scanBusy) {
@@ -123,6 +134,7 @@ fun DocumentsScreen(
                     onImport = onImportPdf,
                     onMerge = onMergePdfs,
                     onSign = onSignDocument,
+                    onAllTools = onAllTools,
                 )
             }
             item(key = "filters") {

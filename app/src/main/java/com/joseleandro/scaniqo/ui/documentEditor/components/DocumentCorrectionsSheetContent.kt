@@ -90,6 +90,7 @@ internal fun DocumentCorrectionsSheetContent(
     var draft by rememberSaveable(workspace.workspaceId, stateSaver = PdfPageLayoutSaver) {
         mutableStateOf(initialPage.layout)
     }
+    val gestureStartLayout = remember(workspace.workspaceId) { mutableStateOf(draft) }
     var tool by rememberSaveable(workspace.workspaceId) { mutableStateOf(initialTool) }
     var editingSelection by rememberSaveable(workspace.workspaceId) { mutableStateOf(true) }
     var retry by remember { mutableIntStateOf(0) }
@@ -389,7 +390,9 @@ internal fun DocumentCorrectionsSheetContent(
     }
     DocumentToolScreenLayout(
         modifier = modifier,
-        header = header,
+        previewKey = page.id,
+        onGestureStart = { gestureStartLayout.value = draft },
+        onTransformStart = { draft = gestureStartLayout.value },        header = header,
         preview = canvas,
         tools = toolButtons,
         controls = adjustments,

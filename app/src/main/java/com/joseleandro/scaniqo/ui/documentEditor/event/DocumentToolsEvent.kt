@@ -10,11 +10,14 @@ import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
+import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfRedactionArea
 
 sealed interface DocumentToolsEvent {
     data class SelectPage(val pageId: String) : DocumentToolsEvent
     data class PageVisibility(val pageId: String, val visible: Boolean) : DocumentToolsEvent
     data class RetryPagePreview(val pageId: String) : DocumentToolsEvent
+    data class SetOverlayPreview(val pageId: String, val overlayId: String?) : DocumentToolsEvent
     data class PreviewLayout(
         val pageId: String,
         val layout: PdfPageLayout,
@@ -142,6 +145,12 @@ sealed interface DocumentToolsEvent {
     data object ConfirmSignature : DocumentToolsEvent
     data object CancelSignature : DocumentToolsEvent
     data class RemoveSignature(val pageId: String, val placementId: String) : DocumentToolsEvent
+    data class SaveFormValue(val label: String, val value: String) : DocumentToolsEvent
+    data class DeleteFormValue(val id: String) : DocumentToolsEvent
+    data class AddImageMark(val uri: String, val pageIds: Set<String>, val x: Float, val y: Float, val width: Float, val height: Float) : DocumentToolsEvent
+    data class PutOverlay(val overlay: PdfOverlay, val pageIds: Set<String>) : DocumentToolsEvent
+    data class RemoveOverlay(val overlayId: String, val pageIds: Set<String>) : DocumentToolsEvent
+    data class SaveRedactedCopy(val areas: List<PdfRedactionArea>) : DocumentToolsEvent
     data object Save : DocumentToolsEvent
     data object Retry : DocumentToolsEvent
     data object DismissMessage : DocumentToolsEvent

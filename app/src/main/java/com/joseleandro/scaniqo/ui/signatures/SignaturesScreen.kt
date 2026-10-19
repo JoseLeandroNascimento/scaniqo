@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import com.joseleandro.scaniqo.domain.model.SignatureFont
 import com.joseleandro.scaniqo.domain.model.SignaturePoint
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
@@ -133,10 +134,16 @@ fun SignaturesScreen(
                 }
             },
             confirmButton = {
-                TextButton(enabled = !state.isBusy, onClick = { viewModel.onEvent(SignaturesEvent.ConfirmDelete) }) { Text("Excluir") }
-            },
-            dismissButton = {
-                TextButton(enabled = !state.isBusy, onClick = { viewModel.onEvent(SignaturesEvent.DismissDialog) }) { Text("Cancelar") }
+                DialogActions(
+                    confirmText = "Excluir",
+                    onConfirm = { viewModel.onEvent(SignaturesEvent.ConfirmDelete) },
+                    dismissText = "Cancelar",
+                    onDismiss = { viewModel.onEvent(SignaturesEvent.DismissDialog) },
+                    confirmEnabled = !state.isBusy,
+                    dismissEnabled = !state.isBusy,
+                    confirming = state.isBusy,
+                    destructive = true,
+                )
             },
         )
     }
@@ -154,10 +161,15 @@ fun SignaturesScreen(
                 }
             },
             confirmButton = {
-                TextButton(enabled = !state.isBusy, onClick = { viewModel.onEvent(SignaturesEvent.ConfirmRename) }) { Text("Salvar") }
-            },
-            dismissButton = {
-                TextButton(enabled = !state.isBusy, onClick = { viewModel.onEvent(SignaturesEvent.DismissDialog) }) { Text("Cancelar") }
+                DialogActions(
+                    confirmText = "Salvar",
+                    onConfirm = { viewModel.onEvent(SignaturesEvent.ConfirmRename) },
+                    dismissText = "Cancelar",
+                    onDismiss = { viewModel.onEvent(SignaturesEvent.DismissDialog) },
+                    confirmEnabled = !state.isBusy,
+                    dismissEnabled = !state.isBusy,
+                    confirming = state.isBusy,
+                )
             },
         )
     }

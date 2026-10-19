@@ -1,27 +1,22 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPreviewZoom
 
-/** Mantém Aplicar acessível e usa a altura disponível para a página, sem limites de bottom sheet. */
+/** O documento usa toda a área disponível; os ajustes aparecem somente quando solicitados. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DocumentToolScreenLayout(
     modifier: Modifier = Modifier,
@@ -30,53 +25,49 @@ internal fun DocumentToolScreenLayout(
     tools: @Composable ColumnScope.() -> Unit,
     controls: @Composable () -> Unit,
     navigation: @Composable () -> Unit = {},
+    previewKey: Any = Unit,
+    onGestureStart: () -> Unit = {},
+    onTransformStart: () -> Unit = {},
     actions: @Composable () -> Unit,
 ) {
-    BoxWithConstraints(modifier.fillMaxSize()) {
-        if (maxWidth > maxHeight || maxWidth >= 600.dp) {
-            val controlsWidth = minOf(320.dp, maxWidth * .46f)
-            Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Surface(
-                    Modifier.weight(1f).fillMaxHeight(),
-                    shape = MaterialTheme.shapes.large,
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                ) {
-                    Row(Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center, content = preview)
-                        Column(
-                            Modifier.width(48.dp).verticalScroll(rememberScrollState()).selectableGroup(),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            content = tools,
-                        )
-                    }
-                }
-                Column(
-                    Modifier.width(controlsWidth).fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Column(
-                        Modifier.weight(1f).verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        header()
-                        controls()
-                        navigation()
-                    }
-                    actions()
-                }
+    var showControls by rememberSaveable { mutableStateOf(false) }
+    Column(modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            DocumentPreviewZoom(Modifier.fillMaxSize(), contentKey = previewKey,
+                onGestureStart = onGestureStart, onTransformStart = onTransformStart, content = preview)
+            FilledTonalButton(
+                onClick = { showControls = true },
+                modifier = Modifier.align(Alignment.BottomStart).padding(8.dp),
+            ) {
+                Icon(painterResource(R.drawable.ic_tool_adjust), null, Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.preview_controls_show))
             }
-        } else {
-            Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                header()
-                DocumentInteractivePreviewStage(
-                    modifier = Modifier.weight(1f),
-                    tools = tools,
-                    controls = controls,
-                    content = preview,
-                )
+        }
+        actions()
+    }
+    if (showControls) ModalBottomSheet(
+        onDismissRequest = { showControls = false },
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    ) {
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth().heightIn(max = maxHeight * .8f).padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.weight(1f)) { header() }
+                    IconButton(onClick = { showControls = false }) {
+                        Icon(painterResource(R.drawable.ic_toast_close), stringResource(R.string.preview_controls_hide))
+                    }
+                }
                 navigation()
+                Row(Modifier.weight(1f, fill = false), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Column(Modifier.width(48.dp).verticalScroll(rememberScrollState()).selectableGroup(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally, content = tools)
+                    Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) { controls() }
+                }
                 actions()
+                Spacer(Modifier.height(12.dp))
             }
         }
     }

@@ -35,7 +35,9 @@ internal class DocumentPagePreviewController(
         if (index < 0) return
         val content = DocumentPreviewContent(
             workspace.workspaceId, workspace.pages[index],
-            (index to workspace.pages.size).takeIf { workspace.showPageNumbers },
+            (index to workspace.pages.size).takeIf { workspace.showPageNumbers || workspace.pages[index].overlays.any {
+                it.text.contains("{pagina}") || it.text.contains("{total}")
+            } },
         )
         requestedOriginal[pageId] = showingOriginal
         if (!force && pending[pageId] == content) return

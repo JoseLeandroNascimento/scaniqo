@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -20,20 +23,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.DocumentModel
+import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentCorrectionsSheetContent
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentLayoutSheetContent
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentPagesSheetContent
+import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentOverlayEditor
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentPagePreviewState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.util.titleRes
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -52,24 +62,35 @@ internal fun DocumentEditorToolScreen(
     onBack: () -> Unit,
     onRetry: () -> Unit,
     snackbarHost: @Composable () -> Unit = {},
+    hasLocalDraft: Boolean = false,
 ) {
     val sameSession = state.document?.id == documentId
     val workspace = state.workspace?.takeIf { sameSession }
     val drafts = rememberSaveableStateHolder()
     val interactive = if (enabled) state else state.copy(isLoading = true)
     val canBack = enabled && (!state.isBusy || state.isLoading)
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(tool.titleRes())) },
+                title = {
+                    Text(stringResource(tool.titleRes()), style = MaterialTheme.typography.titleMedium,
+                        maxLines = 2, overflow = TextOverflow.Ellipsis)
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack, enabled = canBack) {
+                    IconButton(onClick = {
+                        if (tool == DocumentTool.FORMS && imeVisible) {
+                            keyboard?.hide(); focusManager.clearFocus()
+                        } else onBack()
+                    }, enabled = canBack) {
                         Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.editor_tool_back))
                     }
                 },
                 actions = {
-                    if (tool == DocumentTool.PAGES && state.canUndo && sameSession) {
-                        IconButton(onClick = { onEvent(DocumentToolsEvent.Undo) }, enabled = enabled && state.canEdit) {
+                    if (tool in setOf(DocumentTool.PAGES, DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK) && state.canUndo && sameSession) {
+                        IconButton(onClick = { onEvent(DocumentToolsEvent.Undo) }, enabled = enabled && state.canEdit && !hasLocalDraft) {
                             Icon(painterResource(R.drawable.ic_document_undo), stringResource(R.string.viewer_undo_description))
                         }
                     }
@@ -80,7 +101,8 @@ internal fun DocumentEditorToolScreen(
     ) { padding ->
         Box(
             Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(horizontal = if (tool == DocumentTool.FORMS) 0.dp else 12.dp,
+                    vertical = if (tool == DocumentTool.FORMS) 0.dp else 8.dp),
         ) {
             when {
                 sameSession && state.isLocked -> DocumentStatus(
@@ -116,6 +138,8 @@ internal fun DocumentEditorToolScreen(
                                 Text(stringResource(R.string.editor_tool_done))
                             }
                         }
+                        DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION ->
+                            DocumentOverlayEditor(interactive, tool, onEvent, onDraftChanged, onBack)
                         else -> Unit
                     }
                 }
@@ -139,6 +163,23 @@ private fun DocumentCorrectionsScreenPreview() = DocumentEditorToolPreview(Docum
 @Composable
 private fun DocumentPagesScreenPreview() = DocumentEditorToolPreview(DocumentTool.PAGES)
 
+@Preview(name = "Preencher — tela", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Preview(name = "Preencher — fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
+@Composable
+private fun DocumentFormsScreenPreview() = DocumentEditorToolPreview(DocumentTool.FORMS)
+
+@Preview(name = "Anotações — tela", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Composable
+private fun DocumentAnnotationsScreenPreview() = DocumentEditorToolPreview(DocumentTool.ANNOTATIONS)
+
+@Preview(name = "Marcas — tela", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Composable
+private fun DocumentWatermarkScreenPreview() = DocumentEditorToolPreview(DocumentTool.WATERMARK)
+
+@Preview(name = "Censurar — tela", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Composable
+private fun DocumentRedactionScreenPreview() = DocumentEditorToolPreview(DocumentTool.REDACTION)
+
 @Composable
 private fun DocumentEditorToolPreview(tool: DocumentTool) {
     ScaniqoTheme {
@@ -149,6 +190,7 @@ private fun DocumentEditorToolPreview(tool: DocumentTool) {
                 document = DocumentModel(1, "Contrato", "preview.pdf", 4, 0, 0),
                 workspace = PdfWorkspace(1, "preview", "preview", (1..4).map { PdfPageSpec("page-$it", "preview.pdf", it - 1) }),
                 selectedPageId = "page-1",
+                pagePreviews = mapOf("page-1" to DocumentPagePreviewState(preview = PdfPagePreview("preview.pdf", 0))),
                 tool = tool,
             ),
             documentLoading = false, documentError = false, enabled = true,

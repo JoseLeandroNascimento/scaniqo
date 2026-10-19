@@ -17,6 +17,11 @@ import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfSignatureCrop
 import com.joseleandro.scaniqo.domain.model.PdfSignatureImage
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.SavedFormValue
+import com.joseleandro.scaniqo.domain.repository.FormValueRepository
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.domain.model.PdfRedactionArea
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.model.SignatureFont
 import com.joseleandro.scaniqo.domain.model.SignatureModel
@@ -72,6 +77,188 @@ class DocumentToolsViewModelTest {
         store.clear()
         dispatcher.scheduler.runCurrent()
         Dispatchers.resetMain()
+    }
+
+    @Test fun selectingOverlayOnlyRemovesItFromPreviewAndSaveKeepsTheCompleteDocument() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val selected = PdfOverlay("selected", PdfOverlayKind.TEXT, text = "Nome")
+        val other = PdfOverlay("other", PdfOverlayKind.WATERMARK, text = "Cópia")
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(selected, setOf("page-1")))
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(other, setOf("page-1", "page-2")))
+        viewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(DocumentTool.FORMS))
+        val complete = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.SetOverlayPreview("page-1", selected.id))
+        advanceUntilIdle()
+
+        assertEquals(listOf(other), repository.previews.last().pages[0].overlays)
+        assertEquals(listOf(other), repository.previews.last().pages[1].overlays)
+        assertEquals(complete, viewModel.uiState.value.workspace)
+        assertEquals(selected.id, viewModel.uiState.value.overlayPreviewId)
+        viewModel.onEvent(DocumentToolsEvent.Save)
+        advanceUntilIdle()
+        assertEquals(complete, repository.saves.single())
+    }
+
+    @Test fun leavingOverlayEditorRestoresTheSelectedElementAndClearsPreviewIdentity() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val overlay = PdfOverlay("mark", PdfOverlayKind.WATERMARK, text = "Marca")
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(overlay, setOf("page-1")))
+        viewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(DocumentTool.WATERMARK))
+        viewModel.onEvent(DocumentToolsEvent.SetOverlayPreview("page-1", overlay.id))
+        advanceUntilIdle()
+        assertTrue(repository.previews.last().pages[0].overlays.isEmpty())
+
+        viewModel.onEvent(DocumentToolsEvent.DismissTool)
+        advanceUntilIdle()
+        assertEquals(listOf(overlay), repository.previews.last().pages[0].overlays)
+        assertNull(viewModel.uiState.value.overlayPreviewId)
+        assertNull(viewModel.uiState.value.overlayPreviewPageId)
+    }
+
+    @Test fun invalidOrOutOfContextOverlaySelectionCannotHidePdfContent() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val overlay = PdfOverlay("mark", PdfOverlayKind.TEXT, text = "Texto")
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(overlay, setOf("page-1")))
+        viewModel.onEvent(DocumentToolsEvent.SetOverlayPreview("page-1", overlay.id))
+        assertNull(viewModel.uiState.value.overlayPreviewId)
+        viewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(DocumentTool.FORMS))
+        viewModel.onEvent(DocumentToolsEvent.SetOverlayPreview("page-1", "missing"))
+        assertNull(viewModel.uiState.value.overlayPreviewId)
+        viewModel.onEvent(DocumentToolsEvent.SetOverlayPreview("page-1", overlay.id))
+        viewModel.onEvent(DocumentToolsEvent.SelectPage("page-2"))
+        advanceUntilIdle()
+        assertNull(viewModel.uiState.value.overlayPreviewId)
+        assertEquals(listOf(overlay), viewModel.uiState.value.workspace!!.pages[0].overlays)
+    }
+
+    @Test fun formValuesAreOnlyStoredOnExplicitActionAndDoNotMutateDocument() = runTest(dispatcher) {
+        val values = object : FormValueRepository {
+            var entries = emptyList<SavedFormValue>()
+            override suspend fun list() = entries
+            override suspend fun save(label: String, value: String): List<SavedFormValue> {
+                entries = listOf(SavedFormValue("saved", label, value))
+                return entries
+            }
+            override suspend fun delete(id: String): List<SavedFormValue> {
+                entries = entries.filterNot { it.id == id }
+                return entries
+            }
+        }
+        val local = DocumentToolsViewModel(repository, signatures, passwords, values).also { store.put("form", it) }
+        local.load(document)
+        advanceUntilIdle()
+        local.onEvent(DocumentToolsEvent.PutOverlay(PdfOverlay("field", PdfOverlayKind.TEXT, text = "Private"),
+            setOf("page-1")))
+        advanceUntilIdle()
+        assertTrue(values.entries.isEmpty())
+        val workspace = local.uiState.value.workspace
+        local.onEvent(DocumentToolsEvent.SaveFormValue("Nome", "José"))
+        advanceUntilIdle()
+        assertEquals("José", local.uiState.value.savedFormValues.single().value)
+        assertEquals(workspace, local.uiState.value.workspace)
+        local.onEvent(DocumentToolsEvent.DeleteFormValue("saved"))
+        advanceUntilIdle()
+        assertTrue(local.uiState.value.savedFormValues.isEmpty())
+        assertEquals(workspace, local.uiState.value.workspace)
+    }
+
+    @Test fun editableOverlaysUpdateRemoveAndUndoWithoutChangingOtherPages() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace!!
+        val text = PdfOverlay("field", PdfOverlayKind.TEXT, text = "José")
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(text, setOf("page-2")))
+        assertEquals(emptyList<PdfOverlay>(), viewModel.uiState.value.workspace!!.pages[0].overlays)
+        assertEquals(listOf(text), viewModel.uiState.value.workspace!!.pages[1].overlays)
+        val edited = text.copy(text = "José Leandro")
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(edited, setOf("page-2")))
+        assertEquals(listOf(edited), viewModel.uiState.value.workspace!!.pages[1].overlays)
+        viewModel.onEvent(DocumentToolsEvent.RemoveOverlay("field", setOf("page-2")))
+        assertTrue(viewModel.uiState.value.workspace!!.pages[1].overlays.isEmpty())
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        assertEquals(listOf(edited), viewModel.uiState.value.workspace!!.pages[1].overlays)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertFalse(viewModel.uiState.value.hasChanges)
+        assertTrue(repository.saves.isEmpty())
+    }
+
+    @Test fun watermarkTargetsAndInvalidOverlayDoNotAffectExistingLayouts() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val stamp = PdfOverlay("watermark", PdfOverlayKind.WATERMARK, text = "CONFIDENCIAL", opacity = .25f)
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(stamp, setOf("page-1", "page-3")))
+        val snapshot = viewModel.uiState.value.workspace!!
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(stamp.copy(x = Float.NaN), setOf("page-1")))
+        assertEquals(snapshot, viewModel.uiState.value.workspace)
+        assertTrue(snapshot.pages.all { it.layout == PdfPageLayout() })
+        assertEquals(listOf(stamp), snapshot.pages[0].overlays)
+        assertTrue(snapshot.pages[1].overlays.isEmpty())
+        viewModel.onEvent(DocumentToolsEvent.Save)
+        advanceUntilIdle()
+        assertEquals(snapshot, repository.saves.single())
+    }
+
+    @Test fun redactionCreatesSeparateCopyWithoutPuttingAreasIntoSourceRecipeOrUndo() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace!!
+        val area = PdfRedactionArea("page-1", .1f, .2f, .3f, .1f)
+        viewModel.onEvent(DocumentToolsEvent.SaveRedactedCopy(listOf(area)))
+        advanceUntilIdle()
+        assertEquals(listOf(area), repository.redactions.single())
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertEquals(document, viewModel.uiState.value.document)
+        assertFalse(viewModel.uiState.value.hasChanges)
+        assertFalse(viewModel.uiState.value.canUndo)
+        assertTrue(repository.saves.isEmpty())
+        assertEquals(1, viewModel.uiState.value.redactionSaveVersion)
+        assertEquals(DocumentToolsMessage.REDACTED_COPY_SAVED, viewModel.uiState.value.message)
+    }
+
+    @Test fun protectedRedactedCopyUsesSamePasswordAndNeverSavesUnlockedOutput() = runTest(dispatcher) {
+        passwords.unlock()
+        viewModel.load(document.copy(protectionKeyId = "old-key"))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.SaveRedactedCopy(listOf(PdfRedactionArea("page-2", .2f, .2f, .2f, .2f))))
+        advanceUntilIdle()
+        assertEquals("secret", repository.redactionPassword)
+        assertEquals("old-key", repository.redactionKey)
+        assertTrue(repository.saves.isEmpty())
+    }
+
+    @Test fun failedRedactionKeepsSessionAndAllowsRetry() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        repository.failSave = true
+        val original = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.SaveRedactedCopy(listOf(PdfRedactionArea("page-1", 0f, 0f, .5f, .5f))))
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
+        assertEquals(DocumentToolsMessage.SAVE_ERROR, viewModel.uiState.value.message)
+        assertTrue(viewModel.uiState.value.canEdit)
+        assertEquals(0, viewModel.uiState.value.redactionSaveVersion)
+    }
+
+    @Test fun logoUsesPrivateCopyAndExistingUndoWithoutChangingSource() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val original = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.AddImageMark("content://logo.png", setOf("page-1", "page-3"), .1f, .1f, .3f, .2f))
+        advanceUntilIdle()
+        val pages = viewModel.uiState.value.workspace!!.pages
+        assertEquals("file:///workspace/copied-signature.png", pages[0].signatures.single().imageUri)
+        assertEquals(pages[0].signatures, pages[2].signatures)
+        assertTrue(pages[1].signatures.isEmpty())
+        assertTrue(repository.saves.isEmpty())
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertEquals(original, viewModel.uiState.value.workspace)
     }
 
     @Test fun layoutOnlyChangesSelectedPageUntilExplicitSave() = runTest(dispatcher) {
@@ -393,6 +580,29 @@ class DocumentToolsViewModelTest {
         assertEquals(DocumentToolsEffect.NavigateBack, navigation.await())
         assertEquals(1, repository.discards)
         assertNull(viewModel.uiState.value.workspace)
+    }
+
+    @Test fun closingAndReopeningSameDocumentStartsWithSavedContent() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.SelectPage("page-2"))
+        viewModel.onEvent(DocumentToolsEvent.SetNumbering(true))
+        viewModel.onEvent(DocumentToolsEvent.RequestBack)
+        assertTrue(viewModel.uiState.value.confirmDiscard)
+
+        val navigation = async { viewModel.effects.first() }
+        viewModel.onEvent(DocumentToolsEvent.ConfirmDiscard)
+        advanceUntilIdle()
+        assertEquals(DocumentToolsEffect.NavigateBack, navigation.await())
+
+        viewModel.load(document)
+        advanceUntilIdle()
+        assertEquals(2, repository.openCount)
+        assertEquals("page-1", viewModel.uiState.value.selectedPageId)
+        assertFalse(viewModel.uiState.value.workspace!!.showPageNumbers)
+        assertFalse(viewModel.uiState.value.hasChanges)
+        assertFalse(viewModel.uiState.value.confirmDiscard)
+        assertNull(viewModel.uiState.value.signatureDraft)
     }
 
     @Test fun protectedDocumentNeverOpensOrPreviewsBeforeAuthentication() = runTest(dispatcher) {
@@ -1751,6 +1961,9 @@ class DocumentToolsViewModelTest {
         var lastSavePassword: String? = null
         var lastSaveKey: String? = null
         var lastRemoveProtection = false
+        val redactions = mutableListOf<List<PdfRedactionArea>>()
+        var redactionPassword: String? = null
+        var redactionKey: String? = null
         val saves = mutableListOf<PdfWorkspace>()
         val previews = mutableListOf<PdfWorkspace>()
         private lateinit var document: DocumentModel
@@ -1811,6 +2024,13 @@ class DocumentToolsViewModelTest {
             lastSaveKey = protectionKeyId
             lastRemoveProtection = removeProtection
             return document.copy(pdfUri = "file:///saved-${saves.size}.pdf", pageCount = workspace.pages.size, protectionKeyId = protectionKeyId)
+        }
+        override suspend fun saveRedactedCopy(workspace: PdfWorkspace, areas: List<PdfRedactionArea>, password: String?, protectionKeyId: String?): DocumentModel {
+            if (failSave) error("Storage unavailable")
+            redactions += areas
+            redactionPassword = password
+            redactionKey = protectionKeyId
+            return document.copy(id = 99, name = "Contrato — censurado")
         }
         override suspend fun discard(workspace: PdfWorkspace) { discards++ }
     }

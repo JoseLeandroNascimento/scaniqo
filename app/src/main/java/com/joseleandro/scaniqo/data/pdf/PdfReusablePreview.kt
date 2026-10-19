@@ -17,8 +17,12 @@ internal data class PdfReusablePreview(val file: File, val key: PdfPreviewKey) {
             }
         }
         val previous = key.pages.withIndex().associate { it.value.id to it }
-        return workspace.pages.map { page: PdfPageSpec ->
-            previous[page.id]?.takeIf { it.value == page }?.index
+        return workspace.pages.mapIndexed { index, page: PdfPageSpec ->
+            previous[page.id]?.takeIf { cached ->
+                cached.value == page &&
+                    (cached.index == index || page.overlays.none { it.text.contains("{pagina}") }) &&
+                    (key.pages.size == workspace.pages.size || page.overlays.none { it.text.contains("{total}") })
+            }?.index
         }
     }
 }

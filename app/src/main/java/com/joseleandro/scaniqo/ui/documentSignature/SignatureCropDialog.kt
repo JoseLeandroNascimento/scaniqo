@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -97,11 +98,14 @@ internal fun SignatureCropDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onApply(left, top, right, bottom) }, enabled = imageAspect != null) {
-                Text(stringResource(R.string.signature_crop_apply))
-            }
+            DialogActions(
+                confirmText = stringResource(R.string.signature_crop_apply),
+                onConfirm = { onApply(left, top, right, bottom) },
+                dismissText = stringResource(R.string.signature_cancel),
+                onDismiss = onDismiss,
+                confirmEnabled = imageAspect != null,
+            )
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.signature_cancel)) } },
         properties = DialogProperties(securePolicy = SecureFlagPolicy.SecureOn),
     )
 }

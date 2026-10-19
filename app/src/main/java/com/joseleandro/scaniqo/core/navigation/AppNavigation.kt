@@ -15,6 +15,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.joseleandro.scaniqo.core.security.PasswordVault
+import com.joseleandro.scaniqo.domain.model.PdfUtility
+import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
+import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
+import com.joseleandro.scaniqo.ui.toolsHub.ToolsHubScreen
+import com.joseleandro.scaniqo.ui.pdfTools.PdfUtilityRoute
+import com.joseleandro.scaniqo.ui.documentForms.DocumentFormsRoute
+import com.joseleandro.scaniqo.ui.documentCertificates.DocumentCertificatesRoute
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverlays
+import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
+import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
+import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentToolsViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerRoute
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentEditorToolRoute
@@ -24,6 +35,7 @@ import com.joseleandro.scaniqo.ui.documentMerge.DocumentQuickMergeViewModel
 import com.joseleandro.scaniqo.ui.documentMerge.DocumentMergeDestination
 import com.joseleandro.scaniqo.ui.documentSignature.DocumentSignatureRoute
 import com.joseleandro.scaniqo.ui.documents.platform.DocumentQuickActionsHost
+import com.joseleandro.scaniqo.ui.documentSearch.DocumentSearchRoute
 import com.joseleandro.scaniqo.ui.documents.DocumentsRoute
 import com.joseleandro.scaniqo.ui.documents.DocumentsViewModel
 import com.joseleandro.scaniqo.ui.documents.PdfImportViewModel
@@ -34,6 +46,8 @@ import com.joseleandro.scaniqo.ui.documents.event.DocumentsEvent
 import com.joseleandro.scaniqo.ui.documents.platform.PdfImportHandler
 import com.joseleandro.scaniqo.ui.backup.DriveBackupRoute
 import com.joseleandro.scaniqo.ui.security.PasswordSettingsScreen
+import com.joseleandro.scaniqo.ui.settings.SettingsRoute
+import com.joseleandro.scaniqo.ui.settings.SettingsSection
 import com.joseleandro.scaniqo.ui.signatures.SignaturesScreen
 import com.joseleandro.scaniqo.ui.tags.TagsRoute
 import kotlinx.coroutines.launch
@@ -54,16 +68,26 @@ fun AppNavigation(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val currentRoute = viewModel.backStack.lastOrNull()
+    val libraryActionsVisible = currentRoute == AppRoute.Documents || currentRoute == AppRoute.Tools
     var showSignaturePicker by rememberSaveable { mutableStateOf(false) }
+    var utilityImportedDocumentId by rememberSaveable { mutableStateOf<Long?>(null) }
+    var utilityImportedTool by rememberSaveable { mutableStateOf<PdfUtility?>(null) }
+    val importState by importViewModel.uiState.collectAsStateWithLifecycle()
     val documentsState by documentsViewModel.uiState.collectAsStateWithLifecycle()
     val actionsState by actionsViewModel.uiState.collectAsStateWithLifecycle()
-    val canStartDocumentAction = !actionsState.isBusy &&
+    val canStartDocumentAction = !importState.isActive && !actionsState.isBusy &&
         actionsState.editor == null && actionsState.pendingDeletion == null
     val navigate: (AppRoute) -> Unit = { route ->
         scope.launch { drawerState.close(); viewModel.navigateTo(route) }
     }
     val importPdf: () -> Unit = {
         if (canStartDocumentAction) scope.launch { drawerState.close(); importViewModel.chooseFile() }
+    }
+    val importForTool: (PdfImportDestination) -> Unit = { destination ->
+        if (canStartDocumentAction) scope.launch {
+            drawerState.close()
+            importViewModel.chooseFile(destination)
+        }
     }
 
     DocumentActionsHandler(
@@ -96,11 +120,38 @@ fun AppNavigation(
         actionsViewModel = actionsViewModel,
         defaultTagId = documentsState.selectedTagId,
         vault = vault,
-        showDialogs = currentRoute == AppRoute.Documents,
+        showDialogs = libraryActionsVisible || currentRoute is AppRoute.PdfUtilityTool,
         onPasswordSettings = { viewModel.navigateTo(AppRoute.PasswordSettings) },
+        onToolImported = { id, destination ->
+            documentsViewModel.onEvent(DocumentsEvent.DocumentCreated(id, null))
+            when (destination) {
+                PdfImportDestination.EXTRACT_PAGES, PdfImportDestination.PDF_TO_IMAGES,
+                PdfImportDestination.COMPRESS_PDF -> {
+                    val utility = when (destination) {
+                        PdfImportDestination.EXTRACT_PAGES -> PdfUtility.EXTRACT_PAGES
+                        PdfImportDestination.PDF_TO_IMAGES -> PdfUtility.PDF_TO_IMAGES
+                        else -> PdfUtility.COMPRESS_PDF
+                    }
+                    utilityImportedTool = utility
+                    utilityImportedDocumentId = id
+                    viewModel.navigateTo(AppRoute.PdfUtilityTool(utility))
+                }
+                else -> {
+                    val destinationRoute = when (destination) {
+                        PdfImportDestination.FILL_PAGE -> AppRoute.DocumentEditorTool(id, DocumentTool.FORMS)
+                        PdfImportDestination.SIGN -> AppRoute.DocumentSignature(id)
+                        else -> AppRoute.DocumentViewer(id)
+                    }
+                    if (viewModel.backStack.lastOrNull() != destinationRoute) {
+                        viewModel.navigateTo(AppRoute.DocumentViewer(id))
+                        if (destinationRoute !is AppRoute.DocumentViewer) viewModel.navigateTo(destinationRoute)
+                    }
+                }
+            }
+        },
     )
     DocumentQuickActionsHost(
-        showSignaturePicker = showSignaturePicker && currentRoute == AppRoute.Documents,
+        showSignaturePicker = showSignaturePicker && libraryActionsVisible,
         onMergeCompleted = {
             if (viewModel.backStack.lastOrNull() == AppRoute.DocumentMerge()) viewModel.goBack()
         },
@@ -109,7 +160,7 @@ fun AppNavigation(
         isLoading = documentsState.isLoading,
         loadError = documentsState.loadError,
         onRetry = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
-        onImport = importPdf,
+        onImport = { importForTool(PdfImportDestination.SIGN) },
         onSign = { documentId ->
             viewModel.navigateTo(AppRoute.DocumentViewer(documentId))
             viewModel.navigateTo(AppRoute.DocumentSignature(documentId))
@@ -144,8 +195,68 @@ fun AppNavigation(
                         actionsViewModel = actionsViewModel,
                         onOpenMenu = { scope.launch { drawerState.open() } },
                         onImportPdf = importPdf,
+                        onSearch = { viewModel.navigateTo(AppRoute.DocumentSearch) },
+                        onAllTools = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.Tools) },
                         onMergePdfs = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.DocumentMerge()) },
                         onSignDocument = { if (canStartDocumentAction) showSignaturePicker = true },
+                        onOpenDocument = { viewModel.navigateTo(AppRoute.DocumentViewer(it)) },
+                    )
+                }
+                entry<AppRoute.Tools> {
+                    val toast = rememberDocumentToastState(actionsState.message) {
+                        actionsViewModel.onDocumentAction(DocumentActionEvent.DismissMessage)
+                    }
+                    ToolsHubScreen(
+                        documents = documentsState,
+                        enabled = canStartDocumentAction,
+                        onBack = viewModel::goBack,
+                        onImport = importPdf,
+                        onMerge = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.DocumentMerge()) },
+                        onSign = { if (canStartDocumentAction) showSignaturePicker = true },
+                        onUtility = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.PdfUtilityTool(it)) },
+                        onEdit = { id, tool ->
+                            if (canStartDocumentAction) {
+                                viewModel.navigateTo(AppRoute.DocumentViewer(id))
+                                if (tool != null) viewModel.navigateTo(AppRoute.DocumentEditorTool(id, tool))
+                            }
+                        },
+                        onImportForEditor = { tool -> importForTool(if (tool == DocumentTool.FORMS)
+                            PdfImportDestination.FILL_PAGE else PdfImportDestination.EDITOR) },
+                        onForms = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.DocumentForms) },
+                        onRetryDocuments = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
+                        snackbarHost = { AppToastHost(toast) },
+                    )
+                    DocumentActionOverlays(actionsState, actionsViewModel::onDocumentAction)
+                }
+                entry<AppRoute.PdfUtilityTool> { route ->
+                    PdfUtilityRoute(
+                        tool = route.tool,
+                        onBack = viewModel::goBack,
+                        onImport = {
+                            when (route.tool) {
+                                PdfUtility.EXTRACT_PAGES -> importForTool(PdfImportDestination.EXTRACT_PAGES)
+                                PdfUtility.PDF_TO_IMAGES -> importForTool(PdfImportDestination.PDF_TO_IMAGES)
+                                PdfUtility.COMPRESS_PDF -> importForTool(PdfImportDestination.COMPRESS_PDF)
+                                else -> importPdf()
+                            }
+                        },
+                        importBusy = importState.isActive,
+                        importedDocumentId = utilityImportedDocumentId.takeIf { utilityImportedTool == route.tool },
+                        onImportedSelected = {
+                            utilityImportedDocumentId = null
+                            utilityImportedTool = null
+                        },
+                        onOpenDocument = { id ->
+                            documentsViewModel.onEvent(DocumentsEvent.DocumentCreated(id, null))
+                            viewModel.navigateTo(AppRoute.DocumentViewer(id))
+                        },
+                    )
+                }
+                entry<AppRoute.DocumentForms> { DocumentFormsRoute(onBack = viewModel::goBack) }
+                entry<AppRoute.DocumentCertificates> { DocumentCertificatesRoute(onBack = viewModel::goBack) }
+                entry<AppRoute.DocumentSearch> {
+                    DocumentSearchRoute(
+                        onBack = viewModel::goBack,
                         onOpenDocument = { viewModel.navigateTo(AppRoute.DocumentViewer(it)) },
                     )
                 }
@@ -178,6 +289,7 @@ fun AppNavigation(
                         mergeViewModel = mergeViewModel,
                         isActive = currentRoute == route,
                         onRetryDocuments = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
+
                         onBack = viewModel::goBack,
                     )
                 }
@@ -193,6 +305,21 @@ fun AppNavigation(
                 }
                 entry<AppRoute.Tags> { TagsRoute(onNavigationBack = viewModel::goBack) }
                 entry<AppRoute.Signatures> { SignaturesScreen(onBack = viewModel::goBack) }
+                entry<AppRoute.Settings> {
+                    SettingsRoute(
+                        section = SettingsSection.HOME, onBack = viewModel::goBack,
+                        onPersonalization = { viewModel.navigateTo(AppRoute.Personalization) },
+                        onPdf = { viewModel.navigateTo(AppRoute.PdfPreferences) },
+                        onBackup = { viewModel.navigateTo(AppRoute.DriveBackup) },
+                        onPasswords = { viewModel.navigateTo(AppRoute.PasswordSettings) },
+                    )
+                }
+                entry<AppRoute.Personalization> {
+                    SettingsRoute(section = SettingsSection.PERSONALIZATION, onBack = viewModel::goBack)
+                }
+                entry<AppRoute.PdfPreferences> {
+                    SettingsRoute(section = SettingsSection.PDF, onBack = viewModel::goBack)
+                }
                 entry<AppRoute.PasswordSettings> { PasswordSettingsScreen(onBack = viewModel::goBack) }
                 entry<AppRoute.DriveBackup> { DriveBackupRoute(onBack = viewModel::goBack) }
             },
