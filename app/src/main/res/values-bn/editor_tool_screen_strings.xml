@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">ফিরে যান</string>
+    <string name="editor_tool_done">সম্পন্ন</string>
+    <string name="editor_tool_discard_title">সমন্বয় বাদ দেবেন?</string>
+    <string name="editor_tool_discard_body">এখনও প্রয়োগ না করা পরিবর্তন হারিয়ে যাবে।</string>
+</resources>

@@ -43,20 +43,20 @@ import com.joseleandro.scaniqo.ui.documentMerge.DocumentQuickMergeViewModel
 import com.joseleandro.scaniqo.ui.documentSearch.DocumentSearchViewModel
 import com.joseleandro.scaniqo.ui.documents.DocumentsViewModel
 import com.joseleandro.scaniqo.data.documentCertificates.AndroidPdfCertificateRepository
-import com.joseleandro.scaniqo.data.documentForms.AndroidPdfFormRepository
 import com.joseleandro.scaniqo.domain.repository.PdfCertificateRepository
-import com.joseleandro.scaniqo.domain.repository.PdfFormRepository
 import com.joseleandro.scaniqo.ui.documentCertificates.DocumentCertificatesViewModel
-import com.joseleandro.scaniqo.ui.documentForms.DocumentFormsViewModel
 import com.joseleandro.scaniqo.data.pdf.AndroidPdfUtilityRepository
 import com.joseleandro.scaniqo.domain.repository.PdfUtilityRepository
 import com.joseleandro.scaniqo.ui.pdfTools.PdfUtilityViewModel
 import com.joseleandro.scaniqo.ui.documents.PdfImportViewModel
 import com.joseleandro.scaniqo.ui.signatures.SignaturesViewModel
 import com.joseleandro.scaniqo.ui.tags.TagsViewModel
+import com.joseleandro.scaniqo.ui.trash.TrashViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import org.koin.core.module.dsl.viewModel
+import com.joseleandro.scaniqo.core.localization.LocalizedNames
 
 val appModule = module {
 
@@ -66,22 +66,22 @@ val appModule = module {
 
     viewModelOf(::TagsViewModel)
     viewModelOf(::DocumentsViewModel)
+    viewModelOf(::TrashViewModel)
     viewModelOf(::DocumentSearchViewModel)
     viewModelOf(::PdfUtilityViewModel)
     viewModelOf(::DocumentCertificatesViewModel)
-    viewModelOf(::DocumentFormsViewModel)
     single<PdfUtilityRepository> { AndroidPdfUtilityRepository(androidContext()) }
     single<PdfCertificateRepository> { AndroidPdfCertificateRepository(androidContext()) }
-    single<PdfFormRepository> { AndroidPdfFormRepository(androidContext()) }
-    viewModelOf(::DocumentActionsViewModel)
+    single { LocalizedNames(androidContext()) }
+    viewModel { DocumentActionsViewModel(get(), get(), get(), get<LocalizedNames>()::document) }
     viewModelOf(::DocumentViewerViewModel)
     viewModelOf(constructor = { repository: PdfEditorRepository, signatures: SignatureRepository,
         passwords: PasswordAccess, values: FormValueRepository ->
         DocumentToolsViewModel(repository, signatures, passwords, values)
     })
-    viewModelOf(::PdfImportViewModel)
+    viewModel { PdfImportViewModel(get(), get(), get(), get(), get<LocalizedNames>()::importedDocument) }
     viewModelOf(::DocumentQuickMergeViewModel)
-    viewModelOf(::SignaturesViewModel)
+    viewModel { SignaturesViewModel(get(), get<LocalizedNames>()::signature) }
     viewModelOf(::DriveBackupViewModel)
     single<DocumentBackupRepository> { AndroidDocumentBackupRepository(androidContext(), get(), get()) }
     single<DriveBackupRemote> { GoogleDriveBackupRemote() }

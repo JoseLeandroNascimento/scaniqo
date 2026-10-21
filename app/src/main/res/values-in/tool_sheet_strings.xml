@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_sheet_close">Tutup alat</string>
+    <string name="tool_sheet_saved_signatures">Tanda tangan tersimpan</string>
+    <string name="tool_sheet_placed_signatures">Di halaman ini</string>
+</resources>

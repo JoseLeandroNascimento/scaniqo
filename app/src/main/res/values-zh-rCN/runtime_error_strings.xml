@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">已达到笔画数量上限，请撤销一个笔画后继续。</string>
+    <string name="runtime_signature_image_required">请选择签名图片。</string>
+    <string name="runtime_password_required">请输入 PDF 密码。</string>
+    <string name="runtime_unlock_required">请解锁以访问受保护的 PDF。</string>
+    <string name="runtime_merge_paused">合并已暂停，点按重试以继续。</string>
+    <string name="runtime_password_setup_required">请设置通用密码，以安全保存此 PDF 的密码。</string>
+    <string name="runtime_password_incorrect">密码错误，请重试。</string>
+    <string name="runtime_signed_pdf_saved">已保存签名后的 PDF。</string>
+    <string name="runtime_zip_exported">图片已导出为 ZIP 文件。</string>
+    <string name="runtime_csv_exported">已核对的数据已导出为 CSV。</string>
+    <string name="runtime_receipt_page_required">请输入有效的收据页码。</string>
+    <string name="runtime_receipt_review_required">导出前请再次核对数据。</string>
+    <string name="runtime_document_unavailable">此文档已不可用。</string>
+    <string name="runtime_imported_document">导入的文档</string>
+    <string name="runtime_signature_default_name">我的签名</string>
+    <string name="runtime_name_invalid">请输入不超过 100 个字符的名称。</string>
+    <string name="runtime_pdf_size_limit">请选择不超过 50 MB 的 PDF。</string>
+    <string name="runtime_pdf_page_limit">请选择包含 1 至 100 页的 PDF。</string>
+    <string name="runtime_pdf_unprotected_required">请打开无密码副本以使用此工具。</string>
+    <string name="runtime_new_file_required">请选择新文件以保留原始 PDF。</string>
+    <string name="runtime_destination_failed">无法保存到所选位置。</string>
+    <string name="runtime_certificate_select_again">请在 Android 中重新选择证书。</string>
+    <string name="runtime_certificate_chain_unavailable">证书链不可用。</string>
+    <string name="runtime_certificate_rsa_ec">请选择 RSA 或 EC 证书。</string>
+    <string name="runtime_certificate_sign_failed">无法使用此证书签名。</string>
+    <string name="runtime_certificate_sign_disallowed">此文档不允许通过本工具添加新签名。</string>
+    <string name="runtime_pdf_copy_disallowed">此 PDF 的密码不允许将页面复制到其他文档。</string>
+    <string name="runtime_pdf_extract_disallowed">此 PDF 不允许提取内容。</string>
+    <string name="runtime_pdf_edit_disallowed">输入的密码不允许编辑此 PDF。</string>
+    <string name="runtime_two_pdfs_required">请至少选择两个 PDF。</string>
+    <string name="runtime_scan_page_limit">每次请扫描 1 至 20 页。</string>
+    <string name="runtime_images_size_limit">图片超过 200 MB，请每次导出更少页面。</string>
+    <string name="runtime_ocr_empty">未识别到文字，请尝试更清晰的扫描。</string>
+    <string name="runtime_signature_empty">保存前请手写或输入签名。</string>
+    <string name="runtime_image_size_limit">请选择不超过 10 MB 的图片。</string>
+    <string name="runtime_selected_pdf">所选 PDF</string>
+    <string name="runtime_signature_name_invalid">请输入不超过 80 个字符的名称。</string>
+    <string name="runtime_signature_text_invalid">请输入不超过 80 个字符的姓名。</string>
+    <string name="runtime_signature_drawing_large">绘图过大，请简化签名。</string>
+    <string name="runtime_image_invalid">请选择有效的图片。</string>
+    <string name="runtime_signature_not_found">未找到签名。</string>
+</resources>

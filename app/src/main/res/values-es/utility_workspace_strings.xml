@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_workspace_source">Documento</string>
+    <string name="utility_workspace_importing">Importando documento…</string>
+    <string name="utility_workspace_choose_hint">Elige un PDF de la biblioteca o importa un archivo del dispositivo.</string>
+    <string name="utility_workspace_import_device">Importar del dispositivo</string>
+    <string name="utility_workspace_search">Buscar documento</string>
+    <string name="utility_workspace_no_match">No se encontraron documentos.</string>
+    <string name="utility_workspace_pages">Elige las páginas</string>
+    <string name="utility_workspace_selection">%1$d de %2$d seleccionadas</string>
+    <string name="utility_workspace_select_all">Todas</string>
+    <string name="utility_workspace_clear">Limpiar</string>
+    <string name="utility_workspace_range">Ingresar intervalo</string>
+    <string name="utility_workspace_page">Página %1$d</string>
+    <string name="utility_workspace_order">Toca las páginas para seleccionarlas. El intervalo permite definir el orden.</string>
+    <string name="utility_workspace_locked_pages">Por privacidad, se ocultan las miniaturas de este PDF. Elige por los números de página.</string>
+    <string name="utility_workspace_empty_selection">Selecciona al menos una página.</string>
+    <string name="utility_workspace_output">Resultado</string>
+    <string name="utility_workspace_format">Formato de imágenes</string>
+    <string name="utility_workspace_jpg_hint">Archivos ligeros para compartir</string>
+    <string name="utility_workspace_png_hint">Más detalles, archivos más grandes</string>
+    <string name="utility_workspace_zip_hint">Cada página se convierte en imagen. Todas se agrupan en un archivo ZIP.</string>
+    <string name="utility_workspace_copy_hint">Se creará una nueva copia. Se conservará tu documento original.</string>
+    <string name="utility_workspace_busy">Preparando el archivo…</string>
+    <string name="utility_workspace_change_destination">Cambiar ubicación</string>
+    <string name="utility_workspace_compress_title">Comprimir PDF</string>
+    <string name="utility_workspace_compress_hint">Reduce el tamaño de las imágenes del PDF y conserva el texto que se puede buscar.</string>
+    <string name="utility_workspace_compress_level">Nivel de compresión</string>
+    <string name="utility_workspace_balanced">Equilibrada</string>
+    <string name="utility_workspace_balanced_hint">Buena legibilidad con reducción moderada.</string>
+    <string name="utility_workspace_strong">Mayor reducción</string>
+    <string name="utility_workspace_strong_hint">Archivo más ligero. Revisa las letras pequeñas y las imágenes.</string>
+    <string name="utility_workspace_compress_action">Comprimir y crear copia</string>
+    <string name="utility_workspace_original_size">Original</string>
+    <string name="utility_workspace_result_size">Comprimido</string>
+    <string name="utility_workspace_compress_complete">Tu PDF pesa menos</string>
+    <string name="utility_workspace_compress_no_gain">Este PDF ya es compacto</string>
+    <string name="utility_workspace_compress_no_gain_hint">No se creó ninguna copia porque no se redujo el tamaño.</string>
+    <string name="utility_workspace_compress_note">La reducción depende de las imágenes del archivo. Los PDF con texto o imágenes ya optimizadas pueden mantener su tamaño.</string>
+    <string name="utility_workspace_open_result">Abrir PDF comprimido</string>
+    <string name="utility_workspace_saved">%1$d%% más pequeño</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — comprimido</string>
+    <string name="utility_workspace_inspect_page">Ampliar página %1$d</string>
+    <string name="utility_workspace_select_page">Seleccionar esta página</string>
+    <string name="utility_workspace_deselect_page">Quitar de la selección</string>
+</resources>

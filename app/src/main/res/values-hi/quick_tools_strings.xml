@@ -1,0 +1,21 @@
+<resources>
+    <string name="quick_tools_import">PDF आयात करें</string>
+    <string name="quick_tools_import_hint">आपके डिवाइस से</string>
+    <string name="quick_tools_merge">PDF मिलाएँ</string>
+    <string name="quick_tools_merge_hint">मिलाएँ और व्यवस्थित करें</string>
+    <string name="quick_tools_sign">दस्तावेज़ पर हस्ताक्षर करें</string>
+    <string name="quick_tools_sign_hint">हस्ताक्षर की जगह तय करें</string>
+    <string name="quick_merge_title">PDF मिलाएँ</string>
+    <string name="quick_merge_working">आपका नया PDF तैयार हो रहा है…</string>
+    <string name="quick_merge_name">मिलाए गए दस्तावेज़</string>
+    <string name="quick_merge_password">%1$s का पासवर्ड</string>
+    <string name="quick_merge_password_label">PDF का पासवर्ड</string>
+    <string name="quick_merge_password_wrong">गलत पासवर्ड। फिर से कोशिश करें।</string>
+    <string name="quick_merge_continue">आगे बढ़ें</string>
+    <string name="quick_merge_picker_error">फ़ाइल चयन नहीं खुल सका।</string>
+    <string name="quick_sign_choose">किस दस्तावेज़ पर हस्ताक्षर करना है?</string>
+    <string name="quick_sign_description">हस्ताक्षर की जगह, घुमाव और आकार ठीक करने के लिए PDF चुनें।</string>
+    <string name="quick_sign_empty">शुरू करने के लिए दस्तावेज़ आयात या स्कैन करें।</string>
+    <string name="quick_sign_search">दस्तावेज़ खोजें</string>
+    <string name="quick_sign_no_results">कोई दस्तावेज़ नहीं मिला।</string>
+</resources>

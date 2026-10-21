@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">Redresser</string>
+    <string name="correction_editor_perspective">Rogner</string>
+    <string name="correction_editor_curve">Courbure</string>
+    <string name="correction_editor_angle">Inclinaison</string>
+    <string name="correction_editor_auto">Auto</string>
+    <string name="correction_editor_use_angle">Utiliser %1$.1f°</string>
+    <string name="correction_editor_already_straight">Aucune inclinaison détectée.</string>
+    <string name="correction_editor_corners">Coins</string>
+    <string name="correction_editor_result">Résultat</string>
+    <string name="correction_editor_show_before">Comparer avec la page avant correction</string>
+    <string name="correction_editor_show_result">Voir le résultat de la correction</string>
+    <string name="correction_editor_options">Options de correction</string>
+    <string name="correction_editor_native_hint">Permet de corriger le texte et les vecteurs sous forme d’image.</string>
+    <string name="correction_editor_native_required">Le filtre de cette page nécessite une conversion en image.</string>
+    <string name="correction_editor_drag_hint">Faites glisser ↔</string>
+    <string name="correction_editor_angle_gesture">Faites glisser latéralement pour redresser la page</string>
+    <string name="correction_editor_curve_gesture">Faites glisser latéralement pour ajuster la courbure</string>
+</resources>

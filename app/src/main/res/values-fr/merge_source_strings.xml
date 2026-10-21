@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_source_label">Sélectionner des PDF</string>
+    <string name="merge_source_device">De l’appareil</string>
+    <string name="merge_source_app">De l’application</string>
+    <string name="merge_app_title">Documents de l’application</string>
+    <string name="merge_app_description">Les pages seront ajoutées dans l’ordre de sélection des PDF.</string>
+    <string name="merge_app_search">Rechercher par nom</string>
+    <string name="merge_app_empty">Aucun autre PDF enregistré dans l’application. Utilisez « De l’appareil » pour sélectionner des fichiers.</string>
+    <string name="merge_app_no_results">Aucun document trouvé pour cette recherche.</string>
+    <string name="merge_app_selection_order">Position %1$d dans la fusion</string>
+    <string name="merge_app_protected">PDF protégé par mot de passe</string>
+    <string name="merge_app_result_protected">La protection du document en cours d’édition sera conservée dans le résultat.</string>
+    <string name="merge_app_result_unprotected">Le document en cours d’édition n’a pas de mot de passe. Les pages provenant de PDF protégés seront aussi sans mot de passe dans le résultat.</string>
+    <plurals name="merge_app_selected_count">
+        <item quantity="one">%1$d PDF sélectionné</item>
+        <item quantity="many">%1$d PDF sélectionnés</item>
+        <item quantity="other">%1$d PDF sélectionnés</item>
+    </plurals>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">Fusionner %1$d PDF</item>
+        <item quantity="many">Fusionner %1$d PDF</item>
+        <item quantity="other">Fusionner %1$d PDF</item>
+    </plurals>
+</resources>

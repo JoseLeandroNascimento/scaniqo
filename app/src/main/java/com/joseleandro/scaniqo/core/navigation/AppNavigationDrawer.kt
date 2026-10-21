@@ -92,6 +92,12 @@ internal fun AppNavigationDrawer(
                 onClick = { onNavigate(AppRoute.Signatures) },
             )
             DrawerDestination(
+                label = stringResource(R.string.trash_title),
+                icon = R.drawable.delete_24px,
+                selected = currentRoute == AppRoute.Trash,
+                onClick = { onNavigate(AppRoute.Trash) },
+            )
+            DrawerDestination(
                 label = stringResource(R.string.settings_title),
                 icon = R.drawable.ic_settings,
                 selected = currentRoute in setOf(AppRoute.Settings, AppRoute.Personalization,

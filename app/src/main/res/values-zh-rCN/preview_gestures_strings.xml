@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_zoom_expand">全屏放大</string>
+    <string name="preview_zoom_close">关闭放大视图</string>
+    <string name="preview_zoom_reset">页面适应屏幕</string>
+    <string name="preview_controls_show">调整</string>
+    <string name="preview_controls_hide">隐藏调整控件</string>
+    <string name="preview_gestures_hint">使用双指缩放和浏览。</string>
+</resources>

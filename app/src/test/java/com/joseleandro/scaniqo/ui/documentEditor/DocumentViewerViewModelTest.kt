@@ -160,6 +160,8 @@ class DocumentViewerViewModelTest {
             }
         }
 
+        override fun observeTrashedDocuments(): Flow<List<DocumentModel>> = error("Não usado")
+
         override suspend fun findById(id: Long): DocumentModel? =
             documents.value.firstOrNull { it.id == id }
 
@@ -172,6 +174,9 @@ class DocumentViewerViewModelTest {
             scan: ScannedDocument,
             allowProtectionRemoval: Boolean,
         ): DocumentModel = error("Não usado")
+        override suspend fun moveToTrash(id: Long): Unit = error("Não usado")
+        override suspend fun restoreFromTrash(id: Long): Unit = error("Não usado")
+        override suspend fun deletePermanently(id: Long): Unit = error("Não usado")
         override suspend fun delete(document: DocumentModel): Unit = error("Não usado")
         override suspend fun export(document: DocumentModel, targetUri: String): Unit = error("Não usado")
         override suspend fun prepareShare(document: DocumentModel): String = error("Não usado")

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_preview_options">اختر التأثير</string>
+    <string name="filter_preview_samples">صور مصغرة لهذه الصفحة بأقصى شدة.</string>
+    <string name="filter_preview_loading">جارٍ تجهيز التأثيرات…</string>
+    <string name="filter_preview_thumbnails_error">تعذر تحميل الصور المصغرة.</string>
+    <string name="filter_preview_retry">إعادة المحاولة</string>
+    <string name="filter_preview_thumbnail_error">المعاينة غير متاحة</string>
+    <string name="filter_preview_thumbnail_description">معاينة الفلتر %1$s</string>
+    <string name="filter_preview_native_preserved">تحتوي هذه الصفحة على نص أو رسومات متجهة. لمعاينة التأثيرات، اسمح بتحويلها إلى صورة أدناه.</string>
+    <string name="filter_preview_live_hint">راجع النتيجة قبل التطبيق. تؤثر الشدة في المعاينة الكبيرة فقط.</string>
+</resources>

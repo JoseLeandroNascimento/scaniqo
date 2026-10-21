@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_preview_options">Pilih efek</string>
+    <string name="filter_preview_samples">Gambar mini halaman ini pada intensitas maksimal.</string>
+    <string name="filter_preview_loading">Menyiapkan efek…</string>
+    <string name="filter_preview_thumbnails_error">Gambar mini tidak dapat dimuat.</string>
+    <string name="filter_preview_retry">Coba lagi</string>
+    <string name="filter_preview_thumbnail_error">Pratinjau tidak tersedia</string>
+    <string name="filter_preview_thumbnail_description">Pratinjau filter %1$s</string>
+    <string name="filter_preview_native_preserved">Halaman ini berisi teks atau vektor. Izinkan konversi menjadi gambar di bawah untuk melihat efek.</string>
+    <string name="filter_preview_live_hint">Periksa hasil sebelum menerapkan. Intensitas hanya mengubah pratinjau besar.</string>
+</resources>

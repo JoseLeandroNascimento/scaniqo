@@ -15,9 +15,7 @@ import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMetadataUiState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentNameError
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentCreationResult
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -34,6 +32,9 @@ class DocumentActionsViewModel(
     private val repository: DocumentRepository,
     private val tagRepository: TagRepository,
     private val savedStateHandle: SavedStateHandle,
+    private val defaultDocumentName: (Long) -> String = { createdAt ->
+        "Document " + java.text.DateFormat.getDateTimeInstance().format(Date(createdAt))
+    },
 ) : ViewModel() {
     private var pendingDownloadId: Long? = savedStateHandle[PENDING_DOWNLOAD_ID]
     private var pendingDefaultTagId: Long? = savedStateHandle[PENDING_DEFAULT_TAG_ID]
@@ -200,13 +201,11 @@ class DocumentActionsViewModel(
         viewModelScope.launch {
             try {
                 val draft = repository.prepareScan(pageUris)
-                val date = SimpleDateFormat("dd-MM-yyyy HH.mm", Locale.getDefault())
-                    .format(Date(draft.createdAt))
                 updateState {
                     it.copy(
                         editor = DocumentMetadataUiState(
                             draft = draft,
-                            name = "Documento $date",
+                            name = defaultDocumentName(draft.createdAt).take(DOCUMENT_NAME_MAX_LENGTH),
                             tagId = validTagId(pendingDefaultTagId),
                         ),
                     )
@@ -328,7 +327,7 @@ class DocumentActionsViewModel(
         updateState { it.copy(isDeleting = true, message = null) }
         viewModelScope.launch {
             try {
-                repository.delete(document)
+                repository.moveToTrash(document.id)
                 updateState {
                     it.copy(pendingDeletion = null, message = DocumentMessage.DELETED)
                 }

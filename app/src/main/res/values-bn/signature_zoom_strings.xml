@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_document_zoom">নথির জুম</string>
+    <string name="signature_document_zoom_in">নথি বড় করুন</string>
+    <string name="signature_document_zoom_out">নথি ছোট করুন</string>
+    <string name="signature_document_zoom_value">%1$d%%</string>
+    <string name="signature_document_zoom_reset">পুরো পৃষ্ঠা দেখান, 100 শতাংশ</string>
+    <string name="signature_document_pan_left">নথি বামে সরান</string>
+    <string name="signature_document_pan_right">নথি ডানে সরান</string>
+    <string name="signature_document_pan_up">নথি উপরে সরান</string>
+    <string name="signature_document_pan_down">নথি নিচে সরান</string>
+</resources>

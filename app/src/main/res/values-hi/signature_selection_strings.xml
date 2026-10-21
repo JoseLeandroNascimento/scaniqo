@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">ऊपरी बाएँ कोने से आकार बदलें</string>
+    <string name="signature_resize_top_right">ऊपरी दाएँ कोने से आकार बदलें</string>
+    <string name="signature_resize_bottom_right">निचले दाएँ कोने से आकार बदलें</string>
+    <string name="signature_resize_bottom_left">निचले बाएँ कोने से आकार बदलें</string>
+</resources>

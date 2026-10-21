@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_document_zoom">Zoom dokumen</string>
+    <string name="signature_document_zoom_in">Perbesar dokumen</string>
+    <string name="signature_document_zoom_out">Perkecil dokumen</string>
+    <string name="signature_document_zoom_value">%1$d%%</string>
+    <string name="signature_document_zoom_reset">Tampilkan seluruh halaman, 100 persen</string>
+    <string name="signature_document_pan_left">Geser dokumen ke kiri</string>
+    <string name="signature_document_pan_right">Geser dokumen ke kanan</string>
+    <string name="signature_document_pan_up">Geser dokumen ke atas</string>
+    <string name="signature_document_pan_down">Geser dokumen ke bawah</string>
+</resources>

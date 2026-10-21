@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">تسوية</string>
+    <string name="correction_editor_perspective">اقتصاص</string>
+    <string name="correction_editor_curve">الانحناء</string>
+    <string name="correction_editor_angle">الميل</string>
+    <string name="correction_editor_auto">تلقائي</string>
+    <string name="correction_editor_use_angle">استخدام %1$.1f°</string>
+    <string name="correction_editor_already_straight">لم يُكتشف أي ميل.</string>
+    <string name="correction_editor_corners">الزوايا</string>
+    <string name="correction_editor_result">النتيجة</string>
+    <string name="correction_editor_show_before">مقارنة بالصفحة قبل التصحيح</string>
+    <string name="correction_editor_show_result">عرض نتيجة التصحيح</string>
+    <string name="correction_editor_options">خيارات التصحيح</string>
+    <string name="correction_editor_native_hint">السماح بتصحيح النص والرسومات المتجهة كصورة.</string>
+    <string name="correction_editor_native_required">يتطلب فلتر هذه الصفحة التحويل إلى صورة.</string>
+    <string name="correction_editor_drag_hint">اسحب ↔</string>
+    <string name="correction_editor_angle_gesture">اسحب للجانبين لتسوية الصفحة</string>
+    <string name="correction_editor_curve_gesture">اسحب للجانبين لضبط الانحناء</string>
+</resources>

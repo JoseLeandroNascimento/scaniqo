@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -108,7 +109,10 @@ internal fun DocumentTagSelector(
                 modifier = Modifier
                     .heightIn(min = 48.dp)
                     .widthIn(max = 240.dp),
-                label = { Text(tag.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                label = {
+                    Text(tag.name, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelLarge.copy(textDirection = TextDirection.ContentOrLtr))
+                },
                 leadingIcon = { DocumentTagIcon(tag) },
             )
         }

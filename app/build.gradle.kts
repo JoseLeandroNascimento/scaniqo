@@ -37,6 +37,11 @@ android {
     buildFeatures {
         compose = true
     }
+    androidResources {
+        localeFilters += listOf("en", "pt", "es", "fr", "hi", "in", "bn", "zh-rCN", "ar", "ru")
+    }
+    // All supported languages remain available offline in the in-app language picker.
+    bundle.language.enableSplit = false
     testOptions.unitTests.isIncludeAndroidResources = true
 }
 
@@ -89,6 +94,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.room.runtime)

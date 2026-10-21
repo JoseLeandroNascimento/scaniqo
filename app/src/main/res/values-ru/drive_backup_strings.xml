@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_title">Резервная копия в Google Drive</string>
+    <string name="backup_heading">Ваши документы в облаке</string>
+    <string name="backup_intro">Храните копию сохранённых документов и восстанавливайте при необходимости.</string>
+    <string name="backup_connect">Подключить Google Drive</string>
+    <string name="backup_connected">Аккаунт подключён</string>
+    <string name="backup_disconnect">Отключить</string>
+    <string name="backup_now">Создать копию сейчас</string>
+    <string name="backup_count">Документов на устройстве: %1$d</string>
+    <string name="backup_no_documents">Сохраните документ для создания первой резервной копии.</string>
+    <string name="backup_refresh">Обновить список</string>
+    <string name="backup_list_title">Доступные копии</string>
+    <string name="backup_empty">Здесь появится ваша первая резервная копия.</string>
+    <string name="backup_restore">Восстановить</string>
+    <string name="backup_confirm_title">Сохранить копию на Drive?</string>
+    <string name="backup_confirm_body">Документы, названия и метки будут отправлены в папку Scaniqo backups аккаунта %1$s. Проекты без пароля сохранят настройки редактирования. Защищённые PDF загружаются только как PDF с исходным паролем, без файлов редактирования.</string>
+    <string name="backup_scope_note">Хранилище паролей и библиотека подписей не входят в резервную копию. Несохранённые изменения редактора также не включаются.</string>
+    <string name="backup_restore_title">Восстановить эту копию?</string>
+    <string name="backup_restore_body">Документы добавятся как новые копии, не заменяя существующие. Для защищённых PDF по-прежнему нужен исходный пароль.</string>
+    <string name="backup_confirm">Сохранить на Drive</string>
+    <string name="backup_disconnect_title">Отключить Google Drive?</string>
+    <string name="backup_disconnect_body">Доступ Scaniqo будет отозван. Резервные копии останутся в аккаунте Google.</string>
+    <string name="backup_cancel">Отмена</string>
+    <string name="backup_back">Назад</string>
+    <string name="backup_saved">Документов сохранено в Google Drive: %1$d.</string>
+    <string name="backup_restored">Восстановлено документов: %1$d.</string>
+    <string name="backup_authorizing">Ожидание Google…</string>
+    <string name="backup_connecting">Обращение к Google Drive…</string>
+    <string name="backup_preparing">Подготовка документов…</string>
+    <string name="backup_uploading">Загрузка резервной копии…</string>
+    <string name="backup_downloading">Скачивание резервной копии…</string>
+    <string name="backup_restoring">Восстановление документов…</string>
+    <string name="backup_disconnecting">Отключение…</string>
+    <string name="backup_cancelling">Безопасная отмена…</string>
+    <string name="backup_keep_open">Не закрывайте приложение до завершения.</string>
+    <string name="backup_error_auth">Не удалось авторизоваться в Google Drive. Подключитесь заново.</string>
+    <string name="backup_error_configuration">Подключение к Google Drive пока недоступно в этой версии приложения.</string>
+    <string name="backup_error_permission">Разрешите доступ к файлам Scaniqo для продолжения.</string>
+    <string name="backup_error_network">Не удалось подключиться. Проверьте интернет и повторите попытку.</string>
+    <string name="backup_error_quota">Drive не разрешил загрузку. Проверьте свободное место и повторите позже.</string>
+    <string name="backup_error_local">Не удалось подготовить или восстановить копию. Проверьте место на устройстве и целостность файлов.</string>
+    <string name="backup_error_remote">Не удалось завершить операцию в Google Drive. Повторите попытку.</string>
+    <string name="backup_error_account">Аккаунт Google изменился. Подключитесь заново перед продолжением.</string>
+    <string name="backup_visibility">Ручные резервные копии в папке Scaniqo backups на Google Drive.</string>
+</resources>

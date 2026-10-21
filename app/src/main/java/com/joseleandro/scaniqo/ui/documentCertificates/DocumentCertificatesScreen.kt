@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,8 +64,8 @@ internal fun DocumentCertificatesScreen(
                     OutlinedButton(onClick = onPickPdf, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
                         Text(stringResource(R.string.certificate_pick_pdf))
                     }
-                    state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-                    state.message?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
+                    state.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error) }
+                    state.message?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.primary) }
                     state.document?.let {
                         Text(it.name, style = MaterialTheme.typography.titleMedium)
                         if (it.signatures.isEmpty()) Text(stringResource(R.string.certificate_unsigned), style = MaterialTheme.typography.bodyMedium)
@@ -74,7 +75,8 @@ internal fun DocumentCertificatesScreen(
             itemsIndexed(state.document?.signatures.orEmpty()) { index, signature ->
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     if (index > 0) HorizontalDivider()
-                    Text(signature.signer, style = MaterialTheme.typography.titleSmall)
+                    Text(if (signature.signer == "Signatário não identificado") stringResource(R.string.certificate_unknown_signer)
+                        else signature.signer, style = MaterialTheme.typography.titleSmall)
                     val label = when (signature.integrity) {
                         PdfSignatureIntegrity.VERIFIED -> R.string.certificate_integrity_verified
                         PdfSignatureIntegrity.INVALID -> R.string.certificate_integrity_invalid
@@ -88,7 +90,7 @@ internal fun DocumentCertificatesScreen(
                         style = MaterialTheme.typography.bodySmall)
                     Text(stringResource(if (signature.certificateCurrent) R.string.certificate_current else R.string.certificate_not_current),
                         style = MaterialTheme.typography.bodySmall)
-                    signature.detail?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+                    signature.detail?.let { Text(localizedRuntimeMessage(it), style = MaterialTheme.typography.bodySmall) }
                 }
             }
             item {

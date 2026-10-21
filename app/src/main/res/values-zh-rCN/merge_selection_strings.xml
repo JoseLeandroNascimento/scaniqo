@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_selection_title">合并 PDF</string>
+    <string name="merge_selection_new_document">创建无密码的新 PDF，原始文件保留不变。</string>
+    <string name="merge_selection_editor">选择 PDF 并设置页面添加顺序。</string>
+    <string name="merge_selection_order_title">顺序</string>
+    <string name="merge_selection_drag_hint">长按以重新排序</string>
+    <string name="merge_selection_library_title">您的文档</string>
+    <string name="merge_selection_empty">添加 PDF 以开始。</string>
+    <string name="merge_selection_empty_title">将您的 PDF 合为一体</string>
+    <string name="merge_selection_current">当前文档 · %1$s</string>
+    <string name="merge_selection_library_empty">文档库中没有可用文档。</string>
+    <string name="merge_selection_all_added">已全部添加。</string>
+    <string name="merge_selection_add_files">从设备添加文件</string>
+    <string name="merge_selection_external">设备文件</string>
+    <string name="merge_selection_remove">从所选项中移除 %1$s</string>
+    <string name="merge_selection_move_up">将 %1$s 上移</string>
+    <string name="merge_selection_move_down">将 %1$s 下移</string>
+    <string name="merge_selection_drag_handle">调整 %1$s 的顺序，当前位置 %2$d，共 %3$d 项</string>
+    <string name="merge_selection_cancel_drag">取消排序更改</string>
+    <string name="merge_selection_protected">受保护的 PDF 可能需要密码，合并结果不设密码。</string>
+    <string name="merge_selection_preserve_protection">合并结果将保留当前编辑文档的保护设置。</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="other">选择 %1$d 个 PDF</item>
+    </plurals>
+</resources>

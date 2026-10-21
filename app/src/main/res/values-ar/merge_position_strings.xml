@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_position_title">دمج ملفات PDF</string>
+    <string name="merge_position_label">إدراج صفحات جديدة</string>
+    <string name="merge_position_start">البداية</string>
+    <string name="merge_position_after">بعد صفحة</string>
+    <string name="merge_position_end">النهاية</string>
+    <string name="merge_position_page_label">رقم الصفحة</string>
+    <string name="merge_position_page_error">أدخل رقم صفحة من 1 إلى %1$d.</string>
+    <string name="merge_position_start_description">ستُضاف الصفحات الجديدة في بداية المستند.</string>
+    <string name="merge_position_after_description">ستُضاف الصفحات الجديدة بعد الصفحة %1$d.</string>
+    <string name="merge_position_end_description">ستُضاف الصفحات الجديدة في نهاية المستند.</string>
+    <string name="merge_position_invalid_description">اختر صفحة صالحة للمتابعة.</string>
+    <string name="merge_position_select_pdfs">اختيار ملفات PDF</string>
+    <plurals name="merge_position_page_count">
+        <item quantity="zero">مستند بلا صفحات (%1$d)</item>
+        <item quantity="one">مستند بصفحة واحدة (%1$d)</item>
+        <item quantity="two">مستند بصفحتين (%1$d)</item>
+        <item quantity="few">مستند من %1$d صفحات</item>
+        <item quantity="many">مستند من %1$d صفحة</item>
+        <item quantity="other">مستند من %1$d صفحة</item>
+    </plurals>
+</resources>

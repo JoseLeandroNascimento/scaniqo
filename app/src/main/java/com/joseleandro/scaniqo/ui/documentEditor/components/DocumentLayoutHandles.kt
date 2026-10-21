@@ -3,9 +3,10 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -71,7 +72,7 @@ internal fun DocumentLayoutHandles(
                     description = stringResource(R.string.gesture_move_handle),
                     valueDescription = alignments.first { it.first == layout.alignment }.second,
                     enabled = enabled,
-                    modifier = Modifier.align(Alignment.TopCenter).offset(y = (-24).dp)
+                    modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = (-24).dp)
                         .documentLayoutHandleGesture(pageId, DocumentLayoutHandle.MOVE, layout, paperSize, enabled, onLayoutChange),
                     actions = alignments.map { (alignment, label) ->
                         CustomAccessibilityAction(label) { onLayoutChange(layout.copy(alignment = alignment)); true }
@@ -90,7 +91,7 @@ internal fun DocumentLayoutHandles(
                     description = stringResource(R.string.gesture_rotate_handle),
                     valueDescription = stringResource(R.string.tools_rotation_angle, layout.rotationQuarterTurns * 90),
                     enabled = enabled,
-                    modifier = Modifier.align(Alignment.TopEnd).offset(24.dp, (-24).dp)
+                    modifier = Modifier.align(AbsoluteAlignment.TopRight).absoluteOffset(24.dp, (-24).dp)
                         .documentLayoutHandleGesture(pageId, DocumentLayoutHandle.ROTATE, layout, paperSize, enabled, onLayoutChange),
                     actions = listOf(
                         CustomAccessibilityAction(left) { turn(-1); true },
@@ -109,8 +110,8 @@ internal fun DocumentLayoutHandles(
                         valueDescription = stringResource(R.string.tools_content_size_value, (layout.contentScale * 100).roundToInt()),
                         enabled = enabled,
                         modifier = Modifier
-                            .align(if (topLeft) Alignment.TopStart else Alignment.BottomEnd)
-                            .offset(if (topLeft) (-24).dp else 24.dp, if (topLeft) (-24).dp else 24.dp)
+                            .align(if (topLeft) AbsoluteAlignment.TopLeft else AbsoluteAlignment.BottomRight)
+                            .absoluteOffset(if (topLeft) (-24).dp else 24.dp, if (topLeft) (-24).dp else 24.dp)
                             .documentLayoutHandleGesture(
                                 pageId,
                                 if (topLeft) DocumentLayoutHandle.SCALE_TOP_LEFT else DocumentLayoutHandle.SCALE_BOTTOM_RIGHT,

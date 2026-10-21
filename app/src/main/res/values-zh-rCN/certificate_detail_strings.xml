@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_unknown_signer">未识别的签名者</string>
+    <string name="certificate_invalid_ranges">签名包含无效的字节范围。</string>
+    <string name="certificate_unsupported_format">本地验证不支持此签名格式。</string>
+    <string name="certificate_supported_hashes">本地验证支持使用 SHA-256、SHA-384 或 SHA-512 的签名。</string>
+    <string name="certificate_later_bytes">签名版本之后还有新增字节。</string>
+    <string name="certificate_integrity_failed">无法确认此签名的完整性。</string>
+    <string name="runtime_image_count_limit">请选择最多 20 张图片。</string>
+</resources>

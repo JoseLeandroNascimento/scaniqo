@@ -202,6 +202,7 @@ class DocumentActionsViewModelTest {
     @Test
     fun savingBlocksDuplicateClicksAndDiscardingTheDraft() = runTest(dispatcher) {
         prepareDraft()
+        val originalName = viewModel.uiState.value.editor!!.name
         repository.writeGate = CompletableDeferred()
         viewModel.onDocumentAction(DocumentActionEvent.SaveDocument)
         viewModel.onDocumentAction(DocumentActionEvent.SaveDocument)
@@ -211,7 +212,7 @@ class DocumentActionsViewModelTest {
 
         assertEquals(1, repository.created.size)
         assertTrue(repository.discarded.isEmpty())
-        assertTrue(viewModel.uiState.value.editor!!.name.startsWith("Documento "))
+        assertEquals(originalName, viewModel.uiState.value.editor!!.name)
 
         repository.writeGate!!.complete(Unit)
         runCurrent()
@@ -268,7 +269,7 @@ class DocumentActionsViewModelTest {
     }
 
     @Test
-    fun deletionNeedsConfirmationAndBlocksDuplicateClicks() = runTest(dispatcher) {
+    fun movingToTrashNeedsConfirmationPreservesDocumentAndBlocksDuplicateClicks() = runTest(dispatcher) {
         repository.documents.value = listOf(document)
         repository.writeGate = CompletableDeferred()
         viewModel.onDocumentAction(DocumentActionEvent.RequestDelete(document))
@@ -281,18 +282,21 @@ class DocumentActionsViewModelTest {
         runCurrent()
         assertTrue(viewModel.uiState.value.isDeleting)
         assertEquals(document, viewModel.uiState.value.pendingDeletion)
-        assertEquals(listOf(document), repository.deleted)
+        assertEquals(listOf(document.id), repository.movedToTrash)
+        assertTrue(repository.deleted.isEmpty())
 
         repository.writeGate!!.complete(Unit)
         runCurrent()
         assertFalse(viewModel.uiState.value.isDeleting)
         assertNull(viewModel.uiState.value.pendingDeletion)
         assertTrue(repository.documents.value.isEmpty())
+        assertEquals(document.pdfUri, repository.trashedDocuments.value.single().pdfUri)
         assertEquals(DocumentMessage.DELETED, viewModel.uiState.value.message)
     }
 
     @Test
     fun failedDeletionKeepsConfirmationAndCanBeRetried() = runTest(dispatcher) {
+        repository.documents.value = listOf(document)
         repository.writeFailure = IllegalStateException("Falha ao excluir")
         viewModel.onDocumentAction(DocumentActionEvent.RequestDelete(document))
         viewModel.onDocumentAction(DocumentActionEvent.ConfirmDelete)

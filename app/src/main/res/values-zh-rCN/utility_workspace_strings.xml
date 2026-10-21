@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_workspace_source">文档</string>
+    <string name="utility_workspace_importing">正在导入文档…</string>
+    <string name="utility_workspace_choose_hint">选择文档库中的 PDF，或从设备导入文件。</string>
+    <string name="utility_workspace_import_device">从设备导入</string>
+    <string name="utility_workspace_search">搜索文档</string>
+    <string name="utility_workspace_no_match">未找到文档。</string>
+    <string name="utility_workspace_pages">选择页面</string>
+    <string name="utility_workspace_selection">已选择 %1$d 页，共 %2$d 页</string>
+    <string name="utility_workspace_select_all">全部</string>
+    <string name="utility_workspace_clear">清空</string>
+    <string name="utility_workspace_range">输入范围</string>
+    <string name="utility_workspace_page">第 %1$d 页</string>
+    <string name="utility_workspace_order">点按页面进行选择。输入范围可指定顺序。</string>
+    <string name="utility_workspace_locked_pages">为保护隐私，此 PDF 的缩略图已隐藏。请按页码选择。</string>
+    <string name="utility_workspace_empty_selection">请至少选择一页。</string>
+    <string name="utility_workspace_output">结果</string>
+    <string name="utility_workspace_format">图片格式</string>
+    <string name="utility_workspace_jpg_hint">小文件，便于分享</string>
+    <string name="utility_workspace_png_hint">更多细节，更大文件</string>
+    <string name="utility_workspace_zip_hint">每页转换为一张图片，所有图片保存在同一个 ZIP 文件中。</string>
+    <string name="utility_workspace_copy_hint">将创建新副本，原始文档保留不变。</string>
+    <string name="utility_workspace_busy">正在准备文件…</string>
+    <string name="utility_workspace_change_destination">更改位置</string>
+    <string name="utility_workspace_compress_title">压缩 PDF</string>
+    <string name="utility_workspace_compress_hint">缩小 PDF 中的图像体积，同时保留可搜索文字。</string>
+    <string name="utility_workspace_compress_level">压缩级别</string>
+    <string name="utility_workspace_balanced">均衡</string>
+    <string name="utility_workspace_balanced_hint">适度压缩，保持良好可读性。</string>
+    <string name="utility_workspace_strong">更高压缩率</string>
+    <string name="utility_workspace_strong_hint">文件更小，请检查小字和图片。</string>
+    <string name="utility_workspace_compress_action">压缩并创建副本</string>
+    <string name="utility_workspace_original_size">原始文件</string>
+    <string name="utility_workspace_result_size">压缩后</string>
+    <string name="utility_workspace_compress_complete">PDF 体积已减小</string>
+    <string name="utility_workspace_compress_no_gain">此 PDF 已足够紧凑</string>
+    <string name="utility_workspace_compress_no_gain_hint">文件大小未减小，因此未创建副本。</string>
+    <string name="utility_workspace_compress_note">压缩效果取决于文件中的图像。含文字或已优化图像的 PDF 可能保持原大小。</string>
+    <string name="utility_workspace_open_result">打开压缩后的 PDF</string>
+    <string name="utility_workspace_saved">缩小 %1$d%%</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — 已压缩</string>
+    <string name="utility_workspace_inspect_page">放大第 %1$d 页</string>
+    <string name="utility_workspace_select_page">选择此页面</string>
+    <string name="utility_workspace_deselect_page">取消选择</string>
+</resources>

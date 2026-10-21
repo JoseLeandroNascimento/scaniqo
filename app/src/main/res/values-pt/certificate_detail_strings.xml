@@ -1,0 +1,9 @@
+<resources>
+    <string name="certificate_unknown_signer">Signatário não identificado</string>
+    <string name="certificate_invalid_ranges">A assinatura contém intervalos de bytes inválidos.</string>
+    <string name="certificate_unsupported_format">Este formato de assinatura não é compatível com a verificação local.</string>
+    <string name="certificate_supported_hashes">A verificação local aceita assinaturas com SHA-256, SHA-384 ou SHA-512.</string>
+    <string name="certificate_later_bytes">Há bytes posteriores à revisão assinada.</string>
+    <string name="certificate_integrity_failed">Não foi possível confirmar a integridade desta assinatura.</string>
+    <string name="runtime_image_count_limit">Selecione no máximo 20 imagens.</string>
+</resources>

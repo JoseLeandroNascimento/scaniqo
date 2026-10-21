@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">উপরের বাম কোণা দিয়ে আকার বদলান</string>
+    <string name="signature_resize_top_right">উপরের ডান কোণা দিয়ে আকার বদলান</string>
+    <string name="signature_resize_bottom_right">নিচের ডান কোণা দিয়ে আকার বদলান</string>
+    <string name="signature_resize_bottom_left">নিচের বাম কোণা দিয়ে আকার বদলান</string>
+</resources>

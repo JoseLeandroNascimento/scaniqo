@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_search_title">البحث في المستندات</string>
+    <string name="document_search_query_label">اسم الملف أو المحتوى</string>
+    <string name="document_search_query_placeholder">مثال: عقد، إيصال، عنوان</string>
+    <string name="document_search_clear">مسح البحث</string>
+    <string name="document_search_helper">يستخدم البحث في المحتوى النص القابل للتحديد في ملفات PDF فقط.</string>
+    <string name="document_search_initial_title">ابحث في مستنداتك</string>
+    <string name="document_search_initial_body">ابحث بالاسم أو بالنص القابل للتحديد في ملفات PDF.</string>
+    <string name="document_search_loading">جارٍ البحث في المستندات…</string>
+    <string name="document_search_empty_title">لا توجد نتائج</string>
+    <string name="document_search_empty_body">جرّب اسمًا أو كلمة أخرى. يمكن العثور على ملفات PDF بلا نص من خلال الاسم.</string>
+    <string name="document_search_error_title">تعذر إكمال البحث</string>
+    <string name="document_search_error_body">أعد المحاولة للبحث في مستنداتك.</string>
+    <string name="document_search_match_name">تطابق في الاسم</string>
+    <string name="document_search_match_content">في المحتوى</string>
+    <string name="document_search_match_page">الصفحة %1$d</string>
+    <string name="document_search_metadata">%1$s · %2$s</string>
+    <plurals name="document_search_result_count">
+        <item quantity="zero">لم يُعثر على مستندات (%d)</item>
+        <item quantity="one">عُثر على مستند واحد (%d)</item>
+        <item quantity="two">عُثر على مستندين (%d)</item>
+        <item quantity="few">عُثر على %d مستندات</item>
+        <item quantity="many">عُثر على %d مستندًا</item>
+        <item quantity="other">عُثر على %d مستند</item>
+    </plurals>
+</resources>

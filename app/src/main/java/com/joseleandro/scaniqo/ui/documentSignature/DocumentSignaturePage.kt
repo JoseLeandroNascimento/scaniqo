@@ -96,13 +96,13 @@ internal fun DocumentSignaturePage(
                 enabled = state.canEdit && draft == null && state.selectedPageIndex > 0,
                 onClick = { onEvent(DocumentToolsEvent.SelectPage(workspace.pages[state.selectedPageIndex - 1].id)) },
                 modifier = Modifier.semantics { contentDescription = previousPageLabel },
-            ) { Text("‹", style = MaterialTheme.typography.headlineSmall) }
+            ) { Text(if (androidx.compose.ui.platform.LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl) "›" else "‹", style = MaterialTheme.typography.headlineSmall) }
             Text(stringResource(R.string.signature_page, state.selectedPageIndex + 1, workspace.pages.size))
             TextButton(
                 enabled = state.canEdit && draft == null && state.selectedPageIndex < workspace.pages.lastIndex,
                 onClick = { onEvent(DocumentToolsEvent.SelectPage(workspace.pages[state.selectedPageIndex + 1].id)) },
                 modifier = Modifier.semantics { contentDescription = nextPageLabel },
-            ) { Text("›", style = MaterialTheme.typography.headlineSmall) }
+            ) { Text(if (androidx.compose.ui.platform.LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl) "‹" else "›", style = MaterialTheme.typography.headlineSmall) }
         }
         DocumentSignatureViewportStage(
             viewport = viewport,
@@ -255,7 +255,7 @@ private fun DocumentSignatureViewportStage(
                             pointer = gesture?.pointer ?: PdfPoint(active.x + active.width / 2f, active.y + active.height / 2f),
                             pageBounds = bounds.page,
                             viewportSize = IntSize(canvasWidth.roundToInt(), canvasHeight.roundToInt()),
-                            modifier = Modifier.align(Alignment.TopStart),
+                            modifier = Modifier.align(androidx.compose.ui.AbsoluteAlignment.TopLeft),
                         )
                     }
                 }

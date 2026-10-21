@@ -16,6 +16,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -49,8 +51,9 @@ fun SignaturesScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val toast = rememberAppToastState()
-    LaunchedEffect(state.message) {
-        state.message?.let {
+    val messageText = state.message?.let { localizedRuntimeMessage(it) }
+    LaunchedEffect(messageText) {
+        messageText?.let {
             toast.show(it)
             viewModel.onEvent(SignaturesEvent.DismissMessage)
         }
@@ -62,9 +65,9 @@ fun SignaturesScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Minhas assinaturas") },
+                title = { Text(stringResource(R.string.runtime_signatures_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(painterResource(R.drawable.arrow_back_24px), "Voltar") }
+                    IconButton(onClick = onBack) { Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.runtime_back)) }
                 },
             )
         },
@@ -73,7 +76,7 @@ fun SignaturesScreen(
             ExtendedFloatingActionButton(
                 onClick = { viewModel.onEvent(SignaturesEvent.Create) },
                 icon = { Icon(painterResource(R.drawable.edit_24px), null) },
-                text = { Text("Nova assinatura") },
+                text = { Text(stringResource(R.string.runtime_new_signature)) },
             )
         },
     ) { padding ->
@@ -84,7 +87,7 @@ fun SignaturesScreen(
         ) {
             item {
                 Text(
-                    "Desenhe, digite ou importe uma assinatura para aplicar nos seus PDFs.",
+                    stringResource(R.string.runtime_signatures_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -92,11 +95,11 @@ fun SignaturesScreen(
             when {
                 state.isLoading -> item { CircularProgressIndicator(Modifier.padding(24.dp)) }
                 state.loadError -> item {
-                    Text("Não foi possível carregar as assinaturas.")
-                    TextButton(onClick = { viewModel.onEvent(SignaturesEvent.Retry) }) { Text("Tentar novamente") }
+                    Text(stringResource(R.string.runtime_signatures_load_error))
+                    TextButton(onClick = { viewModel.onEvent(SignaturesEvent.Retry) }) { Text(stringResource(R.string.runtime_retry)) }
                 }
                 state.signatures.isEmpty() -> item {
-                    Text("Sua biblioteca está vazia. Crie a primeira assinatura.", Modifier.padding(vertical = 32.dp))
+                    Text(stringResource(R.string.runtime_signatures_empty), Modifier.padding(vertical = 32.dp))
                 }
                 else -> items(state.signatures, key = { it.id }) { signature ->
                     Card {
@@ -104,10 +107,10 @@ fun SignaturesScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(signature.name, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium)
                                 IconButton(onClick = { viewModel.onEvent(SignaturesEvent.RequestRename(signature)) }) {
-                                    Icon(painterResource(R.drawable.edit_24px), "Renomear assinatura")
+                                    Icon(painterResource(R.drawable.edit_24px), stringResource(R.string.runtime_signature_rename))
                                 }
                                 IconButton(onClick = { viewModel.onEvent(SignaturesEvent.RequestDelete(signature)) }) {
-                                    Icon(painterResource(R.drawable.delete_24px), "Excluir assinatura")
+                                    Icon(painterResource(R.drawable.delete_24px), stringResource(R.string.runtime_signature_delete))
                                 }
                             }
                             SignatureImage(
@@ -126,18 +129,18 @@ fun SignaturesScreen(
     state.deleteCandidate?.let { signature ->
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(SignaturesEvent.DismissDialog) },
-            title = { Text("Excluir assinatura?") },
+            title = { Text(stringResource(R.string.runtime_signature_delete_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("“${signature.name}” será removida da biblioteca. Assinaturas aplicadas em documentos salvos serão mantidas.")
-                    state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                    Text(stringResource(R.string.runtime_signature_delete_body, androidx.core.text.BidiFormatter.getInstance().unicodeWrap(signature.name)))
+                    state.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error) }
                 }
             },
             confirmButton = {
                 DialogActions(
-                    confirmText = "Excluir",
+                    confirmText = stringResource(R.string.runtime_delete),
                     onConfirm = { viewModel.onEvent(SignaturesEvent.ConfirmDelete) },
-                    dismissText = "Cancelar",
+                    dismissText = stringResource(R.string.runtime_cancel),
                     onDismiss = { viewModel.onEvent(SignaturesEvent.DismissDialog) },
                     confirmEnabled = !state.isBusy,
                     dismissEnabled = !state.isBusy,
@@ -150,21 +153,21 @@ fun SignaturesScreen(
     state.renameCandidate?.let {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(SignaturesEvent.DismissDialog) },
-            title = { Text("Renomear assinatura") },
+            title = { Text(stringResource(R.string.runtime_signature_rename)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(
                         state.renameText, { viewModel.onEvent(SignaturesEvent.RenameChanged(it)) },
-                        label = { Text("Nome") }, singleLine = true, enabled = !state.isBusy,
+                        label = { Text(stringResource(R.string.runtime_name)) }, singleLine = true, enabled = !state.isBusy,
                     )
-                    state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                    state.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error) }
                 }
             },
             confirmButton = {
                 DialogActions(
-                    confirmText = "Salvar",
+                    confirmText = stringResource(R.string.runtime_save),
                     onConfirm = { viewModel.onEvent(SignaturesEvent.ConfirmRename) },
-                    dismissText = "Cancelar",
+                    dismissText = stringResource(R.string.runtime_cancel),
                     onDismiss = { viewModel.onEvent(SignaturesEvent.DismissDialog) },
                     confirmEnabled = !state.isBusy,
                     dismissEnabled = !state.isBusy,
@@ -175,7 +178,7 @@ fun SignaturesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun SignatureEditorSheet(
     editor: SignatureEditorState,
@@ -196,8 +199,8 @@ internal fun SignatureEditorSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Criar assinatura", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
-                TextButton(enabled = !editor.isSaving, onClick = { onEvent(SignaturesEvent.DismissEditor) }) { Text("Cancelar") }
+                Text(stringResource(R.string.runtime_signature_create), Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+                TextButton(enabled = !editor.isSaving, onClick = { onEvent(SignaturesEvent.DismissEditor) }) { Text(stringResource(R.string.runtime_cancel)) }
             }
             Column(
                 Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
@@ -207,7 +210,7 @@ internal fun SignatureEditorSheet(
                     value = editor.name,
                     onValueChange = { onEvent(SignaturesEvent.NameChanged(it)) },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Nome na biblioteca") },
+                    label = { Text(stringResource(R.string.runtime_library_name)) },
                     singleLine = true,
                     enabled = !editor.isSaving,
                 )
@@ -218,9 +221,9 @@ internal fun SignatureEditorSheet(
                             onClick = { onEvent(SignaturesEvent.InputChanged(input)) },
                             enabled = !editor.isSaving,
                             label = { Text(when (input) {
-                                SignatureInput.DRAW -> "Desenhar"
-                                SignatureInput.TYPE -> "Digitar"
-                                SignatureInput.IMAGE -> "Imagem"
+                                SignatureInput.DRAW -> stringResource(R.string.runtime_draw)
+                                SignatureInput.TYPE -> stringResource(R.string.runtime_type)
+                                SignatureInput.IMAGE -> stringResource(R.string.runtime_image)
                             }) },
                         )
                     }
@@ -228,12 +231,11 @@ internal fun SignatureEditorSheet(
                 when (editor.input) {
                     SignatureInput.DRAW -> {
                         SignatureDrawingPad(editor, onEvent)
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            TextButton(enabled = !editor.isSaving && editor.strokes.isNotEmpty(), onClick = { onEvent(SignaturesEvent.Undo) }) { Text("Desfazer") }
-                            TextButton(enabled = !editor.isSaving && editor.strokes.isNotEmpty(), onClick = { onEvent(SignaturesEvent.Clear) }) { Text("Limpar") }
-                            Spacer(Modifier.weight(1f))
-                            Text("Espessura", style = MaterialTheme.typography.labelMedium)
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            TextButton(enabled = !editor.isSaving && editor.strokes.isNotEmpty(), onClick = { onEvent(SignaturesEvent.Undo) }) { Text(stringResource(R.string.runtime_undo)) }
+                            TextButton(enabled = !editor.isSaving && editor.strokes.isNotEmpty(), onClick = { onEvent(SignaturesEvent.Clear) }) { Text(stringResource(R.string.runtime_clear)) }
                         }
+                        Text(stringResource(R.string.runtime_thickness), style = MaterialTheme.typography.labelMedium)
                         Slider(
                             value = editor.strokeWidth,
                             onValueChange = { onEvent(SignaturesEvent.WidthChanged(it)) },
@@ -244,12 +246,12 @@ internal fun SignatureEditorSheet(
                     SignatureInput.TYPE -> {
                         OutlinedTextField(
                             editor.text, { onEvent(SignaturesEvent.TextChanged(it)) },
-                            Modifier.fillMaxWidth(), label = { Text("Texto da assinatura") },
+                            Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.runtime_signature_text)) },
                             singleLine = true, enabled = !editor.isSaving,
                         )
                         Surface(color = Color.White, shape = MaterialTheme.shapes.medium) {
                             Text(
-                                text = editor.text.ifBlank { "Sua assinatura" },
+                                text = editor.text.ifBlank { stringResource(R.string.runtime_signature_placeholder) },
                                 modifier = Modifier.fillMaxWidth().padding(24.dp),
                                 fontFamily = FontFamily(Typeface.create(
                                     editor.font.family,
@@ -268,10 +270,10 @@ internal fun SignatureEditorSheet(
                                     onClick = { onEvent(SignaturesEvent.FontChanged(font)) },
                                     enabled = !editor.isSaving,
                                     label = { Text(when (font) {
-                                        SignatureFont.CURSIVE -> "Cursiva"
-                                        SignatureFont.HANDWRITTEN -> "Manuscrita"
-                                        SignatureFont.CLASSIC -> "Clássica"
-                                        SignatureFont.MONOSPACED -> "Monoespaçada"
+                                        SignatureFont.CURSIVE -> stringResource(R.string.runtime_font_cursive)
+                                        SignatureFont.HANDWRITTEN -> stringResource(R.string.runtime_font_handwritten)
+                                        SignatureFont.CLASSIC -> stringResource(R.string.runtime_font_classic)
+                                        SignatureFont.MONOSPACED -> stringResource(R.string.runtime_font_monospace)
                                     }) },
                                 )
                             }
@@ -282,22 +284,22 @@ internal fun SignatureEditorSheet(
                             SignatureImage(it, Modifier.fillMaxWidth().height(140.dp).background(Color.White).padding(12.dp))
                         }
                         OutlinedButton(enabled = !editor.isSaving, onClick = onPickImage, modifier = Modifier.fillMaxWidth()) {
-                            Text(if (editor.imageUri == null) "Escolher imagem" else "Trocar imagem")
+                            Text(if (editor.imageUri == null) stringResource(R.string.runtime_image_choose) else stringResource(R.string.runtime_image_change))
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(editor.removeLightBackground, { onEvent(SignaturesEvent.RemoveBackgroundChanged(it)) }, enabled = !editor.isSaving)
-                            Text("Remover fundo branco ao salvar", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.runtime_remove_white), style = MaterialTheme.typography.bodyMedium)
                         }
                         Text(
-                            "PNGs transparentes mantêm a transparência. Imagens de até 10 MB.",
+                            stringResource(R.string.runtime_signature_image_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
                 if (editor.input != SignatureInput.IMAGE) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf("Preto" to 0xFF18212B.toInt(), "Azul" to 0xFF183C9A.toInt(), "Violeta" to 0xFF613D82.toInt()).forEach { (label, argb) ->
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf(stringResource(R.string.runtime_black) to 0xFF18212B.toInt(), stringResource(R.string.runtime_blue) to 0xFF183C9A.toInt(), stringResource(R.string.runtime_violet) to 0xFF613D82.toInt()).forEach { (label, argb) ->
                             FilterChip(
                                 selected = editor.colorArgb == argb,
                                 onClick = { onEvent(SignaturesEvent.ColorChanged(argb)) },
@@ -308,7 +310,7 @@ internal fun SignatureEditorSheet(
                         }
                     }
                 }
-                editor.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                editor.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error) }
             }
             Button(
                 enabled = !editor.isSaving,
@@ -319,7 +321,7 @@ internal fun SignatureEditorSheet(
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(8.dp))
                 }
-                Text(if (editor.isSaving) "Salvando…" else "Salvar assinatura")
+                Text(if (editor.isSaving) stringResource(R.string.runtime_saving) else stringResource(R.string.runtime_signature_save))
             }
         }
     }
@@ -346,7 +348,7 @@ private fun SignatureDrawingPad(editor: SignatureEditorState, onEvent: (Signatur
         Modifier.fillMaxWidth().aspectRatio(8f / 3f).clip(MaterialTheme.shapes.medium).background(Color.White),
     ) {
         if (editor.strokes.isEmpty() && currentPoints.isEmpty()) {
-            Text("Desenhe aqui", Modifier.align(Alignment.Center), color = Color(0xFF72808A))
+            Text(stringResource(R.string.runtime_draw_here), Modifier.align(Alignment.Center), color = Color(0xFF72808A))
         }
         Canvas(
             Modifier.fillMaxSize().pointerInput(editor.isSaving) {

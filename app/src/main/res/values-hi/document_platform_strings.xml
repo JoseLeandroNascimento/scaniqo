@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_share_chooser">PDF शेयर करें</string>
+    <string name="document_pdf_page_description">दस्तावेज़ का पृष्ठ %1$d</string>
+    <string name="document_pdf_loading">पृष्ठ लोड हो रहा है</string>
+    <string name="document_pdf_error">यह पृष्ठ नहीं खोला जा सका।</string>
+    <string name="document_pdf_retry">फिर से कोशिश करें</string>
+    <string name="document_thumbnail_description">दस्तावेज़ का थंबनेल</string>
+</resources>

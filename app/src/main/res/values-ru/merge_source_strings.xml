@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_source_label">Выбрать PDF</string>
+    <string name="merge_source_device">С устройства</string>
+    <string name="merge_source_app">Из приложения</string>
+    <string name="merge_app_title">Документы приложения</string>
+    <string name="merge_app_description">Страницы будут добавлены в порядке выбора PDF.</string>
+    <string name="merge_app_search">Поиск по названию</string>
+    <string name="merge_app_empty">В приложении нет других PDF. Выберите «С устройства» для выбора файлов.</string>
+    <string name="merge_app_no_results">По этому запросу документы не найдены.</string>
+    <string name="merge_app_selection_order">Порядок объединения: %1$d</string>
+    <string name="merge_app_protected">PDF защищён паролем</string>
+    <string name="merge_app_result_protected">Защита редактируемого документа сохранится в результате.</string>
+    <string name="merge_app_result_unprotected">Редактируемый документ без пароля. Страницы защищённых PDF в результате также будут без пароля.</string>
+    <plurals name="merge_app_selected_count">
+        <item quantity="one">Выбран %1$d PDF</item>
+        <item quantity="few">Выбрано %1$d PDF</item>
+        <item quantity="many">Выбрано %1$d PDF</item>
+        <item quantity="other">Выбрано %1$d PDF</item>
+    </plurals>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">Объединить %1$d PDF</item>
+        <item quantity="few">Объединить %1$d PDF</item>
+        <item quantity="many">Объединить %1$d PDF</item>
+        <item quantity="other">Объединить %1$d PDF</item>
+    </plurals>
+</resources>

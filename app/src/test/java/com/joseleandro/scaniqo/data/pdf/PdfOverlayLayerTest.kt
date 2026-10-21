@@ -20,7 +20,7 @@ class PdfOverlayLayerTest {
             val page = PDPage()
             document.addPage(page)
             PDPageContentStream(document, page).use { stream ->
-                PdfOverlayLayer.draw(stream, listOf(
+                PdfOverlayLayer.draw(document, stream, listOf(
                     PdfOverlay("name", PdfOverlayKind.TEXT, text = "Nome: José Leandro"),
                     PdfOverlay("page", PdfOverlayKind.PAGE_NUMBER, text = "Página {pagina} de {total}", y = .9f),
                 ), 2, 5)
@@ -36,7 +36,7 @@ class PdfOverlayLayerTest {
             val page = PDPage()
             document.addPage(page)
             PDPageContentStream(document, page).use { stream ->
-                PdfOverlayLayer.draw(stream, listOf(
+                PdfOverlayLayer.draw(document, stream, listOf(
                     PdfOverlay("text", PdfOverlayKind.TEXT, text = "Texto preservado"),
                     PdfOverlay("highlight", PdfOverlayKind.HIGHLIGHT, opacity = .3f),
                 ), 1, 1)

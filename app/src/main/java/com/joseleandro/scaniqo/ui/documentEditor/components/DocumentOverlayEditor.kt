@@ -1,6 +1,5 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
-import android.graphics.Paint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
@@ -19,6 +18,9 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -31,7 +33,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
 import com.joseleandro.scaniqo.ui.components.DialogActions
+import com.joseleandro.scaniqo.domain.model.PdfCheckmarkGeometry
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import com.joseleandro.scaniqo.domain.model.PdfPoint
@@ -370,8 +374,17 @@ internal fun DrawScope.drawOverlayDraft(overlay: PdfOverlay, pageNumber: Int, co
         PdfOverlayKind.HIGHLIGHT -> drawRect(color, Offset(x, y), Size(width, height))
         PdfOverlayKind.UNDERLINE -> drawLine(color, Offset(x, y + height), Offset(x + width, y + height), 2f)
         PdfOverlayKind.CHECKMARK -> {
-            drawLine(color, Offset(x, y + height * .5f), Offset(x + width * .35f, y + height), 2f)
-            drawLine(color, Offset(x + width * .35f, y + height), Offset(x + width, y), 2f)
+            val path = Path().apply {
+                PdfCheckmarkGeometry.trace(x, y, width, height, ::moveTo, ::lineTo, ::cubicTo)
+            }
+            drawPath(
+                path, color,
+                style = Stroke(
+                    width = PdfCheckmarkGeometry.strokeWidth(width, height),
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                ),
+            )
         }
         PdfOverlayKind.ARROW -> {
             drawLine(color, Offset(x, y + height * .5f), Offset(x + width, y + height * .5f), 2f)
@@ -381,19 +394,26 @@ internal fun DrawScope.drawOverlayDraft(overlay: PdfOverlay, pageNumber: Int, co
         PdfOverlayKind.DRAWING -> Unit
         else -> {
             if (overlay.kind == PdfOverlayKind.STAMP) drawRect(color, Offset(x, y), Size(width, height), style = Stroke(2f))
-            val lines = overlay.text.replace("{pagina}", pageNumber.toString()).replace("{total}", count.toString()).lines()
+            val content = overlay.text.replace("{pagina}", pageNumber.toString()).replace("{total}", count.toString())
+            val pointWidth = overlay.width * 595f
+            val pointHeight = overlay.height * 842f
+            val padding = if (overlay.kind == PdfOverlayKind.STAMP) minOf(6f, minOf(pointWidth, pointHeight) / 4f) else 0f
+            val innerWidth = (pointWidth - padding * 2).coerceAtLeast(.001f)
+            val layout = ShapedTextLayout.create(
+                text = content, fontSize = overlay.fontSize,
+                color = (overlay.color and 0x00FFFFFF) or ((overlay.opacity * 255).toInt() shl 24),
+                maxWidth = innerWidth, maxHeight = (pointHeight - padding * 2).coerceAtLeast(.001f),
+            )
             drawIntoCanvas { canvas ->
-                val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    this.color = overlay.color
-                    alpha = (overlay.opacity * 255).toInt()
-                    textSize = overlay.fontSize * size.width / 595f
-                }
-                val padding = if (overlay.kind == PdfOverlayKind.STAMP) 6f * size.width / 595f else 0f
-                val maxWidth = lines.maxOfOrNull(paint::measureText)?.coerceAtLeast(1f) ?: 1f
-                paint.textSize *= minOf(1f, (width - 2 * padding).coerceAtLeast(1f) / maxWidth,
-                    (height - 2 * padding).coerceAtLeast(1f) / (paint.textSize * lines.size * 1.2f))
-                lines.forEachIndexed { index, line ->
-                    canvas.nativeCanvas.drawText(line, x + padding, y + padding + paint.textSize * (1 + index * 1.2f), paint)
+                val native = canvas.nativeCanvas
+                val save = native.save()
+                try {
+                    native.translate(x, y)
+                    native.scale(size.width / 595f, size.height / 842f)
+                    native.clipRect(0f, 0f, pointWidth, pointHeight)
+                    layout.draw(native, padding, padding, availableWidth = innerWidth)
+                } finally {
+                    native.restoreToCount(save)
                 }
             }
         }

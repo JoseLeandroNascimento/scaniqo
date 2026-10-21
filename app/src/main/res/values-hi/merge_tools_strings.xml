@@ -1,0 +1,14 @@
+<resources>
+    <string name="merge_tools_progress_title">PDF मिलाए जा रहे हैं</string>
+    <string name="merge_tools_progress_body">नए पृष्ठ तैयार हो रहे हैं। आप दस्तावेज़ बदले बिना रद्द कर सकते हैं।</string>
+    <string name="merge_tools_success">PDF मिल गए। बदलाव पूरे करने के लिए सहेजें।</string>
+    <string name="merge_tools_error">PDF नहीं मिलाए जा सके। जाँचें कि फ़ाइलें सही हैं और संपादन की अनुमति है। कोई पृष्ठ नहीं जोड़ा गया।</string>
+    <string name="merge_tools_limit_error">सभी PDF मिलाकर सीमा 100 पृष्ठ और 50 MB है। कम फ़ाइलें चुनें।</string>
+    <string name="merge_tools_password_title">इस PDF पर पासवर्ड है</string>
+    <string name="merge_tools_password_label">PDF का पासवर्ड</string>
+    <string name="merge_tools_password_error">इस पासवर्ड से PDF नहीं खुला। फिर से कोशिश करें।</string>
+    <string name="merge_tools_password_protected">परिणाम में खुले दस्तावेज़ की सुरक्षा इस्तेमाल होगी। चुनी हुई फ़ाइल नहीं बदलेगी।</string>
+    <string name="merge_tools_password_unprotected">खुला दस्तावेज़ सुरक्षित नहीं है। पृष्ठ उसमें जुड़ेंगे और चुनी हुई फ़ाइल नहीं बदलेगी।</string>
+    <string name="merge_tools_selected_file">चुना हुआ PDF</string>
+    <string name="merge_tools_confirm">मिलाएँ</string>
+</resources>

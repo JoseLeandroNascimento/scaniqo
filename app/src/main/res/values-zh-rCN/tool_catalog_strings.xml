@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_catalog_title">工具</string>
+    <string name="tool_catalog_heading">您想做什么？</string>
+    <string name="tool_catalog_search">搜索工具</string>
+    <string name="tool_catalog_clear">清空搜索</string>
+    <string name="tool_catalog_all">全部</string>
+    <string name="tool_catalog_organize">整理</string>
+    <string name="tool_catalog_convert">转换</string>
+    <string name="tool_catalog_edit">编辑</string>
+    <string name="tool_catalog_fill">填写与签名</string>
+    <string name="tool_catalog_empty">未找到工具。</string>
+    <string name="tool_catalog_reset">查看所有工具</string>
+    <string name="tool_catalog_compress">压缩 PDF</string>
+    <string name="tool_catalog_compress_hint">缩小文件体积，便于发送和分享</string>
+    <string name="tool_catalog_fill_page">在页面上填写</string>
+    <string name="tool_catalog_fill_hint">在文档中放置文字和标记</string>
+    <string name="tool_catalog_watermark">水印</string>
+    <string name="tool_catalog_watermark_hint">添加文字、图片或印章</string>
+    <string name="tool_catalog_choose_for">选择用于“%1$s”的文档</string>
+    <string name="tool_catalog_count">%1$d 个可用工具</string>
+</resources>

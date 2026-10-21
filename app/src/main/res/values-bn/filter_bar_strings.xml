@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_bar_title">ফিল্টার</string>
+    <string name="filter_bar_scope">সব পৃষ্ঠা</string>
+    <string name="filter_bar_close">ফিল্টার বন্ধ করুন</string>
+    <string name="filter_bar_samples_error">থাম্বনেইল লোড করা যায়নি।</string>
+    <string name="filter_bar_native_hint">টেক্সট থাকা PDF-এ ফিল্টার পৃষ্ঠাকে ছবিতে রূপান্তর করে।</string>
+</resources>

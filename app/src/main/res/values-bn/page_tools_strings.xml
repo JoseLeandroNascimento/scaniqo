@@ -1,0 +1,21 @@
+<resources>
+    <string name="pages_scan">স্ক্যান করুন</string>
+    <string name="pages_merge">PDF একত্র করুন</string>
+    <string name="pages_numbering">সব পৃষ্ঠায় নম্বর দিন</string>
+    <string name="pages_numbering_global_hint">পরে যোগ করা পৃষ্ঠাও অন্তর্ভুক্ত হবে।</string>
+    <string name="pages_move_title">সরাসরি সরান</string>
+    <string name="pages_move_from">উৎস</string>
+    <string name="pages_move_to">গন্তব্য</string>
+    <string name="pages_move_action">পৃষ্ঠা সরান</string>
+    <string name="pages_move_range">1 থেকে %1$d-এর মধ্যে পৃষ্ঠা লিখুন।</string>
+    <string name="pages_move_same">উৎসের থেকে আলাদা অবস্থান বেছে নিন।</string>
+    <string name="pages_move_hint">বর্তমান ক্রমের নম্বর ব্যবহার করুন।</string>
+    <string name="pages_drag_hint">ক্রম বদলাতে পৃষ্ঠা চেপে ধরে টানুন।</string>
+    <string name="pages_drag_handle">পৃষ্ঠা %1$d-এর ক্রম বদলান</string>
+    <string name="pages_drag_cancel">সরানো বাতিল করুন</string>
+    <string name="pages_page">পৃষ্ঠা %1$d</string>
+    <string name="pages_selected">বেছে নেওয়া হয়েছে</string>
+    <string name="pages_move_up">উপরে সরান</string>
+    <string name="pages_move_down">নিচে সরান</string>
+    <string name="pages_one_page">ক্রম বদলাতে পৃষ্ঠা যোগ করুন।</string>
+</resources>

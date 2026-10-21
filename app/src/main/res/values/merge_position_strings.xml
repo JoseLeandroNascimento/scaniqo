@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="merge_position_title">Mesclar PDFs</string>
-    <string name="merge_position_label">Inserir novas páginas</string>
-    <string name="merge_position_start">Início</string>
-    <string name="merge_position_after">Após página</string>
-    <string name="merge_position_end">Final</string>
-    <string name="merge_position_page_label">Número da página</string>
-    <string name="merge_position_page_error">Informe uma página de 1 a %1$d.</string>
-    <string name="merge_position_start_description">As novas páginas entrarão no início do documento.</string>
-    <string name="merge_position_after_description">As novas páginas entrarão após a página %1$d.</string>
-    <string name="merge_position_end_description">As novas páginas entrarão no final do documento.</string>
-    <string name="merge_position_invalid_description">Escolha uma página válida para continuar.</string>
-    <string name="merge_position_select_pdfs">Selecionar PDFs</string>
+    <string name="merge_position_title">Merge PDFs</string>
+    <string name="merge_position_label">Insert new pages</string>
+    <string name="merge_position_start">Beginning</string>
+    <string name="merge_position_after">After page</string>
+    <string name="merge_position_end">End</string>
+    <string name="merge_position_page_label">Page number</string>
+    <string name="merge_position_page_error">Enter a page from 1 to %1$d.</string>
+    <string name="merge_position_start_description">New pages will be added at the beginning of the document.</string>
+    <string name="merge_position_after_description">New pages will be added after page %1$d.</string>
+    <string name="merge_position_end_description">New pages will be added at the end of the document.</string>
+    <string name="merge_position_invalid_description">Choose a valid page to continue.</string>
+    <string name="merge_position_select_pdfs">Select PDFs</string>
     <plurals name="merge_position_page_count">
-        <item quantity="one">Documento com %1$d página</item>
-        <item quantity="other">Documento com %1$d páginas</item>
+        <item quantity="one">Document with %1$d page</item>
+        <item quantity="other">Document with %1$d pages</item>
     </plurals>
 </resources>

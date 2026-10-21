@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">Straighten</string>
+    <string name="correction_editor_perspective">Crop</string>
+    <string name="correction_editor_curve">Curvature</string>
+    <string name="correction_editor_angle">Tilt</string>
+    <string name="correction_editor_auto">Auto</string>
+    <string name="correction_editor_use_angle">Use %1$.1f°</string>
+    <string name="correction_editor_already_straight">No tilt detected.</string>
+    <string name="correction_editor_corners">Corners</string>
+    <string name="correction_editor_result">Result</string>
+    <string name="correction_editor_show_before">Compare with the page before correction</string>
+    <string name="correction_editor_show_result">View correction result</string>
+    <string name="correction_editor_options">Correction options</string>
+    <string name="correction_editor_native_hint">Allows correcting text and vectors as an image.</string>
+    <string name="correction_editor_native_required">This page’s filter requires image conversion.</string>
+    <string name="correction_editor_drag_hint">Drag ↔</string>
+    <string name="correction_editor_angle_gesture">Drag sideways to straighten the page</string>
+    <string name="correction_editor_curve_gesture">Drag sideways to adjust curvature</string>
+</resources>

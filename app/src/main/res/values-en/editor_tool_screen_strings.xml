@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">Back</string>
+    <string name="editor_tool_done">Done</string>
+    <string name="editor_tool_discard_title">Discard adjustments?</string>
+    <string name="editor_tool_discard_body">Changes not yet applied will be lost.</string>
+</resources>

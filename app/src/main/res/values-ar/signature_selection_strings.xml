@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">تغيير الحجم من الزاوية العلوية اليسرى</string>
+    <string name="signature_resize_top_right">تغيير الحجم من الزاوية العلوية اليمنى</string>
+    <string name="signature_resize_bottom_right">تغيير الحجم من الزاوية السفلية اليمنى</string>
+    <string name="signature_resize_bottom_left">تغيير الحجم من الزاوية السفلية اليسرى</string>
+</resources>

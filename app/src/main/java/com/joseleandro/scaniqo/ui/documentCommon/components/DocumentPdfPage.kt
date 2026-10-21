@@ -105,7 +105,7 @@ fun DocumentThumbnail(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_document_lock),
-                contentDescription = "PDF protegido por senha",
+                contentDescription = stringResource(R.string.runtime_password_protected),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(28.dp),
             )

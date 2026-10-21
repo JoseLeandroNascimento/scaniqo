@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">Stroke limit reached. Undo a stroke to continue.</string>
+    <string name="runtime_signature_image_required">Choose an image of the signature.</string>
+    <string name="runtime_password_required">Enter the PDF password.</string>
+    <string name="runtime_unlock_required">Unlock to access protected PDFs.</string>
+    <string name="runtime_merge_paused">Merging was paused. Tap Try again to continue.</string>
+    <string name="runtime_password_setup_required">Set up the default password to store this PDF’s password securely.</string>
+    <string name="runtime_password_incorrect">Incorrect password. Try again.</string>
+    <string name="runtime_signed_pdf_saved">Signed PDF saved.</string>
+    <string name="runtime_zip_exported">Images exported in a ZIP file.</string>
+    <string name="runtime_csv_exported">Reviewed data exported as CSV.</string>
+    <string name="runtime_receipt_page_required">Enter a valid receipt page.</string>
+    <string name="runtime_receipt_review_required">Review the data again before exporting.</string>
+    <string name="runtime_document_unavailable">The document is no longer available.</string>
+    <string name="runtime_imported_document">Imported document</string>
+    <string name="runtime_signature_default_name">My signature</string>
+    <string name="runtime_name_invalid">Enter a name up to 100 characters.</string>
+    <string name="runtime_pdf_size_limit">Select a PDF up to 50 MB.</string>
+    <string name="runtime_pdf_page_limit">Select a PDF with 1 to 100 pages.</string>
+    <string name="runtime_pdf_unprotected_required">Open a copy without a password to use this tool.</string>
+    <string name="runtime_new_file_required">Choose a new file to preserve the original PDF.</string>
+    <string name="runtime_destination_failed">Could not save to the selected location.</string>
+    <string name="runtime_certificate_select_again">Select the certificate again in Android.</string>
+    <string name="runtime_certificate_chain_unavailable">The certificate chain is unavailable.</string>
+    <string name="runtime_certificate_rsa_ec">Select an RSA or EC certificate.</string>
+    <string name="runtime_certificate_sign_failed">Could not use this certificate to sign.</string>
+    <string name="runtime_certificate_sign_disallowed">This document does not allow a new signature with this tool.</string>
+    <string name="runtime_pdf_copy_disallowed">This PDF’s password does not allow copying pages to another document.</string>
+    <string name="runtime_pdf_extract_disallowed">This PDF does not allow content extraction.</string>
+    <string name="runtime_pdf_edit_disallowed">The entered password does not allow editing this PDF.</string>
+    <string name="runtime_two_pdfs_required">Select at least two PDFs.</string>
+    <string name="runtime_scan_page_limit">Scan 1 to 20 pages at a time.</string>
+    <string name="runtime_images_size_limit">Images exceeded 200 MB. Export fewer pages at a time.</string>
+    <string name="runtime_ocr_empty">No text was recognized. Try a clearer scan.</string>
+    <string name="runtime_signature_empty">Draw or type a signature before saving.</string>
+    <string name="runtime_image_size_limit">Select an image up to 10 MB.</string>
+    <string name="runtime_selected_pdf">Selected PDF</string>
+    <string name="runtime_signature_name_invalid">Enter a name up to 80 characters.</string>
+    <string name="runtime_signature_text_invalid">Type a name up to 80 characters.</string>
+    <string name="runtime_signature_drawing_large">The drawing is too large. Simplify the signature.</string>
+    <string name="runtime_image_invalid">Choose a valid image.</string>
+    <string name="runtime_signature_not_found">Signature not found.</string>
+</resources>

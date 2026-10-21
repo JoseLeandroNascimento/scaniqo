@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_editor_source">Снятое изображение</string>
+    <string name="capture_editor_source_page">Снятое изображение страницы %1$d</string>
+    <string name="capture_editor_result">Результат на изображении</string>
+    <string name="capture_editor_unavailable">На этой странице нет единого изображения для редактирования.</string>
+    <string name="capture_editor_convert_title">Преобразовать страницу в изображение</string>
+    <string name="capture_editor_convert_hint">На странице есть текст или графика PDF. Для удаления фона преобразуйте страницу в изображение.</string>
+</resources>

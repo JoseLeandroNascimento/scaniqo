@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="localization_title">语言和地区</string>
+    <string name="localization_summary">语言、地区格式和阅读方向</string>
+    <string name="localization_system">跟随系统</string>
+    <string name="localization_system_description">使用设备的首选语言。如果均不支持，则使用英语。</string>
+    <string name="localization_language">应用语言</string>
+    <string name="localization_regional_formats">地区格式</string>
+    <string name="localization_formats_description">日期、时间和数字采用所选语言和地区的格式。时区仍使用设备设置。</string>
+    <string name="localization_date_example">日期和时间：%1$s</string>
+    <string name="localization_number_example">数字：%1$s</string>
+    <string name="localization_direction_description">界面方向随语言调整，文档页面中的内容和位置保持不变。</string>
+    <string name="localization_apply">应用语言</string>
+    <string name="localization_cancel">取消</string>
+    <string name="localization_restart_hint">更改语言会重新打开当前界面以应用设置。</string>
+    <string name="localization_flag_description">国旗标识地区变体，这些变体也可在其他国家或地区使用。</string>
+</resources>

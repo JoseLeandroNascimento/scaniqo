@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_workspace_source">المستند</string>
+    <string name="utility_workspace_importing">جارٍ استيراد المستند…</string>
+    <string name="utility_workspace_choose_hint">اختر PDF من المكتبة أو استورد ملفًا من الجهاز.</string>
+    <string name="utility_workspace_import_device">استيراد من الجهاز</string>
+    <string name="utility_workspace_search">البحث عن مستند</string>
+    <string name="utility_workspace_no_match">لم يُعثر على مستندات.</string>
+    <string name="utility_workspace_pages">اختر الصفحات</string>
+    <string name="utility_workspace_selection">تم تحديد %1$d من %2$d</string>
+    <string name="utility_workspace_select_all">الكل</string>
+    <string name="utility_workspace_clear">مسح</string>
+    <string name="utility_workspace_range">إدخال نطاق</string>
+    <string name="utility_workspace_page">الصفحة %1$d</string>
+    <string name="utility_workspace_order">اضغط على الصفحات لتحديدها. يتيح النطاق تحديد الترتيب.</string>
+    <string name="utility_workspace_locked_pages">لخصوصيتك، تُخفى الصور المصغرة لهذا PDF. اختر بأرقام الصفحات.</string>
+    <string name="utility_workspace_empty_selection">حدد صفحة واحدة على الأقل.</string>
+    <string name="utility_workspace_output">النتيجة</string>
+    <string name="utility_workspace_format">تنسيق الصور</string>
+    <string name="utility_workspace_jpg_hint">ملفات صغيرة للمشاركة</string>
+    <string name="utility_workspace_png_hint">تفاصيل أكثر، ملفات أكبر</string>
+    <string name="utility_workspace_zip_hint">تتحول كل صفحة إلى صورة، وتُجمع الصور في ملف ZIP واحد.</string>
+    <string name="utility_workspace_copy_hint">ستُنشأ نسخة جديدة مع الاحتفاظ بالمستند الأصلي.</string>
+    <string name="utility_workspace_busy">جارٍ تجهيز الملف…</string>
+    <string name="utility_workspace_change_destination">تغيير الموقع</string>
+    <string name="utility_workspace_compress_title">ضغط PDF</string>
+    <string name="utility_workspace_compress_hint">قلل حجم صور PDF مع الحفاظ على النص القابل للبحث.</string>
+    <string name="utility_workspace_compress_level">مستوى الضغط</string>
+    <string name="utility_workspace_balanced">متوازن</string>
+    <string name="utility_workspace_balanced_hint">وضوح جيد مع تقليل معتدل للحجم.</string>
+    <string name="utility_workspace_strong">تقليل أكبر للحجم</string>
+    <string name="utility_workspace_strong_hint">ملف أصغر. راجع الحروف الصغيرة والصور.</string>
+    <string name="utility_workspace_compress_action">ضغط وإنشاء نسخة</string>
+    <string name="utility_workspace_original_size">الأصلي</string>
+    <string name="utility_workspace_result_size">المضغوط</string>
+    <string name="utility_workspace_compress_complete">أصبح PDF أصغر حجمًا</string>
+    <string name="utility_workspace_compress_no_gain">ملف PDF هذا مضغوط بالفعل</string>
+    <string name="utility_workspace_compress_no_gain_hint">لم تُنشأ نسخة لعدم انخفاض الحجم.</string>
+    <string name="utility_workspace_compress_note">يعتمد التقليل على صور الملف. قد تحتفظ ملفات PDF النصية أو ذات الصور المحسّنة بحجمها.</string>
+    <string name="utility_workspace_open_result">فتح PDF المضغوط</string>
+    <string name="utility_workspace_saved">أصغر بنسبة %1$d%%</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — مضغوط</string>
+    <string name="utility_workspace_inspect_page">تكبير الصفحة %1$d</string>
+    <string name="utility_workspace_select_page">تحديد هذه الصفحة</string>
+    <string name="utility_workspace_deselect_page">إزالة من التحديد</string>
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_scope_current">此页面</string>
+    <string name="document_scope_select">选择</string>
+    <string name="document_scope_all">全部</string>
+    <string name="document_scope_title">应用到哪些页面？</string>
+    <string name="document_scope_hint">同样的调整仅应用于勾选的页面。</string>
+    <string name="document_scope_select_all">全选</string>
+    <string name="document_scope_clear">清空</string>
+    <string name="document_scope_confirm">使用所选项</string>
+    <string name="document_scope_cancel">取消</string>
+    <string name="document_scope_page">第 %1$d 页</string>
+    <string name="document_scope_selected_count">选择（%1$d）</string>
+    <string name="document_scope_empty">请至少选择一页。</string>
+    <plurals name="document_scope_apply_count">
+        <item quantity="other">应用到 %1$d 页</item>
+    </plurals>
+    <plurals name="document_scope_count">
+        <item quantity="other">已选择 %1$d 页</item>
+    </plurals>
+    <string name="corrections_tab_angle">倾斜</string>
+    <string name="corrections_tab_perspective">边缘</string>
+    <string name="corrections_tab_curve">曲线</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">第 %1$d 页，共 %2$d 页。选择预览页面</string>
+    <string name="corrections_live_title">调整预览</string>
+    <string name="corrections_live_hint">预览随控件更新，仅应用后才会更改文档。</string>
+    <string name="corrections_preview_previous">预览上一页</string>
+    <string name="corrections_preview_next">预览下一页</string>
+    <string name="corrections_preview_choose">选择预览页面</string>
+    <string name="corrections_preview_pages">选择要查看的页面</string>
+    <string name="corrections_preview_before">调整前</string>
+    <string name="corrections_preview_after">调整后</string>
+    <string name="corrections_preview_before_description">查看本次调整前的页面</string>
+    <string name="corrections_preview_after_description">查看本次调整的结果</string>
+    <string name="corrections_preview_before_hint">本次调整前</string>
+    <string name="corrections_preview_after_hint">调整结果</string>
+    <string name="corrections_preview_updating">正在更新…</string>
+    <string name="corrections_preview_error">无法更新预览。</string>
+    <string name="corrections_preview_retry">重试</string>
+    <string name="corrections_preview_native_hint">保留文字和矢量图形。如需将此页作为图像校正，请启用下方选项。</string>
+    <string name="corrections_page_navigation_hint">切换预览会保留当前设置，便于检查其他页面的效果。</string>
+    <string name="corrections_perspective_editor">调整拍摄图像的边缘</string>
+    <string name="corrections_perspective_live_hint">拖动下方图像的角点，在上方查看结果。</string>
+</resources>

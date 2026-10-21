@@ -22,6 +22,7 @@ import java.util.zip.ZipFile
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -61,6 +62,29 @@ class AndroidDocumentBackupRepositoryTest {
         assertTrue(File(URI(original.pdfUri)).isFile)
         fixture.repository.discard(backup.file)
         assertFalse(backup.file.exists())
+    }
+
+    @Test fun backupIncludesOnlyActiveDocumentsAndPreservesTrashedProjectFiles() = runBlocking {
+        val fixture = fixture()
+        val active = fixture.seed()
+        val trashed = fixture.seed(editable = true)
+        fixture.documents.state.value = fixture.documents.state.value.map {
+            if (it.id == trashed.id) it.copy(deletedAt = 500L) else it
+        }
+        val directory = File(URI(trashed.pdfUri)).parentFile!!
+        val recipe = File(directory, "recipe.json").readBytes()
+
+        val backup = fixture.repository.createBackup()
+        val result = fixture.repository.restoreBackup(backup.file)
+
+        assertEquals(1, backup.documentCount)
+        assertEquals(1, result.documentCount)
+        val restored = fixture.documents.state.value.single { it.id != active.id && it.id != trashed.id }
+        assertEquals(active.name, restored.name)
+        assertNull(restored.deletedAt)
+        assertArrayEquals(recipe, File(directory, "recipe.json").readBytes())
+        assertTrue(File(directory, "document.pdf").isFile)
+        assertTrue(File(directory, "sources.pdf").isFile)
     }
 
     @Test fun protectedPdfRestoresWithoutDecryptingOrCopyingLocalVaultIdsAndSidecars() = runBlocking {
@@ -208,8 +232,12 @@ class AndroidDocumentBackupRepositoryTest {
         var nextId = 1L
         var failAfterInsertOnCall: Int? = null
         private var createCalls = 0
-        override fun observeDocuments() = state
-        override suspend fun findById(id: Long) = state.value.find { it.id == id }
+        override fun observeDocuments() = state.map { list -> list.filter { it.deletedAt == null } }
+        override fun observeTrashedDocuments() = state.map { list -> list.filter { it.deletedAt != null } }
+        override suspend fun moveToTrash(id: Long) = error("unused")
+        override suspend fun restoreFromTrash(id: Long) = error("unused")
+        override suspend fun deletePermanently(id: Long) = error("unused")
+        override suspend fun findById(id: Long) = state.value.find { it.id == id && it.deletedAt == null }
         override suspend fun create(scan: ScannedDocument, name: String, tagId: Long?): Long {
             val id = nextId++
             state.value += DocumentModel(id, name, scan.pdfUri, scan.pageCount, scan.createdAt,

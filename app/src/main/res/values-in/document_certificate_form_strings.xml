@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">Sertifikat digital</string>
+    <string name="certificate_intro">Tanda tangani salinan dengan sertifikat yang terpasang di Android atau periksa tanda tangan PDF.</string>
+    <string name="certificate_pick_pdf">Pilih PDF</string>
+    <string name="certificate_choose">Pilih sertifikat</string>
+    <string name="certificate_change">Ganti sertifikat</string>
+    <string name="certificate_install">Pasang sertifikat di Android</string>
+    <string name="certificate_sign">Tanda tangani salinan</string>
+    <string name="certificate_save">Simpan PDF bertanda tangan</string>
+    <string name="certificate_unsigned">PDF ini tidak memiliki tanda tangan digital.</string>
+    <string name="certificate_sign_unavailable">Alat ini hanya memungkinkan pemeriksaan tanda tangan untuk dokumen ini.</string>
+    <string name="certificate_verification_scope">Pemeriksaan memverifikasi byte yang ditandatangani dan masa berlaku sertifikat saat ini. Kepercayaan pada otoritas, pencabutan, dan stempel waktu tidak diperiksa.</string>
+    <string name="certificate_sign_scope">Tanda tangan menggunakan SHA-256 tanpa stempel waktu. Kunci pribadi tetap berada di bawah kendali Android.</string>
+    <string name="certificate_integrity_verified">Integritas revisi terverifikasi</string>
+    <string name="certificate_integrity_invalid">Integritas belum terkonfirmasi</string>
+    <string name="certificate_integrity_unsupported">Format tanda tangan tidak didukung</string>
+    <string name="certificate_whole_file">Tanda tangan mencakup seluruh berkas saat ini.</string>
+    <string name="certificate_earlier_revision">Tanda tangan tidak mencakup seluruh berkas saat ini.</string>
+    <string name="certificate_current">Sertifikat masih dalam masa berlaku.</string>
+    <string name="certificate_not_current">Sertifikat di luar masa berlaku atau tidak teridentifikasi.</string>
+    <string name="certificate_picker_error">Pemilih sertifikat tidak dapat dibuka.</string>
+    <string name="certificate_file_error">Pemilih berkas tidak dapat dibuka.</string>
+    <string name="certificate_back">Kembali</string>
+</resources>

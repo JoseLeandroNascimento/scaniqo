@@ -20,7 +20,6 @@ import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
 import com.joseleandro.scaniqo.ui.toolsHub.ToolsHubScreen
 import com.joseleandro.scaniqo.ui.pdfTools.PdfUtilityRoute
-import com.joseleandro.scaniqo.ui.documentForms.DocumentFormsRoute
 import com.joseleandro.scaniqo.ui.documentCertificates.DocumentCertificatesRoute
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverlays
 import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
@@ -50,6 +49,7 @@ import com.joseleandro.scaniqo.ui.settings.SettingsRoute
 import com.joseleandro.scaniqo.ui.settings.SettingsSection
 import com.joseleandro.scaniqo.ui.signatures.SignaturesScreen
 import com.joseleandro.scaniqo.ui.tags.TagsRoute
+import com.joseleandro.scaniqo.ui.trash.TrashRoute
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -222,7 +222,6 @@ fun AppNavigation(
                         },
                         onImportForEditor = { tool -> importForTool(if (tool == DocumentTool.FORMS)
                             PdfImportDestination.FILL_PAGE else PdfImportDestination.EDITOR) },
-                        onForms = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.DocumentForms) },
                         onRetryDocuments = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
                         snackbarHost = { AppToastHost(toast) },
                     )
@@ -252,17 +251,19 @@ fun AppNavigation(
                         },
                     )
                 }
-                entry<AppRoute.DocumentForms> { DocumentFormsRoute(onBack = viewModel::goBack) }
                 entry<AppRoute.DocumentCertificates> { DocumentCertificatesRoute(onBack = viewModel::goBack) }
                 entry<AppRoute.DocumentSearch> {
                     DocumentSearchRoute(
                         onBack = viewModel::goBack,
-                        onOpenDocument = { viewModel.navigateTo(AppRoute.DocumentViewer(it)) },
+                        onOpenDocument = { documentId, pageNumber ->
+                            viewModel.navigateTo(AppRoute.DocumentViewer(documentId, pageNumber))
+                        },
                     )
                 }
                 entry<AppRoute.DocumentViewer> { route ->
                     DocumentViewerRoute(
                         documentId = route.documentId,
+                        initialPageNumber = route.initialPageNumber,
                         viewModel = viewerViewModel,
                         actionsViewModel = actionsViewModel,
                         toolsViewModel = toolsViewModel,
@@ -303,6 +304,7 @@ fun AppNavigation(
                         onBack = viewModel::goBack,
                     )
                 }
+                entry<AppRoute.Trash> { TrashRoute(onBack = viewModel::goBack) }
                 entry<AppRoute.Tags> { TagsRoute(onNavigationBack = viewModel::goBack) }
                 entry<AppRoute.Signatures> { SignaturesScreen(onBack = viewModel::goBack) }
                 entry<AppRoute.Settings> {

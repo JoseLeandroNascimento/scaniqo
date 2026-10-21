@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_screen_add_files">إضافة ملفات PDF</string>
+    <string name="merge_screen_back">رجوع</string>
+    <string name="merge_result_new_document">PDF جديد · بلا كلمة مرور</string>
+    <string name="merge_screen_library_error">تعذر تحميل مستنداتك.</string>
+    <string name="merge_move_up">نقل لأعلى</string>
+    <string name="merge_move_down">نقل لأسفل</string>
+    <string name="merge_remove">إزالة</string>
+</resources>

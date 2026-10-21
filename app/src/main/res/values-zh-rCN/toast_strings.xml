@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="toast_success_title">操作成功</string>
+    <string name="toast_error_title">出现了问题</string>
+    <string name="toast_info_title">信息</string>
+    <string name="toast_dismiss">关闭消息</string>
+</resources>

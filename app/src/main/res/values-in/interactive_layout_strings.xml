@@ -1,0 +1,10 @@
+<resources>
+    <string name="layout_interactive_position">Posisi</string>
+    <string name="layout_interactive_rotate">Putar</string>
+    <string name="layout_interactive_drag">Seret untuk meratakan</string>
+    <string name="layout_interactive_twist">Putar dengan dua jari</string>
+    <string name="layout_interactive_pinch">Gunakan dua jari untuk memperbesar</string>
+    <string name="layout_interactive_position_space">Perkecil di Ukuran untuk membuat margin.</string>
+    <string name="layout_interactive_rotate_left">Putar 90 derajat ke kiri</string>
+    <string name="layout_interactive_rotate_right">Putar 90 derajat ke kanan</string>
+</resources>

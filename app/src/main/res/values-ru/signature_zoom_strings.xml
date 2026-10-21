@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_document_zoom">Масштаб документа</string>
+    <string name="signature_document_zoom_in">Увеличить документ</string>
+    <string name="signature_document_zoom_out">Уменьшить документ</string>
+    <string name="signature_document_zoom_value">%1$d%%</string>
+    <string name="signature_document_zoom_reset">Показать всю страницу, 100 процентов</string>
+    <string name="signature_document_pan_left">Сдвинуть документ влево</string>
+    <string name="signature_document_pan_right">Сдвинуть документ вправо</string>
+    <string name="signature_document_pan_up">Сдвинуть документ вверх</string>
+    <string name="signature_document_pan_down">Сдвинуть документ вниз</string>
+</resources>

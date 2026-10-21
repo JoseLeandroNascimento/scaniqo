@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_selection_title">دمج ملفات PDF</string>
+    <string name="merge_selection_new_document">إنشاء PDF جديد بلا كلمة مرور مع الاحتفاظ بالملفات الأصلية.</string>
+    <string name="merge_selection_editor">اختر ملفات PDF وحدد ترتيب إضافة صفحاتها.</string>
+    <string name="merge_selection_order_title">الترتيب</string>
+    <string name="merge_selection_drag_hint">اضغط مطولًا لإعادة الترتيب</string>
+    <string name="merge_selection_library_title">مستنداتك</string>
+    <string name="merge_selection_empty">أضف ملفات PDF للبدء.</string>
+    <string name="merge_selection_empty_title">ملفات PDF معًا</string>
+    <string name="merge_selection_current">المستند الحالي · %1$s</string>
+    <string name="merge_selection_library_empty">لا توجد مستندات متاحة في المكتبة.</string>
+    <string name="merge_selection_all_added">تمت إضافة الكل.</string>
+    <string name="merge_selection_add_files">إضافة ملفات من الجهاز</string>
+    <string name="merge_selection_external">ملف من الجهاز</string>
+    <string name="merge_selection_remove">إزالة %1$s من التحديد</string>
+    <string name="merge_selection_move_up">نقل %1$s لأعلى</string>
+    <string name="merge_selection_move_down">نقل %1$s لأسفل</string>
+    <string name="merge_selection_drag_handle">إعادة ترتيب %1$s، الموضع %2$d من %3$d</string>
+    <string name="merge_selection_cancel_drag">إلغاء تغيير الترتيب</string>
+    <string name="merge_selection_protected">قد تطلب ملفات PDF المحمية كلمة مرور. ستكون النتيجة بلا كلمة مرور.</string>
+    <string name="merge_selection_preserve_protection">ستُحفظ حماية المستند الجاري تعديله في النتيجة.</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="zero">اختر %1$d ملف PDF</item>
+        <item quantity="one">اختر ملف PDF واحدًا (%1$d)</item>
+        <item quantity="two">اختر ملفي PDF (%1$d)</item>
+        <item quantity="few">اختر %1$d ملفات PDF</item>
+        <item quantity="many">اختر %1$d ملف PDF</item>
+        <item quantity="other">اختر %1$d ملف PDF</item>
+    </plurals>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">Limite de traços atingido. Desfaça um traço para continuar.</string>
+    <string name="runtime_signature_image_required">Escolha uma imagem da assinatura.</string>
+    <string name="runtime_password_required">Informe a senha do PDF.</string>
+    <string name="runtime_unlock_required">Desbloqueie para acessar os PDFs protegidos.</string>
+    <string name="runtime_merge_paused">A mesclagem foi pausada. Toque em tentar novamente para continuar.</string>
+    <string name="runtime_password_setup_required">Configure a senha geral para guardar a senha deste PDF com segurança.</string>
+    <string name="runtime_password_incorrect">Senha incorreta. Tente novamente.</string>
+    <string name="runtime_signed_pdf_saved">PDF assinado salvo.</string>
+    <string name="runtime_zip_exported">Imagens exportadas em um arquivo ZIP.</string>
+    <string name="runtime_csv_exported">Dados revisados exportados em CSV.</string>
+    <string name="runtime_receipt_page_required">Informe uma página válida do comprovante.</string>
+    <string name="runtime_receipt_review_required">Revise os dados novamente antes de exportar.</string>
+    <string name="runtime_document_unavailable">O documento não está mais disponível.</string>
+    <string name="runtime_imported_document">Documento importado</string>
+    <string name="runtime_signature_default_name">Minha assinatura</string>
+    <string name="runtime_name_invalid">Informe um nome de até 100 caracteres.</string>
+    <string name="runtime_pdf_size_limit">Selecione um PDF de até 50 MB.</string>
+    <string name="runtime_pdf_page_limit">Selecione um PDF com 1 a 100 páginas.</string>
+    <string name="runtime_pdf_unprotected_required">Abra uma cópia sem senha para usar esta ferramenta.</string>
+    <string name="runtime_new_file_required">Escolha um arquivo novo para preservar o PDF original.</string>
+    <string name="runtime_destination_failed">Não foi possível salvar no local selecionado.</string>
+    <string name="runtime_certificate_select_again">Selecione novamente o certificado no Android.</string>
+    <string name="runtime_certificate_chain_unavailable">A cadeia do certificado não está disponível.</string>
+    <string name="runtime_certificate_rsa_ec">Selecione um certificado RSA ou EC.</string>
+    <string name="runtime_certificate_sign_failed">Não foi possível usar este certificado para assinar.</string>
+    <string name="runtime_certificate_sign_disallowed">Este documento não permite uma nova assinatura nesta ferramenta.</string>
+    <string name="runtime_pdf_copy_disallowed">A senha deste PDF não permite copiar páginas para outro documento.</string>
+    <string name="runtime_pdf_extract_disallowed">Este PDF não permite extrair conteúdo.</string>
+    <string name="runtime_pdf_edit_disallowed">A senha informada não permite editar este PDF.</string>
+    <string name="runtime_two_pdfs_required">Selecione pelo menos dois PDFs.</string>
+    <string name="runtime_scan_page_limit">Digitalize entre 1 e 20 páginas por vez.</string>
+    <string name="runtime_images_size_limit">As imagens excederam 200 MB. Exporte menos páginas por vez.</string>
+    <string name="runtime_ocr_empty">Nenhum texto foi reconhecido. Tente uma digitalização mais nítida.</string>
+    <string name="runtime_signature_empty">Desenhe ou digite uma assinatura antes de salvar.</string>
+    <string name="runtime_image_size_limit">Selecione uma imagem de até 10 MB.</string>
+    <string name="runtime_selected_pdf">PDF selecionado</string>
+    <string name="runtime_signature_name_invalid">Informe um nome com até 80 caracteres.</string>
+    <string name="runtime_signature_text_invalid">Digite um nome com até 80 caracteres.</string>
+    <string name="runtime_signature_drawing_large">O desenho está muito grande. Simplifique a assinatura.</string>
+    <string name="runtime_image_invalid">Escolha uma imagem válida.</string>
+    <string name="runtime_signature_not_found">Assinatura não encontrada.</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_editor_source">कैप्चर की गई इमेज</string>
+    <string name="capture_editor_source_page">पृष्ठ %1$d की कैप्चर की गई इमेज</string>
+    <string name="capture_editor_result">इमेज में परिणाम</string>
+    <string name="capture_editor_unavailable">इस पृष्ठ में संपादन के लिए एक अकेली इमेज नहीं है।</string>
+    <string name="capture_editor_convert_title">पृष्ठ को इमेज में बदलें</string>
+    <string name="capture_editor_convert_hint">इस कैप्चर में PDF के टेक्स्ट या ग्राफ़िक्स हैं। बैकग्राउंड हटाने के लिए पृष्ठ को इमेज में बदलें।</string>
+</resources>

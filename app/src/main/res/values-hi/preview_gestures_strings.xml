@@ -1,0 +1,8 @@
+<resources>
+    <string name="preview_zoom_expand">पूरी स्क्रीन में बड़ा करें</string>
+    <string name="preview_zoom_close">बड़ा दृश्य बंद करें</string>
+    <string name="preview_zoom_reset">पृष्ठ स्क्रीन में फिट करें</string>
+    <string name="preview_controls_show">समायोजन</string>
+    <string name="preview_controls_hide">समायोजन छिपाएँ</string>
+    <string name="preview_gestures_hint">ज़ूम करने और देखने के लिए दो उँगलियाँ इस्तेमाल करें।</string>
+</resources>

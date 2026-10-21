@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_scope_current">هذه الصفحة</string>
+    <string name="document_scope_select">اختيار</string>
+    <string name="document_scope_all">الكل</string>
+    <string name="document_scope_title">التطبيق على أي صفحات؟</string>
+    <string name="document_scope_hint">سيُطبّق الضبط نفسه على الصفحات المحددة فقط.</string>
+    <string name="document_scope_select_all">تحديد الكل</string>
+    <string name="document_scope_clear">مسح</string>
+    <string name="document_scope_confirm">استخدام التحديد</string>
+    <string name="document_scope_cancel">إلغاء</string>
+    <string name="document_scope_page">الصفحة %1$d</string>
+    <string name="document_scope_selected_count">اختيار (%1$d)</string>
+    <string name="document_scope_empty">حدد صفحة واحدة على الأقل.</string>
+    <plurals name="document_scope_apply_count">
+        <item quantity="zero">تطبيق على %1$d صفحة</item>
+        <item quantity="one">تطبيق على صفحة واحدة (%1$d)</item>
+        <item quantity="two">تطبيق على صفحتين (%1$d)</item>
+        <item quantity="few">تطبيق على %1$d صفحات</item>
+        <item quantity="many">تطبيق على %1$d صفحة</item>
+        <item quantity="other">تطبيق على %1$d صفحة</item>
+    </plurals>
+    <plurals name="document_scope_count">
+        <item quantity="zero">لم تُحدد صفحات (%1$d)</item>
+        <item quantity="one">حُددت صفحة واحدة (%1$d)</item>
+        <item quantity="two">حُددت صفحتان (%1$d)</item>
+        <item quantity="few">حُددت %1$d صفحات</item>
+        <item quantity="many">حُددت %1$d صفحة</item>
+        <item quantity="other">حُددت %1$d صفحة</item>
+    </plurals>
+    <string name="corrections_tab_angle">إمالة</string>
+    <string name="corrections_tab_perspective">الحواف</string>
+    <string name="corrections_tab_curve">انحناء</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">الصفحة %1$d من %2$d. اختيار صفحة المعاينة</string>
+    <string name="corrections_live_title">معاينة الضبط</string>
+    <string name="corrections_live_hint">تتغير المعاينة مع عناصر التحكم. لا يتغير المستند إلا عند التطبيق.</string>
+    <string name="corrections_preview_previous">معاينة الصفحة السابقة</string>
+    <string name="corrections_preview_next">معاينة الصفحة التالية</string>
+    <string name="corrections_preview_choose">اختيار صفحة المعاينة</string>
+    <string name="corrections_preview_pages">اختيار صفحة للعرض</string>
+    <string name="corrections_preview_before">قبل</string>
+    <string name="corrections_preview_after">بعد</string>
+    <string name="corrections_preview_before_description">عرض الصفحة قبل هذا الضبط</string>
+    <string name="corrections_preview_after_description">عرض نتيجة هذا الضبط</string>
+    <string name="corrections_preview_before_hint">قبل هذا الضبط</string>
+    <string name="corrections_preview_after_hint">نتيجة الضبط</string>
+    <string name="corrections_preview_updating">جارٍ التحديث…</string>
+    <string name="corrections_preview_error">تعذر تحديث المعاينة.</string>
+    <string name="corrections_preview_retry">إعادة المحاولة</string>
+    <string name="corrections_preview_native_hint">يُحفظ النص والرسومات المتجهة. لتصحيح هذه الصفحة كصورة، فعّل الخيار أدناه.</string>
+    <string name="corrections_page_navigation_hint">تبقى الإعدادات عند تغيير المعاينة لتراجع الضبط على صفحات أخرى.</string>
+    <string name="corrections_perspective_editor">ضبط حواف الصورة الملتقطة</string>
+    <string name="corrections_perspective_live_hint">اسحب الزوايا في الصورة أدناه وتابع النتيجة أعلاه.</string>
+</resources>

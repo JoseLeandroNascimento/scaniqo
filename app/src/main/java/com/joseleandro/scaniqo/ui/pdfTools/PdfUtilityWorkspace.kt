@@ -55,11 +55,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -202,8 +204,8 @@ internal fun PdfUtilityWorkspace(
                 WorkspaceNotice(stringResource(R.string.utility_library_error), error = true)
                 TextButton(onClick = onRetry, enabled = enabled) { Text(stringResource(R.string.documents_retry)) }
             }
-            state.error?.let { WorkspaceNotice(it, error = true) }
-            state.message?.let { WorkspaceNotice(it) }
+            state.error?.let { WorkspaceNotice(localizedRuntimeMessage(it), error = true) }
+            state.message?.let { WorkspaceNotice(localizedRuntimeMessage(it)) }
             if (compress) state.compressionResult?.let { result ->
                 Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.primaryContainer) {
                     Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -275,6 +277,7 @@ internal fun PdfUtilityWorkspace(
                         if (showRange) {
                             OutlinedTextField(
                                 value = pages, onValueChange = { emptySelection = false; onPages(it.take(1000)) },
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr),
                                 modifier = Modifier.fillMaxWidth(), enabled = enabled,
                                 label = { Text(stringResource(R.string.utility_pages)) }, singleLine = true,
                                 isError = pageError != null,
@@ -321,6 +324,7 @@ internal fun PdfUtilityWorkspace(
                     Text(stringResource(R.string.utility_workspace_output), style = MaterialTheme.typography.titleMedium)
                     if (extract || compress) {
                         OutlinedTextField(value = name, onValueChange = { onName(it.take(DOCUMENT_NAME_MAX_LENGTH)) },
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
                             modifier = Modifier.fillMaxWidth(), enabled = enabled,
                             label = { Text(stringResource(R.string.utility_name)) }, singleLine = true)
                         Text(stringResource(R.string.utility_workspace_copy_hint), style = MaterialTheme.typography.bodySmall,
@@ -365,7 +369,8 @@ private fun WorkspaceSource(document: DocumentModel?, enabled: Boolean, onChoose
                 Modifier.size(40.dp), tint = MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(document?.name ?: stringResource(R.string.utility_select_pdf),
-                    style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    style = MaterialTheme.typography.titleSmall.copy(textDirection = TextDirection.ContentOrLtr),
+                    maxLines = 2, overflow = TextOverflow.Ellipsis)
                 Text(if (document == null) stringResource(R.string.utility_workspace_choose_hint)
                     else stringResource(R.string.utility_source_pages, document.pageCount) + " · " +
                         Formatter.formatShortFileSize(LocalContext.current, document.sizeBytes),
@@ -401,7 +406,7 @@ private fun WorkspacePageTile(document: DocumentModel, index: Int, selected: Boo
             }
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text((index + 1).toString(), Modifier.weight(1f).padding(start = 6.dp),
-                    style = MaterialTheme.typography.labelLarge)
+                    style = MaterialTheme.typography.labelLarge.copy(textDirection = TextDirection.Ltr))
                 if (!document.isProtected) IconButton(onClick = { inspecting = true }, enabled = enabled) {
                     Icon(painterResource(R.drawable.ic_preview_expand),
                         stringResource(R.string.utility_workspace_inspect_page, index + 1), Modifier.size(20.dp))

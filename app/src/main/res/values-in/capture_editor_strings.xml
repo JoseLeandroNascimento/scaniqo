@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_editor_source">Gambar hasil tangkapan</string>
+    <string name="capture_editor_source_page">Gambar hasil tangkapan halaman %1$d</string>
+    <string name="capture_editor_result">Hasil pada gambar</string>
+    <string name="capture_editor_unavailable">Halaman ini tidak memiliki satu gambar tunggal untuk diedit.</string>
+    <string name="capture_editor_convert_title">Ubah halaman menjadi gambar</string>
+    <string name="capture_editor_convert_hint">Tangkapan ini berisi teks atau grafis PDF. Ubah halaman menjadi gambar untuk menghapus latar belakang.</string>
+</resources>

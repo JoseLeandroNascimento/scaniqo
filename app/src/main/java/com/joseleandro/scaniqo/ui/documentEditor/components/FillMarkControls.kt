@@ -185,7 +185,7 @@ private fun FillMarkPosition(draft: PdfOverlay, editable: Boolean, onUpdate: (Pd
             ).forEach { (label, rotation, delta) ->
                 FilledTonalIconButton(onClick = { onUpdate(draft.movedTo(draft.x + delta.first * .005f, draft.y + delta.second * .005f)) },
                     enabled = editable) {
-                    Icon(painterResource(R.drawable.arrow_back_24px), stringResource(label), Modifier.rotate(rotation))
+                    Icon(painterResource(R.drawable.ic_physical_arrow_left), stringResource(label), Modifier.rotate(rotation))
                 }
             }
             OutlinedIconButton(onClick = { onUpdate(draft.movedTo((1f - draft.width) / 2f, (1f - draft.height) / 2f)) },

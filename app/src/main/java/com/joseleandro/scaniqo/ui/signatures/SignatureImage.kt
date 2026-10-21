@@ -22,6 +22,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.stringResource
+import com.joseleandro.scaniqo.R
 import androidx.core.net.toUri
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -93,9 +95,9 @@ fun SignatureImage(
     }
     Box(modifier, contentAlignment = Alignment.Center) {
         when {
-            image != null -> Image(image, "Assinatura", Modifier.fillMaxSize(), contentScale = contentScale)
+            image != null -> Image(image, stringResource(R.string.runtime_signature_placeholder), Modifier.fillMaxSize(), contentScale = contentScale)
             current == null -> CircularProgressIndicator()
-            else -> Text("Imagem indisponível")
+            else -> Text(stringResource(R.string.runtime_image_unavailable))
         }
     }
 }

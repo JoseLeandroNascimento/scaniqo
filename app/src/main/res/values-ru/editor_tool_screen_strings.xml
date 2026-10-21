@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">Назад</string>
+    <string name="editor_tool_done">Готово</string>
+    <string name="editor_tool_discard_title">Отменить настройки?</string>
+    <string name="editor_tool_discard_body">Неприменённые изменения будут потеряны.</string>
+</resources>

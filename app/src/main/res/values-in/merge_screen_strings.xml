@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_screen_add_files">Tambahkan PDF</string>
+    <string name="merge_screen_back">Kembali</string>
+    <string name="merge_result_new_document">PDF baru · tanpa kata sandi</string>
+    <string name="merge_screen_library_error">Dokumen Anda tidak dapat dimuat.</string>
+    <string name="merge_move_up">Pindahkan ke atas</string>
+    <string name="merge_move_down">Pindahkan ke bawah</string>
+    <string name="merge_remove">Hapus</string>
+</resources>

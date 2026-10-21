@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -79,6 +80,7 @@ fun DocumentViewerScreen(
     toolsState: DocumentToolsUiState,
     onToolsEvent: (DocumentToolsEvent) -> Unit,
     modifier: Modifier = Modifier,
+    initialPageNumber: Int? = null,
 ) {
     val document = uiState.document
     val sameSession = toolsState.document?.id == documentId
@@ -101,6 +103,24 @@ fun DocumentViewerScreen(
     )
     DocumentToolsMessages(toolsState, onToolsEvent, toastState)
 
+    var initialPageApplied by rememberSaveable(documentId, initialPageNumber) {
+        mutableStateOf(initialPageNumber == null)
+    }
+    LaunchedEffect(
+        document?.id, uiState.isLoading, initialPageNumber,
+        workspace?.workspaceId, workspace?.pages?.size, toolsState.canEdit,
+    ) {
+        if (initialPageApplied || document == null || uiState.isLoading ||
+            workspace == null || !toolsState.canEdit || locked) return@LaunchedEffect
+        val pageIndex = initialViewerPageIndex(initialPageNumber, workspace.pages.size)
+            ?: return@LaunchedEffect
+        // Aguarda as páginas definitivas; a prévia temporária usa outras chaves na lista.
+        snapshotFlow { listState.layoutInfo.totalItemsCount }.first { it >= workspace.pages.size + 1 }
+        onToolsEvent(DocumentToolsEvent.SelectPage(workspace.pages[pageIndex].id))
+        listState.scrollToItem(pageIndex + 1) // O primeiro item contém os dados do documento.
+        initialPageApplied = true
+    }
+
     var previousSelection by remember(documentId) { mutableStateOf<String?>(null) }
     LaunchedEffect(
         toolsState.selectedPageId,
@@ -110,7 +130,8 @@ fun DocumentViewerScreen(
         val previous = previousSelection
         previousSelection = toolsState.selectedPageId
         // Atualizar a imagem preserva a posição de leitura. Só uma nova seleção move a lista.
-        if (workspace != null && !locked && (previous != null || toolsState.signatureDraft != null)) {
+        if (initialPageApplied && workspace != null && !locked &&
+            (previous != null || toolsState.signatureDraft != null)) {
             snapshotFlow { listState.layoutInfo.totalItemsCount }.first { it >= workspace.pages.size + 1 }
             listState.animateScrollToItem(toolsState.selectedPageIndex + 1)
         }
@@ -118,7 +139,7 @@ fun DocumentViewerScreen(
 
     LaunchedEffect(filtersOpen) {
         // Ao abrir a faixa, a página escolhida ocupa a área livre para conferir o efeito.
-        if (filtersOpen && workspace != null && !locked) {
+        if (initialPageApplied && filtersOpen && workspace != null && !locked) {
             snapshotFlow { listState.layoutInfo.totalItemsCount }.first { it >= workspace.pages.size + 1 }
             listState.animateScrollToItem(toolsState.selectedPageIndex + 1)
         }

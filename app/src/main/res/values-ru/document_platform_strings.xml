@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_share_chooser">Поделиться PDF</string>
+    <string name="document_pdf_page_description">Страница %1$d документа</string>
+    <string name="document_pdf_loading">Загрузка страницы</string>
+    <string name="document_pdf_error">Не удалось открыть эту страницу.</string>
+    <string name="document_pdf_retry">Повторить</string>
+    <string name="document_thumbnail_description">Миниатюра документа</string>
+</resources>

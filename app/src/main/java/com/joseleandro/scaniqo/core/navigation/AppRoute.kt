@@ -13,16 +13,16 @@ sealed interface AppRoute : NavKey {
     data object Documents : AppRoute
 
     @Serializable
+    @SerialName("trash")
+    data object Trash : AppRoute
+
+    @Serializable
     @SerialName("tools")
     data object Tools : AppRoute
 
     @Serializable
     @SerialName("pdf_utility")
     data class PdfUtilityTool(val tool: PdfUtility) : AppRoute
-
-    @Serializable
-    @SerialName("document_forms")
-    data object DocumentForms : AppRoute
 
     @Serializable
     @SerialName("document_certificates")
@@ -34,7 +34,11 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     @SerialName("document_viewer")
-    data class DocumentViewer(val documentId: Long) : AppRoute
+    data class DocumentViewer(
+        val documentId: Long,
+        /** Página inicial solicitada pela busca, começando em 1. */
+        val initialPageNumber: Int? = null,
+    ) : AppRoute
 
     @Serializable
     @SerialName("document_signature")

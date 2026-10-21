@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="document_share_chooser">Compartilhar PDF</string>
-    <string name="document_pdf_page_description">Página %1$d do documento</string>
-    <string name="document_pdf_loading">Carregando página</string>
-    <string name="document_pdf_error">Não foi possível abrir esta página.</string>
-    <string name="document_pdf_retry">Tentar novamente</string>
-    <string name="document_thumbnail_description">Miniatura do documento</string>
+    <string name="document_share_chooser">Share PDF</string>
+    <string name="document_pdf_page_description">Page %1$d of the document</string>
+    <string name="document_pdf_loading">Loading page</string>
+    <string name="document_pdf_error">Could not open this page.</string>
+    <string name="document_pdf_retry">Try again</string>
+    <string name="document_thumbnail_description">Document thumbnail</string>
 </resources>

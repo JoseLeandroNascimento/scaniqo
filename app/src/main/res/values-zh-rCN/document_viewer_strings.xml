@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_title">文档</string>
+    <string name="viewer_created_on">创建于 %1$s</string>
+    <string name="viewer_page_selected">已选择</string>
+    <string name="viewer_pdf_format">PDF</string>
+</resources>

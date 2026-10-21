@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_position_title">Fusionner des PDF</string>
+    <string name="merge_position_label">Insérer de nouvelles pages</string>
+    <string name="merge_position_start">Début</string>
+    <string name="merge_position_after">Après la page</string>
+    <string name="merge_position_end">Fin</string>
+    <string name="merge_position_page_label">Numéro de page</string>
+    <string name="merge_position_page_error">Saisissez une page de 1 à %1$d.</string>
+    <string name="merge_position_start_description">Les nouvelles pages seront ajoutées au début du document.</string>
+    <string name="merge_position_after_description">Les nouvelles pages seront ajoutées après la page %1$d.</string>
+    <string name="merge_position_end_description">Les nouvelles pages seront ajoutées à la fin du document.</string>
+    <string name="merge_position_invalid_description">Choisissez une page valide pour continuer.</string>
+    <string name="merge_position_select_pdfs">Sélectionner des PDF</string>
+    <plurals name="merge_position_page_count">
+        <item quantity="one">Document de %1$d page</item>
+        <item quantity="many">Document de %1$d pages</item>
+        <item quantity="other">Document de %1$d pages</item>
+    </plurals>
+</resources>

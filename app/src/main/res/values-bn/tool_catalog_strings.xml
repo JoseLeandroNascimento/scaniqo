@@ -1,0 +1,21 @@
+<resources>
+    <string name="tool_catalog_title">টুল</string>
+    <string name="tool_catalog_heading">আপনি কী করতে চান?</string>
+    <string name="tool_catalog_search">টুল খুঁজুন</string>
+    <string name="tool_catalog_clear">অনুসন্ধান মুছুন</string>
+    <string name="tool_catalog_all">সব</string>
+    <string name="tool_catalog_organize">গুছিয়ে নিন</string>
+    <string name="tool_catalog_convert">রূপান্তর করুন</string>
+    <string name="tool_catalog_edit">সম্পাদনা করুন</string>
+    <string name="tool_catalog_fill">পূরণ ও স্বাক্ষর করুন</string>
+    <string name="tool_catalog_empty">কোনো টুল পাওয়া যায়নি।</string>
+    <string name="tool_catalog_reset">সব টুল দেখুন</string>
+    <string name="tool_catalog_compress">PDF কম্প্রেস করুন</string>
+    <string name="tool_catalog_compress_hint">পাঠানো ও শেয়ারের জন্য আকার কমান</string>
+    <string name="tool_catalog_fill_page">পৃষ্ঠার উপরে পূরণ করুন</string>
+    <string name="tool_catalog_fill_hint">নথিতে টেক্সট ও চিহ্ন বসান</string>
+    <string name="tool_catalog_watermark">জলছাপ</string>
+    <string name="tool_catalog_watermark_hint">টেক্সট, ছবি বা স্ট্যাম্প দিয়ে সাজান</string>
+    <string name="tool_catalog_choose_for">%1$s-এর জন্য নথি বেছে নিন</string>
+    <string name="tool_catalog_count">%1$dটি টুল উপলব্ধ</string>
+</resources>

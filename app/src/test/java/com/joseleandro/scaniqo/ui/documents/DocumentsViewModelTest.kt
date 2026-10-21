@@ -43,7 +43,10 @@ class DocumentsViewModelTest {
     }
 
     private val actions by lazy {
-        DocumentActionsViewModel(repository, tagRepository, actionsSavedStateHandle)
+        DocumentActionsViewModel(
+            repository, tagRepository, actionsSavedStateHandle,
+            defaultDocumentName = { createdAt -> "Localized document $createdAt" },
+        )
             .also { viewModelStore.put("actions", it) }
     }
 
@@ -147,7 +150,7 @@ class DocumentsViewModelTest {
         val editor = actions.uiState.value.editor!!
         assertFalse(actions.uiState.value.isPreparingScan)
         assertEquals(repository.scan, editor.draft)
-        assertTrue(editor.name.matches(Regex("Documento \\d{2}-\\d{2}-\\d{4} \\d{2}\\.\\d{2}")))
+        assertEquals("Localized document ${repository.scan.createdAt}", editor.name)
         assertEquals(tag.id, editor.tagId)
         assertNull(editor.documentId)
         assertEquals(listOf("content://page-1", "content://page-2"), repository.preparedPages.single())

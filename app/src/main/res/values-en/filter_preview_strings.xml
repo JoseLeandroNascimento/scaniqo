@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_preview_options">Choose an effect</string>
+    <string name="filter_preview_samples">Thumbnails of this page at maximum intensity.</string>
+    <string name="filter_preview_loading">Preparing effects…</string>
+    <string name="filter_preview_thumbnails_error">Could not load thumbnails.</string>
+    <string name="filter_preview_retry">Try again</string>
+    <string name="filter_preview_thumbnail_error">Preview unavailable</string>
+    <string name="filter_preview_thumbnail_description">%1$s filter preview</string>
+    <string name="filter_preview_native_preserved">This page contains text or vectors. To preview effects, allow image conversion below.</string>
+    <string name="filter_preview_live_hint">Check the result before applying. Intensity changes only the larger preview.</string>
+</resources>

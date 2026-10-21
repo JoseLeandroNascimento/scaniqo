@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">Kembali</string>
+    <string name="editor_tool_done">Selesai</string>
+    <string name="editor_tool_discard_title">Buang penyesuaian?</string>
+    <string name="editor_tool_discard_body">Perubahan yang belum diterapkan akan hilang.</string>
+</resources>

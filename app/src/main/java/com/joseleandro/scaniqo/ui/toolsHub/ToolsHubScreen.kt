@@ -64,7 +64,6 @@ internal enum class CatalogTool(
     EDITOR(R.string.tools_hub_editor, R.string.tools_hub_editor_hint, R.drawable.ic_tool_pdf_edit, ToolGroup.EDIT, Color(0xFF376B8E)),
     SIGN(R.string.quick_tools_sign, R.string.quick_tools_sign_hint, R.drawable.ic_tool_signature, ToolGroup.FILL, Color(0xFF735A91)),
     FILL_PAGE(R.string.tool_catalog_fill_page, R.string.tool_catalog_fill_hint, R.drawable.ic_tool_fill_page, ToolGroup.FILL, Color(0xFF387E88)),
-    FORMS(R.string.tool_catalog_forms, R.string.tool_catalog_forms_hint, R.drawable.ic_tool_interactive_form, ToolGroup.FILL, Color(0xFF92702F)),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +78,6 @@ fun ToolsHubScreen(
     onUtility: (PdfUtility) -> Unit,
     onEdit: (Long, DocumentTool?) -> Unit,
     onImportForEditor: (DocumentTool?) -> Unit,
-    onForms: () -> Unit,
     onRetryDocuments: () -> Unit,
     snackbarHost: @Composable () -> Unit = {},
 ) {
@@ -103,7 +101,6 @@ fun ToolsHubScreen(
             CatalogTool.PDF_IMAGES -> onUtility(PdfUtility.PDF_TO_IMAGES)
             CatalogTool.COMPRESS -> onUtility(PdfUtility.COMPRESS_PDF)
             CatalogTool.SIGN -> onSign()
-            CatalogTool.FORMS -> onForms()
             else -> selectedEditor = tool
         }
     }
@@ -276,6 +273,6 @@ private fun EditorDocumentPicker(
 @Composable
 private fun ToolsHubPreview() {
     ScaniqoTheme {
-        ToolsHubScreen(DocumentsUiState(isLoading = false), true, {}, {}, {}, {}, {}, { _, _ -> }, {}, {}, {})
+        ToolsHubScreen(DocumentsUiState(isLoading = false), true, {}, {}, {}, {}, {}, { _, _ -> }, {}, {})
     }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_bar_title">الفلاتر</string>
+    <string name="filter_bar_scope">جميع الصفحات</string>
+    <string name="filter_bar_close">إغلاق الفلاتر</string>
+    <string name="filter_bar_samples_error">تعذر تحميل الصور المصغرة.</string>
+    <string name="filter_bar_native_hint">في ملفات PDF النصية، يحوّل الفلتر الصفحة إلى صورة.</string>
+</resources>

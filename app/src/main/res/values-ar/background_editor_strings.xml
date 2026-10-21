@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_editor_title">الخلفية</string>
+    <string name="background_editor_remove">إزالة الخلفية</string>
+    <string name="background_editor_retry">اكتشاف مجددًا</string>
+    <string name="background_editor_adjust">ضبط الحدود</string>
+    <string name="background_editor_detecting">جارٍ تحديد موضع الورقة…</string>
+    <string name="background_editor_suggested">راجع النتيجة أو اضبط الحدود قبل التطبيق.</string>
+    <string name="background_editor_no_edges">اضبط الزوايا يدويًا لتحديد الورقة.</string>
+    <string name="background_editor_failed">تعذر تحديد موضع الورقة. اضبط الزوايا يدويًا.</string>
+    <string name="background_editor_hint">تُزال الخلفية تلقائيًا من الصورة الملتقطة مع الحفاظ على محتوى الورقة.</string>
+</resources>

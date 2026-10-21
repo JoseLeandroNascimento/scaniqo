@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="interactive_scope_current">所选页面</string>
+    <string name="interactive_scope_choose">选择页面…</string>
+    <string name="interactive_scope_all">所有页面</string>
+    <string name="interactive_scope_current_summary">仅第 %1$d 页</string>
+    <string name="interactive_scope_all_summary">全部（%1$d）</string>
+    <plurals name="interactive_scope_selected_summary">
+        <item quantity="other">已选择 %1$d 页</item>
+    </plurals>
+    <string name="interactive_scope_description">应用范围：%1$s。更改页面</string>
+    <string name="interactive_preview_page">第 %1$d 页</string>
+    <string name="interactive_preview_page_description">第 %1$d 页，第 %2$d 个预览，共 %3$d 个。选择预览</string>
+    <string name="interactive_preview_busy">正在更新预览</string>
+</resources>

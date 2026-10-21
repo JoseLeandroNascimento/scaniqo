@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_title">Документ</string>
+    <string name="viewer_created_on">Создан: %1$s</string>
+    <string name="viewer_page_selected">Выбрана</string>
+    <string name="viewer_pdf_format">PDF</string>
+</resources>

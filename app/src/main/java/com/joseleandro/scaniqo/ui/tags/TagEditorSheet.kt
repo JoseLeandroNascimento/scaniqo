@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -140,6 +141,7 @@ private fun TagEditorContent(
                 OutlinedTextField(
                     value = editor.name,
                     onValueChange = { onEvent(TagsEvent.NameChanged(it)) },
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text(stringResource(R.string.tag_name_label)) },
                     placeholder = { Text(stringResource(R.string.tag_name_placeholder)) },
@@ -298,7 +300,7 @@ private fun TagEditorPreviewCard(editor: TagEditorUiState) {
                 )
                 Text(
                     text = editor.name.trim().ifBlank { stringResource(R.string.tag_preview_name) },
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(textDirection = TextDirection.ContentOrLtr),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )

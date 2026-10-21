@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_bar_title">Filter</string>
+    <string name="filter_bar_scope">Semua halaman</string>
+    <string name="filter_bar_close">Tutup filter</string>
+    <string name="filter_bar_samples_error">Gambar mini tidak dapat dimuat.</string>
+    <string name="filter_bar_native_hint">Pada PDF berisi teks, filter mengubah halaman menjadi gambar.</string>
+</resources>

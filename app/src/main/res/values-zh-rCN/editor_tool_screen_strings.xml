@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">返回</string>
+    <string name="editor_tool_done">完成</string>
+    <string name="editor_tool_discard_title">放弃调整？</string>
+    <string name="editor_tool_discard_body">尚未应用的更改将丢失。</string>
+</resources>

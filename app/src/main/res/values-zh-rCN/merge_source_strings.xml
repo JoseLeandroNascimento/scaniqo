@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_source_label">选择 PDF</string>
+    <string name="merge_source_device">来自设备</string>
+    <string name="merge_source_app">来自应用</string>
+    <string name="merge_app_title">应用中的文档</string>
+    <string name="merge_app_description">页面将按照您选择 PDF 的顺序添加。</string>
+    <string name="merge_app_search">按名称搜索</string>
+    <string name="merge_app_empty">应用中没有其他已保存的 PDF。选择“来自设备”以选取文件。</string>
+    <string name="merge_app_no_results">没有找到匹配的文档。</string>
+    <string name="merge_app_selection_order">合并顺序：%1$d</string>
+    <string name="merge_app_protected">受密码保护的 PDF</string>
+    <string name="merge_app_result_protected">合并结果将保留当前编辑文档的保护设置。</string>
+    <string name="merge_app_result_unprotected">当前文档没有密码。受保护 PDF 的页面在合并结果中也不设密码。</string>
+    <plurals name="merge_app_selected_count">
+        <item quantity="other">已选择 %1$d 个 PDF</item>
+    </plurals>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="other">合并 %1$d 个 PDF</item>
+    </plurals>
+</resources>

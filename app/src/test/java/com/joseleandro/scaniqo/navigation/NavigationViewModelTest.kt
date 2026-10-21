@@ -26,13 +26,13 @@ class NavigationViewModelTest {
     @Test
     fun openingASearchResultReturnsToSearchAndItsStackCanBeRestored() {
         viewModel.navigateTo(AppRoute.DocumentSearch)
-        viewModel.navigateTo(AppRoute.DocumentViewer(7))
+        viewModel.navigateTo(AppRoute.DocumentViewer(7, initialPageNumber = 4))
         val serializer = NavBackStackSerializer(AppRoute.serializer())
         val stack = NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray())
         val restored = Json.decodeFromString(serializer, Json.encodeToString(serializer, stack))
 
         assertEquals(
-            listOf(AppRoute.Documents, AppRoute.DocumentSearch, AppRoute.DocumentViewer(7)),
+            listOf(AppRoute.Documents, AppRoute.DocumentSearch, AppRoute.DocumentViewer(7, initialPageNumber = 4)),
             restored.toList(),
         )
         viewModel.goBack()
@@ -42,11 +42,35 @@ class NavigationViewModelTest {
     }
 
     @Test
+    fun returningFromAnEditorPreservesTheSearchDestinationAndItsPage() {
+        val viewer = AppRoute.DocumentViewer(7, initialPageNumber = 4)
+        viewModel.navigateTo(AppRoute.DocumentSearch)
+        viewModel.navigateTo(viewer)
+        viewModel.navigateTo(AppRoute.DocumentEditorTool(7, DocumentTool.FORMS))
+
+        viewModel.goBack()
+
+        assertEquals(viewer, viewModel.backStack.last())
+        viewModel.goBack()
+        assertEquals(AppRoute.DocumentSearch, viewModel.backStack.last())
+    }
+
+    @Test
+    fun restoringAnOlderViewerRouteDefaultsToNoPageJump() {
+        val restored = Json.decodeFromString(
+            AppRoute.DocumentViewer.serializer(),
+            """{"documentId":7}""",
+        )
+
+        assertEquals(AppRoute.DocumentViewer(7), restored)
+    }
+
+    @Test
     fun everyUtilityRestoresItsSelectionAndReturnsToTheToolsHub() {
         viewModel.navigateTo(AppRoute.Tools)
         val serializer = NavBackStackSerializer(AppRoute.serializer())
         val destinations = PdfUtility.entries.map { AppRoute.PdfUtilityTool(it) } +
-            listOf(AppRoute.DocumentForms, AppRoute.DocumentCertificates)
+            listOf(AppRoute.DocumentCertificates)
         for (destination in destinations) {
             viewModel.navigateTo(destination)
             val restored = Json.decodeFromString(serializer, Json.encodeToString(

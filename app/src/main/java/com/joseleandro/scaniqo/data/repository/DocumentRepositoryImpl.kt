@@ -17,7 +17,8 @@ import kotlinx.coroutines.sync.withLock
 
 class DocumentRepositoryImpl(
     private val documentDatasource: DocumentDatasource,
-    private val fileStore: DocumentFileStore
+    private val fileStore: DocumentFileStore,
+    private val nowMillis: () -> Long = System::currentTimeMillis
 ) : DocumentRepository {
 
     // Evita que o descarte do formulário concorra com a confirmação do mesmo scan.
@@ -25,6 +26,9 @@ class DocumentRepositoryImpl(
 
     override fun observeDocuments(): Flow<List<DocumentModel>> =
         documentDatasource.documentsObserver.map { documents -> documents.map { it.toModel() } }
+
+    override fun observeTrashedDocuments(): Flow<List<DocumentModel>> =
+        documentDatasource.trashedDocumentsObserver.map { documents -> documents.map { it.toModel() } }
 
     override suspend fun findById(id: Long): DocumentModel? =
         documentDatasource.findById(id)?.toModel()
@@ -53,6 +57,7 @@ class DocumentRepositoryImpl(
         // A confirmação pode ter sido gravada antes da restauração de um formulário antigo.
         val existing = documentDatasource.findByPdfUri(scan.pdfUri)
         if (existing != null) {
+            check(existing.deletedAt == null) { "Restaure o documento da lixeira antes de editá-lo." }
             if (existing.name != normalizedName || existing.tagId != tagId) {
                 check(documentDatasource.updateMetadata(existing.id, normalizedName, tagId) == 1) {
                     "O documento não foi encontrado para atualização."
@@ -122,6 +127,29 @@ class DocumentRepositoryImpl(
             }
         }
 
+    override suspend fun moveToTrash(id: Long) = mutationMutex.withLock {
+        check(documentDatasource.moveToTrash(id, nowMillis()) == 1) {
+            "O documento não foi encontrado para mover à lixeira."
+        }
+    }
+
+    override suspend fun restoreFromTrash(id: Long) = mutationMutex.withLock {
+        // A chave estrangeira de tags já remove a associação quando uma tag é excluída.
+        check(documentDatasource.restoreFromTrash(id) == 1) {
+            "O documento não foi encontrado na lixeira."
+        }
+    }
+
+    override suspend fun deletePermanently(id: Long) = mutationMutex.withLock {
+        val stored = checkNotNull(documentDatasource.findTrashedById(id)) {
+            "O documento não foi encontrado na lixeira."
+        }
+        check(documentDatasource.deleteTrashed(id) == 1) {
+            "O documento não foi encontrado na lixeira."
+        }
+        deleteUnreferencedFiles(stored.pdfUri)
+    }
+
     override suspend fun delete(document: DocumentModel) = mutationMutex.withLock {
         val stored = checkNotNull(documentDatasource.findById(document.id)) {
             "O documento não foi encontrado para exclusão."
@@ -129,10 +157,15 @@ class DocumentRepositoryImpl(
         check(documentDatasource.delete(stored) == 1) {
             "O documento não foi encontrado para exclusão."
         }
+        deleteUnreferencedFiles(stored.pdfUri)
+    }
+
+    private suspend fun deleteUnreferencedFiles(pdfUri: String) {
         try {
             // Primeiro removemos o registro; falhas de limpeza não restauram um item inválido.
-            if (documentDatasource.findByPdfUri(stored.pdfUri) == null) {
-                fileStore.deleteOwnedDocument(stored.pdfUri)
+            // A consulta inclui a lixeira para proteger arquivos ainda recuperáveis.
+            if (documentDatasource.findByPdfUri(pdfUri) == null) {
+                fileStore.deleteOwnedDocument(pdfUri)
             }
         } catch (cancellation: CancellationException) {
             throw cancellation
@@ -165,6 +198,7 @@ class DocumentRepositoryImpl(
         sizeBytes = sizeBytes,
         thumbnailUri = thumbnailUri,
         tagId = tagId,
-        protectionKeyId = protectionKeyId
+        protectionKeyId = protectionKeyId,
+        deletedAt = deletedAt
     )
 }

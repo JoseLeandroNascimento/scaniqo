@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_title">نسخ احتياطي على Google Drive</string>
+    <string name="backup_heading">مستنداتك في السحابة</string>
+    <string name="backup_intro">احتفظ بنسخة من المستندات المحفوظة واستعدها عند الحاجة.</string>
+    <string name="backup_connect">ربط Google Drive</string>
+    <string name="backup_connected">الحساب متصل</string>
+    <string name="backup_disconnect">قطع الاتصال</string>
+    <string name="backup_now">نسخ احتياطي الآن</string>
+    <string name="backup_count">عدد المستندات على هذا الجهاز: %1$d</string>
+    <string name="backup_no_documents">احفظ مستندًا لإنشاء أول نسخة احتياطية.</string>
+    <string name="backup_refresh">تحديث القائمة</string>
+    <string name="backup_list_title">النسخ الاحتياطية المتاحة</string>
+    <string name="backup_empty">ستظهر أول نسخة احتياطية هنا.</string>
+    <string name="backup_restore">استعادة</string>
+    <string name="backup_confirm_title">حفظ نسخة على Drive؟</string>
+    <string name="backup_confirm_body">ستُرسل المستندات المحفوظة وأسماؤها ووسومها إلى مجلد Scaniqo backups في الحساب %1$s. تحتفظ المشروعات بلا كلمة مرور بتعديلات التحرير. تُرسل ملفات PDF المحمية بصيغة PDF فقط بكلمة مرورها الأصلية، دون ملفات التحرير.</string>
+    <string name="backup_scope_note">لا تشمل النسخة الاحتياطية خزنة كلمات المرور أو مكتبة التوقيعات، ولا التغييرات غير المحفوظة في المحرر.</string>
+    <string name="backup_restore_title">استعادة هذه النسخة الاحتياطية؟</string>
+    <string name="backup_restore_body">ستُضاف المستندات كنسخ جديدة دون استبدال الحالية. ستظل ملفات PDF المحمية تتطلب كلمة المرور الأصلية.</string>
+    <string name="backup_confirm">حفظ على Drive</string>
+    <string name="backup_disconnect_title">قطع الاتصال بـ Google Drive؟</string>
+    <string name="backup_disconnect_body">ستُزال صلاحية وصول Scaniqo. ستبقى نسخك الاحتياطية في حساب Google.</string>
+    <string name="backup_cancel">إلغاء</string>
+    <string name="backup_back">رجوع</string>
+    <string name="backup_saved">عدد المستندات المحفوظة على Google Drive: %1$d.</string>
+    <string name="backup_restored">عدد المستندات المستعادة: %1$d.</string>
+    <string name="backup_authorizing">في انتظار Google…</string>
+    <string name="backup_connecting">جارٍ الاتصال بـ Google Drive…</string>
+    <string name="backup_preparing">جارٍ تجهيز المستندات…</string>
+    <string name="backup_uploading">جارٍ رفع النسخة الاحتياطية…</string>
+    <string name="backup_downloading">جارٍ تنزيل النسخة الاحتياطية…</string>
+    <string name="backup_restoring">جارٍ استعادة المستندات…</string>
+    <string name="backup_disconnecting">جارٍ قطع الاتصال…</string>
+    <string name="backup_cancelling">جارٍ الإلغاء بأمان…</string>
+    <string name="backup_keep_open">أبقِ التطبيق مفتوحًا حتى الاكتمال.</string>
+    <string name="backup_error_auth">تعذر منح إذن Google Drive. أعد الاتصال.</string>
+    <string name="backup_error_configuration">الاتصال بـ Google Drive غير متاح بعد في هذا الإصدار من التطبيق.</string>
+    <string name="backup_error_permission">اسمح بالوصول إلى ملفات Scaniqo للمتابعة.</string>
+    <string name="backup_error_network">تعذر الاتصال. تحقق من اتصال الإنترنت وأعد المحاولة.</string>
+    <string name="backup_error_quota">لم يسمح Drive بالرفع. تحقق من المساحة المتاحة وحاول لاحقًا.</string>
+    <string name="backup_error_local">تعذر تجهيز النسخة الاحتياطية أو استعادتها. تحقق من مساحة الجهاز وسلامة الملفات.</string>
+    <string name="backup_error_remote">تعذر إكمال العملية على Google Drive. أعد المحاولة.</string>
+    <string name="backup_error_account">تغير حساب Google. أعد الاتصال قبل المتابعة.</string>
+    <string name="backup_visibility">نسخ احتياطية يدوية في مجلد Scaniqo backups على Google Drive.</string>
+</resources>

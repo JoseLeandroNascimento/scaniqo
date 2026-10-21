@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">Certificado digital</string>
+    <string name="certificate_intro">Firma una copia con un certificado instalado en Android o comprueba las firmas de un PDF.</string>
+    <string name="certificate_pick_pdf">Seleccionar PDF</string>
+    <string name="certificate_choose">Seleccionar certificado</string>
+    <string name="certificate_change">Cambiar certificado</string>
+    <string name="certificate_install">Instalar certificado en Android</string>
+    <string name="certificate_sign">Firmar copia</string>
+    <string name="certificate_save">Guardar PDF firmado</string>
+    <string name="certificate_unsigned">Este PDF no tiene firma digital.</string>
+    <string name="certificate_sign_unavailable">Esta herramienta solo permite comprobar las firmas de este documento.</string>
+    <string name="certificate_verification_scope">La comprobación verifica los bytes firmados y la validez actual del certificado. No verifica la confianza en la autoridad, la revocación ni el sello de tiempo.</string>
+    <string name="certificate_sign_scope">La firma usa SHA-256 y no incluye sello de tiempo. La clave privada permanece bajo el control de Android.</string>
+    <string name="certificate_integrity_verified">Integridad de la revisión verificada</string>
+    <string name="certificate_integrity_invalid">Integridad no confirmada</string>
+    <string name="certificate_integrity_unsupported">Formato de firma no compatible</string>
+    <string name="certificate_whole_file">La firma cubre todo el archivo actual.</string>
+    <string name="certificate_earlier_revision">La firma no cubre todo el archivo actual.</string>
+    <string name="certificate_current">Certificado dentro de su período de validez.</string>
+    <string name="certificate_not_current">Certificado fuera de su período de validez o no identificado.</string>
+    <string name="certificate_picker_error">No se pudo abrir la selección de certificados.</string>
+    <string name="certificate_file_error">No se pudo abrir el selector de archivos.</string>
+    <string name="certificate_back">Volver</string>
+</resources>

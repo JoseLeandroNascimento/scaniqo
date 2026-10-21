@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">सीधा करें</string>
+    <string name="correction_editor_perspective">क्रॉप करें</string>
+    <string name="correction_editor_curve">वक्रता</string>
+    <string name="correction_editor_angle">झुकाव</string>
+    <string name="correction_editor_auto">ऑटो</string>
+    <string name="correction_editor_use_angle">%1$.1f° इस्तेमाल करें</string>
+    <string name="correction_editor_already_straight">कोई झुकाव नहीं मिला।</string>
+    <string name="correction_editor_corners">कोने</string>
+    <string name="correction_editor_result">परिणाम</string>
+    <string name="correction_editor_show_before">सुधार से पहले के पृष्ठ से तुलना करें</string>
+    <string name="correction_editor_show_result">सुधार का परिणाम देखें</string>
+    <string name="correction_editor_options">सुधार के विकल्प</string>
+    <string name="correction_editor_native_hint">टेक्स्ट और वेक्टर को इमेज के रूप में ठीक करने देता है।</string>
+    <string name="correction_editor_native_required">इस पृष्ठ के फ़िल्टर के लिए इमेज में बदलना ज़रूरी है।</string>
+    <string name="correction_editor_drag_hint">खींचें ↔</string>
+    <string name="correction_editor_angle_gesture">पृष्ठ सीधा करने के लिए बाएँ या दाएँ खींचें</string>
+    <string name="correction_editor_curve_gesture">वक्रता ठीक करने के लिए बाएँ या दाएँ खींचें</string>
+</resources>

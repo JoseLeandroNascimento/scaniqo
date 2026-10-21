@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_document_zoom">दस्तावेज़ का ज़ूम</string>
+    <string name="signature_document_zoom_in">दस्तावेज़ बड़ा करें</string>
+    <string name="signature_document_zoom_out">दस्तावेज़ छोटा करें</string>
+    <string name="signature_document_zoom_value">%1$d%%</string>
+    <string name="signature_document_zoom_reset">पूरा पृष्ठ दिखाएँ, 100 प्रतिशत</string>
+    <string name="signature_document_pan_left">दस्तावेज़ बाएँ ले जाएँ</string>
+    <string name="signature_document_pan_right">दस्तावेज़ दाएँ ले जाएँ</string>
+    <string name="signature_document_pan_up">दस्तावेज़ ऊपर ले जाएँ</string>
+    <string name="signature_document_pan_down">दस्तावेज़ नीचे ले जाएँ</string>
+</resources>

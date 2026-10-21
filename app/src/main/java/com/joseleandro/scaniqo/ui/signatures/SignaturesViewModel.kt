@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 enum class SignatureInput { DRAW, TYPE, IMAGE }
 
 data class SignatureEditorState(
-    val name: String = "Minha assinatura",
+    val name: String = "",
     val input: SignatureInput = SignatureInput.DRAW,
     val strokes: List<SignatureStroke> = emptyList(),
     val text: String = "",
@@ -71,7 +71,10 @@ sealed interface SignaturesEvent {
     data object DismissMessage : SignaturesEvent
 }
 
-class SignaturesViewModel(private val repository: SignatureRepository) : ViewModel() {
+class SignaturesViewModel(
+    private val repository: SignatureRepository,
+    private val defaultName: () -> String = { "Signature" },
+) : ViewModel() {
     private val state = MutableStateFlow(SignaturesUiState())
     val uiState = state.asStateFlow()
     private var observation: Job? = null
@@ -80,9 +83,9 @@ class SignaturesViewModel(private val repository: SignatureRepository) : ViewMod
 
     fun onEvent(event: SignaturesEvent) {
         when (event) {
-            SignaturesEvent.Create -> if (!state.value.isBusy && state.value.editor == null) state.update { it.copy(editor = SignatureEditorState()) }
+            SignaturesEvent.Create -> if (!state.value.isBusy && state.value.editor == null) state.update { it.copy(editor = SignatureEditorState(name = defaultName())) }
             is SignaturesEvent.CreateForDocument -> if (!state.value.isBusy && state.value.editor == null) {
-                state.update { it.copy(editor = SignatureEditorState(targetDocumentId = event.documentId)) }
+                state.update { it.copy(editor = SignatureEditorState(name = defaultName(), targetDocumentId = event.documentId)) }
             }
             is SignaturesEvent.AcknowledgeDocumentSelection -> state.update {
                 if (it.pendingDocumentSelection?.signatureId == event.signatureId) it.copy(pendingDocumentSelection = null) else it

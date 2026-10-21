@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">स्ट्रोक की सीमा पूरी हुई। आगे बढ़ने के लिए एक स्ट्रोक पूर्ववत करें।</string>
+    <string name="runtime_signature_image_required">हस्ताक्षर की इमेज चुनें।</string>
+    <string name="runtime_password_required">PDF का पासवर्ड दर्ज करें।</string>
+    <string name="runtime_unlock_required">सुरक्षित PDF खोलने के लिए अनलॉक करें।</string>
+    <string name="runtime_merge_paused">मिलाना रुका हुआ है। आगे बढ़ने के लिए फिर से कोशिश करें पर टैप करें।</string>
+    <string name="runtime_password_setup_required">इस PDF का पासवर्ड सुरक्षित रखने के लिए सामान्य पासवर्ड सेट करें।</string>
+    <string name="runtime_password_incorrect">गलत पासवर्ड। फिर से कोशिश करें।</string>
+    <string name="runtime_signed_pdf_saved">हस्ताक्षरित PDF सहेजा गया।</string>
+    <string name="runtime_zip_exported">इमेज ZIP फ़ाइल में निर्यात हुईं।</string>
+    <string name="runtime_csv_exported">जाँचा गया डेटा CSV में निर्यात हुआ।</string>
+    <string name="runtime_receipt_page_required">रसीद का सही पृष्ठ दर्ज करें।</string>
+    <string name="runtime_receipt_review_required">निर्यात से पहले डेटा फिर जाँचें।</string>
+    <string name="runtime_document_unavailable">दस्तावेज़ अब उपलब्ध नहीं है।</string>
+    <string name="runtime_imported_document">आयात किया दस्तावेज़</string>
+    <string name="runtime_signature_default_name">मेरा हस्ताक्षर</string>
+    <string name="runtime_name_invalid">अधिकतम 100 वर्ण का नाम दर्ज करें।</string>
+    <string name="runtime_pdf_size_limit">अधिकतम 50 MB का PDF चुनें।</string>
+    <string name="runtime_pdf_page_limit">1 से 100 पृष्ठ का PDF चुनें।</string>
+    <string name="runtime_pdf_unprotected_required">यह टूल इस्तेमाल करने के लिए बिना पासवर्ड की कॉपी खोलें।</string>
+    <string name="runtime_new_file_required">मूल PDF सुरक्षित रखने के लिए नई फ़ाइल चुनें।</string>
+    <string name="runtime_destination_failed">चुनी जगह पर सहेजा नहीं जा सका।</string>
+    <string name="runtime_certificate_select_again">Android में प्रमाणपत्र फिर से चुनें।</string>
+    <string name="runtime_certificate_chain_unavailable">प्रमाणपत्र की शृंखला उपलब्ध नहीं है।</string>
+    <string name="runtime_certificate_rsa_ec">RSA या EC प्रमाणपत्र चुनें।</string>
+    <string name="runtime_certificate_sign_failed">इस प्रमाणपत्र से हस्ताक्षर नहीं हो सका।</string>
+    <string name="runtime_certificate_sign_disallowed">इस टूल में इस दस्तावेज़ पर नया हस्ताक्षर लगाने की अनुमति नहीं है।</string>
+    <string name="runtime_pdf_copy_disallowed">इस PDF का पासवर्ड पृष्ठ दूसरे दस्तावेज़ में कॉपी करने की अनुमति नहीं देता।</string>
+    <string name="runtime_pdf_extract_disallowed">यह PDF कंटेंट निकालने की अनुमति नहीं देता।</string>
+    <string name="runtime_pdf_edit_disallowed">दिया पासवर्ड इस PDF को संपादित करने की अनुमति नहीं देता।</string>
+    <string name="runtime_two_pdfs_required">कम से कम दो PDF चुनें।</string>
+    <string name="runtime_scan_page_limit">एक बार में 1 से 20 पृष्ठ स्कैन करें।</string>
+    <string name="runtime_images_size_limit">इमेज 200 MB से अधिक हैं। एक बार में कम पृष्ठ निर्यात करें।</string>
+    <string name="runtime_ocr_empty">कोई टेक्स्ट नहीं पहचाना गया। ज़्यादा स्पष्ट स्कैन आज़माएँ।</string>
+    <string name="runtime_signature_empty">सहेजने से पहले हस्ताक्षर बनाएँ या टाइप करें।</string>
+    <string name="runtime_image_size_limit">अधिकतम 10 MB की इमेज चुनें।</string>
+    <string name="runtime_selected_pdf">चुना हुआ PDF</string>
+    <string name="runtime_signature_name_invalid">अधिकतम 80 वर्ण का नाम दर्ज करें।</string>
+    <string name="runtime_signature_text_invalid">अधिकतम 80 वर्ण का नाम टाइप करें।</string>
+    <string name="runtime_signature_drawing_large">चित्र बहुत बड़ा है। हस्ताक्षर सरल करें।</string>
+    <string name="runtime_image_invalid">सही इमेज चुनें।</string>
+    <string name="runtime_signature_not_found">हस्ताक्षर नहीं मिला।</string>
+</resources>

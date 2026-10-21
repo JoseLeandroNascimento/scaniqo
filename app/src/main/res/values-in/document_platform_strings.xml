@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_share_chooser">Bagikan PDF</string>
+    <string name="document_pdf_page_description">Halaman %1$d dokumen</string>
+    <string name="document_pdf_loading">Memuat halaman</string>
+    <string name="document_pdf_error">Halaman ini tidak dapat dibuka.</string>
+    <string name="document_pdf_retry">Coba lagi</string>
+    <string name="document_thumbnail_description">Gambar mini dokumen</string>
+</resources>

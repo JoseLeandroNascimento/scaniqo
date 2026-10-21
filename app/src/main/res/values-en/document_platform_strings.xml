@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_share_chooser">Share PDF</string>
+    <string name="document_pdf_page_description">Page %1$d of the document</string>
+    <string name="document_pdf_loading">Loading page</string>
+    <string name="document_pdf_error">Could not open this page.</string>
+    <string name="document_pdf_retry">Try again</string>
+    <string name="document_thumbnail_description">Document thumbnail</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">校正倾斜</string>
+    <string name="correction_editor_perspective">裁剪</string>
+    <string name="correction_editor_curve">弯曲校正</string>
+    <string name="correction_editor_angle">倾斜</string>
+    <string name="correction_editor_auto">自动</string>
+    <string name="correction_editor_use_angle">使用 %1$.1f°</string>
+    <string name="correction_editor_already_straight">未检测到倾斜。</string>
+    <string name="correction_editor_corners">角点</string>
+    <string name="correction_editor_result">结果</string>
+    <string name="correction_editor_show_before">与校正前的页面比较</string>
+    <string name="correction_editor_show_result">查看校正结果</string>
+    <string name="correction_editor_options">校正选项</string>
+    <string name="correction_editor_native_hint">允许将文字和矢量图形作为图像进行校正。</string>
+    <string name="correction_editor_native_required">此页的滤镜需要转换为图像。</string>
+    <string name="correction_editor_drag_hint">拖动 ↔</string>
+    <string name="correction_editor_angle_gesture">左右拖动以校正页面倾斜</string>
+    <string name="correction_editor_curve_gesture">左右拖动以调整弯曲</string>
+</resources>

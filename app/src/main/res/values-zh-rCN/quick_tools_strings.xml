@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_tools_import">导入 PDF</string>
+    <string name="quick_tools_import_hint">从设备导入</string>
+    <string name="quick_tools_merge">合并 PDF</string>
+    <string name="quick_tools_merge_hint">合并并整理</string>
+    <string name="quick_tools_sign">为文档签名</string>
+    <string name="quick_tools_sign_hint">放置您的签名</string>
+    <string name="quick_merge_title">合并 PDF</string>
+    <string name="quick_merge_working">正在准备新的 PDF…</string>
+    <string name="quick_merge_name">已合并的文档</string>
+    <string name="quick_merge_password">%1$s 的密码</string>
+    <string name="quick_merge_password_label">PDF 密码</string>
+    <string name="quick_merge_password_wrong">密码错误，请重试。</string>
+    <string name="quick_merge_continue">继续</string>
+    <string name="quick_merge_picker_error">无法打开文件选择器。</string>
+    <string name="quick_sign_choose">您想为哪个文档签名？</string>
+    <string name="quick_sign_description">选择 PDF，即可放置、旋转和调整签名。</string>
+    <string name="quick_sign_empty">导入或扫描文档以开始。</string>
+    <string name="quick_sign_search">搜索文档</string>
+    <string name="quick_sign_no_results">未找到文档。</string>
+</resources>

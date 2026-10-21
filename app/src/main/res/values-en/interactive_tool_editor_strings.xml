@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="interactive_scope_current">Selected page</string>
+    <string name="interactive_scope_choose">Choose pages…</string>
+    <string name="interactive_scope_all">All pages</string>
+    <string name="interactive_scope_current_summary">Page %1$d only</string>
+    <string name="interactive_scope_all_summary">All (%1$d)</string>
+    <plurals name="interactive_scope_selected_summary">
+        <item quantity="one">%1$d selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
+    <string name="interactive_scope_description">Apply to: %1$s. Change pages</string>
+    <string name="interactive_preview_page">Page %1$d</string>
+    <string name="interactive_preview_page_description">Page %1$d, preview %2$d of %3$d. Choose preview</string>
+    <string name="interactive_preview_busy">Updating preview</string>
+</resources>

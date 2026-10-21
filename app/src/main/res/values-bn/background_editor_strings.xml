@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_editor_title">পটভূমি</string>
+    <string name="background_editor_remove">পটভূমি সরান</string>
+    <string name="background_editor_retry">আবার শনাক্ত করুন</string>
+    <string name="background_editor_adjust">সীমানা ঠিক করুন</string>
+    <string name="background_editor_detecting">শিট খোঁজা হচ্ছে…</string>
+    <string name="background_editor_suggested">প্রয়োগের আগে ফলাফল দেখুন বা সীমানা ঠিক করুন।</string>
+    <string name="background_editor_no_edges">শিট বেছে নিতে কোণগুলো হাতে ঠিক করুন।</string>
+    <string name="background_editor_failed">শিট খুঁজে পাওয়া যায়নি। কোণগুলো হাতে ঠিক করুন।</string>
+    <string name="background_editor_hint">তোলা ছবি থেকে পটভূমি স্বয়ংক্রিয়ভাবে সরানো হয়। শিটের বিষয়বস্তু অক্ষত থাকে।</string>
+</resources>

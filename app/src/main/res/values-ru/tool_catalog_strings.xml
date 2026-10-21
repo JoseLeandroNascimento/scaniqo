@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_catalog_title">Инструменты</string>
+    <string name="tool_catalog_heading">Что вы хотите сделать?</string>
+    <string name="tool_catalog_search">Найти инструмент</string>
+    <string name="tool_catalog_clear">Очистить поиск</string>
+    <string name="tool_catalog_all">Все</string>
+    <string name="tool_catalog_organize">Упорядочить</string>
+    <string name="tool_catalog_convert">Преобразовать</string>
+    <string name="tool_catalog_edit">Изменить</string>
+    <string name="tool_catalog_fill">Заполнить и подписать</string>
+    <string name="tool_catalog_empty">Инструменты не найдены.</string>
+    <string name="tool_catalog_reset">Все инструменты</string>
+    <string name="tool_catalog_compress">Сжать PDF</string>
+    <string name="tool_catalog_compress_hint">Уменьшите размер для отправки</string>
+    <string name="tool_catalog_fill_page">Заполнить на странице</string>
+    <string name="tool_catalog_fill_hint">Разместите текст и отметки в документе</string>
+    <string name="tool_catalog_watermark">Водяной знак</string>
+    <string name="tool_catalog_watermark_hint">Добавьте текст, изображение или штамп</string>
+    <string name="tool_catalog_choose_for">Выберите документ для: %1$s</string>
+    <string name="tool_catalog_count">Доступно инструментов: %1$d</string>
+</resources>

@@ -1,0 +1,19 @@
+<resources>
+    <string name="trash_title">ট্র্যাশ</string>
+    <string name="trash_description">আপনি পুনরুদ্ধার বা স্থায়ীভাবে মুছে না ফেলা পর্যন্ত নথিগুলো এখানে থাকবে। এগুলো ডিভাইসে জায়গা নেবে এবং নতুন ব্যাকআপে অন্তর্ভুক্ত হবে না।</string>
+    <string name="trash_empty_title">ট্র্যাশ খালি</string>
+    <string name="trash_empty_body">ট্র্যাশে পাঠানো নথি পুনরুদ্ধারের জন্য এখানে দেখা যাবে।</string>
+    <string name="trash_load_error">ট্র্যাশ লোড করা যায়নি।</string>
+    <string name="trash_restore">পুনরুদ্ধার করুন</string>
+    <string name="trash_restore_document">%1$s পুনরুদ্ধার করুন</string>
+    <string name="trash_delete_document">%1$s স্থায়ীভাবে মুছুন</string>
+    <string name="trash_restored">নথি লাইব্রেরিতে পুনরুদ্ধার হয়েছে</string>
+    <string name="trash_restore_error">পুনরুদ্ধার করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="trash_permanent_delete">স্থায়ীভাবে মুছুন</string>
+    <string name="trash_delete_title">স্থায়ীভাবে মুছবেন?</string>
+    <string name="trash_delete_body">নথি “%1$s” এবং এর ফাইলগুলো এই ডিভাইস থেকে মুছে যাবে। এই কাজ পূর্বাবস্থায় ফেরানো যাবে না।</string>
+    <string name="trash_deleted">নথি স্থায়ীভাবে মুছে ফেলা হয়েছে</string>
+    <string name="trash_delete_error">মুছে ফেলা যায়নি। নথি ট্র্যাশে আছে; আবার চেষ্টা করুন।</string>
+    <string name="trash_deleted_on">%1$s থেকে ট্র্যাশে</string>
+    <string name="trash_working">নথি প্রক্রিয়াকরণ হচ্ছে…</string>
+</resources>

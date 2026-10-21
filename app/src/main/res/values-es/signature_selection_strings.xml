@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">Redimensionar desde la esquina superior izquierda</string>
+    <string name="signature_resize_top_right">Redimensionar desde la esquina superior derecha</string>
+    <string name="signature_resize_bottom_right">Redimensionar desde la esquina inferior derecha</string>
+    <string name="signature_resize_bottom_left">Redimensionar desde la esquina inferior izquierda</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_search_title">搜索文档</string>
+    <string name="document_search_query_label">文件名或内容</string>
+    <string name="document_search_query_placeholder">例如：合同、收据、地址</string>
+    <string name="document_search_clear">清空搜索</string>
+    <string name="document_search_helper">内容搜索仅查找 PDF 中可选择的文字。</string>
+    <string name="document_search_initial_title">搜索您的文档</string>
+    <string name="document_search_initial_body">按名称或 PDF 中可选择的文字搜索。</string>
+    <string name="document_search_loading">正在搜索文档…</string>
+    <string name="document_search_empty_title">无搜索结果</string>
+    <string name="document_search_empty_body">请尝试其他名称或关键词。无文字的 PDF 可按名称查找。</string>
+    <string name="document_search_error_title">无法完成搜索</string>
+    <string name="document_search_error_body">请重试搜索文档。</string>
+    <string name="document_search_match_name">名称匹配</string>
+    <string name="document_search_match_content">内容匹配</string>
+    <string name="document_search_match_page">第 %1$d 页</string>
+    <string name="document_search_metadata">%1$s · %2$s</string>
+    <plurals name="document_search_result_count">
+        <item quantity="other">找到 %d 个文档</item>
+    </plurals>
+</resources>

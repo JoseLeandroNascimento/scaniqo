@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_selection_title">PDF একত্র করুন</string>
+    <string name="merge_selection_new_document">পাসওয়ার্ডহীন নতুন PDF তৈরি করে। মূল ফাইল রাখা হয়।</string>
+    <string name="merge_selection_editor">PDF বেছে নিয়ে পৃষ্ঠা যোগ করার ক্রম ঠিক করুন।</string>
+    <string name="merge_selection_order_title">ক্রম</string>
+    <string name="merge_selection_drag_hint">ক্রম বদলাতে চেপে ধরুন</string>
+    <string name="merge_selection_library_title">আপনার নথি</string>
+    <string name="merge_selection_empty">শুরু করতে PDF যোগ করুন।</string>
+    <string name="merge_selection_empty_title">আপনার PDF, একসঙ্গে</string>
+    <string name="merge_selection_current">বর্তমান নথি · %1$s</string>
+    <string name="merge_selection_library_empty">লাইব্রেরিতে কোনো নথি নেই।</string>
+    <string name="merge_selection_all_added">সব যোগ হয়েছে।</string>
+    <string name="merge_selection_add_files">ডিভাইস থেকে ফাইল যোগ করুন</string>
+    <string name="merge_selection_external">ডিভাইসের ফাইল</string>
+    <string name="merge_selection_remove">নির্বাচন থেকে %1$s সরান</string>
+    <string name="merge_selection_move_up">%1$s উপরে সরান</string>
+    <string name="merge_selection_move_down">%1$s নিচে সরান</string>
+    <string name="merge_selection_drag_handle">%1$s-এর ক্রম বদলান, অবস্থান %2$d / %3$d</string>
+    <string name="merge_selection_cancel_drag">ক্রম পরিবর্তন বাতিল করুন</string>
+    <string name="merge_selection_protected">সুরক্ষিত PDF পাসওয়ার্ড চাইতে পারে। ফলাফলে পাসওয়ার্ড থাকবে না।</string>
+    <string name="merge_selection_preserve_protection">সম্পাদনাধীন নথির সুরক্ষা ফলাফলেও থাকবে।</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="one">%1$dটি PDF বেছে নিন</item>
+        <item quantity="other">%1$dটি PDF বেছে নিন</item>
+    </plurals>
+</resources>

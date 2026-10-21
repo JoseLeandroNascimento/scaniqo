@@ -9,6 +9,7 @@ import android.graphics.Path
 import android.graphics.Typeface
 import android.net.Uri
 import android.util.AtomicFile
+import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
 import com.joseleandro.scaniqo.domain.model.SignatureFont
 import com.joseleandro.scaniqo.domain.model.SignatureModel
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
@@ -27,6 +28,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -82,19 +84,16 @@ class AndroidSignatureRepository(context: Context) : SignatureRepository {
     ): SignatureModel = withContext(Dispatchers.IO) {
         val signature = text.trim()
         require(signature.isNotBlank() && signature.length <= 80) { "Digite um nome com até 80 caracteres." }
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = colorArgb
-            textSize = 160f
-            typeface = Typeface.create(font.family, if (font.italic) Typeface.ITALIC else Typeface.NORMAL)
-        }
-        val measured = paint.measureText(signature)
-        if (measured > 1520f) paint.textSize *= 1520f / measured
-        val metrics = paint.fontMetrics
-        val width = (paint.measureText(signature) + 80).roundToInt().coerceIn(80, 1600)
-        val height = (metrics.descent - metrics.ascent + 60).roundToInt().coerceAtLeast(80)
+        val layout = ShapedTextLayout.create(
+            text = signature, fontSize = 160f, color = colorArgb,
+            maxWidth = 1520f, maxHeight = 540f,
+            typeface = Typeface.create(font.family, if (font.italic) Typeface.ITALIC else Typeface.NORMAL),
+        )
+        val width = (ceil(layout.width).toInt() + 80).coerceIn(80, 1600)
+        val height = (ceil(layout.height).toInt() + 60).coerceIn(80, 600)
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         try {
-            Canvas(bitmap).drawText(signature, 40f, 30f - metrics.ascent, paint)
+            layout.draw(Canvas(bitmap), 40f, 30f)
             persist(name, bitmap)
         } finally { bitmap.recycle() }
     }

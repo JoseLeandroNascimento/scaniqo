@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="localization_title">اللغة والمنطقة</string>
+    <string name="localization_summary">اللغة والتنسيقات المحلية واتجاه القراءة</string>
+    <string name="localization_system">اتباع النظام</string>
+    <string name="localization_system_description">يستخدم اللغات المفضلة للجهاز. إذا لم تتوفر أي منها، تُستخدم الإنجليزية.</string>
+    <string name="localization_language">لغة التطبيق</string>
+    <string name="localization_regional_formats">تنسيقات المنطقة</string>
+    <string name="localization_formats_description">تتبع التواريخ والأوقات والأرقام اللغة والمنطقة المحددتين. تبقى المنطقة الزمنية كما هي في الجهاز.</string>
+    <string name="localization_date_example">التاريخ والوقت: %1$s</string>
+    <string name="localization_number_example">الرقم: %1$s</string>
+    <string name="localization_direction_description">يتبع اتجاه الواجهة اللغة. يُحفظ المحتوى ومواضعه على صفحات المستند.</string>
+    <string name="localization_apply">تطبيق اللغة</string>
+    <string name="localization_cancel">إلغاء</string>
+    <string name="localization_restart_hint">يعيد التغيير فتح الشاشة الحالية لتطبيق اللغة.</string>
+    <string name="localization_flag_description">تحدد الأعلام النسخة الإقليمية، ويمكن استخدامها في دول أخرى أيضًا.</string>
+</resources>

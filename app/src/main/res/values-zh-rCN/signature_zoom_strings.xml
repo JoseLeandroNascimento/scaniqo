@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_document_zoom">文档缩放</string>
+    <string name="signature_document_zoom_in">放大文档</string>
+    <string name="signature_document_zoom_out">缩小文档</string>
+    <string name="signature_document_zoom_value">%1$d%%</string>
+    <string name="signature_document_zoom_reset">显示完整页面，百分之百</string>
+    <string name="signature_document_pan_left">向左移动文档</string>
+    <string name="signature_document_pan_right">向右移动文档</string>
+    <string name="signature_document_pan_up">向上移动文档</string>
+    <string name="signature_document_pan_down">向下移动文档</string>
+</resources>

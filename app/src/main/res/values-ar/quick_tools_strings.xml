@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_tools_import">استيراد PDF</string>
+    <string name="quick_tools_import_hint">من جهازك</string>
+    <string name="quick_tools_merge">دمج ملفات PDF</string>
+    <string name="quick_tools_merge_hint">اجمع ونظّم</string>
+    <string name="quick_tools_sign">توقيع مستند</string>
+    <string name="quick_tools_sign_hint">ضع توقيعك</string>
+    <string name="quick_merge_title">دمج ملفات PDF</string>
+    <string name="quick_merge_working">جارٍ تجهيز PDF الجديد…</string>
+    <string name="quick_merge_name">مستندات مدمجة</string>
+    <string name="quick_merge_password">كلمة مرور %1$s</string>
+    <string name="quick_merge_password_label">كلمة مرور PDF</string>
+    <string name="quick_merge_password_wrong">كلمة المرور غير صحيحة. أعد المحاولة.</string>
+    <string name="quick_merge_continue">متابعة</string>
+    <string name="quick_merge_picker_error">تعذر فتح منتقي الملفات.</string>
+    <string name="quick_sign_choose">أي مستند تريد توقيعه؟</string>
+    <string name="quick_sign_description">اختر PDF لتحديد موضع توقيعك وتدويره وضبطه.</string>
+    <string name="quick_sign_empty">استورد مستندًا أو امسحه للبدء.</string>
+    <string name="quick_sign_search">البحث عن مستند</string>
+    <string name="quick_sign_no_results">لم يُعثر على مستندات.</string>
+</resources>

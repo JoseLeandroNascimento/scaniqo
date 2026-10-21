@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_tool_corrections">সংশোধন করুন</string>
+    <string name="viewer_tool_quality">মান</string>
+    <string name="viewer_compare_before">আগে</string>
+    <string name="viewer_compare_after">পরে</string>
+    <string name="viewer_compare_description">পৃষ্ঠা %1$d-এর উন্নতি তুলনা করুন</string>
+    <string name="viewer_compare_before_description">উন্নতি ছাড়া পৃষ্ঠা দেখান</string>
+    <string name="viewer_compare_after_description">উন্নতিসহ পৃষ্ঠা দেখান</string>
+    <string name="viewer_preview_updating">প্রিভিউ আপডেট হচ্ছে…</string>
+    <string name="viewer_preview_stale">আপডেট করা যায়নি। আগের প্রিভিউ রাখা হয়েছে।</string>
+    <string name="viewer_preparing_tools">টুল প্রস্তুত হচ্ছে…</string>
+    <string name="viewer_undo_description">শেষ পরিবর্তন পূর্বাবস্থায় ফেরান</string>
+</resources>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="certificate_unknown_signer">Penanda tangan tidak teridentifikasi</string>
+    <string name="certificate_invalid_ranges">Tanda tangan berisi rentang byte yang tidak valid.</string>
+    <string name="certificate_unsupported_format">Format tanda tangan ini tidak didukung untuk verifikasi lokal.</string>
+    <string name="certificate_supported_hashes">Verifikasi lokal menerima tanda tangan dengan SHA-256, SHA-384, atau SHA-512.</string>
+    <string name="certificate_later_bytes">Ada byte setelah revisi yang ditandatangani.</string>
+    <string name="certificate_integrity_failed">Integritas tanda tangan ini tidak dapat dikonfirmasi.</string>
+    <string name="runtime_image_count_limit">Pilih maksimal 20 gambar.</string>
+</resources>

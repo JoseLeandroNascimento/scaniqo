@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">Retour</string>
+    <string name="editor_tool_done">Terminer</string>
+    <string name="editor_tool_discard_title">Abandonner les réglages ?</string>
+    <string name="editor_tool_discard_body">Les modifications non appliquées seront perdues.</string>
+</resources>

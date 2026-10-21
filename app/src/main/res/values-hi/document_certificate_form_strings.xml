@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">डिजिटल प्रमाणपत्र</string>
+    <string name="certificate_intro">Android में इंस्टॉल प्रमाणपत्र से कॉपी पर हस्ताक्षर करें या PDF के हस्ताक्षर जाँचें।</string>
+    <string name="certificate_pick_pdf">PDF चुनें</string>
+    <string name="certificate_choose">प्रमाणपत्र चुनें</string>
+    <string name="certificate_change">प्रमाणपत्र बदलें</string>
+    <string name="certificate_install">Android में प्रमाणपत्र इंस्टॉल करें</string>
+    <string name="certificate_sign">कॉपी पर हस्ताक्षर करें</string>
+    <string name="certificate_save">हस्ताक्षरित PDF सहेजें</string>
+    <string name="certificate_unsigned">इस PDF में डिजिटल हस्ताक्षर नहीं है।</string>
+    <string name="certificate_sign_unavailable">इस टूल में इस दस्तावेज़ के केवल हस्ताक्षर जाँचे जा सकते हैं।</string>
+    <string name="certificate_verification_scope">जाँच में हस्ताक्षरित बाइट और प्रमाणपत्र की वर्तमान वैधता देखी जाती है। प्राधिकरण पर भरोसा, निरस्तीकरण और टाइमस्टैम्प नहीं जाँचे जाते।</string>
+    <string name="certificate_sign_scope">हस्ताक्षर SHA-256 इस्तेमाल करता है और उसमें टाइमस्टैम्प नहीं है। निजी कुंजी Android के नियंत्रण में रहती है।</string>
+    <string name="certificate_integrity_verified">संस्करण की अखंडता जाँची गई</string>
+    <string name="certificate_integrity_invalid">अखंडता की पुष्टि नहीं हुई</string>
+    <string name="certificate_integrity_unsupported">हस्ताक्षर का फ़ॉर्मैट समर्थित नहीं है</string>
+    <string name="certificate_whole_file">हस्ताक्षर पूरी वर्तमान फ़ाइल को कवर करता है।</string>
+    <string name="certificate_earlier_revision">हस्ताक्षर पूरी वर्तमान फ़ाइल को कवर नहीं करता।</string>
+    <string name="certificate_current">प्रमाणपत्र अपनी वैधता अवधि में है।</string>
+    <string name="certificate_not_current">प्रमाणपत्र अपनी वैधता अवधि से बाहर है या उसकी पहचान नहीं हुई।</string>
+    <string name="certificate_picker_error">प्रमाणपत्र चयन नहीं खुल सका।</string>
+    <string name="certificate_file_error">फ़ाइल चयन नहीं खुल सका।</string>
+    <string name="certificate_back">वापस</string>
+</resources>

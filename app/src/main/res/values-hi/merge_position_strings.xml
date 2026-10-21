@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_position_title">PDF मिलाएँ</string>
+    <string name="merge_position_label">नए पृष्ठ जोड़ें</string>
+    <string name="merge_position_start">शुरुआत</string>
+    <string name="merge_position_after">पृष्ठ के बाद</string>
+    <string name="merge_position_end">अंत</string>
+    <string name="merge_position_page_label">पृष्ठ संख्या</string>
+    <string name="merge_position_page_error">1 से %1$d तक का पृष्ठ दर्ज करें।</string>
+    <string name="merge_position_start_description">नए पृष्ठ दस्तावेज़ की शुरुआत में जुड़ेंगे।</string>
+    <string name="merge_position_after_description">नए पृष्ठ %1$d पृष्ठ के बाद जुड़ेंगे।</string>
+    <string name="merge_position_end_description">नए पृष्ठ दस्तावेज़ के अंत में जुड़ेंगे।</string>
+    <string name="merge_position_invalid_description">आगे बढ़ने के लिए सही पृष्ठ चुनें।</string>
+    <string name="merge_position_select_pdfs">PDF चुनें</string>
+    <plurals name="merge_position_page_count">
+        <item quantity="one">%1$d पृष्ठ का दस्तावेज़</item>
+        <item quantity="other">%1$d पृष्ठों का दस्तावेज़</item>
+    </plurals>
+</resources>

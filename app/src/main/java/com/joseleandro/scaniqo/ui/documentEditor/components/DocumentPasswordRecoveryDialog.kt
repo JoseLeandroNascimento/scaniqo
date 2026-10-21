@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.joseleandro.scaniqo.R
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,8 @@ internal fun DocumentPasswordRecoveryDialog(
     var saving by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
+    val recoveryError = stringResource(R.string.runtime_recovery_failed)
+
     fun recover() {
         if (saving || password.isEmpty()) return
         saving = true
@@ -54,7 +58,7 @@ internal fun DocumentPasswordRecoveryDialog(
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
-                error = "Não foi possível guardar o acesso. Desbloqueie o cofre e tente novamente."
+                error = recoveryError
             } finally {
                 saving = false
             }
@@ -71,32 +75,32 @@ internal fun DocumentPasswordRecoveryDialog(
     }
     AlertDialog(
         onDismissRequest = { if (!saving) { password = ""; onDismiss() } },
-        title = { Text("Usar senha do PDF") },
+        title = { Text(stringResource(R.string.runtime_recovery_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Informe a senha usada para proteger este arquivo. O acesso será guardado novamente no cofre do aparelho.")
+                Text(stringResource(R.string.runtime_recovery_body))
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it.take(127); error = null },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Senha original do PDF") },
+                    label = { Text(stringResource(R.string.runtime_recovery_password)) },
                     singleLine = true,
                     enabled = !saving,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 )
                 if (!state.isConfigured || state.recoveryRequired) {
-                    Text("Configure ou recupere o cofre antes de continuar.")
-                    TextButton(onClick = { password = ""; onSettings() }) { Text("Gerenciar senha geral") }
+                    Text(stringResource(R.string.runtime_recovery_setup))
+                    TextButton(onClick = { password = ""; onSettings() }) { Text(stringResource(R.string.runtime_password_manage)) }
                 }
                 error?.let { Text(it, color = androidx.compose.material3.MaterialTheme.colorScheme.error) }
             }
         },
         confirmButton = {
             DialogActions(
-                confirmText = if (saving) "Abrindo…" else "Abrir documento",
+                confirmText = if (saving) stringResource(R.string.runtime_opening) else stringResource(R.string.runtime_open_document),
                 onConfirm = { if (state.isUnlocked) recover() else authenticating = true },
-                dismissText = "Cancelar",
+                dismissText = stringResource(R.string.runtime_cancel),
                 onDismiss = { password = ""; onDismiss() },
                 confirmEnabled = !saving && password.isNotEmpty() && state.isConfigured && !state.recoveryRequired,
                 dismissEnabled = !saving,

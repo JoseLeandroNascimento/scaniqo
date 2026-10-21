@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_workspace_source">Dokumen</string>
+    <string name="utility_workspace_importing">Mengimpor dokumen…</string>
+    <string name="utility_workspace_choose_hint">Pilih PDF dari pustaka atau impor berkas dari perangkat.</string>
+    <string name="utility_workspace_import_device">Impor dari perangkat</string>
+    <string name="utility_workspace_search">Cari dokumen</string>
+    <string name="utility_workspace_no_match">Tidak ada dokumen ditemukan.</string>
+    <string name="utility_workspace_pages">Pilih halaman</string>
+    <string name="utility_workspace_selection">%1$d dari %2$d dipilih</string>
+    <string name="utility_workspace_select_all">Semua</string>
+    <string name="utility_workspace_clear">Hapus</string>
+    <string name="utility_workspace_range">Masukkan rentang</string>
+    <string name="utility_workspace_page">Halaman %1$d</string>
+    <string name="utility_workspace_order">Ketuk halaman untuk memilih. Rentang dapat menentukan urutan.</string>
+    <string name="utility_workspace_locked_pages">Demi privasi, gambar mini PDF ini disembunyikan. Pilih berdasarkan nomor halaman.</string>
+    <string name="utility_workspace_empty_selection">Pilih minimal satu halaman.</string>
+    <string name="utility_workspace_output">Hasil</string>
+    <string name="utility_workspace_format">Format gambar</string>
+    <string name="utility_workspace_jpg_hint">Berkas ringan untuk dibagikan</string>
+    <string name="utility_workspace_png_hint">Lebih detail, berkas lebih besar</string>
+    <string name="utility_workspace_zip_hint">Setiap halaman menjadi gambar. Semuanya digabungkan dalam satu berkas ZIP.</string>
+    <string name="utility_workspace_copy_hint">Salinan baru akan dibuat. Dokumen asli tetap dipertahankan.</string>
+    <string name="utility_workspace_busy">Menyiapkan berkas…</string>
+    <string name="utility_workspace_change_destination">Ganti lokasi</string>
+    <string name="utility_workspace_compress_title">Kompres PDF</string>
+    <string name="utility_workspace_compress_hint">Perkecil gambar PDF dan pertahankan teks yang dapat dicari.</string>
+    <string name="utility_workspace_compress_level">Tingkat kompresi</string>
+    <string name="utility_workspace_balanced">Seimbang</string>
+    <string name="utility_workspace_balanced_hint">Keterbacaan baik, pengurangan ukuran sedang.</string>
+    <string name="utility_workspace_strong">Pengurangan lebih besar</string>
+    <string name="utility_workspace_strong_hint">Berkas lebih ringan. Periksa huruf kecil dan gambar.</string>
+    <string name="utility_workspace_compress_action">Kompres dan buat salinan</string>
+    <string name="utility_workspace_original_size">Asli</string>
+    <string name="utility_workspace_result_size">Dikompresi</string>
+    <string name="utility_workspace_compress_complete">PDF Anda lebih ringan</string>
+    <string name="utility_workspace_compress_no_gain">PDF ini sudah ringkas</string>
+    <string name="utility_workspace_compress_no_gain_hint">Tidak ada salinan dibuat karena ukurannya tidak berkurang.</string>
+    <string name="utility_workspace_compress_note">Pengurangan bergantung pada gambar dalam berkas. PDF dengan teks atau gambar yang sudah dioptimalkan mungkin tetap berukuran sama.</string>
+    <string name="utility_workspace_open_result">Buka PDF terkompresi</string>
+    <string name="utility_workspace_saved">%1$d%% lebih kecil</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — dikompresi</string>
+    <string name="utility_workspace_inspect_page">Perbesar halaman %1$d</string>
+    <string name="utility_workspace_select_page">Pilih halaman ini</string>
+    <string name="utility_workspace_deselect_page">Hapus dari pilihan</string>
+</resources>

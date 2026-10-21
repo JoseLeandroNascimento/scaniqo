@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Scaniqo</string>
+    <string name="menu_import_pdf">导入 PDF</string>
+    <string name="menu_tags">标签</string>
+    <string name="menu_signatures">签名</string>
+    <string name="menu_pdf_password">PDF 密码</string>
+    <string name="navigation_documents">返回文档列表</string>
+    <string name="navigation_tags">转到标签</string>
+    <string name="documents_screen_title">扫描的文档</string>
+    <string name="tags_screen_title">文件标签</string>
+    <string name="icone_de_voltar">返回</string>
+    <string name="gerenciar_tags">管理标签</string>
+    <string name="suas_tags">您的标签</string>
+    <string name="tags_description">让文件井井有条，为标签选择名称、颜色和图标。</string>
+    <plurals name="tags_count">
+        <item quantity="other">%d 个标签</item>
+    </plurals>
+    <string name="icone_da_tag">标签图标</string>
+    <string name="icone_more">更多选项</string>
+    <string name="editar">编辑</string>
+    <string name="icone_de_editar">编辑</string>
+    <string name="excluir">删除</string>
+    <string name="icone_de_excluir">删除</string>
+    <string name="icone_de_adicionar">添加</string>
+    <string name="nova_tag">新建标签</string>
+    <string name="cancel">取消</string>
+    <string name="try_again">重试</string>
+    <string name="tags_loading">正在加载标签…</string>
+    <string name="tags_empty_title">从一个标签开始整理</string>
+    <string name="tags_empty_description">点按“新建标签”，创建符合您风格的第一个标签。</string>
+    <string name="tags_load_error_title">无法加载标签</string>
+    <string name="tags_load_error_description">访问标签时出现问题，请重试。</string>
+    <string name="tag_actions">标签 %1$s 的选项</string>
+    <string name="tag_edit_title">编辑标签</string>
+    <string name="tag_name_label">标签名称</string>
+    <string name="tag_name_placeholder">例如：收据</string>
+    <string name="tag_name_counter">%1$d/%2$d</string>
+    <string name="tag_name_required">请输入标签名称。</string>
+    <string name="tag_name_too_long">最多使用 %1$d 个字符。</string>
+    <string name="tag_icon_title">图标</string>
+    <string name="tag_icon_description">选择适合标签的图标。</string>
+    <string name="tag_color_title">颜色</string>
+    <string name="tag_color_description">使用颜色快速识别标签。</string>
+    <string name="tag_preview_label">预览</string>
+    <string name="tag_preview_name">您的标签</string>
+    <string name="tag_create">创建标签</string>
+    <string name="tag_save_changes">保存更改</string>
+    <string name="tag_saving">正在保存…</string>
+    <string name="tag_save_error">无法保存标签，所选设置已保留。请重试。</string>
+    <string name="tag_saved">标签已保存</string>
+    <string name="tag_deleted">标签已删除</string>
+    <string name="tag_delete_title">删除标签？</string>
+    <string name="tag_delete_description">标签“%1$s”将被删除，此操作无法撤销。</string>
+    <string name="tag_delete_error">无法删除标签，请重试。</string>
+    <string name="tag_deleting">正在删除…</string>
+</resources>

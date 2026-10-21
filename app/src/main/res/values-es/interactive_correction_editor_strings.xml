@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">Enderezar</string>
+    <string name="correction_editor_perspective">Recortar</string>
+    <string name="correction_editor_curve">Curvatura</string>
+    <string name="correction_editor_angle">Inclinación</string>
+    <string name="correction_editor_auto">Auto</string>
+    <string name="correction_editor_use_angle">Usar %1$.1f°</string>
+    <string name="correction_editor_already_straight">No se detectó inclinación.</string>
+    <string name="correction_editor_corners">Esquinas</string>
+    <string name="correction_editor_result">Resultado</string>
+    <string name="correction_editor_show_before">Comparar con la página antes de la corrección</string>
+    <string name="correction_editor_show_result">Ver resultado de la corrección</string>
+    <string name="correction_editor_options">Opciones de corrección</string>
+    <string name="correction_editor_native_hint">Permite corregir texto y vectores como imagen.</string>
+    <string name="correction_editor_native_required">El filtro de esta página necesita la conversión a imagen.</string>
+    <string name="correction_editor_drag_hint">Arrastra ↔</string>
+    <string name="correction_editor_angle_gesture">Arrastra a los lados para enderezar la página</string>
+    <string name="correction_editor_curve_gesture">Arrastra a los lados para ajustar la curvatura</string>
+</resources>

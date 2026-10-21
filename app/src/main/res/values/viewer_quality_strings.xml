@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="viewer_tool_corrections">Corrigir</string>
-    <string name="viewer_tool_quality">Qualidade</string>
-    <string name="viewer_compare_before">Antes</string>
-    <string name="viewer_compare_after">Depois</string>
-    <string name="viewer_compare_description">Comparar melhorias da página %1$d</string>
-    <string name="viewer_compare_before_description">Mostrar página sem melhorias</string>
-    <string name="viewer_compare_after_description">Mostrar página com melhorias</string>
-    <string name="viewer_preview_updating">Atualizando prévia…</string>
-    <string name="viewer_preview_stale">Não foi possível atualizar. A prévia anterior foi mantida.</string>
-    <string name="viewer_preparing_tools">Preparando ferramentas…</string>
-    <string name="viewer_undo_description">Desfazer a última alteração</string>
+    <string name="viewer_tool_corrections">Correct</string>
+    <string name="viewer_tool_quality">Quality</string>
+    <string name="viewer_compare_before">Before</string>
+    <string name="viewer_compare_after">After</string>
+    <string name="viewer_compare_description">Compare page %1$d enhancements</string>
+    <string name="viewer_compare_before_description">Show page without enhancements</string>
+    <string name="viewer_compare_after_description">Show page with enhancements</string>
+    <string name="viewer_preview_updating">Updating preview…</string>
+    <string name="viewer_preview_stale">Could not update. The previous preview was kept.</string>
+    <string name="viewer_preparing_tools">Preparing tools…</string>
+    <string name="viewer_undo_description">Undo last change</string>
 </resources>

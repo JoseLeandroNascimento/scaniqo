@@ -1,0 +1,14 @@
+<resources>
+    <string name="merge_tools_progress_title">Combinando PDF</string>
+    <string name="merge_tools_progress_body">Preparando las nuevas páginas. Puedes cancelar sin cambiar el documento.</string>
+    <string name="merge_tools_success">PDF combinados. Guarda para completar los cambios.</string>
+    <string name="merge_tools_error">No se pudieron combinar los PDF. Verifica que los archivos sean válidos y permitan edición. No se agregó ninguna página.</string>
+    <string name="merge_tools_limit_error">El límite es de 100 páginas y 50 MB para el conjunto de PDF. Selecciona menos archivos.</string>
+    <string name="merge_tools_password_title">Este PDF tiene contraseña</string>
+    <string name="merge_tools_password_label">Contraseña del PDF</string>
+    <string name="merge_tools_password_error">La contraseña no abrió este PDF. Reintenta.</string>
+    <string name="merge_tools_password_protected">El resultado usará la protección del documento abierto. El archivo seleccionado seguirá intacto.</string>
+    <string name="merge_tools_password_unprotected">El documento abierto no tiene protección. Las páginas se agregarán a él y el archivo seleccionado seguirá intacto.</string>
+    <string name="merge_tools_selected_file">PDF seleccionado</string>
+    <string name="merge_tools_confirm">Combinar</string>
+</resources>

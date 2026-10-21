@@ -1,0 +1,9 @@
+<resources>
+    <string name="certificate_unknown_signer">Unidentified signer</string>
+    <string name="certificate_invalid_ranges">The signature contains invalid byte ranges.</string>
+    <string name="certificate_unsupported_format">This signature format is not supported by local verification.</string>
+    <string name="certificate_supported_hashes">Local verification supports signatures using SHA-256, SHA-384, or SHA-512.</string>
+    <string name="certificate_later_bytes">There are bytes after the signed revision.</string>
+    <string name="certificate_integrity_failed">Could not confirm this signature’s integrity.</string>
+    <string name="runtime_image_count_limit">Select up to 20 images.</string>
+</resources>

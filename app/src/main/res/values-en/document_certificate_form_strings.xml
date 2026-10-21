@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">Digital certificate</string>
+    <string name="certificate_intro">Sign a copy with a certificate installed on Android or check a PDF’s signatures.</string>
+    <string name="certificate_pick_pdf">Select PDF</string>
+    <string name="certificate_choose">Select certificate</string>
+    <string name="certificate_change">Change certificate</string>
+    <string name="certificate_install">Install certificate on Android</string>
+    <string name="certificate_sign">Sign copy</string>
+    <string name="certificate_save">Save signed PDF</string>
+    <string name="certificate_unsigned">This PDF has no digital signature.</string>
+    <string name="certificate_sign_unavailable">This tool only allows checking signatures in this document.</string>
+    <string name="certificate_verification_scope">The check verifies the signed bytes and the certificate’s current validity. Trust in the authority, revocation, and timestamps are not checked.</string>
+    <string name="certificate_sign_scope">The signature uses SHA-256 and does not include a timestamp. The private key remains under Android’s control.</string>
+    <string name="certificate_integrity_verified">Revision integrity verified</string>
+    <string name="certificate_integrity_invalid">Integrity not confirmed</string>
+    <string name="certificate_integrity_unsupported">Unsupported signature format</string>
+    <string name="certificate_whole_file">The signature covers the entire current file.</string>
+    <string name="certificate_earlier_revision">The signature does not cover the entire current file.</string>
+    <string name="certificate_current">Certificate within its validity period.</string>
+    <string name="certificate_not_current">Certificate outside its validity period or unidentified.</string>
+    <string name="certificate_picker_error">Could not open certificate selection.</string>
+    <string name="certificate_file_error">Could not open the file picker.</string>
+    <string name="certificate_back">Back</string>
+</resources>

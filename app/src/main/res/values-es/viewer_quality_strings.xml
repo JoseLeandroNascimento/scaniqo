@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_tool_corrections">Corregir</string>
+    <string name="viewer_tool_quality">Calidad</string>
+    <string name="viewer_compare_before">Antes</string>
+    <string name="viewer_compare_after">Después</string>
+    <string name="viewer_compare_description">Comparar mejoras de la página %1$d</string>
+    <string name="viewer_compare_before_description">Mostrar página sin mejoras</string>
+    <string name="viewer_compare_after_description">Mostrar página con mejoras</string>
+    <string name="viewer_preview_updating">Actualizando vista previa…</string>
+    <string name="viewer_preview_stale">No se pudo actualizar. Se conservó la vista previa anterior.</string>
+    <string name="viewer_preparing_tools">Preparando herramientas…</string>
+    <string name="viewer_undo_description">Deshacer el último cambio</string>
+</resources>

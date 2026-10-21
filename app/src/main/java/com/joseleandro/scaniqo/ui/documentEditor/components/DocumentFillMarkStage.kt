@@ -1,6 +1,5 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
-import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -23,6 +22,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -38,10 +38,13 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfPoint
@@ -85,6 +88,7 @@ internal fun DocumentFillMarkStage(
     val latestPage by rememberUpdatedState(page)
     var gestureDraft by remember(page.id) { mutableStateOf<PdfOverlay?>(null) }
     var gestureInProgress by remember(page.id) { mutableStateOf(false) }
+    var alignmentGuides by remember(page.id) { mutableStateOf<FillMarkAlignment?>(null) }
     val displayedDraft = gestureDraft ?: draft
     Column(modifier) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -99,7 +103,8 @@ internal fun DocumentFillMarkStage(
             val fitLabel = stringResource(R.string.fill_mark_fit)
             TextButton(onClick = { onStopTyping(); viewport.reset() }, enabled = ready,
                 modifier = Modifier.semantics { contentDescription = fitLabel }) {
-                Text("${(viewport.value.zoom * 100).roundToInt()}%", style = MaterialTheme.typography.labelMedium)
+                Text(com.joseleandro.scaniqo.core.localization.localizedPercent(viewport.value.zoom,
+                    androidx.compose.ui.platform.LocalConfiguration.current.locales[0]), style = MaterialTheme.typography.labelMedium)
             }
             IconButton(onClick = {
                 onStopTyping()
@@ -116,6 +121,8 @@ internal fun DocumentFillMarkStage(
             val bounds = signatureDocumentViewportBounds(viewport.value, width, height, margin, maxZoom = 6f)
             val latestBounds by rememberUpdatedState(bounds)
             val selectionRadius = with(density) { 8.dp.toPx() }
+            val alignmentThreshold = with(density) { 6.dp.toPx() }
+            val guideColor = MaterialTheme.colorScheme.primary
             val selection = displayedDraft?.let {
                 fillMarkSelectionGeometry(
                     it, bounds.page.left, bounds.page.top, bounds.page.width, bounds.page.height,
@@ -178,6 +185,7 @@ internal fun DocumentFillMarkStage(
                                     if (intent.transformed) {
                                         pending = null
                                         gestureDraft = null
+                                        alignmentGuides = null
                                         if (event.changes.count { it.pressed && it.previousPressed } >= 2) {
                                             viewport.transform(
                                                 event.calculateCentroid(useCurrent = false), event.calculatePan(), event.calculateZoom(),
@@ -189,13 +197,24 @@ internal fun DocumentFillMarkStage(
                                         change.consume()
                                         if (initialDraft != null && (resizeCorner != null || moving)) {
                                             val delta = current - start
-                                            pending = if (resizeCorner != null) initialDraft.scaledFillMarkFromCorner(
-                                                resizeCorner, delta.x, delta.y,
-                                                initialBounds.page.width, initialBounds.page.height,
-                                            ) else initialDraft.movedTo(
-                                                initialDraft.x + delta.x / initialBounds.page.width,
-                                                initialDraft.y + delta.y / initialBounds.page.height,
-                                            )
+                                            if (resizeCorner != null) {
+                                                pending = initialDraft.scaledFillMarkFromCorner(
+                                                    resizeCorner, delta.x, delta.y,
+                                                    initialBounds.page.width, initialBounds.page.height,
+                                                )
+                                                alignmentGuides = null
+                                            } else {
+                                                val aligned = initialDraft.movedTo(
+                                                    initialDraft.x + delta.x / initialBounds.page.width,
+                                                    initialDraft.y + delta.y / initialBounds.page.height,
+                                                ).alignedFillMark(
+                                                    latestPage.overlays,
+                                                    alignmentThreshold / initialBounds.page.width,
+                                                    alignmentThreshold / initialBounds.page.height,
+                                                )
+                                                pending = aligned.overlay
+                                                alignmentGuides = aligned
+                                            }
                                             gestureDraft = pending
                                         } else {
                                             val delta = current - last
@@ -219,6 +238,7 @@ internal fun DocumentFillMarkStage(
                                 } while (event.changes.any { it.pressed })
                             } finally {
                                 gestureDraft = null
+                                alignmentGuides = null
                                 gestureInProgress = false
                             }
                         }
@@ -263,10 +283,10 @@ internal fun DocumentFillMarkStage(
                     val fieldWidth = displayedDraft.width * bounds.page.width
                     val fieldHeight = displayedDraft.height * bounds.page.height
                     InlineFillMarkText(
-                        displayedDraft, focusRequest, fieldWidth, fieldHeight, bounds.page.width, state.canEdit, onUpdate, onStopTyping,
-                        Modifier.align(Alignment.TopStart)
-                            .offset { IntOffset(left.roundToInt(), top.roundToInt()) }
-                            .wrapContentSize(Alignment.TopStart, unbounded = true)
+                        displayedDraft, focusRequest, bounds.page.width, state.canEdit, onUpdate, onStopTyping,
+                        Modifier.align(androidx.compose.ui.AbsoluteAlignment.TopLeft)
+                            .absoluteOffset { IntOffset(left.roundToInt(), top.roundToInt()) }
+                            .wrapContentSize(androidx.compose.ui.AbsoluteAlignment.TopLeft, unbounded = true)
                             .requiredSize(with(density) { fieldWidth.toDp() }, with(density) { fieldHeight.toDp() }),
                         onCursor = { caret ->
                             val inset = with(density) { 18.dp.toPx() }
@@ -278,6 +298,21 @@ internal fun DocumentFillMarkStage(
                                 viewport.pan(dx, dy, width, height, margin, maxZoom = 6f)
                         },
                     )
+                }
+                alignmentGuides?.let { guides ->
+                    Canvas(Modifier.fillMaxSize()) {
+                        val dash = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 3.dp.toPx()))
+                        guides.verticalGuide?.let { anchor ->
+                            val x = bounds.page.left + anchor * bounds.page.width
+                            drawLine(guideColor, Offset(x, bounds.page.top), Offset(x, bounds.page.bottom),
+                                strokeWidth = 1.dp.toPx(), pathEffect = dash)
+                        }
+                        guides.horizontalGuide?.let { anchor ->
+                            val y = bounds.page.top + anchor * bounds.page.height
+                            drawLine(guideColor, Offset(bounds.page.left, y), Offset(bounds.page.right, y),
+                                strokeWidth = 1.dp.toPx(), pathEffect = dash)
+                        }
+                    }
                 }
                 if (selection != null) DocumentFillMarkSelection(
                     selection, displayedDraft, enabled = ready && state.canEdit, onUpdate = onUpdate,
@@ -300,8 +335,6 @@ internal fun DocumentFillMarkStage(
 private fun InlineFillMarkText(
     draft: PdfOverlay,
     focusRequest: Int,
-    width: Float,
-    height: Float,
     pageWidth: Float,
     enabled: Boolean,
     onUpdate: (PdfOverlay) -> Unit,
@@ -324,14 +357,15 @@ private fun InlineFillMarkText(
             keyboard?.show()
         }
     }
-    val lines = draft.text.lines()
-    val paint = remember { Paint(Paint.ANTI_ALIAS_FLAG) }
-    paint.textSize = draft.fontSize * pageWidth / 595f
-    val maxTextWidth = lines.maxOfOrNull(paint::measureText)?.coerceAtLeast(1f) ?: 1f
-    val fontPixels = paint.textSize * minOf(
-        1f, width.coerceAtLeast(1f) / maxTextWidth,
-        height.coerceAtLeast(1f) / (paint.textSize * lines.size * 1.2f),
-    )
+    val shaped = remember(draft.text, draft.fontSize, draft.width, draft.height) {
+        ShapedTextLayout.create(
+            text = draft.text, fontSize = draft.fontSize, color = draft.color,
+            maxWidth = (draft.width * 595f).coerceAtLeast(.001f),
+            maxHeight = (draft.height * 842f).coerceAtLeast(.001f),
+        )
+    }
+    val fontPixels = shaped.fontSize * pageWidth / 595f
+    val linePixels = shaped.lineAdvance * pageWidth / 595f
     val description = stringResource(R.string.fill_inline_edit_text)
     BasicTextField(
         value = value,
@@ -347,8 +381,10 @@ private fun InlineFillMarkText(
         textStyle = TextStyle(
             color = Color(draft.color).copy(alpha = draft.opacity),
             fontSize = with(density) { fontPixels.toSp() },
-            lineHeight = with(density) { (fontPixels * 1.2f).toSp() },
-            platformStyle = PlatformTextStyle(includeFontPadding = false),
+            lineHeight = with(density) { linePixels.toSp() },
+            platformStyle = PlatformTextStyle(includeFontPadding = true),
+            textDirection = TextDirection.ContentOrLtr,
+            textAlign = TextAlign.Start,
         ),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

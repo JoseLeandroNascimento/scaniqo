@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">वापस</string>
+    <string name="editor_tool_done">पूरा करें</string>
+    <string name="editor_tool_discard_title">समायोजन छोड़ दें?</string>
+    <string name="editor_tool_discard_body">अभी लागू नहीं किए गए बदलाव खो जाएँगे।</string>
+</resources>

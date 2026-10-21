@@ -1,0 +1,21 @@
+<resources>
+    <string name="quick_tools_import">Import PDF</string>
+    <string name="quick_tools_import_hint">From your device</string>
+    <string name="quick_tools_merge">Merge PDFs</string>
+    <string name="quick_tools_merge_hint">Combine and organize</string>
+    <string name="quick_tools_sign">Sign document</string>
+    <string name="quick_tools_sign_hint">Position your signature</string>
+    <string name="quick_merge_title">Merge PDFs</string>
+    <string name="quick_merge_working">Preparing your new PDF…</string>
+    <string name="quick_merge_name">Documents merged</string>
+    <string name="quick_merge_password">Password for %1$s</string>
+    <string name="quick_merge_password_label">PDF password</string>
+    <string name="quick_merge_password_wrong">Incorrect password. Try again.</string>
+    <string name="quick_merge_continue">Continue</string>
+    <string name="quick_merge_picker_error">Could not open the file picker.</string>
+    <string name="quick_sign_choose">Which document do you want to sign?</string>
+    <string name="quick_sign_description">Choose a PDF to position, rotate, and adjust your signature.</string>
+    <string name="quick_sign_empty">Import or scan a document to get started.</string>
+    <string name="quick_sign_search">Search document</string>
+    <string name="quick_sign_no_results">No documents found.</string>
+</resources>

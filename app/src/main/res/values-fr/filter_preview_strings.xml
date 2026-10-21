@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_preview_options">Choisissez un effet</string>
+    <string name="filter_preview_samples">Miniatures de cette page à intensité maximale.</string>
+    <string name="filter_preview_loading">Préparation des effets…</string>
+    <string name="filter_preview_thumbnails_error">Impossible de charger les miniatures.</string>
+    <string name="filter_preview_retry">Réessayer</string>
+    <string name="filter_preview_thumbnail_error">Aperçu indisponible</string>
+    <string name="filter_preview_thumbnail_description">Aperçu du filtre %1$s</string>
+    <string name="filter_preview_native_preserved">Cette page contient du texte ou des vecteurs. Pour voir les effets, autorisez la conversion en image ci-dessous.</string>
+    <string name="filter_preview_live_hint">Vérifiez le résultat avant d’appliquer. L’intensité ne modifie que le grand aperçu.</string>
+</resources>

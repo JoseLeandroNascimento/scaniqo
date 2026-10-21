@@ -1,0 +1,9 @@
+<resources>
+    <string name="certificate_unknown_signer">স্বাক্ষরকারী শনাক্ত হয়নি</string>
+    <string name="certificate_invalid_ranges">স্বাক্ষরে বাইটের পরিসর সঠিক নয়।</string>
+    <string name="certificate_unsupported_format">এই স্বাক্ষরের ফরম্যাট স্থানীয় যাচাইয়ে সমর্থিত নয়।</string>
+    <string name="certificate_supported_hashes">স্থানীয় যাচাইয়ে SHA-256, SHA-384 বা SHA-512 স্বাক্ষর গ্রহণ করা হয়।</string>
+    <string name="certificate_later_bytes">স্বাক্ষরিত সংস্করণের পরে অতিরিক্ত বাইট আছে।</string>
+    <string name="certificate_integrity_failed">এই স্বাক্ষরের অখণ্ডতা নিশ্চিত করা যায়নি।</string>
+    <string name="runtime_image_count_limit">সর্বোচ্চ 20টি ছবি বেছে নিন।</string>
+</resources>

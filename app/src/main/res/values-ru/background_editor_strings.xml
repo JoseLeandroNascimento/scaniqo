@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_editor_title">Фон</string>
+    <string name="background_editor_remove">Удалить фон</string>
+    <string name="background_editor_retry">Найти заново</string>
+    <string name="background_editor_adjust">Настроить контур</string>
+    <string name="background_editor_detecting">Поиск листа…</string>
+    <string name="background_editor_suggested">Проверьте результат или настройте контур перед применением.</string>
+    <string name="background_editor_no_edges">Настройте углы вручную, чтобы выделить лист.</string>
+    <string name="background_editor_failed">Не удалось найти лист. Настройте углы вручную.</string>
+    <string name="background_editor_hint">Фон снимка удаляется автоматически. Содержимое листа сохраняется.</string>
+</resources>

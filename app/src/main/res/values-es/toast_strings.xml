@@ -1,0 +1,6 @@
+<resources>
+    <string name="toast_success_title">Todo listo</string>
+    <string name="toast_error_title">Algo salió mal</string>
+    <string name="toast_info_title">Información</string>
+    <string name="toast_dismiss">Cerrar mensaje</string>
+</resources>

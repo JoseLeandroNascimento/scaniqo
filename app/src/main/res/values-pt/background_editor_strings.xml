@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_editor_title">Fundo</string>
+    <string name="background_editor_remove">Remover fundo</string>
+    <string name="background_editor_retry">Detectar novamente</string>
+    <string name="background_editor_adjust">Ajustar contorno</string>
+    <string name="background_editor_detecting">Localizando a folha…</string>
+    <string name="background_editor_suggested">Confira o resultado ou ajuste o contorno antes de aplicar.</string>
+    <string name="background_editor_no_edges">Ajuste os cantos manualmente para selecionar a folha.</string>
+    <string name="background_editor_failed">Não foi possível localizar a folha. Ajuste os cantos manualmente.</string>
+    <string name="background_editor_hint">O fundo é removido automaticamente da captura. O conteúdo da folha é preservado.</string>
+</resources>

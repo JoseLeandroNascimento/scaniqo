@@ -3,7 +3,7 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -102,7 +102,7 @@ private fun CropCorner(
     val down = stringResource(R.string.quality_corner_down)
     Box(
         Modifier
-            .offset { IntOffset((point.x * size.width).roundToInt(), (point.y * size.height).roundToInt()) }
+            .absoluteOffset { IntOffset((point.x * size.width).roundToInt(), (point.y * size.height).roundToInt()) }
             .size(48.dp)
             .semantics {
                 contentDescription = label
@@ -143,6 +143,7 @@ private fun CropCorner(
     }
 }
 
+@Preview(name = "Recorte retangular - Árabe", locale = "ar", widthDp = 390, heightDp = 600, showBackground = true)
 @Preview(name = "Recorte retangular", widthDp = 390, heightDp = 600, showBackground = true)
 @Preview(name = "Recorte retangular fonte ampliada", widthDp = 360, heightDp = 600, fontScale = 1.3f)
 @Composable

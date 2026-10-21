@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_editor_title">Arrière-plan</string>
+    <string name="background_editor_remove">Supprimer l’arrière-plan</string>
+    <string name="background_editor_retry">Détecter à nouveau</string>
+    <string name="background_editor_adjust">Ajuster le contour</string>
+    <string name="background_editor_detecting">Détection de la feuille…</string>
+    <string name="background_editor_suggested">Vérifiez le résultat ou ajustez le contour avant d’appliquer.</string>
+    <string name="background_editor_no_edges">Ajustez les coins manuellement pour sélectionner la feuille.</string>
+    <string name="background_editor_failed">Impossible de détecter la feuille. Ajustez les coins manuellement.</string>
+    <string name="background_editor_hint">L’arrière-plan est automatiquement supprimé de la capture. Le contenu de la feuille est conservé.</string>
+</resources>

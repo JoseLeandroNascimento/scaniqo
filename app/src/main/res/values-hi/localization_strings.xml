@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="localization_title">भाषा और क्षेत्र</string>
+    <string name="localization_summary">भाषा, स्थानीय फ़ॉर्मैट और पढ़ने की दिशा</string>
+    <string name="localization_system">सिस्टम के अनुसार</string>
+    <string name="localization_system_description">डिवाइस की पसंदीदा भाषाएँ इस्तेमाल करता है। कोई उपलब्ध न हो तो अंग्रेज़ी इस्तेमाल होती है।</string>
+    <string name="localization_language">ऐप की भाषा</string>
+    <string name="localization_regional_formats">क्षेत्रीय फ़ॉर्मैट</string>
+    <string name="localization_formats_description">तारीख, समय और संख्या चुनी भाषा और क्षेत्र के अनुसार हैं। समय क्षेत्र डिवाइस वाला ही रहेगा।</string>
+    <string name="localization_date_example">तारीख और समय: %1$s</string>
+    <string name="localization_number_example">संख्या: %1$s</string>
+    <string name="localization_direction_description">इंटरफ़ेस की दिशा भाषा के अनुसार बदलती है। दस्तावेज़ के पृष्ठों का कंटेंट और स्थिति सुरक्षित रहते हैं।</string>
+    <string name="localization_apply">भाषा लागू करें</string>
+    <string name="localization_cancel">रद्द करें</string>
+    <string name="localization_restart_hint">भाषा लागू करने के लिए वर्तमान स्क्रीन फिर खुलेगी।</string>
+    <string name="localization_flag_description">झंडे क्षेत्रीय रूप की पहचान बताते हैं, जिसे दूसरे देशों में भी इस्तेमाल किया जा सकता है।</string>
+</resources>

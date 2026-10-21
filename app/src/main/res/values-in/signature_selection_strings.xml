@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">Ubah ukuran dari sudut kiri atas</string>
+    <string name="signature_resize_top_right">Ubah ukuran dari sudut kanan atas</string>
+    <string name="signature_resize_bottom_right">Ubah ukuran dari sudut kanan bawah</string>
+    <string name="signature_resize_bottom_left">Ubah ukuran dari sudut kiri bawah</string>
+</resources>

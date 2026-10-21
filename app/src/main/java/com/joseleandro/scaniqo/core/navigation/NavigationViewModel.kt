@@ -8,8 +8,8 @@ import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private val navigationStack by savedStateHandle.saved(
-        // Route identifiers changed in v2, so older saved stacks are incompatible.
-        key = "navigation_back_stack_v2",
+        // Older saved stacks can contain the removed interactive forms destination.
+        key = "navigation_back_stack_v3",
         serializer = NavBackStackSerializer(AppRoute.serializer()),
     ) {
         NavBackStack<AppRoute>(AppRoute.Documents)

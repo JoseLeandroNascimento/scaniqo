@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_scope_current">এই পৃষ্ঠা</string>
+    <string name="document_scope_select">বেছে নিন</string>
+    <string name="document_scope_all">সব</string>
+    <string name="document_scope_title">কোন পৃষ্ঠায় প্রয়োগ করবেন?</string>
+    <string name="document_scope_hint">একই সমন্বয় শুধু চিহ্নিত পৃষ্ঠায় প্রয়োগ হবে।</string>
+    <string name="document_scope_select_all">সব বেছে নিন</string>
+    <string name="document_scope_clear">মুছুন</string>
+    <string name="document_scope_confirm">নির্বাচন ব্যবহার করুন</string>
+    <string name="document_scope_cancel">বাতিল</string>
+    <string name="document_scope_page">পৃষ্ঠা %1$d</string>
+    <string name="document_scope_selected_count">বেছে নিন (%1$d)</string>
+    <string name="document_scope_empty">অন্তত একটি পৃষ্ঠা বেছে নিন।</string>
+    <plurals name="document_scope_apply_count">
+        <item quantity="one">%1$dটি পৃষ্ঠায় প্রয়োগ করুন</item>
+        <item quantity="other">%1$dটি পৃষ্ঠায় প্রয়োগ করুন</item>
+    </plurals>
+    <plurals name="document_scope_count">
+        <item quantity="one">%1$dটি পৃষ্ঠা বেছে নেওয়া হয়েছে</item>
+        <item quantity="other">%1$dটি পৃষ্ঠা বেছে নেওয়া হয়েছে</item>
+    </plurals>
+    <string name="corrections_tab_angle">হেলান</string>
+    <string name="corrections_tab_perspective">প্রান্ত</string>
+    <string name="corrections_tab_curve">বাঁক</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">পৃষ্ঠা %1$d / %2$d। প্রিভিউয়ের পৃষ্ঠা বেছে নিন</string>
+    <string name="corrections_live_title">সমন্বয়ের প্রিভিউ</string>
+    <string name="corrections_live_hint">প্রিভিউ নিয়ন্ত্রণের সঙ্গে বদলায়। প্রয়োগ করলেই নথি বদলায়।</string>
+    <string name="corrections_preview_previous">আগের পৃষ্ঠার প্রিভিউ</string>
+    <string name="corrections_preview_next">পরের পৃষ্ঠার প্রিভিউ</string>
+    <string name="corrections_preview_choose">প্রিভিউয়ের পৃষ্ঠা বেছে নিন</string>
+    <string name="corrections_preview_pages">দেখার জন্য পৃষ্ঠা বেছে নিন</string>
+    <string name="corrections_preview_before">আগে</string>
+    <string name="corrections_preview_after">পরে</string>
+    <string name="corrections_preview_before_description">এই সমন্বয়ের আগের পৃষ্ঠা দেখুন</string>
+    <string name="corrections_preview_after_description">এই সমন্বয়ের ফলাফল দেখুন</string>
+    <string name="corrections_preview_before_hint">এই সমন্বয়ের আগে</string>
+    <string name="corrections_preview_after_hint">সমন্বয়ের ফলাফল</string>
+    <string name="corrections_preview_updating">আপডেট হচ্ছে…</string>
+    <string name="corrections_preview_error">প্রিভিউ আপডেট করা যায়নি।</string>
+    <string name="corrections_preview_retry">আবার চেষ্টা করুন</string>
+    <string name="corrections_preview_native_hint">টেক্সট ও ভেক্টর অক্ষত আছে। এই পৃষ্ঠাকে ছবি হিসেবে সংশোধন করতে নিচের বিকল্প চালু করুন।</string>
+    <string name="corrections_page_navigation_hint">প্রিভিউ বদলালেও নিয়ন্ত্রণ একই থাকে, যাতে অন্য পৃষ্ঠায় সমন্বয় দেখতে পারেন।</string>
+    <string name="corrections_perspective_editor">তোলা ছবির প্রান্ত ঠিক করুন</string>
+    <string name="corrections_perspective_live_hint">নিচের ছবিতে কোণা টেনে উপরে ফলাফল দেখুন।</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="localization_title">Langue et région</string>
+    <string name="localization_summary">Langue, formats locaux et sens de lecture</string>
+    <string name="localization_system">Suivre le système</string>
+    <string name="localization_system_description">Utilise les langues préférées de l’appareil. Si aucune n’est disponible, utilise l’anglais.</string>
+    <string name="localization_language">Langue de l’application</string>
+    <string name="localization_regional_formats">Formats régionaux</string>
+    <string name="localization_formats_description">Les dates, heures et nombres suivent la langue et la région choisies. Le fuseau horaire reste celui de l’appareil.</string>
+    <string name="localization_date_example">Date et heure : %1$s</string>
+    <string name="localization_number_example">Nombre : %1$s</string>
+    <string name="localization_direction_description">Le sens de l’interface suit la langue. Le contenu et les positions sur les pages du document sont conservés.</string>
+    <string name="localization_apply">Appliquer la langue</string>
+    <string name="localization_cancel">Annuler</string>
+    <string name="localization_restart_hint">Le changement rouvre l’écran actuel pour appliquer la langue.</string>
+    <string name="localization_flag_description">Les drapeaux identifient la variante régionale, qui peut aussi être utilisée dans d’autres pays.</string>
+</resources>

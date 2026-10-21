@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_sheet_close">Fermer l’outil</string>
+    <string name="tool_sheet_saved_signatures">Signatures enregistrées</string>
+    <string name="tool_sheet_placed_signatures">Sur cette page</string>
+</resources>

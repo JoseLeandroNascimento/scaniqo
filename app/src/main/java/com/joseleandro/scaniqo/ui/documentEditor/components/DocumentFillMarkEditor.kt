@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -37,8 +38,10 @@ internal fun DocumentFillMarkEditor(
 ) {
     val workspace = state.workspace ?: return
     val page = workspace.pages.getOrNull(state.selectedPageIndex) ?: return
+    val context = LocalContext.current
+    val styles = remember(context.applicationContext) { FillMarkStylePreferences(context) }
     var encoded by rememberSaveable(workspace.workspaceId, tool, page.id) {
-        mutableStateOf(Json.encodeToString(newOverlay(PdfOverlayKind.TEXT)))
+        mutableStateOf(Json.encodeToString(styles.newOverlay(PdfOverlayKind.TEXT)))
     }
     val draft = remember(encoded) { Json.decodeFromString<PdfOverlay>(encoded) }
     var active by rememberSaveable(workspace.workspaceId, tool, page.id) { mutableStateOf(false) }
@@ -71,7 +74,7 @@ internal fun DocumentFillMarkEditor(
     }
     fun reset() {
         stopTyping()
-        encoded = Json.encodeToString(newOverlay(mode))
+        encoded = Json.encodeToString(styles.newOverlay(mode))
         dirty = false
         active = false
         selectedId = null
@@ -84,7 +87,10 @@ internal fun DocumentFillMarkEditor(
 
     fun commitCurrent(): Boolean {
         if (dirty && !canCommit(draft)) return false
-        if (dirty) onEvent(DocumentToolsEvent.PutOverlay(draft, targets))
+        if (dirty) {
+            styles.remember(draft)
+            onEvent(DocumentToolsEvent.PutOverlay(draft, targets))
+        }
         return true
     }
     fun focusText() {
@@ -107,13 +113,24 @@ internal fun DocumentFillMarkEditor(
     }
     fun insert(point: PdfPoint) {
         if (!commitCurrent()) return
-        val value = newOverlay(mode).placedFillMarkAt(point)
+        val value = styles.newOverlay(mode).placedFillMarkAt(point)
         selectedId = null
         encoded = Json.encodeToString(value)
         active = true
         dirty = mode == PdfOverlayKind.CHECKMARK
         allPages = false
         if (mode == PdfOverlayKind.TEXT) focusText() else stopTyping()
+    }
+
+    fun canDuplicateCurrent(): Boolean = active && draft.kind in repeatableFillMarkKinds &&
+        canCommit(draft) && page.overlays.size + (if (page.overlays.any { it.id == draft.id }) 0 else 1) < 100
+
+    fun duplicate() {
+        if (!canDuplicateCurrent() || !commitCurrent()) return
+        stopTyping()
+        selectedId = null
+        allPages = false
+        update(draft.duplicatedFillMark())
     }
 
     LaunchedEffect(dirty) { onDraftChanged(dirty) }
@@ -170,6 +187,10 @@ internal fun DocumentFillMarkEditor(
                     if (page.overlays.isNotEmpty()) DropdownMenuItem(
                         text = { Text(stringResource(R.string.fill_mark_elements, page.overlays.size)) },
                         onClick = { more = false; stopTyping(); showElements = true })
+                    if (active && draft.kind in repeatableFillMarkKinds) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.fill_mark_duplicate)) },
+                        enabled = canDuplicateCurrent(),
+                        onClick = { more = false; duplicate() })
                     if (existing != null) DropdownMenuItem(
                         text = { Text(stringResource(R.string.overlay_delete)) },
                         leadingIcon = { Icon(painterResource(R.drawable.delete_24px), null) },

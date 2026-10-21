@@ -4,13 +4,14 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -51,7 +52,7 @@ internal fun DocumentFillMarkSelection(
         stringResource(R.string.fill_selection_top_left), stringResource(R.string.fill_selection_top_right),
         stringResource(R.string.fill_selection_bottom_right), stringResource(R.string.fill_selection_bottom_left),
     )
-    Box(modifier.fillMaxSize()) {
+    Box(modifier.fillMaxSize(), contentAlignment = AbsoluteAlignment.TopLeft) {
         Canvas(Modifier.fillMaxSize()) {
             val dash = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()))
             val outline = Path().apply {
@@ -81,7 +82,7 @@ internal fun DocumentFillMarkSelection(
                 CustomAccessibilityAction(shrink) { onUpdate(draft.scaledFillMarkAtCorner(index, .9f)); true },
             )
             Box(
-                Modifier.offset {
+                Modifier.absoluteOffset {
                     IntOffset((handle.x - selection.targetSize / 2f).roundToInt(),
                         (handle.y - selection.targetSize / 2f).roundToInt())
                 }.size(48.dp).semantics {

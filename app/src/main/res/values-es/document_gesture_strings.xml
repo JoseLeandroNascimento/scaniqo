@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_move_handle">Arrastra el control para alinear el contenido. Toca para centrar.</string>
+    <string name="gesture_rotate_handle">Arrastra alrededor de la hoja para girar. Toca para girar 90 grados.</string>
+    <string name="gesture_scale_handle">Arrastra la esquina en diagonal para cambiar el tamaño del contenido.</string>
+    <string name="gesture_straighten_handle">Arrastra el control a los lados para ajustar la inclinación.</string>
+    <string name="gesture_curvature_handle">Arrastra el control hacia arriba o abajo para corregir la curvatura.</string>
+    <string name="gesture_scale_increase">Ampliar un 5 por ciento</string>
+    <string name="gesture_scale_decrease">Reducir un 5 por ciento</string>
+    <string name="gesture_angle_increase">Girar 1 grado a la derecha</string>
+    <string name="gesture_angle_decrease">Girar 1 grado a la izquierda</string>
+    <string name="gesture_curve_increase">Curvar hacia abajo</string>
+    <string name="gesture_curve_decrease">Curvar hacia arriba</string>
+    <string name="gesture_drag_handle">Arrastra el control</string>
+</resources>

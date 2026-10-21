@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trash_title">Корзина</string>
+    <string name="trash_description">Документы хранятся здесь до восстановления или удаления навсегда. Они занимают место на устройстве и не входят в новые резервные копии.</string>
+    <string name="trash_empty_title">Корзина пуста</string>
+    <string name="trash_empty_body">Здесь появятся документы, перемещённые в корзину, чтобы их можно было восстановить.</string>
+    <string name="trash_load_error">Не удалось загрузить корзину.</string>
+    <string name="trash_restore">Восстановить</string>
+    <string name="trash_restore_document">Восстановить %1$s</string>
+    <string name="trash_delete_document">Удалить %1$s навсегда</string>
+    <string name="trash_restored">Документ восстановлен в библиотеке</string>
+    <string name="trash_restore_error">Не удалось восстановить. Повторите попытку.</string>
+    <string name="trash_permanent_delete">Удалить навсегда</string>
+    <string name="trash_delete_title">Удалить навсегда?</string>
+    <string name="trash_delete_body">Документ «%1$s» и его файлы будут удалены с устройства. Это действие нельзя отменить.</string>
+    <string name="trash_deleted">Документ удалён навсегда</string>
+    <string name="trash_delete_error">Не удалось удалить. Документ остаётся в корзине. Повторите попытку.</string>
+    <string name="trash_deleted_on">В корзине с %1$s</string>
+    <string name="trash_working">Обработка документа…</string>
+</resources>

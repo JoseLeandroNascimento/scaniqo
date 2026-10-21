@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_tool_corrections">Исправить</string>
+    <string name="viewer_tool_quality">Качество</string>
+    <string name="viewer_compare_before">До</string>
+    <string name="viewer_compare_after">После</string>
+    <string name="viewer_compare_description">Сравнить улучшения страницы %1$d</string>
+    <string name="viewer_compare_before_description">Показать страницу без улучшений</string>
+    <string name="viewer_compare_after_description">Показать страницу с улучшениями</string>
+    <string name="viewer_preview_updating">Обновление предпросмотра…</string>
+    <string name="viewer_preview_stale">Не удалось обновить. Предыдущий предпросмотр сохранён.</string>
+    <string name="viewer_preparing_tools">Подготовка инструментов…</string>
+    <string name="viewer_undo_description">Отменить последнее изменение</string>
+</resources>

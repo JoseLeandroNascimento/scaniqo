@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.joseleandro.scaniqo.R
-import kotlin.math.roundToInt
 
 /** A transformação afeta a prévia e suas alças juntas, sem modificar o PDF. */
 internal data class PreviewZoom(val scale: Float = 1f, val x: Float = 0f, val y: Float = 0f) {
@@ -148,7 +147,8 @@ internal fun DocumentPreviewZoom(
                     val resetLabel = stringResource(R.string.preview_zoom_reset)
                     TextButton(onClick = { zoom = PreviewZoom() },
                         modifier = Modifier.semantics { contentDescription = resetLabel }) {
-                        Text("${(zoom.scale * 100).roundToInt()}%")
+                        Text(com.joseleandro.scaniqo.core.localization.localizedPercent(zoom.scale,
+                            androidx.compose.ui.platform.LocalConfiguration.current.locales[0]))
                     }
                 }
                 if (allowFullscreen || fullscreen) FilledTonalIconButton(onClick = { expanded = !fullscreen }) {

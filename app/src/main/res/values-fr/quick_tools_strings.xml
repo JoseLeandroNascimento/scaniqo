@@ -1,0 +1,21 @@
+<resources>
+    <string name="quick_tools_import">Importer un PDF</string>
+    <string name="quick_tools_import_hint">Depuis votre appareil</string>
+    <string name="quick_tools_merge">Fusionner des PDF</string>
+    <string name="quick_tools_merge_hint">Réunir et organiser</string>
+    <string name="quick_tools_sign">Signer le document</string>
+    <string name="quick_tools_sign_hint">Positionnez votre signature</string>
+    <string name="quick_merge_title">Fusionner des PDF</string>
+    <string name="quick_merge_working">Préparation de votre nouveau PDF…</string>
+    <string name="quick_merge_name">Documents fusionnés</string>
+    <string name="quick_merge_password">Mot de passe de %1$s</string>
+    <string name="quick_merge_password_label">Mot de passe du PDF</string>
+    <string name="quick_merge_password_wrong">Mot de passe incorrect. Réessayez.</string>
+    <string name="quick_merge_continue">Continuer</string>
+    <string name="quick_merge_picker_error">Impossible d’ouvrir le sélecteur de fichiers.</string>
+    <string name="quick_sign_choose">Quel document souhaitez-vous signer ?</string>
+    <string name="quick_sign_description">Choisissez un PDF pour positionner, faire pivoter et ajuster votre signature.</string>
+    <string name="quick_sign_empty">Importez ou numérisez un document pour commencer.</string>
+    <string name="quick_sign_search">Rechercher un document</string>
+    <string name="quick_sign_no_results">Aucun document trouvé.</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_move_handle">कंटेंट संरेखित करने के लिए हैंडल खींचें। बीच में रखने के लिए टैप करें।</string>
+    <string name="gesture_rotate_handle">घुमाने के लिए शीट के चारों ओर खींचें। 90 डिग्री घुमाने के लिए टैप करें।</string>
+    <string name="gesture_scale_handle">कंटेंट का आकार बदलने के लिए कोना तिरछा खींचें।</string>
+    <string name="gesture_straighten_handle">झुकाव ठीक करने के लिए हैंडल बाएँ या दाएँ खींचें।</string>
+    <string name="gesture_curvature_handle">वक्रता ठीक करने के लिए हैंडल ऊपर या नीचे खींचें।</string>
+    <string name="gesture_scale_increase">5 प्रतिशत बड़ा करें</string>
+    <string name="gesture_scale_decrease">5 प्रतिशत छोटा करें</string>
+    <string name="gesture_angle_increase">1 डिग्री दाएँ घुमाएँ</string>
+    <string name="gesture_angle_decrease">1 डिग्री बाएँ घुमाएँ</string>
+    <string name="gesture_curve_increase">नीचे की ओर मोड़ें</string>
+    <string name="gesture_curve_decrease">ऊपर की ओर मोड़ें</string>
+    <string name="gesture_drag_handle">हैंडल खींचें</string>
+</resources>

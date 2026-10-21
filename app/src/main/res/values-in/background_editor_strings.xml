@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_editor_title">Latar belakang</string>
+    <string name="background_editor_remove">Hapus latar belakang</string>
+    <string name="background_editor_retry">Deteksi ulang</string>
+    <string name="background_editor_adjust">Sesuaikan garis tepi</string>
+    <string name="background_editor_detecting">Mencari lembar…</string>
+    <string name="background_editor_suggested">Periksa hasil atau sesuaikan garis tepi sebelum menerapkan.</string>
+    <string name="background_editor_no_edges">Sesuaikan sudut secara manual untuk memilih lembar.</string>
+    <string name="background_editor_failed">Lembar tidak ditemukan. Sesuaikan sudut secara manual.</string>
+    <string name="background_editor_hint">Latar belakang dihapus otomatis dari hasil tangkapan. Konten lembar tetap dipertahankan.</string>
+</resources>

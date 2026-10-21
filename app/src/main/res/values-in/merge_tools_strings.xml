@@ -1,0 +1,14 @@
+<resources>
+    <string name="merge_tools_progress_title">Menggabungkan PDF</string>
+    <string name="merge_tools_progress_body">Menyiapkan halaman baru. Anda dapat membatalkan tanpa mengubah dokumen.</string>
+    <string name="merge_tools_success">PDF digabungkan. Simpan untuk menyelesaikan perubahan.</string>
+    <string name="merge_tools_error">PDF tidak dapat digabungkan. Pastikan berkas valid dan mengizinkan pengeditan. Tidak ada halaman yang ditambahkan.</string>
+    <string name="merge_tools_limit_error">Batas gabungan PDF adalah 100 halaman dan 50 MB. Pilih lebih sedikit berkas.</string>
+    <string name="merge_tools_password_title">PDF ini memiliki kata sandi</string>
+    <string name="merge_tools_password_label">Kata sandi PDF</string>
+    <string name="merge_tools_password_error">Kata sandi ini tidak membuka PDF. Coba lagi.</string>
+    <string name="merge_tools_password_protected">Hasil akan menggunakan perlindungan dokumen yang terbuka. Berkas yang dipilih tetap utuh.</string>
+    <string name="merge_tools_password_unprotected">Dokumen yang terbuka tidak dilindungi. Halaman akan ditambahkan ke dalamnya, dan berkas yang dipilih tetap utuh.</string>
+    <string name="merge_tools_selected_file">PDF yang dipilih</string>
+    <string name="merge_tools_confirm">Gabungkan</string>
+</resources>

@@ -1,0 +1,35 @@
+<resources>
+    <string name="tools_hub_title">सभी टूल</string>
+    <string name="tools_hub_hint">आपके PDF के लिए और विकल्प</string>
+    <string name="tools_hub_organize">बनाएँ और व्यवस्थित करें</string>
+    <string name="tools_hub_convert">बदलें और निकालें</string>
+    <string name="tools_hub_edit">PDF संपादित करें</string>
+    <string name="tools_hub_originals">प्रमाणपत्र</string>
+    <string name="tools_hub_split">पृष्ठ निकालें</string>
+    <string name="tools_hub_split_hint">चुने हुए पृष्ठ दूसरे PDF में सहेजें</string>
+    <string name="tools_hub_images_pdf">इमेज से PDF</string>
+    <string name="tools_hub_images_pdf_hint">अपनी फ़ोटो से दस्तावेज़ बनाएँ</string>
+    <string name="tools_hub_id">दस्तावेज़ का आगे और पीछे</string>
+    <string name="tools_hub_id_hint">दोनों तरफ़ एक शीट पर व्यवस्थित करें</string>
+    <string name="tools_hub_pdf_images">PDF से इमेज</string>
+    <string name="tools_hub_pdf_images_hint">पृष्ठ JPG या PNG में निर्यात करें</string>
+    <string name="tools_hub_receipt">रसीदों से डेटा निकालें</string>
+    <string name="tools_hub_receipt_hint">पहचाना गया डेटा जाँचें और CSV में निर्यात करें</string>
+    <string name="tools_hub_fill">पृष्ठ पर भरें</string>
+    <string name="tools_hub_fill_hint">स्कैन किए फ़ॉर्म में टेक्स्ट और निशान जोड़ें</string>
+    <string name="tools_hub_annotate">टिप्पणी जोड़ें</string>
+    <string name="tools_hub_annotate_hint">अंश हाइलाइट करें और टिप्पणियाँ जोड़ें</string>
+    <string name="tools_hub_watermark">निशान और हेडर</string>
+    <string name="tools_hub_watermark_hint">PDF में अपने टेक्स्ट और निशान जोड़ें</string>
+    <string name="tools_hub_redact">जानकारी छिपाएँ</string>
+    <string name="tools_hub_redact_hint">चुने हुए हिस्से हटाकर कॉपी बनाएँ</string>
+    <string name="tools_hub_certificates">प्रमाणपत्र से हस्ताक्षर</string>
+    <string name="tools_hub_certificates_hint">डिजिटल हस्ताक्षर करें या PDF की अखंडता जाँचें</string>
+    <string name="tools_hub_editor">PDF एडिटर</string>
+    <string name="tools_hub_editor_hint">पृष्ठ, फ़िल्टर, OCR, कंप्रेशन और सुरक्षा</string>
+    <string name="tools_hub_choose">दस्तावेज़ चुनें</string>
+    <string name="tools_hub_choose_hint">आगे बढ़ने के लिए लाइब्रेरी से PDF खोलें।</string>
+    <string name="tools_hub_search">नाम से खोजें</string>
+    <string name="tools_hub_empty">इस संपादन के लिए PDF आयात या स्कैन करें।</string>
+    <string name="tools_hub_back">वापस</string>
+</resources>

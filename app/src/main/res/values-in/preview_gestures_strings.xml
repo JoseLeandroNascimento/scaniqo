@@ -1,0 +1,8 @@
+<resources>
+    <string name="preview_zoom_expand">Perbesar ke layar penuh</string>
+    <string name="preview_zoom_close">Tutup tampilan diperbesar</string>
+    <string name="preview_zoom_reset">Sesuaikan halaman ke layar</string>
+    <string name="preview_controls_show">Penyesuaian</string>
+    <string name="preview_controls_hide">Sembunyikan penyesuaian</string>
+    <string name="preview_gestures_hint">Gunakan dua jari untuk memperbesar dan menjelajah.</string>
+</resources>

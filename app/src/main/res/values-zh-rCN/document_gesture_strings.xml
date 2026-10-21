@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_move_handle">拖动控制点对齐内容，点按可居中。</string>
+    <string name="gesture_rotate_handle">绕页面拖动可旋转，点按可旋转 90 度。</string>
+    <string name="gesture_scale_handle">沿对角线拖动角点以调整内容大小。</string>
+    <string name="gesture_straighten_handle">左右拖动控制点以调整倾斜。</string>
+    <string name="gesture_curvature_handle">上下拖动控制点以校正弯曲。</string>
+    <string name="gesture_scale_increase">放大百分之五</string>
+    <string name="gesture_scale_decrease">缩小百分之五</string>
+    <string name="gesture_angle_increase">向右旋转 1 度</string>
+    <string name="gesture_angle_decrease">向左旋转 1 度</string>
+    <string name="gesture_curve_increase">向下弯曲</string>
+    <string name="gesture_curve_decrease">向上弯曲</string>
+    <string name="gesture_drag_handle">拖动控制点</string>
+</resources>

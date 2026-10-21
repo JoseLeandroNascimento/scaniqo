@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_interactive_position">Положение</string>
+    <string name="layout_interactive_rotate">Поворот</string>
+    <string name="layout_interactive_drag">Перетащите для выравнивания</string>
+    <string name="layout_interactive_twist">Поворачивайте двумя пальцами</string>
+    <string name="layout_interactive_pinch">Увеличивайте двумя пальцами</string>
+    <string name="layout_interactive_position_space">Уменьшите значение «Размер», чтобы создать поля.</string>
+    <string name="layout_interactive_rotate_left">Повернуть влево на 90 градусов</string>
+    <string name="layout_interactive_rotate_right">Повернуть вправо на 90 градусов</string>
+</resources>

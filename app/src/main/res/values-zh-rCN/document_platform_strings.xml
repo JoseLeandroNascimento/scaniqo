@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_share_chooser">分享 PDF</string>
+    <string name="document_pdf_page_description">文档第 %1$d 页</string>
+    <string name="document_pdf_loading">正在加载页面</string>
+    <string name="document_pdf_error">无法打开此页面。</string>
+    <string name="document_pdf_retry">重试</string>
+    <string name="document_thumbnail_description">文档缩略图</string>
+</resources>

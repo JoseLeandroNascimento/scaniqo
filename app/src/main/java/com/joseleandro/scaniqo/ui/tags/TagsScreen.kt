@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.domain.model.TagIcon
 import com.joseleandro.scaniqo.domain.model.TagModel
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
@@ -243,7 +245,7 @@ private fun TagItemCard(
             ) {
                 Text(
                     text = tag.name,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(textDirection = TextDirection.ContentOrLtr),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -257,7 +259,7 @@ private fun TagItemCard(
                 IconButton(onClick = { showMenu = true }) {
                     Icon(
                         painter = painterResource(R.drawable.more_vert_24px),
-                        contentDescription = stringResource(R.string.tag_actions, tag.name),
+                        contentDescription = stringResource(R.string.tag_actions, bidiArgument(tag.name)),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -368,7 +370,7 @@ private fun DeleteTagDialog(
         title = { Text(stringResource(R.string.tag_delete_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(stringResource(R.string.tag_delete_description, tag.name))
+                Text(stringResource(R.string.tag_delete_description, bidiArgument(tag.name)))
                 if (hasError) {
                     Text(
                         stringResource(R.string.tag_delete_error),

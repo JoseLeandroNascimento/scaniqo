@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_position_title">Объединить PDF</string>
+    <string name="merge_position_label">Вставить новые страницы</string>
+    <string name="merge_position_start">В начало</string>
+    <string name="merge_position_after">После страницы</string>
+    <string name="merge_position_end">В конец</string>
+    <string name="merge_position_page_label">Номер страницы</string>
+    <string name="merge_position_page_error">Введите номер страницы от 1 до %1$d.</string>
+    <string name="merge_position_start_description">Новые страницы будут добавлены в начало документа.</string>
+    <string name="merge_position_after_description">Новые страницы будут добавлены после страницы %1$d.</string>
+    <string name="merge_position_end_description">Новые страницы будут добавлены в конец документа.</string>
+    <string name="merge_position_invalid_description">Выберите допустимую страницу для продолжения.</string>
+    <string name="merge_position_select_pdfs">Выбрать PDF</string>
+    <plurals name="merge_position_page_count">
+        <item quantity="one">Документ: %1$d страница</item>
+        <item quantity="few">Документ: %1$d страницы</item>
+        <item quantity="many">Документ: %1$d страниц</item>
+        <item quantity="other">Документ: %1$d страницы</item>
+    </plurals>
+</resources>

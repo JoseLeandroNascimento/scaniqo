@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.domain.model.TagIcon
@@ -39,7 +40,7 @@ internal fun DocumentTagLabel(tag: TagModel, modifier: Modifier = Modifier) {
             Icon(painterResource(tag.icon.drawableRes), null, modifier = Modifier.size(12.dp))
             Text(
                 text = tag.name,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelSmall.copy(textDirection = TextDirection.ContentOrLtr),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

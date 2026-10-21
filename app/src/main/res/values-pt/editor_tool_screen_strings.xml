@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_tool_back">Voltar</string>
+    <string name="editor_tool_done">Concluir</string>
+    <string name="editor_tool_discard_title">Descartar ajustes?</string>
+    <string name="editor_tool_discard_body">As alterações ainda não aplicadas serão perdidas.</string>
+</resources>

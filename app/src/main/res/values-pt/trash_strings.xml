@@ -1,0 +1,19 @@
+<resources>
+    <string name="trash_title">Lixeira</string>
+    <string name="trash_description">Os documentos ficam aqui até você restaurar ou excluir definitivamente. Eles continuam ocupando espaço no aparelho e não entram em novos backups.</string>
+    <string name="trash_empty_title">Lixeira vazia</string>
+    <string name="trash_empty_body">Os documentos enviados para a lixeira aparecerão aqui para recuperação.</string>
+    <string name="trash_load_error">Não foi possível carregar a lixeira.</string>
+    <string name="trash_restore">Restaurar</string>
+    <string name="trash_restore_document">Restaurar %1$s</string>
+    <string name="trash_delete_document">Excluir definitivamente %1$s</string>
+    <string name="trash_restored">Documento restaurado na biblioteca</string>
+    <string name="trash_restore_error">Não foi possível restaurar. Tente novamente.</string>
+    <string name="trash_permanent_delete">Excluir definitivamente</string>
+    <string name="trash_delete_title">Excluir definitivamente?</string>
+    <string name="trash_delete_body">O documento “%1$s” e seus arquivos serão apagados deste aparelho. Esta ação não pode ser desfeita.</string>
+    <string name="trash_deleted">Documento excluído definitivamente</string>
+    <string name="trash_delete_error">Não foi possível excluir. O documento continua na lixeira; tente novamente.</string>
+    <string name="trash_deleted_on">Na lixeira desde %1$s</string>
+    <string name="trash_working">Processando documento…</string>
+</resources>

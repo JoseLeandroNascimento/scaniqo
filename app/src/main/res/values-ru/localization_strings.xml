@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="localization_title">Язык и регион</string>
+    <string name="localization_summary">Язык, форматы и направление чтения</string>
+    <string name="localization_system">Как в системе</string>
+    <string name="localization_system_description">Используются предпочтительные языки устройства. Если ни один не поддерживается, используется английский.</string>
+    <string name="localization_language">Язык приложения</string>
+    <string name="localization_regional_formats">Региональные форматы</string>
+    <string name="localization_formats_description">Даты, время и числа отображаются по выбранному языку и региону. Часовой пояс остаётся таким, как на устройстве.</string>
+    <string name="localization_date_example">Дата и время: %1$s</string>
+    <string name="localization_number_example">Число: %1$s</string>
+    <string name="localization_direction_description">Направление интерфейса соответствует языку. Содержимое и расположение на страницах документа сохраняются.</string>
+    <string name="localization_apply">Применить язык</string>
+    <string name="localization_cancel">Отмена</string>
+    <string name="localization_restart_hint">Для применения языка текущий экран откроется заново.</string>
+    <string name="localization_flag_description">Флаги обозначают региональный вариант, который можно использовать и в других странах.</string>
+</resources>

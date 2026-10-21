@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_tools_progress_title">Объединение PDF</string>
+    <string name="merge_tools_progress_body">Подготовка новых страниц. Можно отменить без изменения документа.</string>
+    <string name="merge_tools_success">PDF объединены. Сохраните для завершения изменений.</string>
+    <string name="merge_tools_error">Не удалось объединить PDF. Убедитесь, что файлы корректны и разрешают редактирование. Страницы не добавлены.</string>
+    <string name="merge_tools_limit_error">Общий лимит — 100 страниц и 50 MB для всех PDF. Выберите меньше файлов.</string>
+    <string name="merge_tools_password_title">Этот PDF защищён паролем</string>
+    <string name="merge_tools_password_label">Пароль PDF</string>
+    <string name="merge_tools_password_error">Этот пароль не подходит. Повторите попытку.</string>
+    <string name="merge_tools_password_protected">Результат получит защиту открытого документа. Выбранный файл не изменится.</string>
+    <string name="merge_tools_password_unprotected">Открытый документ не защищён. Страницы будут добавлены в него, а выбранный файл не изменится.</string>
+    <string name="merge_tools_selected_file">Выбранный PDF</string>
+    <string name="merge_tools_confirm">Объединить</string>
+</resources>

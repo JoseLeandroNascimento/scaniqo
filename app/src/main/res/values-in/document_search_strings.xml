@@ -1,0 +1,21 @@
+<resources>
+    <string name="document_search_title">Cari dokumen</string>
+    <string name="document_search_query_label">Nama berkas atau konten</string>
+    <string name="document_search_query_placeholder">Contoh: kontrak, kuitansi, alamat</string>
+    <string name="document_search_clear">Hapus pencarian</string>
+    <string name="document_search_helper">Pencarian konten hanya menggunakan teks PDF yang dapat dipilih.</string>
+    <string name="document_search_initial_title">Cari dokumen Anda</string>
+    <string name="document_search_initial_body">Cari berdasarkan nama atau teks PDF yang dapat dipilih.</string>
+    <string name="document_search_loading">Mencari dalam dokumen…</string>
+    <string name="document_search_empty_title">Tidak ada hasil</string>
+    <string name="document_search_empty_body">Coba nama atau istilah lain. PDF tanpa teks dapat ditemukan berdasarkan nama.</string>
+    <string name="document_search_error_title">Pencarian tidak dapat diselesaikan</string>
+    <string name="document_search_error_body">Coba lagi untuk mencari dokumen Anda.</string>
+    <string name="document_search_match_name">Ditemukan dalam nama</string>
+    <string name="document_search_match_content">Dalam konten</string>
+    <string name="document_search_match_page">Halaman %1$d</string>
+    <string name="document_search_metadata">%1$s · %2$s</string>
+    <plurals name="document_search_result_count">
+        <item quantity="other">%d dokumen ditemukan</item>
+    </plurals>
+</resources>

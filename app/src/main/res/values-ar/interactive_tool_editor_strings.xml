@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="interactive_scope_current">الصفحة المحددة</string>
+    <string name="interactive_scope_choose">اختيار صفحات…</string>
+    <string name="interactive_scope_all">جميع الصفحات</string>
+    <string name="interactive_scope_current_summary">الصفحة %1$d فقط</string>
+    <string name="interactive_scope_all_summary">الكل (%1$d)</string>
+    <plurals name="interactive_scope_selected_summary">
+        <item quantity="zero">لم تُحدد صفحات (%1$d)</item>
+        <item quantity="one">حُددت صفحة واحدة (%1$d)</item>
+        <item quantity="two">حُددت صفحتان (%1$d)</item>
+        <item quantity="few">حُددت %1$d صفحات</item>
+        <item quantity="many">حُددت %1$d صفحة</item>
+        <item quantity="other">حُددت %1$d صفحة</item>
+    </plurals>
+    <string name="interactive_scope_description">التطبيق على: %1$s. تغيير الصفحات</string>
+    <string name="interactive_preview_page">الصفحة %1$d</string>
+    <string name="interactive_preview_page_description">الصفحة %1$d، المعاينة %2$d من %3$d. اختيار المعاينة</string>
+    <string name="interactive_preview_busy">جارٍ تحديث المعاينة</string>
+</resources>

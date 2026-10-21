@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -143,6 +144,7 @@ private fun DocumentMetadataContent(
             OutlinedTextField(
                 value = editor.name,
                 onValueChange = onNameChange,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
                 label = { Text(stringResource(R.string.document_name_label)) },
                 placeholder = { Text(stringResource(R.string.document_name_placeholder)) },

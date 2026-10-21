@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">شهادة رقمية</string>
+    <string name="certificate_intro">وقّع نسخة بشهادة مثبتة على Android أو افحص توقيعات ملف PDF.</string>
+    <string name="certificate_pick_pdf">اختيار PDF</string>
+    <string name="certificate_choose">اختيار شهادة</string>
+    <string name="certificate_change">تغيير الشهادة</string>
+    <string name="certificate_install">تثبيت شهادة على Android</string>
+    <string name="certificate_sign">توقيع نسخة</string>
+    <string name="certificate_save">حفظ PDF الموقّع</string>
+    <string name="certificate_unsigned">لا يحتوي ملف PDF هذا على توقيع رقمي.</string>
+    <string name="certificate_sign_unavailable">تتيح هذه الأداة فحص توقيعات هذا المستند فقط.</string>
+    <string name="certificate_verification_scope">يفحص التحقق البيانات الموقّعة وصلاحية الشهادة الحالية. لا تُفحص الثقة بجهة الإصدار أو الإلغاء أو الطابع الزمني.</string>
+    <string name="certificate_sign_scope">يستخدم التوقيع SHA-256 ولا يتضمن طابعًا زمنيًا. يبقى المفتاح الخاص تحت تحكم Android.</string>
+    <string name="certificate_integrity_verified">تم التحقق من سلامة الإصدار</string>
+    <string name="certificate_integrity_invalid">لم تُؤكد السلامة</string>
+    <string name="certificate_integrity_unsupported">تنسيق التوقيع غير مدعوم</string>
+    <string name="certificate_whole_file">يغطي التوقيع الملف الحالي بالكامل.</string>
+    <string name="certificate_earlier_revision">لا يغطي التوقيع الملف الحالي بالكامل.</string>
+    <string name="certificate_current">الشهادة ضمن فترة صلاحيتها.</string>
+    <string name="certificate_not_current">الشهادة خارج فترة صلاحيتها أو لم يتم التعرف عليها.</string>
+    <string name="certificate_picker_error">تعذر فتح اختيار الشهادات.</string>
+    <string name="certificate_file_error">تعذر فتح منتقي الملفات.</string>
+    <string name="certificate_back">رجوع</string>
+</resources>

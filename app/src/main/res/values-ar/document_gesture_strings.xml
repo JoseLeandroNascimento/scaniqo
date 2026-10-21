@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_move_handle">اسحب المقبض لمحاذاة المحتوى. اضغط لتوسيطه.</string>
+    <string name="gesture_rotate_handle">اسحب حول الورقة للتدوير. اضغط للتدوير 90 درجة.</string>
+    <string name="gesture_scale_handle">اسحب الزاوية قطريًا لتغيير حجم المحتوى.</string>
+    <string name="gesture_straighten_handle">اسحب المقبض يمينًا أو يسارًا لضبط الميل.</string>
+    <string name="gesture_curvature_handle">اسحب المقبض إلى أعلى أو أسفل لتصحيح الانحناء.</string>
+    <string name="gesture_scale_increase">تكبير بنسبة خمسة بالمئة</string>
+    <string name="gesture_scale_decrease">تصغير بنسبة خمسة بالمئة</string>
+    <string name="gesture_angle_increase">تدوير درجة واحدة إلى اليمين</string>
+    <string name="gesture_angle_decrease">تدوير درجة واحدة إلى اليسار</string>
+    <string name="gesture_curve_increase">انحناء إلى أسفل</string>
+    <string name="gesture_curve_decrease">انحناء إلى أعلى</string>
+    <string name="gesture_drag_handle">اسحب المقبض</string>
+</resources>

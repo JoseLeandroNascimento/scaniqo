@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">Redimensionner par le coin supérieur gauche</string>
+    <string name="signature_resize_top_right">Redimensionner par le coin supérieur droit</string>
+    <string name="signature_resize_bottom_right">Redimensionner par le coin inférieur droit</string>
+    <string name="signature_resize_bottom_left">Redimensionner par le coin inférieur gauche</string>
+</resources>

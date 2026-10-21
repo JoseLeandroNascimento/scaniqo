@@ -1,0 +1,23 @@
+<resources>
+    <string name="document_search_title">Rechercher des documents</string>
+    <string name="document_search_query_label">Nom du fichier ou contenu</string>
+    <string name="document_search_query_placeholder">Ex. : contrat, reçu, adresse</string>
+    <string name="document_search_clear">Effacer la recherche</string>
+    <string name="document_search_helper">La recherche dans le contenu utilise uniquement le texte sélectionnable des PDF.</string>
+    <string name="document_search_initial_title">Recherchez vos documents</string>
+    <string name="document_search_initial_body">Recherchez par nom ou dans le texte sélectionnable des PDF.</string>
+    <string name="document_search_loading">Recherche dans les documents…</string>
+    <string name="document_search_empty_title">Aucun résultat</string>
+    <string name="document_search_empty_body">Essayez un autre nom ou terme. Les PDF sans texte peuvent être trouvés par leur nom.</string>
+    <string name="document_search_error_title">Impossible de terminer la recherche</string>
+    <string name="document_search_error_body">Réessayez pour rechercher vos documents.</string>
+    <string name="document_search_match_name">Trouvé dans le nom</string>
+    <string name="document_search_match_content">Dans le contenu</string>
+    <string name="document_search_match_page">Page %1$d</string>
+    <string name="document_search_metadata">%1$s · %2$s</string>
+    <plurals name="document_search_result_count">
+        <item quantity="one">%d document trouvé</item>
+        <item quantity="many">%d documents trouvés</item>
+        <item quantity="other">%d documents trouvés</item>
+    </plurals>
+</resources>

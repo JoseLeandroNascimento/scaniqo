@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">通过左上角调整大小</string>
+    <string name="signature_resize_top_right">通过右上角调整大小</string>
+    <string name="signature_resize_bottom_right">通过右下角调整大小</string>
+    <string name="signature_resize_bottom_left">通过左下角调整大小</string>
+</resources>

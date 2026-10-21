@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_source_label">PDF বেছে নিন</string>
+    <string name="merge_source_device">ডিভাইস থেকে</string>
+    <string name="merge_source_app">অ্যাপ থেকে</string>
+    <string name="merge_app_title">অ্যাপের নথি</string>
+    <string name="merge_app_description">আপনি যে ক্রমে PDF বেছে নেবেন সেই ক্রমে পৃষ্ঠা যোগ হবে।</string>
+    <string name="merge_app_search">নাম দিয়ে খুঁজুন</string>
+    <string name="merge_app_empty">অ্যাপে অন্য PDF সংরক্ষিত নেই। ফাইল বেছে নিতে “ডিভাইস থেকে” ব্যবহার করুন।</string>
+    <string name="merge_app_no_results">এই অনুসন্ধানে কোনো নথি পাওয়া যায়নি।</string>
+    <string name="merge_app_selection_order">একত্রীকরণে অবস্থান %1$d</string>
+    <string name="merge_app_protected">পাসওয়ার্ডে সুরক্ষিত PDF</string>
+    <string name="merge_app_result_protected">সম্পাদনাধীন নথির সুরক্ষা ফলাফলেও থাকবে।</string>
+    <string name="merge_app_result_unprotected">সম্পাদনাধীন নথিতে পাসওয়ার্ড নেই। সুরক্ষিত PDF-এর পৃষ্ঠাও ফলাফলে পাসওয়ার্ডহীন থাকবে।</string>
+    <plurals name="merge_app_selected_count">
+        <item quantity="one">%1$dটি PDF বেছে নেওয়া হয়েছে</item>
+        <item quantity="other">%1$dটি PDF বেছে নেওয়া হয়েছে</item>
+    </plurals>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">%1$dটি PDF একত্র করুন</item>
+        <item quantity="other">%1$dটি PDF একত্র করুন</item>
+    </plurals>
+</resources>

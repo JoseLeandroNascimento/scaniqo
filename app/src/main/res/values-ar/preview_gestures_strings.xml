@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_zoom_expand">تكبير إلى ملء الشاشة</string>
+    <string name="preview_zoom_close">إغلاق العرض المكبّر</string>
+    <string name="preview_zoom_reset">ملاءمة الصفحة للشاشة</string>
+    <string name="preview_controls_show">التعديلات</string>
+    <string name="preview_controls_hide">إخفاء التعديلات</string>
+    <string name="preview_gestures_hint">استخدم إصبعين للتكبير والتنقل.</string>
+</resources>

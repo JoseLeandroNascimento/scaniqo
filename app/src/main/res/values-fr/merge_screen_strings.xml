@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_screen_add_files">Ajouter des PDF</string>
+    <string name="merge_screen_back">Retour</string>
+    <string name="merge_result_new_document">Nouveau PDF · sans mot de passe</string>
+    <string name="merge_screen_library_error">Impossible de charger vos documents.</string>
+    <string name="merge_move_up">Déplacer vers le haut</string>
+    <string name="merge_move_down">Déplacer vers le bas</string>
+    <string name="merge_remove">Retirer</string>
+</resources>

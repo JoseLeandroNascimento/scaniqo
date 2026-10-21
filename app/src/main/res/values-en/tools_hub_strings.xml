@@ -1,0 +1,35 @@
+<resources>
+    <string name="tools_hub_title">All tools</string>
+    <string name="tools_hub_hint">More possibilities for your PDFs</string>
+    <string name="tools_hub_organize">Create and organize</string>
+    <string name="tools_hub_convert">Convert and extract</string>
+    <string name="tools_hub_edit">Edit a PDF</string>
+    <string name="tools_hub_originals">Certificates</string>
+    <string name="tools_hub_split">Extract pages</string>
+    <string name="tools_hub_split_hint">Save selected pages to another PDF</string>
+    <string name="tools_hub_images_pdf">Images to PDF</string>
+    <string name="tools_hub_images_pdf_hint">Create a document from your photos</string>
+    <string name="tools_hub_id">Front and back document</string>
+    <string name="tools_hub_id_hint">Arrange both sides on one sheet</string>
+    <string name="tools_hub_pdf_images">PDF to images</string>
+    <string name="tools_hub_pdf_images_hint">Export pages as JPG or PNG</string>
+    <string name="tools_hub_receipt">Extract receipt data</string>
+    <string name="tools_hub_receipt_hint">Review recognized data and export as CSV</string>
+    <string name="tools_hub_fill">Fill on page</string>
+    <string name="tools_hub_fill_hint">Add text and checkmarks to scanned forms</string>
+    <string name="tools_hub_annotate">Annotate</string>
+    <string name="tools_hub_annotate_hint">Highlight passages and add notes</string>
+    <string name="tools_hub_watermark">Marks and headers</string>
+    <string name="tools_hub_watermark_hint">Customize PDFs with text and marks</string>
+    <string name="tools_hub_redact">Redact information</string>
+    <string name="tools_hub_redact_hint">Create a copy with selected areas removed</string>
+    <string name="tools_hub_certificates">Certificate signing</string>
+    <string name="tools_hub_certificates_hint">Sign digitally or check a PDF’s integrity</string>
+    <string name="tools_hub_editor">PDF editor</string>
+    <string name="tools_hub_editor_hint">Pages, filters, OCR, compression, and protection</string>
+    <string name="tools_hub_choose">Choose a document</string>
+    <string name="tools_hub_choose_hint">Open a PDF from your library to continue.</string>
+    <string name="tools_hub_search">Search by name</string>
+    <string name="tools_hub_empty">Import or scan a PDF to use this editing tool.</string>
+    <string name="tools_hub_back">Back</string>
+</resources>

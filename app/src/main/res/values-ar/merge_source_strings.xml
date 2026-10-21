@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_source_label">اختيار ملفات PDF</string>
+    <string name="merge_source_device">من الجهاز</string>
+    <string name="merge_source_app">من التطبيق</string>
+    <string name="merge_app_title">مستندات التطبيق</string>
+    <string name="merge_app_description">ستُضاف الصفحات حسب ترتيب اختيارك لملفات PDF.</string>
+    <string name="merge_app_search">البحث بالاسم</string>
+    <string name="merge_app_empty">لا توجد ملفات PDF أخرى محفوظة في التطبيق. استخدم «من الجهاز» لاختيار الملفات.</string>
+    <string name="merge_app_no_results">لم يُعثر على مستندات لهذا البحث.</string>
+    <string name="merge_app_selection_order">الترتيب في الدمج: %1$d</string>
+    <string name="merge_app_protected">PDF محمي بكلمة مرور</string>
+    <string name="merge_app_result_protected">ستُحفظ حماية المستند الجاري تعديله في النتيجة.</string>
+    <string name="merge_app_result_unprotected">المستند الجاري تعديله بلا كلمة مرور. ستصبح صفحات ملفات PDF المحمية أيضًا بلا كلمة مرور في النتيجة.</string>
+    <plurals name="merge_app_selected_count">
+        <item quantity="zero">لم تُحدد ملفات PDF (%1$d)</item>
+        <item quantity="one">حُدد ملف PDF واحد (%1$d)</item>
+        <item quantity="two">حُدد ملفا PDF (%1$d)</item>
+        <item quantity="few">حُددت %1$d ملفات PDF</item>
+        <item quantity="many">حُدد %1$d ملف PDF</item>
+        <item quantity="other">حُدد %1$d ملف PDF</item>
+    </plurals>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="zero">دمج %1$d ملف PDF</item>
+        <item quantity="one">دمج ملف PDF واحد (%1$d)</item>
+        <item quantity="two">دمج ملفي PDF (%1$d)</item>
+        <item quantity="few">دمج %1$d ملفات PDF</item>
+        <item quantity="many">دمج %1$d ملف PDF</item>
+        <item quantity="other">دمج %1$d ملف PDF</item>
+    </plurals>
+</resources>

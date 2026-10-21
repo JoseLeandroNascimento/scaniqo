@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_sheet_close">关闭工具</string>
+    <string name="tool_sheet_saved_signatures">已保存的签名</string>
+    <string name="tool_sheet_placed_signatures">此页面</string>
+</resources>

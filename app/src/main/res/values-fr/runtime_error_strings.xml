@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">Limite de traits atteinte. Annulez un trait pour continuer.</string>
+    <string name="runtime_signature_image_required">Choisissez une image de la signature.</string>
+    <string name="runtime_password_required">Saisissez le mot de passe du PDF.</string>
+    <string name="runtime_unlock_required">Déverrouillez pour accéder aux PDF protégés.</string>
+    <string name="runtime_merge_paused">La fusion a été mise en pause. Touchez Réessayer pour continuer.</string>
+    <string name="runtime_password_setup_required">Définissez le mot de passe par défaut pour enregistrer le mot de passe de ce PDF en sécurité.</string>
+    <string name="runtime_password_incorrect">Mot de passe incorrect. Réessayez.</string>
+    <string name="runtime_signed_pdf_saved">PDF signé enregistré.</string>
+    <string name="runtime_zip_exported">Images exportées dans un fichier ZIP.</string>
+    <string name="runtime_csv_exported">Données vérifiées exportées en CSV.</string>
+    <string name="runtime_receipt_page_required">Saisissez une page valide du reçu.</string>
+    <string name="runtime_receipt_review_required">Vérifiez à nouveau les données avant d’exporter.</string>
+    <string name="runtime_document_unavailable">Le document n’est plus disponible.</string>
+    <string name="runtime_imported_document">Document importé</string>
+    <string name="runtime_signature_default_name">Ma signature</string>
+    <string name="runtime_name_invalid">Saisissez un nom de 100 caractères maximum.</string>
+    <string name="runtime_pdf_size_limit">Sélectionnez un PDF de 50 Mo maximum.</string>
+    <string name="runtime_pdf_page_limit">Sélectionnez un PDF de 1 à 100 pages.</string>
+    <string name="runtime_pdf_unprotected_required">Ouvrez une copie sans mot de passe pour utiliser cet outil.</string>
+    <string name="runtime_new_file_required">Choisissez un nouveau fichier pour préserver le PDF d’origine.</string>
+    <string name="runtime_destination_failed">Impossible d’enregistrer à l’emplacement choisi.</string>
+    <string name="runtime_certificate_select_again">Sélectionnez à nouveau le certificat dans Android.</string>
+    <string name="runtime_certificate_chain_unavailable">La chaîne du certificat est indisponible.</string>
+    <string name="runtime_certificate_rsa_ec">Sélectionnez un certificat RSA ou EC.</string>
+    <string name="runtime_certificate_sign_failed">Impossible d’utiliser ce certificat pour signer.</string>
+    <string name="runtime_certificate_sign_disallowed">Ce document n’autorise pas de nouvelle signature avec cet outil.</string>
+    <string name="runtime_pdf_copy_disallowed">Le mot de passe de ce PDF ne permet pas de copier des pages vers un autre document.</string>
+    <string name="runtime_pdf_extract_disallowed">Ce PDF n’autorise pas l’extraction de contenu.</string>
+    <string name="runtime_pdf_edit_disallowed">Le mot de passe saisi ne permet pas de modifier ce PDF.</string>
+    <string name="runtime_two_pdfs_required">Sélectionnez au moins deux PDF.</string>
+    <string name="runtime_scan_page_limit">Numérisez entre 1 et 20 pages à la fois.</string>
+    <string name="runtime_images_size_limit">Les images dépassent 200 Mo. Exportez moins de pages à la fois.</string>
+    <string name="runtime_ocr_empty">Aucun texte reconnu. Essayez une numérisation plus nette.</string>
+    <string name="runtime_signature_empty">Dessinez ou saisissez une signature avant d’enregistrer.</string>
+    <string name="runtime_image_size_limit">Sélectionnez une image de 10 Mo maximum.</string>
+    <string name="runtime_selected_pdf">PDF sélectionné</string>
+    <string name="runtime_signature_name_invalid">Saisissez un nom de 80 caractères maximum.</string>
+    <string name="runtime_signature_text_invalid">Saisissez un nom de 80 caractères maximum.</string>
+    <string name="runtime_signature_drawing_large">Le dessin est trop volumineux. Simplifiez la signature.</string>
+    <string name="runtime_image_invalid">Choisissez une image valide.</string>
+    <string name="runtime_signature_not_found">Signature introuvable.</string>
+</resources>

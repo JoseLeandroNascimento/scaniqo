@@ -227,6 +227,10 @@ class AndroidPdfEditorSettingsTest {
     /** O repositório cria projetos; estes testes não cadastram documentos no banco. */
     private class UnusedDocuments : DocumentRepository {
         override fun observeDocuments() = MutableStateFlow<List<DocumentModel>>(emptyList())
+        override fun observeTrashedDocuments() = MutableStateFlow<List<DocumentModel>>(emptyList())
+        override suspend fun moveToTrash(id: Long) = error("unused")
+        override suspend fun restoreFromTrash(id: Long) = error("unused")
+        override suspend fun deletePermanently(id: Long) = error("unused")
         override suspend fun findById(id: Long): DocumentModel? = error("unused")
         override suspend fun prepareScan(pageUris: List<String>): ScannedDocument = error("unused")
         override suspend fun discardScan(scan: ScannedDocument) = Unit

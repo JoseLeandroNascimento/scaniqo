@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_editor_source">তোলা ছবি</string>
+    <string name="capture_editor_source_page">পৃষ্ঠা %1$d-এর তোলা ছবি</string>
+    <string name="capture_editor_result">ছবিতে ফলাফল</string>
+    <string name="capture_editor_unavailable">এই পৃষ্ঠায় সম্পাদনার জন্য একক ছবি নেই।</string>
+    <string name="capture_editor_convert_title">পৃষ্ঠা ছবিতে রূপান্তর করুন</string>
+    <string name="capture_editor_convert_hint">এই ছবিতে PDF-এর টেক্সট বা গ্রাফিক্স আছে। পটভূমি সরাতে পৃষ্ঠাটি ছবিতে রূপান্তর করুন।</string>
+</resources>

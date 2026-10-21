@@ -56,7 +56,7 @@ fun PdfImportHandler(
                             if (cursor.moveToFirst()) cursor.getString(0) else null
                         }
                     }
-                }.getOrNull() ?: "Documento importado"
+                }.getOrNull().orEmpty()
             }
         }
     }

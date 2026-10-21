@@ -108,7 +108,7 @@ internal fun DocumentToolScopeMenu(
                 style = MaterialTheme.typography.labelMedium
             )
             Icon(
-                painterResource(R.drawable.arrow_back_24px),
+                painterResource(R.drawable.ic_physical_arrow_left),
                 null,
                 Modifier
                     .size(16.dp)

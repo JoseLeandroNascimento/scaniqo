@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_interactive_position">الموضع</string>
+    <string name="layout_interactive_rotate">تدوير</string>
+    <string name="layout_interactive_drag">اسحب للمحاذاة</string>
+    <string name="layout_interactive_twist">دوّر بإصبعين</string>
+    <string name="layout_interactive_pinch">استخدم إصبعين للتكبير</string>
+    <string name="layout_interactive_position_space">صغّر من «الحجم» لإنشاء هوامش.</string>
+    <string name="layout_interactive_rotate_left">تدوير 90 درجة إلى اليسار</string>
+    <string name="layout_interactive_rotate_right">تدوير 90 درجة إلى اليمين</string>
+</resources>

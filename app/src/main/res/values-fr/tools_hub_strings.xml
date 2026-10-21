@@ -1,0 +1,35 @@
+<resources>
+    <string name="tools_hub_title">Tous les outils</string>
+    <string name="tools_hub_hint">Plus de possibilités pour vos PDF</string>
+    <string name="tools_hub_organize">Créer et organiser</string>
+    <string name="tools_hub_convert">Convertir et extraire</string>
+    <string name="tools_hub_edit">Modifier un PDF</string>
+    <string name="tools_hub_originals">Certificats</string>
+    <string name="tools_hub_split">Extraire des pages</string>
+    <string name="tools_hub_split_hint">Enregistrez les pages choisies dans un autre PDF</string>
+    <string name="tools_hub_images_pdf">Images en PDF</string>
+    <string name="tools_hub_images_pdf_hint">Créez un document avec vos photos</string>
+    <string name="tools_hub_id">Document recto verso</string>
+    <string name="tools_hub_id_hint">Disposez les deux faces sur une feuille</string>
+    <string name="tools_hub_pdf_images">PDF en images</string>
+    <string name="tools_hub_pdf_images_hint">Exportez les pages en JPG ou PNG</string>
+    <string name="tools_hub_receipt">Extraire les données des reçus</string>
+    <string name="tools_hub_receipt_hint">Vérifiez les données reconnues et exportez en CSV</string>
+    <string name="tools_hub_fill">Remplir sur la page</string>
+    <string name="tools_hub_fill_hint">Ajoutez du texte et des coches aux formulaires numérisés</string>
+    <string name="tools_hub_annotate">Annoter</string>
+    <string name="tools_hub_annotate_hint">Surlignez des passages et ajoutez des notes</string>
+    <string name="tools_hub_watermark">Marques et en-têtes</string>
+    <string name="tools_hub_watermark_hint">Personnalisez le PDF avec du texte et des marques</string>
+    <string name="tools_hub_redact">Caviarder des informations</string>
+    <string name="tools_hub_redact_hint">Créez une copie dont les zones choisies sont supprimées</string>
+    <string name="tools_hub_certificates">Signature par certificat</string>
+    <string name="tools_hub_certificates_hint">Signez numériquement ou vérifiez l’intégrité d’un PDF</string>
+    <string name="tools_hub_editor">Éditeur PDF</string>
+    <string name="tools_hub_editor_hint">Pages, filtres, OCR, compression et protection</string>
+    <string name="tools_hub_choose">Choisissez un document</string>
+    <string name="tools_hub_choose_hint">Ouvrez un PDF de votre bibliothèque pour continuer.</string>
+    <string name="tools_hub_search">Rechercher par nom</string>
+    <string name="tools_hub_empty">Importez ou numérisez un PDF pour utiliser cet outil d’édition.</string>
+    <string name="tools_hub_back">Retour</string>
+</resources>

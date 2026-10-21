@@ -1,0 +1,21 @@
+<resources>
+    <string name="pages_scan">Numériser</string>
+    <string name="pages_merge">Fusionner des PDF</string>
+    <string name="pages_numbering">Numéroter toutes les pages</string>
+    <string name="pages_numbering_global_hint">Inclut aussi les pages ajoutées plus tard.</string>
+    <string name="pages_move_title">Déplacer directement</string>
+    <string name="pages_move_from">Origine</string>
+    <string name="pages_move_to">Destination</string>
+    <string name="pages_move_action">Déplacer la page</string>
+    <string name="pages_move_range">Saisissez une page de 1 à %1$d.</string>
+    <string name="pages_move_same">Choisissez une position différente de l’origine.</string>
+    <string name="pages_move_hint">Utilisez les numéros de l’ordre actuel.</string>
+    <string name="pages_drag_hint">Appuyez longuement sur une page et faites-la glisser pour réorganiser.</string>
+    <string name="pages_drag_handle">Réorganiser la page %1$d</string>
+    <string name="pages_drag_cancel">Annuler le déplacement</string>
+    <string name="pages_page">Page %1$d</string>
+    <string name="pages_selected">Sélectionnée</string>
+    <string name="pages_move_up">Déplacer vers le haut</string>
+    <string name="pages_move_down">Déplacer vers le bas</string>
+    <string name="pages_one_page">Ajoutez des pages pour modifier leur ordre.</string>
+</resources>

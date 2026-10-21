@@ -1,0 +1,21 @@
+<resources>
+    <string name="quick_tools_import">Impor PDF</string>
+    <string name="quick_tools_import_hint">Dari perangkat Anda</string>
+    <string name="quick_tools_merge">Gabungkan PDF</string>
+    <string name="quick_tools_merge_hint">Gabungkan dan atur</string>
+    <string name="quick_tools_sign">Tanda tangani dokumen</string>
+    <string name="quick_tools_sign_hint">Posisikan tanda tangan Anda</string>
+    <string name="quick_merge_title">Gabungkan PDF</string>
+    <string name="quick_merge_working">Menyiapkan PDF baru Anda…</string>
+    <string name="quick_merge_name">Dokumen gabungan</string>
+    <string name="quick_merge_password">Kata sandi %1$s</string>
+    <string name="quick_merge_password_label">Kata sandi PDF</string>
+    <string name="quick_merge_password_wrong">Kata sandi salah. Coba lagi.</string>
+    <string name="quick_merge_continue">Lanjutkan</string>
+    <string name="quick_merge_picker_error">Pemilih berkas tidak dapat dibuka.</string>
+    <string name="quick_sign_choose">Dokumen mana yang ingin Anda tanda tangani?</string>
+    <string name="quick_sign_description">Pilih PDF untuk memosisikan, memutar, dan menyesuaikan tanda tangan.</string>
+    <string name="quick_sign_empty">Impor atau pindai dokumen untuk memulai.</string>
+    <string name="quick_sign_search">Cari dokumen</string>
+    <string name="quick_sign_no_results">Tidak ada dokumen ditemukan.</string>
+</resources>

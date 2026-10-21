@@ -31,5 +31,6 @@ data class DocumentEntity(
     val sizeBytes: Long = 0,
     val thumbnailUri: String? = null,
     val tagId: Long? = null,
-    val protectionKeyId: String? = null
+    val protectionKeyId: String? = null,
+    val deletedAt: Long? = null
 )

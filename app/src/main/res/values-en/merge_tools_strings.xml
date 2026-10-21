@@ -1,0 +1,14 @@
+<resources>
+    <string name="merge_tools_progress_title">Merging PDFs</string>
+    <string name="merge_tools_progress_body">Preparing new pages. You can cancel without changing the document.</string>
+    <string name="merge_tools_success">PDFs merged. Save to complete the changes.</string>
+    <string name="merge_tools_error">Could not merge the PDFs. Check that the files are valid and allow editing. No pages were added.</string>
+    <string name="merge_tools_limit_error">The limit is 100 pages and 50 MB for all PDFs combined. Select fewer files.</string>
+    <string name="merge_tools_password_title">This PDF is password-protected</string>
+    <string name="merge_tools_password_label">PDF password</string>
+    <string name="merge_tools_password_error">The password did not open this PDF. Try again.</string>
+    <string name="merge_tools_password_protected">The result will use the open document’s protection. The selected file will remain intact.</string>
+    <string name="merge_tools_password_unprotected">The open document is unprotected. Pages will be added to it, and the selected file will remain intact.</string>
+    <string name="merge_tools_selected_file">Selected PDF</string>
+    <string name="merge_tools_confirm">Merge</string>
+</resources>

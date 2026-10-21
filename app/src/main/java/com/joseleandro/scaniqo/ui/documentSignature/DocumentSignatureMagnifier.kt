@@ -3,7 +3,7 @@ package com.joseleandro.scaniqo.ui.documentSignature
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +60,7 @@ internal fun DocumentSignatureMagnifier(
     val surround = MaterialTheme.colorScheme.surfaceContainerHighest
     Canvas(
         modifier
-            .offset { IntOffset(lens.left.roundToInt(), lens.top.roundToInt()) }
+            .absoluteOffset { IntOffset(lens.left.roundToInt(), lens.top.roundToInt()) }
             .size(with(density) { lens.width.toDp() }, with(density) { lens.height.toDp() })
             .shadow(6.dp, shape)
             .clip(shape)

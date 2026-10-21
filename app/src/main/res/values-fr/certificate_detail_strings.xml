@@ -1,0 +1,9 @@
+<resources>
+    <string name="certificate_unknown_signer">Signataire non identifié</string>
+    <string name="certificate_invalid_ranges">La signature contient des plages d’octets invalides.</string>
+    <string name="certificate_unsupported_format">Ce format de signature n’est pas pris en charge par la vérification locale.</string>
+    <string name="certificate_supported_hashes">La vérification locale accepte les signatures avec SHA-256, SHA-384 ou SHA-512.</string>
+    <string name="certificate_later_bytes">Des octets sont présents après la révision signée.</string>
+    <string name="certificate_integrity_failed">Impossible de confirmer l’intégrité de cette signature.</string>
+    <string name="runtime_image_count_limit">Sélectionnez au maximum 20 images.</string>
+</resources>

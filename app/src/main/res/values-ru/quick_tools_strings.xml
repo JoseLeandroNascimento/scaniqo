@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_tools_import">Импорт PDF</string>
+    <string name="quick_tools_import_hint">С вашего устройства</string>
+    <string name="quick_tools_merge">Объединить PDF</string>
+    <string name="quick_tools_merge_hint">Объединяйте и упорядочивайте</string>
+    <string name="quick_tools_sign">Подписать документ</string>
+    <string name="quick_tools_sign_hint">Разместите подпись</string>
+    <string name="quick_merge_title">Объединить PDF</string>
+    <string name="quick_merge_working">Подготовка нового PDF…</string>
+    <string name="quick_merge_name">Объединённые документы</string>
+    <string name="quick_merge_password">Пароль для %1$s</string>
+    <string name="quick_merge_password_label">Пароль PDF</string>
+    <string name="quick_merge_password_wrong">Неверный пароль. Повторите попытку.</string>
+    <string name="quick_merge_continue">Продолжить</string>
+    <string name="quick_merge_picker_error">Не удалось открыть выбор файла.</string>
+    <string name="quick_sign_choose">Какой документ вы хотите подписать?</string>
+    <string name="quick_sign_description">Выберите PDF для размещения, поворота и настройки подписи.</string>
+    <string name="quick_sign_empty">Импортируйте или отсканируйте документ, чтобы начать.</string>
+    <string name="quick_sign_search">Найти документ</string>
+    <string name="quick_sign_no_results">Документы не найдены.</string>
+</resources>

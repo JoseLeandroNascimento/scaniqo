@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_move_handle">Перетащите маркер для выравнивания. Нажмите для центрирования.</string>
+    <string name="gesture_rotate_handle">Тяните вокруг листа для поворота. Нажмите для поворота на 90 градусов.</string>
+    <string name="gesture_scale_handle">Тяните угол по диагонали для изменения размера содержимого.</string>
+    <string name="gesture_straighten_handle">Тяните маркер в стороны для коррекции наклона.</string>
+    <string name="gesture_curvature_handle">Тяните маркер вверх или вниз для исправления изгиба.</string>
+    <string name="gesture_scale_increase">Увеличить на 5 процентов</string>
+    <string name="gesture_scale_decrease">Уменьшить на 5 процентов</string>
+    <string name="gesture_angle_increase">Повернуть вправо на 1 градус</string>
+    <string name="gesture_angle_decrease">Повернуть влево на 1 градус</string>
+    <string name="gesture_curve_increase">Изогнуть вниз</string>
+    <string name="gesture_curve_decrease">Изогнуть вверх</string>
+    <string name="gesture_drag_handle">Перетащите маркер</string>
+</resources>

@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 
 @Composable
 internal fun DocumentDeleteDialog(
@@ -33,7 +34,7 @@ internal fun DocumentDeleteDialog(
         title = { Text(stringResource(R.string.document_delete_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(stringResource(R.string.document_delete_body, documentName))
+                Text(stringResource(R.string.document_delete_body, bidiArgument(documentName)))
                 if (hasError) {
                     Text(
                         stringResource(R.string.document_delete_error),

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">Certificat numérique</string>
+    <string name="certificate_intro">Signez une copie avec un certificat installé sur Android ou vérifiez les signatures d’un PDF.</string>
+    <string name="certificate_pick_pdf">Sélectionner un PDF</string>
+    <string name="certificate_choose">Sélectionner un certificat</string>
+    <string name="certificate_change">Changer de certificat</string>
+    <string name="certificate_install">Installer un certificat sur Android</string>
+    <string name="certificate_sign">Signer une copie</string>
+    <string name="certificate_save">Enregistrer le PDF signé</string>
+    <string name="certificate_unsigned">Ce PDF ne contient aucune signature numérique.</string>
+    <string name="certificate_sign_unavailable">Cet outil permet uniquement de vérifier les signatures de ce document.</string>
+    <string name="certificate_verification_scope">La vérification contrôle les octets signés et la validité actuelle du certificat. La confiance dans l’autorité, la révocation et l’horodatage ne sont pas vérifiés.</string>
+    <string name="certificate_sign_scope">La signature utilise SHA-256 sans horodatage. La clé privée reste sous le contrôle d’Android.</string>
+    <string name="certificate_integrity_verified">Intégrité de la révision vérifiée</string>
+    <string name="certificate_integrity_invalid">Intégrité non confirmée</string>
+    <string name="certificate_integrity_unsupported">Format de signature non pris en charge</string>
+    <string name="certificate_whole_file">La signature couvre l’intégralité du fichier actuel.</string>
+    <string name="certificate_earlier_revision">La signature ne couvre pas l’intégralité du fichier actuel.</string>
+    <string name="certificate_current">Certificat dans sa période de validité.</string>
+    <string name="certificate_not_current">Certificat hors de sa période de validité ou non identifié.</string>
+    <string name="certificate_picker_error">Impossible d’ouvrir la sélection des certificats.</string>
+    <string name="certificate_file_error">Impossible d’ouvrir le sélecteur de fichiers.</string>
+    <string name="certificate_back">Retour</string>
+</resources>

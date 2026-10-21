@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_resize_top_left">Изменить размер за левый верхний угол</string>
+    <string name="signature_resize_top_right">Изменить размер за правый верхний угол</string>
+    <string name="signature_resize_bottom_right">Изменить размер за правый нижний угол</string>
+    <string name="signature_resize_bottom_left">Изменить размер за левый нижний угол</string>
+</resources>

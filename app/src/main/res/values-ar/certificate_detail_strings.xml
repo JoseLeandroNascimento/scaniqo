@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_unknown_signer">موقّع غير معروف</string>
+    <string name="certificate_invalid_ranges">يحتوي التوقيع على نطاقات بايت غير صالحة.</string>
+    <string name="certificate_unsupported_format">تنسيق التوقيع هذا غير مدعوم في التحقق المحلي.</string>
+    <string name="certificate_supported_hashes">يدعم التحقق المحلي توقيعات SHA-256 أو SHA-384 أو SHA-512.</string>
+    <string name="certificate_later_bytes">توجد بايتات بعد الإصدار الموقّع.</string>
+    <string name="certificate_integrity_failed">تعذر تأكيد سلامة هذا التوقيع.</string>
+    <string name="runtime_image_count_limit">اختر 20 صورة كحد أقصى.</string>
+</resources>

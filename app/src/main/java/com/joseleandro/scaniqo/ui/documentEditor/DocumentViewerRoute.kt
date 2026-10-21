@@ -16,6 +16,7 @@ fun DocumentViewerRoute(
     toolsViewModel: DocumentToolsViewModel,
     onNavigationBack: () -> Unit,
     modifier: Modifier = Modifier,
+    initialPageNumber: Int? = null,
 ) {
     val viewerState by viewModel.uiState.collectAsStateWithLifecycle()
     val actionsState by actionsViewModel.uiState.collectAsStateWithLifecycle()
@@ -30,6 +31,7 @@ fun DocumentViewerRoute(
     }
     DocumentViewerScreen(
         documentId = documentId,
+        initialPageNumber = initialPageNumber,
         uiState = viewerState.copy(
             document = document,
             actions = actionsState,

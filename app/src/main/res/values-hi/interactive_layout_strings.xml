@@ -1,0 +1,10 @@
+<resources>
+    <string name="layout_interactive_position">स्थिति</string>
+    <string name="layout_interactive_rotate">घुमाएँ</string>
+    <string name="layout_interactive_drag">संरेखित करने के लिए खींचें</string>
+    <string name="layout_interactive_twist">दो उँगलियों से घुमाएँ</string>
+    <string name="layout_interactive_pinch">ज़ूम के लिए दो उँगलियाँ इस्तेमाल करें</string>
+    <string name="layout_interactive_position_space">मार्जिन बनाने के लिए आकार में कमी करें।</string>
+    <string name="layout_interactive_rotate_left">90 डिग्री बाएँ घुमाएँ</string>
+    <string name="layout_interactive_rotate_right">90 डिग्री दाएँ घुमाएँ</string>
+</resources>

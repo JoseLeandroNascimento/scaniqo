@@ -78,6 +78,8 @@ internal fun SettingsScreen(
     snackbarHost: @Composable () -> Unit = {},
 ) {
     var restore by rememberSaveable { mutableStateOf(false) }
+    var languageSettings by rememberSaveable { mutableStateOf(false) }
+    if (languageSettings) LanguageSettingsDialog { languageSettings = false }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         topBar = {
@@ -104,6 +106,12 @@ internal fun SettingsScreen(
             when (section) {
                 SettingsSection.HOME -> {
                     item { PersonalizationEntry(preferences, onPersonalization) }
+                    item {
+                        SettingsGroup(stringResource(R.string.localization_title)) {
+                            SettingsDestination(R.drawable.ic_settings_device, stringResource(R.string.localization_language),
+                                currentLanguageSummary()) { languageSettings = true }
+                        }
+                    }
                     item {
                         SettingsGroup(stringResource(R.string.settings_pdf_export)) {
                             SettingsDestination(

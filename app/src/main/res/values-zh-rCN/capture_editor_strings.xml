@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_editor_source">拍摄的图像</string>
+    <string name="capture_editor_source_page">第 %1$d 页的拍摄图像</string>
+    <string name="capture_editor_result">图像效果</string>
+    <string name="capture_editor_unavailable">此页没有可单独编辑的图像。</string>
+    <string name="capture_editor_convert_title">将页面转换为图像</string>
+    <string name="capture_editor_convert_hint">此页面包含 PDF 文字或图形。如需移除背景，请先转换为图像。</string>
+</resources>

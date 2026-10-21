@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="merge_source_label">Selecionar PDFs</string>
-    <string name="merge_source_device">Do dispositivo</string>
-    <string name="merge_source_app">Do app</string>
-    <string name="merge_app_title">Documentos do app</string>
-    <string name="merge_app_description">As páginas serão adicionadas na ordem em que você selecionar os PDFs.</string>
-    <string name="merge_app_search">Buscar pelo nome</string>
-    <string name="merge_app_empty">Nenhum outro PDF salvo no app. Use “Do dispositivo” para selecionar arquivos.</string>
-    <string name="merge_app_no_results">Nenhum documento encontrado para esta busca.</string>
-    <string name="merge_app_selection_order">%1$dº na mesclagem</string>
-    <string name="merge_app_protected">PDF protegido por senha</string>
-    <string name="merge_app_result_protected">A proteção do documento em edição será mantida no resultado.</string>
-    <string name="merge_app_result_unprotected">O documento em edição está sem senha. As páginas dos PDFs protegidos também ficarão sem senha no resultado.</string>
+    <string name="merge_source_label">Select PDFs</string>
+    <string name="merge_source_device">From device</string>
+    <string name="merge_source_app">From app</string>
+    <string name="merge_app_title">App documents</string>
+    <string name="merge_app_description">Pages will be added in the order you select the PDFs.</string>
+    <string name="merge_app_search">Search by name</string>
+    <string name="merge_app_empty">No other PDFs saved in the app. Use “From device” to select files.</string>
+    <string name="merge_app_no_results">No documents found for this search.</string>
+    <string name="merge_app_selection_order">Position %1$d in merge</string>
+    <string name="merge_app_protected">Password-protected PDF</string>
+    <string name="merge_app_result_protected">The protection of the document being edited will be kept in the result.</string>
+    <string name="merge_app_result_unprotected">The document being edited has no password. Pages from protected PDFs will also have no password in the result.</string>
     <plurals name="merge_app_selected_count">
-        <item quantity="one">%1$d PDF selecionado</item>
-        <item quantity="other">%1$d PDFs selecionados</item>
+        <item quantity="one">%1$d PDF selected</item>
+        <item quantity="other">%1$d PDFs selected</item>
     </plurals>
     <plurals name="merge_app_confirm_count">
-        <item quantity="one">Mesclar %1$d PDF</item>
-        <item quantity="other">Mesclar %1$d PDFs</item>
+        <item quantity="one">Merge %1$d PDF</item>
+        <item quantity="other">Merge %1$d PDFs</item>
     </plurals>
 </resources>

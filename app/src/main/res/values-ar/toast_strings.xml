@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="toast_success_title">تم بنجاح</string>
+    <string name="toast_error_title">حدث خطأ</string>
+    <string name="toast_info_title">معلومة</string>
+    <string name="toast_dismiss">إغلاق الرسالة</string>
+</resources>

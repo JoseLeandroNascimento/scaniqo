@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">সোজা করুন</string>
+    <string name="correction_editor_perspective">কাটছাঁট করুন</string>
+    <string name="correction_editor_curve">বক্রতা</string>
+    <string name="correction_editor_angle">হেলানো ভাব</string>
+    <string name="correction_editor_auto">স্বয়ংক্রিয়</string>
+    <string name="correction_editor_use_angle">%1$.1f° ব্যবহার করুন</string>
+    <string name="correction_editor_already_straight">কোনো হেলানো ভাব শনাক্ত হয়নি।</string>
+    <string name="correction_editor_corners">কোণা</string>
+    <string name="correction_editor_result">ফলাফল</string>
+    <string name="correction_editor_show_before">সংশোধনের আগের পৃষ্ঠার সঙ্গে তুলনা করুন</string>
+    <string name="correction_editor_show_result">সংশোধনের ফলাফল দেখুন</string>
+    <string name="correction_editor_options">সংশোধনের বিকল্প</string>
+    <string name="correction_editor_native_hint">টেক্সট ও ভেক্টরকে ছবি হিসেবে সংশোধন করতে দেয়।</string>
+    <string name="correction_editor_native_required">এই পৃষ্ঠার ফিল্টারের জন্য ছবিতে রূপান্তর প্রয়োজন।</string>
+    <string name="correction_editor_drag_hint">টানুন ↔</string>
+    <string name="correction_editor_angle_gesture">পৃষ্ঠা সোজা করতে ডানে-বামে টানুন</string>
+    <string name="correction_editor_curve_gesture">বক্রতা ঠিক করতে ডানে-বামে টানুন</string>
+</resources>

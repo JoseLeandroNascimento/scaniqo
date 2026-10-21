@@ -7,7 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,6 +30,7 @@ import kotlin.math.roundToInt
 
 @Preview(name = "Lupa assinatura ativa · documento e tinta", widthDp = 360, heightDp = 480, showBackground = true)
 @Preview(name = "Lupa assinatura ativa · palco largo", widthDp = 640, heightDp = 360, showBackground = true)
+@Preview(name = "Lupa assinatura · árabe", widthDp = 360, heightDp = 480, locale = "ar", showBackground = true)
 @Composable
 private fun DocumentSignatureMagnifierPreview() {
     val document = remember {
@@ -81,7 +82,8 @@ private fun DocumentSignatureMagnifierPreview() {
     )
     ScaniqoTheme {
         Surface {
-            BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)) {
+            BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
+                contentAlignment = androidx.compose.ui.AbsoluteAlignment.TopLeft) {
                 val density = LocalDensity.current
                 val width = minOf(maxWidth - 48.dp, (maxHeight - 48.dp) * 595f / 842f)
                 val height = width * 842f / 595f
@@ -89,9 +91,9 @@ private fun DocumentSignatureMagnifierPreview() {
                 val pageHeight = with(density) { height.toPx() }
                 val left = (constraints.maxWidth - pageWidth) / 2f
                 val top = (constraints.maxHeight - pageHeight) / 2f
-                Image(document, null, Modifier.offset { IntOffset(left.roundToInt(), top.roundToInt()) }
+                Image(document, null, Modifier.absoluteOffset { IntOffset(left.roundToInt(), top.roundToInt()) }
                     .size(width, height))
-                Image(signature, null, Modifier.offset {
+                Image(signature, null, Modifier.absoluteOffset {
                     IntOffset((left + placement.x * pageWidth).roundToInt(), (top + placement.y * pageHeight).roundToInt())
                 }.size(width * placement.width, height * placement.height)
                     .graphicsLayer { rotationZ = placement.rotationDegrees }, contentScale = ContentScale.FillBounds)

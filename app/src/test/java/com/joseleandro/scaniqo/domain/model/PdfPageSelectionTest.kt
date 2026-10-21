@@ -19,6 +19,16 @@ class PdfPageSelectionTest {
             assertThrows(it, IllegalArgumentException::class.java) { PdfPageSelection.parse(it, 3) }
         }
     }
+    @Test fun supportsLocalizedDigitsAndPunctuationWithoutChangingPageOrder() {
+        assertEquals(listOf(4, 1, 2, 3, 0), PdfPageSelection.parse("۵، ২–৪, ١", 5))
+        assertEquals(listOf(1, 2), PdfPageSelection.parse("２－３", 4))
+        assertEquals(listOf(1, 2), PdfPageSelection.parse("\u2067٢–٣\u2069", 4))
+    }
+    @Test fun localizedInvalidRangesStillFail() {
+        listOf("٠", "٣–١", "١٫٥", "١٬٢", "١،", "١—٤").forEach {
+            assertThrows(it, IllegalArgumentException::class.java) { PdfPageSelection.parse(it, 3) }
+        }
+    }
     @Test fun documentLimitAndInputLimitAreEnforced() {
         assertThrows(IllegalArgumentException::class.java) { PdfPageSelection.parse("", 101) }
         assertThrows(IllegalArgumentException::class.java) { PdfPageSelection.parse("", 0) }

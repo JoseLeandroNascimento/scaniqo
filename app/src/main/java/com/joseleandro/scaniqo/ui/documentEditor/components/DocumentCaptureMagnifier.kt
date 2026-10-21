@@ -6,7 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -70,7 +70,7 @@ internal fun DocumentCaptureMagnifier(
     val crosshair = androidx.compose.ui.graphics.Color.Black
     Canvas(
         modifier
-            .offset { IntOffset(placement.left.roundToInt(), placement.top.roundToInt()) }
+            .absoluteOffset { IntOffset(placement.left.roundToInt(), placement.top.roundToInt()) }
             .size(with(density) { placement.width.toDp() }, with(density) { placement.height.toDp() })
             .shadow(6.dp, shape)
             .clip(shape)
@@ -112,6 +112,7 @@ internal fun DocumentCaptureMagnifier(
     }
 }
 
+@Preview(name = "Lupa ativa · Árabe", locale = "ar", widthDp = 640, heightDp = 320, showBackground = true)
 @Preview(name = "Lupa ativa · captura horizontal", widthDp = 640, heightDp = 320, showBackground = true)
 @Preview(name = "Lupa ativa · captura horizontal pequena", widthDp = 360, heightDp = 320, fontScale = 1.3f)
 @Composable

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_scan">Сканировать</string>
+    <string name="pages_merge">Объединить PDF</string>
+    <string name="pages_numbering">Нумеровать все страницы</string>
+    <string name="pages_numbering_global_hint">Включая страницы, добавленные позже.</string>
+    <string name="pages_move_title">Переместить по номеру</string>
+    <string name="pages_move_from">Откуда</string>
+    <string name="pages_move_to">Куда</string>
+    <string name="pages_move_action">Переместить страницу</string>
+    <string name="pages_move_range">Введите номер страницы от 1 до %1$d.</string>
+    <string name="pages_move_same">Выберите позицию, отличную от исходной.</string>
+    <string name="pages_move_hint">Используйте номера в текущем порядке.</string>
+    <string name="pages_drag_hint">Удерживайте и перетащите страницу для изменения порядка.</string>
+    <string name="pages_drag_handle">Изменить порядок страницы %1$d</string>
+    <string name="pages_drag_cancel">Отменить перемещение</string>
+    <string name="pages_page">Страница %1$d</string>
+    <string name="pages_selected">Выбрана</string>
+    <string name="pages_move_up">Вверх</string>
+    <string name="pages_move_down">Вниз</string>
+    <string name="pages_one_page">Добавьте страницы, чтобы изменить порядок.</string>
+</resources>

@@ -6,7 +6,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -133,11 +133,12 @@ internal fun DocumentSignatureOverlay(
                 minimumTargetSize = targetSize,
                 viewportGestureKey = viewportGestureKey ?: page,
             ),
+            contentAlignment = androidx.compose.ui.AbsoluteAlignment.TopLeft,
         ) {
             Box(
                 Modifier
-                    .offset { IntOffset((page.left + placement.x * page.width).roundToInt(), (page.top + placement.y * page.height).roundToInt()) }
-                    .wrapContentSize(Alignment.TopStart, unbounded = true)
+                    .absoluteOffset { IntOffset((page.left + placement.x * page.width).roundToInt(), (page.top + placement.y * page.height).roundToInt()) }
+                    .wrapContentSize(androidx.compose.ui.AbsoluteAlignment.TopLeft, unbounded = true)
                     .size(with(density) { (placement.width * page.width).toDp() }, with(density) { (placement.height * page.height).toDp() })
                     .graphicsLayer { rotationZ = placement.rotationDegrees }
                     .semantics(mergeDescendants = true) {
@@ -205,7 +206,7 @@ internal fun DocumentSignatureOverlay(
                     val currentHandle by rememberUpdatedState(handle)
                     Box(
                         Modifier
-                            .offset { IntOffset((handle.x - targetSize / 2f).roundToInt(), (handle.y - targetSize / 2f).roundToInt()) }
+                            .absoluteOffset { IntOffset((handle.x - targetSize / 2f).roundToInt(), (handle.y - targetSize / 2f).roundToInt()) }
                             .size(48.dp)
                             .semantics {
                                 contentDescription = if (isRotation) rotate else cornerLabels[index]

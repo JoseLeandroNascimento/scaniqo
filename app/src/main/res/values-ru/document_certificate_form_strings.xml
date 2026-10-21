@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">Цифровой сертификат</string>
+    <string name="certificate_intro">Подпишите копию сертификатом, установленным в Android, или проверьте подписи PDF.</string>
+    <string name="certificate_pick_pdf">Выбрать PDF</string>
+    <string name="certificate_choose">Выбрать сертификат</string>
+    <string name="certificate_change">Сменить сертификат</string>
+    <string name="certificate_install">Установить сертификат в Android</string>
+    <string name="certificate_sign">Подписать копию</string>
+    <string name="certificate_save">Сохранить подписанный PDF</string>
+    <string name="certificate_unsigned">В этом PDF нет цифровой подписи.</string>
+    <string name="certificate_sign_unavailable">Для этого документа доступна только проверка подписей.</string>
+    <string name="certificate_verification_scope">Проверяются подписанные байты и текущий срок действия сертификата. Доверие к центру сертификации, отзыв и метка времени не проверяются.</string>
+    <string name="certificate_sign_scope">Подпись использует SHA-256 без метки времени. Закрытый ключ остаётся под управлением Android.</string>
+    <string name="certificate_integrity_verified">Целостность подписанной версии проверена</string>
+    <string name="certificate_integrity_invalid">Целостность не подтверждена</string>
+    <string name="certificate_integrity_unsupported">Формат подписи не поддерживается</string>
+    <string name="certificate_whole_file">Подпись охватывает весь текущий файл.</string>
+    <string name="certificate_earlier_revision">Подпись не охватывает весь текущий файл.</string>
+    <string name="certificate_current">Сертификат в пределах срока действия.</string>
+    <string name="certificate_not_current">Сертификат вне срока действия или не распознан.</string>
+    <string name="certificate_picker_error">Не удалось открыть выбор сертификата.</string>
+    <string name="certificate_file_error">Не удалось открыть выбор файла.</string>
+    <string name="certificate_back">Назад</string>
+</resources>

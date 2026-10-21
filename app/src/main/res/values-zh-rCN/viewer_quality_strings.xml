@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_tool_corrections">校正</string>
+    <string name="viewer_tool_quality">质量</string>
+    <string name="viewer_compare_before">调整前</string>
+    <string name="viewer_compare_after">调整后</string>
+    <string name="viewer_compare_description">比较第 %1$d 页的优化效果</string>
+    <string name="viewer_compare_before_description">显示未优化的页面</string>
+    <string name="viewer_compare_after_description">显示优化后的页面</string>
+    <string name="viewer_preview_updating">正在更新预览…</string>
+    <string name="viewer_preview_stale">无法更新，已保留之前的预览。</string>
+    <string name="viewer_preparing_tools">正在准备工具…</string>
+    <string name="viewer_undo_description">撤销上一次更改</string>
+</resources>

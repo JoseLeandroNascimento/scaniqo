@@ -25,8 +25,10 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.core.utils.documentDate
 import com.joseleandro.scaniqo.core.utils.documentFileSize
 import com.joseleandro.scaniqo.domain.model.DocumentModel
@@ -75,14 +77,14 @@ internal fun DocumentViewerHeader(
                 ) {
                     Text(
                         document.name,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleLarge.copy(textDirection = TextDirection.ContentOrLtr),
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.semantics { heading() },
                     )
                     Text(
-                        stringResource(R.string.viewer_created_on, documentDate(document)),
+                        stringResource(R.string.viewer_created_on, bidiArgument(documentDate(document))),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

@@ -1,0 +1,6 @@
+<resources>
+    <string name="viewer_title">নথি</string>
+    <string name="viewer_created_on">তৈরি হয়েছে %1$s</string>
+    <string name="viewer_page_selected">বেছে নেওয়া হয়েছে</string>
+    <string name="viewer_pdf_format">PDF</string>
+</resources>

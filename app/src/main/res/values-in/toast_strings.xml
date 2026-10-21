@@ -1,0 +1,6 @@
+<resources>
+    <string name="toast_success_title">Berhasil</string>
+    <string name="toast_error_title">Terjadi kesalahan</string>
+    <string name="toast_info_title">Informasi</string>
+    <string name="toast_dismiss">Tutup pesan</string>
+</resources>

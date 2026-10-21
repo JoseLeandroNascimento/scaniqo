@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_position_title">PDF একত্র করুন</string>
+    <string name="merge_position_label">নতুন পৃষ্ঠা যোগ করুন</string>
+    <string name="merge_position_start">শুরুতে</string>
+    <string name="merge_position_after">পৃষ্ঠার পরে</string>
+    <string name="merge_position_end">শেষে</string>
+    <string name="merge_position_page_label">পৃষ্ঠা নম্বর</string>
+    <string name="merge_position_page_error">1 থেকে %1$d এর মধ্যে পৃষ্ঠা লিখুন।</string>
+    <string name="merge_position_start_description">নতুন পৃষ্ঠাগুলো নথির শুরুতে যোগ হবে।</string>
+    <string name="merge_position_after_description">নতুন পৃষ্ঠাগুলো %1$d নম্বর পৃষ্ঠার পরে যোগ হবে।</string>
+    <string name="merge_position_end_description">নতুন পৃষ্ঠাগুলো নথির শেষে যোগ হবে।</string>
+    <string name="merge_position_invalid_description">চালিয়ে যেতে সঠিক পৃষ্ঠা বেছে নিন।</string>
+    <string name="merge_position_select_pdfs">PDF বেছে নিন</string>
+    <plurals name="merge_position_page_count">
+        <item quantity="one">%1$d পৃষ্ঠার নথি</item>
+        <item quantity="other">%1$d পৃষ্ঠার নথি</item>
+    </plurals>
+</resources>

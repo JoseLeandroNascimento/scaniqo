@@ -1,0 +1,22 @@
+<resources>
+    <string name="document_search_title">दस्तावेज़ खोजें</string>
+    <string name="document_search_query_label">फ़ाइल का नाम या कंटेंट</string>
+    <string name="document_search_query_placeholder">जैसे: अनुबंध, रसीद, पता</string>
+    <string name="document_search_clear">खोज साफ़ करें</string>
+    <string name="document_search_helper">कंटेंट की खोज में PDF का केवल चुनने योग्य टेक्स्ट इस्तेमाल होता है।</string>
+    <string name="document_search_initial_title">अपने दस्तावेज़ खोजें</string>
+    <string name="document_search_initial_body">PDF के नाम या चुनने योग्य टेक्स्ट से खोजें।</string>
+    <string name="document_search_loading">दस्तावेज़ों में खोजा जा रहा है…</string>
+    <string name="document_search_empty_title">कोई परिणाम नहीं</string>
+    <string name="document_search_empty_body">दूसरा नाम या शब्द आज़माएँ। बिना टेक्स्ट वाले PDF नाम से मिलते हैं।</string>
+    <string name="document_search_error_title">खोज पूरी नहीं हो सकी</string>
+    <string name="document_search_error_body">अपने दस्तावेज़ खोजने के लिए फिर से कोशिश करें।</string>
+    <string name="document_search_match_name">नाम में मिला</string>
+    <string name="document_search_match_content">कंटेंट में</string>
+    <string name="document_search_match_page">पृष्ठ %1$d</string>
+    <string name="document_search_metadata">%1$s · %2$s</string>
+    <plurals name="document_search_result_count">
+        <item quantity="one">%d दस्तावेज़ मिला</item>
+        <item quantity="other">%d दस्तावेज़ मिले</item>
+    </plurals>
+</resources>

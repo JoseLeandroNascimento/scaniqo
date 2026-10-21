@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_tool_corrections">सुधारें</string>
+    <string name="viewer_tool_quality">गुणवत्ता</string>
+    <string name="viewer_compare_before">पहले</string>
+    <string name="viewer_compare_after">बाद में</string>
+    <string name="viewer_compare_description">पृष्ठ %1$d के सुधारों की तुलना करें</string>
+    <string name="viewer_compare_before_description">बिना सुधार वाला पृष्ठ दिखाएँ</string>
+    <string name="viewer_compare_after_description">सुधार वाला पृष्ठ दिखाएँ</string>
+    <string name="viewer_preview_updating">प्रीव्यू अपडेट हो रहा है…</string>
+    <string name="viewer_preview_stale">अपडेट नहीं हो सका। पिछला प्रीव्यू रखा गया है।</string>
+    <string name="viewer_preparing_tools">टूल तैयार हो रहे हैं…</string>
+    <string name="viewer_undo_description">आखिरी बदलाव पूर्ववत करें</string>
+</resources>

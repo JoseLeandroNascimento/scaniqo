@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="background_editor_title">Fundo</string>
-    <string name="background_editor_remove">Remover fundo</string>
-    <string name="background_editor_retry">Detectar novamente</string>
-    <string name="background_editor_adjust">Ajustar contorno</string>
-    <string name="background_editor_detecting">Localizando a folha…</string>
-    <string name="background_editor_suggested">Confira o resultado ou ajuste o contorno antes de aplicar.</string>
-    <string name="background_editor_no_edges">Ajuste os cantos manualmente para selecionar a folha.</string>
-    <string name="background_editor_failed">Não foi possível localizar a folha. Ajuste os cantos manualmente.</string>
-    <string name="background_editor_hint">O fundo é removido automaticamente da captura. O conteúdo da folha é preservado.</string>
+    <string name="background_editor_title">Background</string>
+    <string name="background_editor_remove">Remove background</string>
+    <string name="background_editor_retry">Detect again</string>
+    <string name="background_editor_adjust">Adjust outline</string>
+    <string name="background_editor_detecting">Locating the sheet…</string>
+    <string name="background_editor_suggested">Check the result or adjust the outline before applying.</string>
+    <string name="background_editor_no_edges">Adjust the corners manually to select the sheet.</string>
+    <string name="background_editor_failed">Could not locate the sheet. Adjust the corners manually.</string>
+    <string name="background_editor_hint">The background is automatically removed from the capture. The sheet’s content is preserved.</string>
 </resources>

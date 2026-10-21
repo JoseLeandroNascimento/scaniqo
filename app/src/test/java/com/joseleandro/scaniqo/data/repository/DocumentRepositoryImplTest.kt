@@ -11,6 +11,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -22,7 +23,7 @@ class DocumentRepositoryImplTest {
     private val operations = mutableListOf<String>()
     private val datasource = FakeDatasource(operations)
     private val fileStore = FakeFileStore(operations)
-    private val repository = DocumentRepositoryImpl(datasource, fileStore)
+    private val repository = DocumentRepositoryImpl(datasource, fileStore) { 500L }
 
     @Test
     fun `cadastro normaliza nome e preserva metadados do scan`() = runBlocking {
@@ -318,6 +319,90 @@ class DocumentRepositoryImplTest {
         assertTrue(fileStore.deletedUris.isEmpty())
     }
 
+    @Test
+    fun `lixeira oculta documento e conserva arquivos inclusive para descarte tardio`() = runBlocking {
+        val id = repository.create(scan(), "Recibo", 4L)
+        val original = requireNotNull(repository.findById(id))
+        operations.clear()
+
+        repository.moveToTrash(id)
+        repository.discardScan(scan())
+
+        assertNull(repository.findById(id))
+        assertTrue(repository.observeDocuments().first().isEmpty())
+        assertEquals(listOf(original.copy(deletedAt = 500L)), repository.observeTrashedDocuments().first())
+        assertEquals(listOf("trash-db"), operations)
+        assertTrue(fileStore.deletedUris.isEmpty())
+    }
+
+    @Test
+    fun `restauracao preserva identidade metadados e protecao sem regenerar arquivos`() = runBlocking {
+        val id = repository.create(scan().copy(protectionKeyId = "senha"), "Recibo", 4L)
+        val original = requireNotNull(repository.findById(id))
+        repository.moveToTrash(id)
+        val reopened = DocumentRepositoryImpl(datasource, fileStore)
+
+        reopened.restoreFromTrash(id)
+
+        assertEquals(original, reopened.findById(id))
+        assertTrue(reopened.observeTrashedDocuments().first().isEmpty())
+        assertEquals(listOf(original), reopened.observeDocuments().first())
+        assertTrue(fileStore.deletedUris.isEmpty())
+        assertEquals(0, fileStore.prepareCalls)
+    }
+
+    @Test
+    fun `exclusao permanente exige lixeira e so entao remove os arquivos`() = runBlocking {
+        val id = repository.create(scan(), "Recibo", null)
+
+        expectFailure<IllegalStateException> { repository.deletePermanently(id) }
+        assertTrue(fileStore.deletedUris.isEmpty())
+        assertEquals(1, repository.observeDocuments().first().size)
+
+        repository.moveToTrash(id)
+        operations.clear()
+        repository.deletePermanently(id)
+
+        assertEquals(listOf("delete-db", "delete-file"), operations)
+        assertEquals(listOf(scan().pdfUri), fileStore.deletedUris)
+        assertTrue(repository.observeTrashedDocuments().first().isEmpty())
+        expectFailure<IllegalStateException> { repository.restoreFromTrash(id) }
+        assertNull(repository.findById(id))
+    }
+
+    @Test
+    fun `edicao tardia nao modifica nem recupera documento na lixeira`() = runBlocking {
+        val id = repository.create(scan(), "Original", 4L)
+        repository.moveToTrash(id)
+        val trashed = repository.observeTrashedDocuments().first()
+
+        expectFailure<IllegalStateException> { repository.create(scan(), "Outro", null) }
+        expectFailure<IllegalStateException> { repository.update(id, "Outro", null) }
+        expectFailure<IllegalStateException> {
+            repository.replaceContent(id, scan().copy(pdfUri = "file:///novo.pdf"))
+        }
+        expectFailure<IllegalStateException> { repository.moveToTrash(id) }
+
+        assertEquals(trashed, repository.observeTrashedDocuments().first())
+        assertTrue(fileStore.deletedUris.isEmpty())
+    }
+
+    @Test
+    fun `falha ao mover ou excluir permanentemente mantem os arquivos recuperaveis`() = runBlocking {
+        val id = repository.create(scan(), "Recibo", null)
+        datasource.failure = IOException("Banco indisponível")
+        expectFailure<IOException> { repository.moveToTrash(id) }
+        datasource.failure = null
+        assertEquals(1, repository.observeDocuments().first().size)
+        repository.moveToTrash(id)
+        datasource.failure = IOException("Banco indisponível")
+        expectFailure<IOException> { repository.deletePermanently(id) }
+        datasource.failure = null
+
+        assertEquals(1, repository.observeTrashedDocuments().first().size)
+        assertTrue(fileStore.deletedUris.isEmpty())
+    }
+
     private suspend inline fun <reified T : Throwable> expectFailure(
         block: suspend () -> Unit
     ): T {
@@ -334,11 +419,21 @@ class DocumentRepositoryImplTest {
         val documents = MutableStateFlow<List<DocumentEntity>>(emptyList())
         var failure: Throwable? = null
         private var nextId = 1L
-        override val documentsObserver: Flow<List<DocumentEntity>> = documents
+        override val documentsObserver: Flow<List<DocumentEntity>> = documents.map { list ->
+            list.filter { it.deletedAt == null }
+        }
+        override val trashedDocumentsObserver: Flow<List<DocumentEntity>> = documents.map { list ->
+            list.filter { it.deletedAt != null }.sortedByDescending { it.deletedAt }
+        }
 
         override suspend fun findById(id: Long): DocumentEntity? {
             failure?.let { throw it }
-            return documents.value.firstOrNull { it.id == id }
+            return documents.value.firstOrNull { it.id == id && it.deletedAt == null }
+        }
+
+        override suspend fun findTrashedById(id: Long): DocumentEntity? {
+            failure?.let { throw it }
+            return documents.value.firstOrNull { it.id == id && it.deletedAt != null }
         }
 
         override suspend fun findByPdfUri(pdfUri: String): DocumentEntity? {
@@ -357,7 +452,7 @@ class DocumentRepositoryImplTest {
         override suspend fun updateMetadata(id: Long, name: String, tagId: Long?): Int {
             failure?.let { throw it }
             operations += "update-db"
-            if (documents.value.none { it.id == id }) return 0
+            if (documents.value.none { it.id == id && it.deletedAt == null }) return 0
             documents.value = documents.value.map {
                 if (it.id == id) it.copy(name = name, tagId = tagId) else it
             }
@@ -366,10 +461,31 @@ class DocumentRepositoryImplTest {
 
         override suspend fun replaceContent(document: DocumentEntity): Int {
             failure?.let { throw it }
-            if (documents.value.none { it.id == document.id }) return 0
+            if (documents.value.none { it.id == document.id && it.deletedAt == null }) return 0
             operations += "replace-db"
             documents.value = documents.value.map { if (it.id == document.id) document else it }
             return 1
+        }
+
+        override suspend fun moveToTrash(id: Long, deletedAt: Long): Int {
+            failure?.let { throw it }
+            if (documents.value.none { it.id == id && it.deletedAt == null }) return 0
+            operations += "trash-db"
+            documents.value = documents.value.map { if (it.id == id) it.copy(deletedAt = deletedAt) else it }
+            return 1
+        }
+
+        override suspend fun restoreFromTrash(id: Long): Int {
+            failure?.let { throw it }
+            if (documents.value.none { it.id == id && it.deletedAt != null }) return 0
+            operations += "restore-db"
+            documents.value = documents.value.map { if (it.id == id) it.copy(deletedAt = null) else it }
+            return 1
+        }
+
+        override suspend fun deleteTrashed(id: Long): Int {
+            val document = findTrashedById(id) ?: return 0
+            return delete(document)
         }
 
         override suspend fun delete(document: DocumentEntity): Int {

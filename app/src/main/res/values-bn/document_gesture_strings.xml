@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_move_handle">বিষয়বস্তু সারিবদ্ধ করতে হাতল টানুন। মাঝে আনতে ট্যাপ করুন।</string>
+    <string name="gesture_rotate_handle">ঘোরাতে শিটের চারদিকে টানুন। 90 ডিগ্রি ঘোরাতে ট্যাপ করুন।</string>
+    <string name="gesture_scale_handle">বিষয়বস্তুর আকার বদলাতে কোণা তির্যকভাবে টানুন।</string>
+    <string name="gesture_straighten_handle">হেলানো ভাব ঠিক করতে হাতল ডানে-বামে টানুন।</string>
+    <string name="gesture_curvature_handle">বক্রতা ঠিক করতে হাতল উপরে বা নিচে টানুন।</string>
+    <string name="gesture_scale_increase">5 শতাংশ বড় করুন</string>
+    <string name="gesture_scale_decrease">5 শতাংশ ছোট করুন</string>
+    <string name="gesture_angle_increase">ডানে 1 ডিগ্রি ঘোরান</string>
+    <string name="gesture_angle_decrease">বামে 1 ডিগ্রি ঘোরান</string>
+    <string name="gesture_curve_increase">নিচের দিকে বাঁকান</string>
+    <string name="gesture_curve_decrease">উপরের দিকে বাঁকান</string>
+    <string name="gesture_drag_handle">হাতল টানুন</string>
+</resources>

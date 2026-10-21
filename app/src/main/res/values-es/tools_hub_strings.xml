@@ -1,0 +1,35 @@
+<resources>
+    <string name="tools_hub_title">Todas las herramientas</string>
+    <string name="tools_hub_hint">Más posibilidades para tus PDF</string>
+    <string name="tools_hub_organize">Crear y organizar</string>
+    <string name="tools_hub_convert">Convertir y extraer</string>
+    <string name="tools_hub_edit">Editar un PDF</string>
+    <string name="tools_hub_originals">Certificados</string>
+    <string name="tools_hub_split">Extraer páginas</string>
+    <string name="tools_hub_split_hint">Guarda las páginas elegidas en otro PDF</string>
+    <string name="tools_hub_images_pdf">Imágenes a PDF</string>
+    <string name="tools_hub_images_pdf_hint">Crea un documento con tus fotos</string>
+    <string name="tools_hub_id">Documento de dos caras</string>
+    <string name="tools_hub_id_hint">Organiza las dos caras en una hoja</string>
+    <string name="tools_hub_pdf_images">PDF a imágenes</string>
+    <string name="tools_hub_pdf_images_hint">Exporta las páginas en JPG o PNG</string>
+    <string name="tools_hub_receipt">Extraer datos de recibos</string>
+    <string name="tools_hub_receipt_hint">Revisa los datos reconocidos y exporta en CSV</string>
+    <string name="tools_hub_fill">Rellenar sobre la página</string>
+    <string name="tools_hub_fill_hint">Agrega texto y marcas en formularios escaneados</string>
+    <string name="tools_hub_annotate">Anotar</string>
+    <string name="tools_hub_annotate_hint">Resalta fragmentos y agrega notas</string>
+    <string name="tools_hub_watermark">Marcas y encabezados</string>
+    <string name="tools_hub_watermark_hint">Personaliza el PDF con textos y marcas</string>
+    <string name="tools_hub_redact">Censurar información</string>
+    <string name="tools_hub_redact_hint">Crea una copia con las áreas elegidas eliminadas</string>
+    <string name="tools_hub_certificates">Firma con certificado</string>
+    <string name="tools_hub_certificates_hint">Firma digitalmente o comprueba la integridad de un PDF</string>
+    <string name="tools_hub_editor">Editor de PDF</string>
+    <string name="tools_hub_editor_hint">Páginas, filtros, OCR, compresión y protección</string>
+    <string name="tools_hub_choose">Elige un documento</string>
+    <string name="tools_hub_choose_hint">Abre un PDF de tu biblioteca para continuar.</string>
+    <string name="tools_hub_search">Buscar por nombre</string>
+    <string name="tools_hub_empty">Importa o escanea un PDF para usar esta edición.</string>
+    <string name="tools_hub_back">Volver</string>
+</resources>

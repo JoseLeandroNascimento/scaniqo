@@ -1,0 +1,19 @@
+<resources>
+    <string name="trash_title">Sampah</string>
+    <string name="trash_description">Dokumen tetap di sini sampai Anda memulihkan atau menghapusnya secara permanen. Dokumen masih menggunakan ruang perangkat dan tidak disertakan dalam cadangan baru.</string>
+    <string name="trash_empty_title">Sampah kosong</string>
+    <string name="trash_empty_body">Dokumen yang dipindahkan ke sampah akan muncul di sini untuk dipulihkan.</string>
+    <string name="trash_load_error">Sampah tidak dapat dimuat.</string>
+    <string name="trash_restore">Pulihkan</string>
+    <string name="trash_restore_document">Pulihkan %1$s</string>
+    <string name="trash_delete_document">Hapus permanen %1$s</string>
+    <string name="trash_restored">Dokumen dipulihkan ke pustaka</string>
+    <string name="trash_restore_error">Tidak dapat memulihkan. Coba lagi.</string>
+    <string name="trash_permanent_delete">Hapus permanen</string>
+    <string name="trash_delete_title">Hapus secara permanen?</string>
+    <string name="trash_delete_body">Dokumen “%1$s” beserta berkasnya akan dihapus dari perangkat ini. Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="trash_deleted">Dokumen dihapus secara permanen</string>
+    <string name="trash_delete_error">Tidak dapat menghapus. Dokumen masih di sampah; coba lagi.</string>
+    <string name="trash_deleted_on">Di sampah sejak %1$s</string>
+    <string name="trash_working">Memproses dokumen…</string>
+</resources>

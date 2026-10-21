@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_selection_title">Объединить PDF</string>
+    <string name="merge_selection_new_document">Создаёт новый PDF без пароля. Исходные файлы сохраняются.</string>
+    <string name="merge_selection_editor">Выберите PDF и задайте порядок добавления страниц.</string>
+    <string name="merge_selection_order_title">Порядок</string>
+    <string name="merge_selection_drag_hint">Удерживайте для изменения порядка</string>
+    <string name="merge_selection_library_title">Ваши документы</string>
+    <string name="merge_selection_empty">Добавьте PDF, чтобы начать.</string>
+    <string name="merge_selection_empty_title">Ваши PDF вместе</string>
+    <string name="merge_selection_current">Текущий документ · %1$s</string>
+    <string name="merge_selection_library_empty">В библиотеке нет доступных документов.</string>
+    <string name="merge_selection_all_added">Все добавлены.</string>
+    <string name="merge_selection_add_files">Добавить файлы с устройства</string>
+    <string name="merge_selection_external">Файл с устройства</string>
+    <string name="merge_selection_remove">Убрать %1$s из выбранных</string>
+    <string name="merge_selection_move_up">Переместить %1$s вверх</string>
+    <string name="merge_selection_move_down">Переместить %1$s вниз</string>
+    <string name="merge_selection_drag_handle">Изменить порядок %1$s, позиция %2$d из %3$d</string>
+    <string name="merge_selection_cancel_drag">Отменить изменение порядка</string>
+    <string name="merge_selection_protected">Защищённые PDF могут запросить пароль. Результат будет без пароля.</string>
+    <string name="merge_selection_preserve_protection">Защита редактируемого документа сохранится в результате.</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="one">Выберите %1$d PDF</item>
+        <item quantity="few">Выберите %1$d PDF</item>
+        <item quantity="many">Выберите %1$d PDF</item>
+        <item quantity="other">Выберите %1$d PDF</item>
+    </plurals>
+</resources>

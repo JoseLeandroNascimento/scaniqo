@@ -43,13 +43,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.domain.model.DriveBackupEntry
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupPhase
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupProblem
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
-import java.text.DateFormat
-import java.util.Date
+import com.joseleandro.scaniqo.core.localization.localizedDateTime
+import androidx.compose.ui.platform.LocalConfiguration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -157,7 +158,7 @@ internal fun DriveBackupScreen(
         title = { Text(stringResource(R.string.backup_confirm_title)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(stringResource(R.string.backup_confirm_body, state.accountEmail.orEmpty()))
+                Text(stringResource(R.string.backup_confirm_body, bidiArgument(state.accountEmail.orEmpty())))
                 Text(stringResource(R.string.backup_scope_note))
             }
         },
@@ -203,7 +204,8 @@ internal fun DriveBackupScreen(
 @Composable
 private fun BackupEntryCard(entry: DriveBackupEntry, enabled: Boolean, onRestore: () -> Unit) {
     val context = LocalContext.current
-    val date = remember(entry.modifiedTimeMillis) { DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(entry.modifiedTimeMillis)) }
+    val configuration = LocalConfiguration.current
+    val date = remember(entry.modifiedTimeMillis, configuration) { context.localizedDateTime(entry.modifiedTimeMillis) }
     Card {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(date, style = MaterialTheme.typography.titleSmall)

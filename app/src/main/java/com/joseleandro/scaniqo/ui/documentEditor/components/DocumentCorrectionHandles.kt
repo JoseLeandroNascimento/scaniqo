@@ -4,11 +4,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -64,11 +65,11 @@ internal fun CorrectionHandlesOverlay(
                 }
             }
         }
-        val handles = if (curvature) listOf(Alignment.CenterStart, Alignment.CenterEnd) else listOf(Alignment.TopCenter)
+        val handles = if (curvature) listOf(AbsoluteAlignment.CenterLeft, AbsoluteAlignment.CenterRight) else listOf(Alignment.TopCenter)
         handles.forEach { alignment ->
             val x = when (alignment) {
-                Alignment.CenterStart -> (-24).dp
-                Alignment.CenterEnd -> 24.dp
+                AbsoluteAlignment.CenterLeft -> (-24).dp
+                AbsoluteAlignment.CenterRight -> 24.dp
                 else -> 0.dp
             }
             DocumentPreviewHandle(
@@ -77,7 +78,7 @@ internal fun CorrectionHandlesOverlay(
                 description = description,
                 valueDescription = valueText,
                 enabled = enabled,
-                modifier = Modifier.align(alignment).offset(x, if (curvature) 0.dp else (-24).dp)
+                modifier = Modifier.align(alignment).absoluteOffset(x, if (curvature) 0.dp else (-24).dp)
                     .pointerInput(curvature, paperSize, enabled) {
                         if (enabled) detectDragGestures { change, amount ->
                             change.consume()

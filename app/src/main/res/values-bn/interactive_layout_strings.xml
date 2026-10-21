@@ -1,0 +1,10 @@
+<resources>
+    <string name="layout_interactive_position">অবস্থান</string>
+    <string name="layout_interactive_rotate">ঘোরান</string>
+    <string name="layout_interactive_drag">সারিবদ্ধ করতে টানুন</string>
+    <string name="layout_interactive_twist">দুই আঙুলে ঘোরান</string>
+    <string name="layout_interactive_pinch">বড় করতে দুই আঙুল ব্যবহার করুন</string>
+    <string name="layout_interactive_position_space">মার্জিন তৈরি করতে আকার কমান।</string>
+    <string name="layout_interactive_rotate_left">বামে 90 ডিগ্রি ঘোরান</string>
+    <string name="layout_interactive_rotate_right">ডানে 90 ডিগ্রি ঘোরান</string>
+</resources>

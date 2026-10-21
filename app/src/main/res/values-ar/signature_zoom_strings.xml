@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_document_zoom">تكبير المستند</string>
+    <string name="signature_document_zoom_in">تكبير المستند</string>
+    <string name="signature_document_zoom_out">تصغير المستند</string>
+    <string name="signature_document_zoom_value">%1$d%%</string>
+    <string name="signature_document_zoom_reset">عرض الصفحة كاملة، مئة بالمئة</string>
+    <string name="signature_document_pan_left">تحريك المستند لليسار</string>
+    <string name="signature_document_pan_right">تحريك المستند لليمين</string>
+    <string name="signature_document_pan_up">تحريك المستند لأعلى</string>
+    <string name="signature_document_pan_down">تحريك المستند لأسفل</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_bar_title">Filtros</string>
+    <string name="filter_bar_scope">Todas as páginas</string>
+    <string name="filter_bar_close">Fechar filtros</string>
+    <string name="filter_bar_samples_error">Não foi possível carregar as miniaturas.</string>
+    <string name="filter_bar_native_hint">Em PDFs com texto, o filtro converte a página em imagem.</string>
+</resources>

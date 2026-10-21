@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_position_title">Gabungkan PDF</string>
+    <string name="merge_position_label">Sisipkan halaman baru</string>
+    <string name="merge_position_start">Awal</string>
+    <string name="merge_position_after">Setelah halaman</string>
+    <string name="merge_position_end">Akhir</string>
+    <string name="merge_position_page_label">Nomor halaman</string>
+    <string name="merge_position_page_error">Masukkan halaman antara 1 dan %1$d.</string>
+    <string name="merge_position_start_description">Halaman baru akan disisipkan di awal dokumen.</string>
+    <string name="merge_position_after_description">Halaman baru akan disisipkan setelah halaman %1$d.</string>
+    <string name="merge_position_end_description">Halaman baru akan disisipkan di akhir dokumen.</string>
+    <string name="merge_position_invalid_description">Pilih halaman yang valid untuk melanjutkan.</string>
+    <string name="merge_position_select_pdfs">Pilih PDF</string>
+    <plurals name="merge_position_page_count">
+        <item quantity="other">Dokumen dengan %1$d halaman</item>
+    </plurals>
+</resources>

@@ -322,7 +322,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                 stream.restoreGraphicsState()
                 require(spec.signatures.size <= 20) { "Use até 20 assinaturas por página." }
                 spec.signatures.forEach { drawSignature(output, stream, it, maxSide = 512) }
-                PdfOverlayLayer.draw(stream, spec.overlays, index + 1, workspace.pages.size)
+                PdfOverlayLayer.draw(output, stream, spec.overlays, index + 1, workspace.pages.size)
                 if (workspace.showPageNumbers) drawPageNumber(stream, index + 1, workspace.pages.size)
             }
             currentCoroutineContext().ensureActive()
@@ -514,7 +514,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                         if (!originalsOnly) {
                             require(spec.signatures.size <= 20) { "Use até 20 assinaturas por página." }
                             spec.signatures.forEach { drawSignature(output, stream, it) }
-                            PdfOverlayLayer.draw(stream, spec.overlays, index + 1, workspace.pages.size)
+                            PdfOverlayLayer.draw(output, stream, spec.overlays, index + 1, workspace.pages.size)
                         }
                     }
                     if (!originalsOnly && workspace.showPageNumbers) {

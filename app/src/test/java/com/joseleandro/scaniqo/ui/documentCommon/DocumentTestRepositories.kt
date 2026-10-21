@@ -17,6 +17,10 @@ internal data class UpdateRequest(val id: Long, val name: String, val tagId: Lon
 /** Simula operações e falhas sem abrir arquivos, banco de dados ou contratos Android. */
 internal class FakeDocumentRepository : DocumentRepository {
     val documents = MutableStateFlow<List<DocumentModel>>(emptyList())
+    val trashedDocuments = MutableStateFlow<List<DocumentModel>>(emptyList())
+    val movedToTrash = mutableListOf<Long>()
+    val restored = mutableListOf<Long>()
+    val permanentlyDeleted = mutableListOf<Long>()
     val scan = ScannedDocument(
         pdfUri = "file:///documents/draft.pdf",
         pageCount = 2,
@@ -54,6 +58,34 @@ internal class FakeDocumentRepository : DocumentRepository {
         } finally {
             activeObservers--
         }
+    }
+
+    override fun observeTrashedDocuments(): Flow<List<DocumentModel>> = flow {
+        loadFailure?.let { throw it }
+        emitAll(trashedDocuments)
+    }
+
+    override suspend fun moveToTrash(id: Long) {
+        movedToTrash += id
+        awaitWrite()
+        val document = checkNotNull(documents.value.firstOrNull { it.id == id })
+        documents.value = documents.value.filterNot { it.id == id }
+        trashedDocuments.value += document.copy(deletedAt = 1_790_000_000_000L)
+    }
+
+    override suspend fun restoreFromTrash(id: Long) {
+        restored += id
+        awaitWrite()
+        val document = checkNotNull(trashedDocuments.value.firstOrNull { it.id == id })
+        trashedDocuments.value = trashedDocuments.value.filterNot { it.id == id }
+        documents.value += document.copy(deletedAt = null)
+    }
+
+    override suspend fun deletePermanently(id: Long) {
+        permanentlyDeleted += id
+        awaitWrite()
+        check(trashedDocuments.value.any { it.id == id })
+        trashedDocuments.value = trashedDocuments.value.filterNot { it.id == id }
     }
 
     override suspend fun findById(id: Long): DocumentModel? =

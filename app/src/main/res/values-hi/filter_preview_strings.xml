@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_preview_options">इफ़ेक्ट चुनें</string>
+    <string name="filter_preview_samples">इस पृष्ठ के थंबनेल अधिकतम तीव्रता पर हैं।</string>
+    <string name="filter_preview_loading">इफ़ेक्ट तैयार हो रहे हैं…</string>
+    <string name="filter_preview_thumbnails_error">थंबनेल लोड नहीं हो सके।</string>
+    <string name="filter_preview_retry">फिर से कोशिश करें</string>
+    <string name="filter_preview_thumbnail_error">प्रीव्यू उपलब्ध नहीं है</string>
+    <string name="filter_preview_thumbnail_description">%1$s फ़िल्टर का प्रीव्यू</string>
+    <string name="filter_preview_native_preserved">इस पृष्ठ में टेक्स्ट या वेक्टर हैं। इफ़ेक्ट देखने के लिए नीचे इमेज में बदलने की अनुमति दें।</string>
+    <string name="filter_preview_live_hint">लागू करने से पहले परिणाम देखें। तीव्रता केवल बड़े प्रीव्यू को बदलती है।</string>
+</resources>

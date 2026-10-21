@@ -1,0 +1,21 @@
+<resources>
+    <string name="tool_catalog_title">Alat</string>
+    <string name="tool_catalog_heading">Apa yang ingin Anda lakukan?</string>
+    <string name="tool_catalog_search">Cari alat</string>
+    <string name="tool_catalog_clear">Hapus pencarian</string>
+    <string name="tool_catalog_all">Semua</string>
+    <string name="tool_catalog_organize">Atur</string>
+    <string name="tool_catalog_convert">Konversi</string>
+    <string name="tool_catalog_edit">Edit</string>
+    <string name="tool_catalog_fill">Isi dan tanda tangani</string>
+    <string name="tool_catalog_empty">Tidak ada alat ditemukan.</string>
+    <string name="tool_catalog_reset">Lihat semua alat</string>
+    <string name="tool_catalog_compress">Kompres PDF</string>
+    <string name="tool_catalog_compress_hint">Perkecil ukuran untuk dikirim dan dibagikan</string>
+    <string name="tool_catalog_fill_page">Isi di atas halaman</string>
+    <string name="tool_catalog_fill_hint">Posisikan teks dan tanda pada dokumen</string>
+    <string name="tool_catalog_watermark">Tanda air</string>
+    <string name="tool_catalog_watermark_hint">Sesuaikan dengan teks, gambar, atau stempel</string>
+    <string name="tool_catalog_choose_for">Pilih dokumen untuk %1$s</string>
+    <string name="tool_catalog_count">%1$d alat tersedia</string>
+</resources>

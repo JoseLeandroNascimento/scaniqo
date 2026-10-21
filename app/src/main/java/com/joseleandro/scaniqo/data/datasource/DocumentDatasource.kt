@@ -5,8 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface DocumentDatasource {
     val documentsObserver: Flow<List<DocumentEntity>>
+    val trashedDocumentsObserver: Flow<List<DocumentEntity>>
 
     suspend fun findById(id: Long): DocumentEntity?
+
+    suspend fun findTrashedById(id: Long): DocumentEntity?
 
     suspend fun findByPdfUri(pdfUri: String): DocumentEntity?
 
@@ -15,6 +18,12 @@ interface DocumentDatasource {
     suspend fun updateMetadata(id: Long, name: String, tagId: Long?): Int
 
     suspend fun replaceContent(document: DocumentEntity): Int
+
+    suspend fun moveToTrash(id: Long, deletedAt: Long): Int
+
+    suspend fun restoreFromTrash(id: Long): Int
+
+    suspend fun deleteTrashed(id: Long): Int
 
     suspend fun delete(document: DocumentEntity): Int
 }

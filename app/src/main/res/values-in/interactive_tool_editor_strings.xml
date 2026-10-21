@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="interactive_scope_current">Halaman yang dipilih</string>
+    <string name="interactive_scope_choose">Pilih halaman…</string>
+    <string name="interactive_scope_all">Semua halaman</string>
+    <string name="interactive_scope_current_summary">Hanya halaman %1$d</string>
+    <string name="interactive_scope_all_summary">Semua (%1$d)</string>
+    <plurals name="interactive_scope_selected_summary">
+        <item quantity="other">%1$d dipilih</item>
+    </plurals>
+    <string name="interactive_scope_description">Terapkan pada: %1$s. Ubah halaman</string>
+    <string name="interactive_preview_page">Halaman %1$d</string>
+    <string name="interactive_preview_page_description">Halaman %1$d, pratinjau %2$d dari %3$d. Pilih pratinjau</string>
+    <string name="interactive_preview_busy">Memperbarui pratinjau</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trash_title">سلة المهملات</string>
+    <string name="trash_description">تبقى المستندات هنا حتى تستعيدها أو تحذفها نهائيًا. وتستمر في شغل مساحة على الجهاز ولا تُضمّن في النسخ الاحتياطية الجديدة.</string>
+    <string name="trash_empty_title">سلة المهملات فارغة</string>
+    <string name="trash_empty_body">ستظهر هنا المستندات المنقولة إلى سلة المهملات لاستعادتها.</string>
+    <string name="trash_load_error">تعذر تحميل سلة المهملات.</string>
+    <string name="trash_restore">استعادة</string>
+    <string name="trash_restore_document">استعادة %1$s</string>
+    <string name="trash_delete_document">حذف %1$s نهائيًا</string>
+    <string name="trash_restored">تمت استعادة المستند إلى المكتبة</string>
+    <string name="trash_restore_error">تعذرت الاستعادة. أعد المحاولة.</string>
+    <string name="trash_permanent_delete">حذف نهائي</string>
+    <string name="trash_delete_title">الحذف نهائيًا؟</string>
+    <string name="trash_delete_body">سيُحذف المستند «%1$s» وملفاته من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="trash_deleted">تم حذف المستند نهائيًا</string>
+    <string name="trash_delete_error">تعذر الحذف. ما زال المستند في سلة المهملات؛ أعد المحاولة.</string>
+    <string name="trash_deleted_on">في سلة المهملات منذ %1$s</string>
+    <string name="trash_working">جارٍ معالجة المستند…</string>
+</resources>

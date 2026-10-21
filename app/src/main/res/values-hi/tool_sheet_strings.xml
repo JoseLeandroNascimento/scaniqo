@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_sheet_close">टूल बंद करें</string>
+    <string name="tool_sheet_saved_signatures">सहेजे गए हस्ताक्षर</string>
+    <string name="tool_sheet_placed_signatures">इस पृष्ठ पर</string>
+</resources>

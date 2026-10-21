@@ -51,12 +51,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
@@ -135,13 +137,16 @@ fun PdfUtilityRoute(
         onDispose { lifecycle.removeObserver(observer) }
     }
     BackHandler(enabled = state.busy || importBusy) {}
+    val imageArchiveName = stringResource(R.string.utility_pages) + ".zip"
+    val receiptExportName = stringResource(R.string.tag_icon_receipt) + ".csv"
+    val documentSuffix = stringResource(if (tool == PdfUtility.COMPRESS_PDF)
+        R.string.utility_workspace_compress_title else R.string.utility_extract_title)
     fun selectDocument(document: DocumentModel) {
         selectedId = document.id
         pages = ""
         receiptPage = "1"
         targetUri = null
-        name = (document.name + if (tool == PdfUtility.COMPRESS_PDF)
-            " — comprimido" else " — páginas").take(DOCUMENT_NAME_MAX_LENGTH)
+        name = (document.name + " — " + documentSuffix).take(DOCUMENT_NAME_MAX_LENGTH)
         viewModel.clearReceipt()
         viewModel.clearCompressionResult()
         pickingDocument = false
@@ -240,14 +245,14 @@ fun PdfUtilityRoute(
             onPassword = { password = it },
             onFormat = { imageFormat = it },
             onCompression = { compression = it; viewModel.clearCompressionResult() },
-            onDestination = { launchSaf { zipPicker.launch("paginas.zip") } },
+            onDestination = { launchSaf { zipPicker.launch(imageArchiveName) } },
             onAction = {
                 selected?.let { source ->
                     when (tool) {
                         PdfUtility.EXTRACT_PAGES -> viewModel.extract(source.id, pages, name, password)
                         PdfUtility.COMPRESS_PDF -> viewModel.compress(source.id, name, compression, password)
                         PdfUtility.PDF_TO_IMAGES -> if (targetUri == null) {
-                            launchSaf { zipPicker.launch("paginas.zip") }
+                            launchSaf { zipPicker.launch(imageArchiveName) }
                         } else viewModel.exportImages(source.id, pages, imageFormat, requireNotNull(targetUri), password)
                         else -> Unit
                     }
@@ -278,8 +283,8 @@ fun PdfUtilityRoute(
                     Text(stringResource(R.string.documents_retry))
                 }
             }
-            state.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
-            state.message?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
+            state.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
+            state.message?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.primary) }
             Text(stringResource(when (tool) {
                 PdfUtility.EXTRACT_PAGES -> R.string.utility_extract_description
                 PdfUtility.PDF_TO_IMAGES -> R.string.utility_export_note
@@ -313,11 +318,13 @@ fun PdfUtilityRoute(
             when (tool) {
                 PdfUtility.EXTRACT_PAGES, PdfUtility.PDF_TO_IMAGES -> {
                     OutlinedTextField(pages, { pages = it }, Modifier.fillMaxWidth(), enabled = !state.busy,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr),
                         label = { Text(stringResource(R.string.utility_pages)) }, singleLine = true,
                         supportingText = { Text(stringResource(R.string.utility_pages_hint)) })
                     if (tool == PdfUtility.EXTRACT_PAGES) {
                         OutlinedTextField(name, { name = it.take(DOCUMENT_NAME_MAX_LENGTH) }, Modifier.fillMaxWidth(), enabled = !state.busy,
-                            label = { Text(stringResource(R.string.utility_name)) }, singleLine = true)
+                            label = { Text(stringResource(R.string.utility_name)) }, singleLine = true,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr))
                         Button(onClick = { selected?.let { viewModel.extract(it.id, pages, name, password) } },
                             enabled = !state.busy && selected != null && name.isNotBlank() &&
                                 (selected.isProtected != true || password.isNotEmpty()), modifier = Modifier.fillMaxWidth()) {
@@ -332,7 +339,7 @@ fun PdfUtilityRoute(
                         }
                         if (targetUri != null) Text(stringResource(R.string.utility_destination_ready), style = MaterialTheme.typography.bodySmall)
                         Button(onClick = {
-                            if (targetUri == null) launchSaf { zipPicker.launch("paginas.zip") }
+                            if (targetUri == null) launchSaf { zipPicker.launch(imageArchiveName) }
                             else selected?.let { viewModel.exportImages(it.id, pages, imageFormat, requireNotNull(targetUri), password) }
                         }, enabled = !state.busy && selected != null &&
                             (targetUri == null || selected.isProtected != true || password.isNotEmpty()), modifier = Modifier.fillMaxWidth()) {
@@ -383,7 +390,8 @@ fun PdfUtilityRoute(
                         }
                     }
                     OutlinedTextField(name, { name = it.take(DOCUMENT_NAME_MAX_LENGTH) }, Modifier.fillMaxWidth(), enabled = !state.busy,
-                        label = { Text(stringResource(R.string.utility_name)) }, singleLine = true)
+                        label = { Text(stringResource(R.string.utility_name)) }, singleLine = true,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr))
                     Button(onClick = { viewModel.createFromImages(images, name, tool == PdfUtility.ID_CARD) },
                         enabled = !state.busy && name.isNotBlank() && images.isNotEmpty() &&
                             (tool != PdfUtility.ID_CARD || (images.size == 2 && images.all(String::isNotBlank))),
@@ -393,7 +401,8 @@ fun PdfUtilityRoute(
                 PdfUtility.RECEIPT -> {
                     if (state.receipt == null) {
                         OutlinedTextField(receiptPage, { receiptPage = it.take(3) }, Modifier.fillMaxWidth(), enabled = !state.busy,
-                            label = { Text(stringResource(R.string.utility_receipt_page)) }, singleLine = true)
+                            label = { Text(stringResource(R.string.utility_receipt_page)) }, singleLine = true,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr))
                         Button(onClick = { selected?.let { viewModel.readReceipt(it.id, receiptPage, password) } },
                             enabled = !state.busy && selected != null && (selected.isProtected != true || password.isNotEmpty()),
                             modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.utility_receipt_read)) }
@@ -402,16 +411,23 @@ fun PdfUtilityRoute(
                         Text(stringResource(R.string.utility_receipt_review), style = MaterialTheme.typography.titleMedium)
                         Text(stringResource(R.string.utility_receipt_review_note), style = MaterialTheme.typography.bodySmall)
                         OutlinedTextField(receipt.merchant, { viewModel.updateReceipt(receipt.copy(merchant = it)) },
-                            Modifier.fillMaxWidth(), enabled = !state.busy, label = { Text(stringResource(R.string.utility_receipt_merchant)) })
+                            Modifier.fillMaxWidth(), enabled = !state.busy,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
+                            label = { Text(stringResource(R.string.utility_receipt_merchant)) })
                         OutlinedTextField(receipt.date, { viewModel.updateReceipt(receipt.copy(date = it)) },
-                            Modifier.fillMaxWidth(), enabled = !state.busy, label = { Text(stringResource(R.string.utility_receipt_date)) })
+                            Modifier.fillMaxWidth(), enabled = !state.busy,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
+                            label = { Text(stringResource(R.string.utility_receipt_date)) })
                         OutlinedTextField(receipt.total, { viewModel.updateReceipt(receipt.copy(total = it)) },
-                            Modifier.fillMaxWidth(), enabled = !state.busy, label = { Text(stringResource(R.string.utility_receipt_total)) })
+                            Modifier.fillMaxWidth(), enabled = !state.busy,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
+                            label = { Text(stringResource(R.string.utility_receipt_total)) })
                         OutlinedTextField(receipt.items, { viewModel.updateReceipt(receipt.copy(items = it)) },
                             Modifier.fillMaxWidth(), enabled = !state.busy, minLines = 3,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
                             label = { Text(stringResource(R.string.utility_receipt_items)) })
                         Text(stringResource(R.string.utility_receipt_source), style = MaterialTheme.typography.titleSmall)
-                        Text(receipt.sourceText, style = MaterialTheme.typography.bodySmall)
+                        Text(receipt.sourceText, style = MaterialTheme.typography.bodySmall.copy(textDirection = TextDirection.ContentOrLtr))
                         Text(stringResource(R.string.utility_receipt_csv_note), style = MaterialTheme.typography.bodySmall)
                         Button(onClick = {
                             viewModel.prepareReceiptExport()?.let { token ->
@@ -419,7 +435,7 @@ fun PdfUtilityRoute(
                                 launchSaf(onFailure = {
                                     viewModel.completeReceiptExport(null, token)
                                     receiptExportToken = null
-                                }) { csvPicker.launch("comprovante.csv") }
+                                }) { csvPicker.launch(receiptExportName) }
                             }
                         }, enabled = !state.busy && !externalPicker,
                             modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.utility_receipt_export)) }

@@ -1,0 +1,8 @@
+<resources>
+    <string name="preview_zoom_expand">পূর্ণ পর্দায় বড় করুন</string>
+    <string name="preview_zoom_close">বড় দৃশ্য বন্ধ করুন</string>
+    <string name="preview_zoom_reset">পৃষ্ঠা পর্দায় মেলান</string>
+    <string name="preview_controls_show">সমন্বয়</string>
+    <string name="preview_controls_hide">সমন্বয় লুকান</string>
+    <string name="preview_gestures_hint">বড় করতে ও ঘুরে দেখতে দুই আঙুল ব্যবহার করুন।</string>
+</resources>

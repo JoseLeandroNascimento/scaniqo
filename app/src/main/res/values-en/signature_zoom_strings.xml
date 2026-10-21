@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_document_zoom">Document zoom</string>
+    <string name="signature_document_zoom_in">Zoom in on document</string>
+    <string name="signature_document_zoom_out">Zoom out of document</string>
+    <string name="signature_document_zoom_value">%1$d%%</string>
+    <string name="signature_document_zoom_reset">Show full page, 100 percent</string>
+    <string name="signature_document_pan_left">Move document left</string>
+    <string name="signature_document_pan_right">Move document right</string>
+    <string name="signature_document_pan_up">Move document up</string>
+    <string name="signature_document_pan_down">Move document down</string>
+</resources>

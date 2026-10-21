@@ -1,0 +1,35 @@
+<resources>
+    <string name="tools_hub_title">Semua alat</string>
+    <string name="tools_hub_hint">Lebih banyak pilihan untuk PDF Anda</string>
+    <string name="tools_hub_organize">Buat dan atur</string>
+    <string name="tools_hub_convert">Konversi dan ekstrak</string>
+    <string name="tools_hub_edit">Edit PDF</string>
+    <string name="tools_hub_originals">Sertifikat</string>
+    <string name="tools_hub_split">Ekstrak halaman</string>
+    <string name="tools_hub_split_hint">Simpan halaman yang dipilih ke PDF lain</string>
+    <string name="tools_hub_images_pdf">Gambar ke PDF</string>
+    <string name="tools_hub_images_pdf_hint">Buat dokumen dari foto Anda</string>
+    <string name="tools_hub_id">Dokumen depan dan belakang</string>
+    <string name="tools_hub_id_hint">Atur kedua sisi dalam satu lembar</string>
+    <string name="tools_hub_pdf_images">PDF ke gambar</string>
+    <string name="tools_hub_pdf_images_hint">Ekspor halaman ke JPG atau PNG</string>
+    <string name="tools_hub_receipt">Ekstrak data kuitansi</string>
+    <string name="tools_hub_receipt_hint">Tinjau data yang dikenali dan ekspor ke CSV</string>
+    <string name="tools_hub_fill">Isi di atas halaman</string>
+    <string name="tools_hub_fill_hint">Tambahkan teks dan tanda pada formulir hasil pindai</string>
+    <string name="tools_hub_annotate">Anotasi</string>
+    <string name="tools_hub_annotate_hint">Sorot bagian dan tambahkan catatan</string>
+    <string name="tools_hub_watermark">Tanda dan header</string>
+    <string name="tools_hub_watermark_hint">Sesuaikan PDF dengan teks dan tanda</string>
+    <string name="tools_hub_redact">Redaksi informasi</string>
+    <string name="tools_hub_redact_hint">Buat salinan dengan area yang dipilih dihapus</string>
+    <string name="tools_hub_certificates">Tanda tangan dengan sertifikat</string>
+    <string name="tools_hub_certificates_hint">Tanda tangani secara digital atau periksa integritas PDF</string>
+    <string name="tools_hub_editor">Editor PDF</string>
+    <string name="tools_hub_editor_hint">Halaman, filter, OCR, kompresi, dan perlindungan</string>
+    <string name="tools_hub_choose">Pilih dokumen</string>
+    <string name="tools_hub_choose_hint">Buka PDF dari pustaka untuk melanjutkan.</string>
+    <string name="tools_hub_search">Cari berdasarkan nama</string>
+    <string name="tools_hub_empty">Impor atau pindai PDF untuk menggunakan pengeditan ini.</string>
+    <string name="tools_hub_back">Kembali</string>
+</resources>

@@ -9,11 +9,15 @@ import android.graphics.pdf.PdfDocument
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.core.image.DocumentImageDecoder
+import com.joseleandro.scaniqo.core.localization.appLocale
+import com.joseleandro.scaniqo.core.localization.withLocale
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfCompressionLevel
 import com.joseleandro.scaniqo.domain.model.PdfCompressionResult
@@ -217,8 +221,17 @@ class AndroidPdfUtilityRepository(
 
     override suspend fun exportReceipt(receipt: ReceiptDraft, targetUri: String) = withContext(ioDispatcher) {
         require(Uri.parse(targetUri).scheme == "content") { "Selecione um destino válido." }
+        val locale = AppCompatDelegate.getApplicationLocales()[0] ?: app.appLocale()
+        val localized = app.withLocale(locale)
+        val headers = ReceiptCsv.Headers(
+            merchant = localized.getString(R.string.utility_receipt_merchant),
+            date = localized.getString(R.string.utility_receipt_date),
+            total = localized.getString(R.string.utility_receipt_total),
+            item = localized.getString(R.string.utility_receipt_items),
+        )
+        val separator = ReceiptCsv.separatorFor(locale)
         stageExport(targetUri, ".csv") { staged ->
-            staged.bufferedWriter(Charsets.UTF_8).use { it.write(ReceiptCsv.encode(receipt)) }
+            staged.bufferedWriter(Charsets.UTF_8).use { it.write(ReceiptCsv.encode(receipt, headers, separator)) }
         }
     }
 

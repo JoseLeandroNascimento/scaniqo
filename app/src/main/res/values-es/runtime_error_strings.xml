@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">Se alcanzó el límite de trazos. Deshaz un trazo para continuar.</string>
+    <string name="runtime_signature_image_required">Elige una imagen de la firma.</string>
+    <string name="runtime_password_required">Ingresa la contraseña del PDF.</string>
+    <string name="runtime_unlock_required">Desbloquea para acceder a los PDF protegidos.</string>
+    <string name="runtime_merge_paused">La combinación se pausó. Toca Reintentar para continuar.</string>
+    <string name="runtime_password_setup_required">Configura la contraseña general para guardar de forma segura la contraseña de este PDF.</string>
+    <string name="runtime_password_incorrect">Contraseña incorrecta. Reintenta.</string>
+    <string name="runtime_signed_pdf_saved">PDF firmado guardado.</string>
+    <string name="runtime_zip_exported">Imágenes exportadas en un archivo ZIP.</string>
+    <string name="runtime_csv_exported">Datos revisados exportados en CSV.</string>
+    <string name="runtime_receipt_page_required">Ingresa una página válida del recibo.</string>
+    <string name="runtime_receipt_review_required">Revisa los datos de nuevo antes de exportar.</string>
+    <string name="runtime_document_unavailable">El documento ya no está disponible.</string>
+    <string name="runtime_imported_document">Documento importado</string>
+    <string name="runtime_signature_default_name">Mi firma</string>
+    <string name="runtime_name_invalid">Ingresa un nombre de hasta 100 caracteres.</string>
+    <string name="runtime_pdf_size_limit">Selecciona un PDF de hasta 50 MB.</string>
+    <string name="runtime_pdf_page_limit">Selecciona un PDF de 1 a 100 páginas.</string>
+    <string name="runtime_pdf_unprotected_required">Abre una copia sin contraseña para usar esta herramienta.</string>
+    <string name="runtime_new_file_required">Elige un archivo nuevo para conservar el PDF original.</string>
+    <string name="runtime_destination_failed">No se pudo guardar en la ubicación elegida.</string>
+    <string name="runtime_certificate_select_again">Selecciona de nuevo el certificado en Android.</string>
+    <string name="runtime_certificate_chain_unavailable">La cadena del certificado no está disponible.</string>
+    <string name="runtime_certificate_rsa_ec">Selecciona un certificado RSA o EC.</string>
+    <string name="runtime_certificate_sign_failed">No se pudo usar este certificado para firmar.</string>
+    <string name="runtime_certificate_sign_disallowed">Este documento no permite una nueva firma con esta herramienta.</string>
+    <string name="runtime_pdf_copy_disallowed">La contraseña de este PDF no permite copiar páginas a otro documento.</string>
+    <string name="runtime_pdf_extract_disallowed">Este PDF no permite extraer contenido.</string>
+    <string name="runtime_pdf_edit_disallowed">La contraseña ingresada no permite editar este PDF.</string>
+    <string name="runtime_two_pdfs_required">Selecciona al menos dos PDF.</string>
+    <string name="runtime_scan_page_limit">Digitaliza entre 1 y 20 páginas a la vez.</string>
+    <string name="runtime_images_size_limit">Las imágenes superaron los 200 MB. Exporta menos páginas a la vez.</string>
+    <string name="runtime_ocr_empty">No se reconoció ningún texto. Prueba con una digitalización más nítida.</string>
+    <string name="runtime_signature_empty">Dibuja o escribe una firma antes de guardar.</string>
+    <string name="runtime_image_size_limit">Selecciona una imagen de hasta 10 MB.</string>
+    <string name="runtime_selected_pdf">PDF seleccionado</string>
+    <string name="runtime_signature_name_invalid">Ingresa un nombre de hasta 80 caracteres.</string>
+    <string name="runtime_signature_text_invalid">Escribe un nombre de hasta 80 caracteres.</string>
+    <string name="runtime_signature_drawing_large">El dibujo es demasiado grande. Simplifica la firma.</string>
+    <string name="runtime_image_invalid">Elige una imagen válida.</string>
+    <string name="runtime_signature_not_found">Firma no encontrada.</string>
+</resources>

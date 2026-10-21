@@ -1,0 +1,19 @@
+<resources>
+    <string name="trash_title">Trash</string>
+    <string name="trash_description">Documents stay here until you restore or permanently delete them. They still take up space on your device and are not included in new backups.</string>
+    <string name="trash_empty_title">Trash is empty</string>
+    <string name="trash_empty_body">Documents moved to trash will appear here so you can restore them.</string>
+    <string name="trash_load_error">Could not load trash.</string>
+    <string name="trash_restore">Restore</string>
+    <string name="trash_restore_document">Restore %1$s</string>
+    <string name="trash_delete_document">Permanently delete %1$s</string>
+    <string name="trash_restored">Document restored to library</string>
+    <string name="trash_restore_error">Could not restore. Try again.</string>
+    <string name="trash_permanent_delete">Delete permanently</string>
+    <string name="trash_delete_title">Delete permanently?</string>
+    <string name="trash_delete_body">“%1$s” and its files will be deleted from this device. This action cannot be undone.</string>
+    <string name="trash_deleted">Document permanently deleted</string>
+    <string name="trash_delete_error">Could not delete. The document is still in trash; try again.</string>
+    <string name="trash_deleted_on">In trash since %1$s</string>
+    <string name="trash_working">Processing document…</string>
+</resources>

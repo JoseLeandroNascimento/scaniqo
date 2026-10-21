@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">数字证书</string>
+    <string name="certificate_intro">使用 Android 中安装的证书为副本签名，或检查 PDF 签名。</string>
+    <string name="certificate_pick_pdf">选择 PDF</string>
+    <string name="certificate_choose">选择证书</string>
+    <string name="certificate_change">更换证书</string>
+    <string name="certificate_install">在 Android 中安装证书</string>
+    <string name="certificate_sign">为副本签名</string>
+    <string name="certificate_save">保存已签名 PDF</string>
+    <string name="certificate_unsigned">此 PDF 没有数字签名。</string>
+    <string name="certificate_sign_unavailable">此工具仅允许检查该文档的签名。</string>
+    <string name="certificate_verification_scope">检查签名数据及证书当前有效期。不检查证书颁发机构的信任状态、吊销状态或时间戳。</string>
+    <string name="certificate_sign_scope">签名使用 SHA-256，不包含时间戳。私钥始终由 Android 管理。</string>
+    <string name="certificate_integrity_verified">已验证签名版本的完整性</string>
+    <string name="certificate_integrity_invalid">未能确认完整性</string>
+    <string name="certificate_integrity_unsupported">不支持的签名格式</string>
+    <string name="certificate_whole_file">签名覆盖当前整个文件。</string>
+    <string name="certificate_earlier_revision">签名未覆盖当前整个文件。</string>
+    <string name="certificate_current">证书处于有效期内。</string>
+    <string name="certificate_not_current">证书已超出有效期或无法识别。</string>
+    <string name="certificate_picker_error">无法打开证书选择界面。</string>
+    <string name="certificate_file_error">无法打开文件选择器。</string>
+    <string name="certificate_back">返回</string>
+</resources>

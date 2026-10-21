@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_tool_corrections">Perbaiki</string>
+    <string name="viewer_tool_quality">Kualitas</string>
+    <string name="viewer_compare_before">Sebelum</string>
+    <string name="viewer_compare_after">Sesudah</string>
+    <string name="viewer_compare_description">Bandingkan peningkatan halaman %1$d</string>
+    <string name="viewer_compare_before_description">Tampilkan halaman tanpa peningkatan</string>
+    <string name="viewer_compare_after_description">Tampilkan halaman dengan peningkatan</string>
+    <string name="viewer_preview_updating">Memperbarui pratinjau…</string>
+    <string name="viewer_preview_stale">Tidak dapat memperbarui. Pratinjau sebelumnya tetap ditampilkan.</string>
+    <string name="viewer_preparing_tools">Menyiapkan alat…</string>
+    <string name="viewer_undo_description">Urungkan perubahan terakhir</string>
+</resources>

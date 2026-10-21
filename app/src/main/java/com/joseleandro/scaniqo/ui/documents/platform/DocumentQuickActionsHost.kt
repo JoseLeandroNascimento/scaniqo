@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.domain.model.DocumentModel
@@ -108,7 +110,10 @@ fun DocumentQuickActionsHost(
                             Text(stringResource(R.string.quick_merge_working))
                         }
                         prompt != null -> {
-                            Text(stringResource(R.string.quick_merge_password, prompt.name))
+                            val documentName = if (prompt.name == "PDF selecionado") {
+                                stringResource(R.string.runtime_selected_pdf)
+                            } else prompt.name
+                            Text(stringResource(R.string.quick_merge_password, bidiArgument(documentName)))
                             OutlinedTextField(
                                 value = password, onValueChange = { password = it },
                                 label = { Text(stringResource(R.string.quick_merge_password_label)) },
@@ -121,7 +126,7 @@ fun DocumentQuickActionsHost(
                                 color = MaterialTheme.colorScheme.error)
                         }
                     }
-                    state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                    state.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error) }
                 }
             },
             confirmButton = {

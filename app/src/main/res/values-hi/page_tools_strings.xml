@@ -1,0 +1,21 @@
+<resources>
+    <string name="pages_scan">स्कैन करें</string>
+    <string name="pages_merge">PDF मिलाएँ</string>
+    <string name="pages_numbering">सभी पृष्ठों पर क्रमांक</string>
+    <string name="pages_numbering_global_hint">बाद में जोड़े गए पृष्ठ भी शामिल हैं।</string>
+    <string name="pages_move_title">सीधे ले जाएँ</string>
+    <string name="pages_move_from">कहाँ से</string>
+    <string name="pages_move_to">कहाँ तक</string>
+    <string name="pages_move_action">पृष्ठ ले जाएँ</string>
+    <string name="pages_move_range">1 से %1$d तक का पृष्ठ दर्ज करें।</string>
+    <string name="pages_move_same">शुरुआती जगह से अलग स्थान चुनें।</string>
+    <string name="pages_move_hint">वर्तमान क्रम की संख्याएँ इस्तेमाल करें।</string>
+    <string name="pages_drag_hint">क्रम बदलने के लिए पृष्ठ दबाकर खींचें।</string>
+    <string name="pages_drag_handle">पृष्ठ %1$d का क्रम बदलें</string>
+    <string name="pages_drag_cancel">हिलाना रद्द करें</string>
+    <string name="pages_page">पृष्ठ %1$d</string>
+    <string name="pages_selected">चुना गया</string>
+    <string name="pages_move_up">ऊपर ले जाएँ</string>
+    <string name="pages_move_down">नीचे ले जाएँ</string>
+    <string name="pages_one_page">क्रम बदलने के लिए पृष्ठ जोड़ें।</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_source_label">PDF चुनें</string>
+    <string name="merge_source_device">डिवाइस से</string>
+    <string name="merge_source_app">ऐप से</string>
+    <string name="merge_app_title">ऐप के दस्तावेज़</string>
+    <string name="merge_app_description">पृष्ठ उसी क्रम में जुड़ेंगे जिस क्रम में आप PDF चुनेंगे।</string>
+    <string name="merge_app_search">नाम से खोजें</string>
+    <string name="merge_app_empty">ऐप में और कोई PDF नहीं है। फ़ाइलें चुनने के लिए “डिवाइस से” इस्तेमाल करें।</string>
+    <string name="merge_app_no_results">इस खोज में कोई दस्तावेज़ नहीं मिला।</string>
+    <string name="merge_app_selection_order">मिलाने में स्थान %1$d</string>
+    <string name="merge_app_protected">पासवर्ड से सुरक्षित PDF</string>
+    <string name="merge_app_result_protected">संपादित हो रहे दस्तावेज़ की सुरक्षा परिणाम में बनी रहेगी।</string>
+    <string name="merge_app_result_unprotected">संपादित हो रहे दस्तावेज़ में पासवर्ड नहीं है। सुरक्षित PDF के पृष्ठ भी परिणाम में बिना पासवर्ड होंगे।</string>
+    <plurals name="merge_app_selected_count">
+        <item quantity="one">%1$d PDF चुना गया</item>
+        <item quantity="other">%1$d PDF चुने गए</item>
+    </plurals>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">%1$d PDF मिलाएँ</item>
+        <item quantity="other">%1$d PDF मिलाएँ</item>
+    </plurals>
+</resources>

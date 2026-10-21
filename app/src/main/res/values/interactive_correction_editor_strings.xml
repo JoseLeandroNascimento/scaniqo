@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="correction_editor_straighten">Endireitar</string>
-    <string name="correction_editor_perspective">Recortar</string>
-    <string name="correction_editor_curve">Curvatura</string>
-    <string name="correction_editor_angle">Inclinação</string>
+    <string name="correction_editor_straighten">Straighten</string>
+    <string name="correction_editor_perspective">Crop</string>
+    <string name="correction_editor_curve">Curvature</string>
+    <string name="correction_editor_angle">Tilt</string>
     <string name="correction_editor_auto">Auto</string>
-    <string name="correction_editor_use_angle">Usar %1$.1f°</string>
-    <string name="correction_editor_already_straight">Nenhuma inclinação detectada.</string>
-    <string name="correction_editor_corners">Cantos</string>
-    <string name="correction_editor_result">Resultado</string>
-    <string name="correction_editor_show_before">Comparar com a página antes da correção</string>
-    <string name="correction_editor_show_result">Ver resultado da correção</string>
-    <string name="correction_editor_options">Opções da correção</string>
-    <string name="correction_editor_native_hint">Permite corrigir texto e vetores como imagem.</string>
-    <string name="correction_editor_native_required">O filtro desta página precisa da conversão em imagem.</string>
-    <string name="correction_editor_drag_hint">Arraste ↔</string>
-    <string name="correction_editor_angle_gesture">Arraste para os lados para endireitar a página</string>
-    <string name="correction_editor_curve_gesture">Arraste para os lados para ajustar a curvatura</string>
+    <string name="correction_editor_use_angle">Use %1$.1f°</string>
+    <string name="correction_editor_already_straight">No tilt detected.</string>
+    <string name="correction_editor_corners">Corners</string>
+    <string name="correction_editor_result">Result</string>
+    <string name="correction_editor_show_before">Compare with the page before correction</string>
+    <string name="correction_editor_show_result">View correction result</string>
+    <string name="correction_editor_options">Correction options</string>
+    <string name="correction_editor_native_hint">Allows correcting text and vectors as an image.</string>
+    <string name="correction_editor_native_required">This page’s filter requires image conversion.</string>
+    <string name="correction_editor_drag_hint">Drag ↔</string>
+    <string name="correction_editor_angle_gesture">Drag sideways to straighten the page</string>
+    <string name="correction_editor_curve_gesture">Drag sideways to adjust curvature</string>
 </resources>

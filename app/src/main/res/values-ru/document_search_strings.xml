@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_search_title">Поиск документов</string>
+    <string name="document_search_query_label">Название файла или содержимое</string>
+    <string name="document_search_query_placeholder">Например: договор, квитанция, адрес</string>
+    <string name="document_search_clear">Очистить поиск</string>
+    <string name="document_search_helper">Поиск по содержимому использует только выделяемый текст PDF.</string>
+    <string name="document_search_initial_title">Найдите свои документы</string>
+    <string name="document_search_initial_body">Ищите по названию или выделяемому тексту PDF.</string>
+    <string name="document_search_loading">Поиск в документах…</string>
+    <string name="document_search_empty_title">Ничего не найдено</string>
+    <string name="document_search_empty_body">Попробуйте другое название или слово. PDF без текста можно найти по названию.</string>
+    <string name="document_search_error_title">Не удалось завершить поиск</string>
+    <string name="document_search_error_body">Повторите поиск документов.</string>
+    <string name="document_search_match_name">Найдено в названии</string>
+    <string name="document_search_match_content">В содержимом</string>
+    <string name="document_search_match_page">Страница %1$d</string>
+    <string name="document_search_metadata">%1$s · %2$s</string>
+    <plurals name="document_search_result_count">
+        <item quantity="one">Найден %d документ</item>
+        <item quantity="few">Найдено %d документа</item>
+        <item quantity="many">Найдено %d документов</item>
+        <item quantity="other">Найдено %d документа</item>
+    </plurals>
+</resources>

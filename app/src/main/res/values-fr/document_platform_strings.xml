@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_share_chooser">Partager le PDF</string>
+    <string name="document_pdf_page_description">Page %1$d du document</string>
+    <string name="document_pdf_loading">Chargement de la page</string>
+    <string name="document_pdf_error">Impossible d’ouvrir cette page.</string>
+    <string name="document_pdf_retry">Réessayer</string>
+    <string name="document_thumbnail_description">Miniature du document</string>
+</resources>

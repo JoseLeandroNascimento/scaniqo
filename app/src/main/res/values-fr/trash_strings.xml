@@ -1,0 +1,19 @@
+<resources>
+    <string name="trash_title">Corbeille</string>
+    <string name="trash_description">Les documents restent ici jusqu’à leur restauration ou suppression définitive. Ils occupent toujours de l’espace sur l’appareil et sont exclus des nouvelles sauvegardes.</string>
+    <string name="trash_empty_title">La corbeille est vide</string>
+    <string name="trash_empty_body">Les documents mis à la corbeille apparaîtront ici pour être restaurés.</string>
+    <string name="trash_load_error">Impossible de charger la corbeille.</string>
+    <string name="trash_restore">Restaurer</string>
+    <string name="trash_restore_document">Restaurer %1$s</string>
+    <string name="trash_delete_document">Supprimer définitivement %1$s</string>
+    <string name="trash_restored">Document restauré dans la bibliothèque</string>
+    <string name="trash_restore_error">Impossible de restaurer. Réessayez.</string>
+    <string name="trash_permanent_delete">Supprimer définitivement</string>
+    <string name="trash_delete_title">Supprimer définitivement ?</string>
+    <string name="trash_delete_body">Le document « %1$s » et ses fichiers seront supprimés de cet appareil. Cette action est irréversible.</string>
+    <string name="trash_deleted">Document supprimé définitivement</string>
+    <string name="trash_delete_error">Impossible de supprimer. Le document reste dans la corbeille ; réessayez.</string>
+    <string name="trash_deleted_on">Dans la corbeille depuis le %1$s</string>
+    <string name="trash_working">Traitement du document…</string>
+</resources>

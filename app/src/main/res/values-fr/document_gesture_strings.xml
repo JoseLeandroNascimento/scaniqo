@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_move_handle">Faites glisser la poignée pour aligner le contenu. Touchez pour centrer.</string>
+    <string name="gesture_rotate_handle">Faites glisser autour de la feuille pour pivoter. Touchez pour tourner de 90 degrés.</string>
+    <string name="gesture_scale_handle">Faites glisser le coin en diagonale pour redimensionner le contenu.</string>
+    <string name="gesture_straighten_handle">Faites glisser la poignée latéralement pour ajuster l’inclinaison.</string>
+    <string name="gesture_curvature_handle">Faites glisser la poignée vers le haut ou le bas pour corriger la courbure.</string>
+    <string name="gesture_scale_increase">Agrandir de 5 pour cent</string>
+    <string name="gesture_scale_decrease">Réduire de 5 pour cent</string>
+    <string name="gesture_angle_increase">Tourner de 1 degré vers la droite</string>
+    <string name="gesture_angle_decrease">Tourner de 1 degré vers la gauche</string>
+    <string name="gesture_curve_increase">Courber vers le bas</string>
+    <string name="gesture_curve_decrease">Courber vers le haut</string>
+    <string name="gesture_drag_handle">Faites glisser la poignée</string>
+</resources>

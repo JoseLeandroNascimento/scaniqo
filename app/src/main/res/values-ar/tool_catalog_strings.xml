@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_catalog_title">الأدوات</string>
+    <string name="tool_catalog_heading">ماذا تريد أن تفعل؟</string>
+    <string name="tool_catalog_search">البحث عن أداة</string>
+    <string name="tool_catalog_clear">مسح البحث</string>
+    <string name="tool_catalog_all">الكل</string>
+    <string name="tool_catalog_organize">تنظيم</string>
+    <string name="tool_catalog_convert">تحويل</string>
+    <string name="tool_catalog_edit">تعديل</string>
+    <string name="tool_catalog_fill">تعبئة وتوقيع</string>
+    <string name="tool_catalog_empty">لم يُعثر على أدوات.</string>
+    <string name="tool_catalog_reset">عرض جميع الأدوات</string>
+    <string name="tool_catalog_compress">ضغط PDF</string>
+    <string name="tool_catalog_compress_hint">قلل الحجم للإرسال والمشاركة</string>
+    <string name="tool_catalog_fill_page">تعبئة فوق الصفحة</string>
+    <string name="tool_catalog_fill_hint">ضع النصوص والعلامات على المستند</string>
+    <string name="tool_catalog_watermark">علامة مائية</string>
+    <string name="tool_catalog_watermark_hint">خصص بالنص أو الصورة أو الختم</string>
+    <string name="tool_catalog_choose_for">اختر مستندًا لاستخدام %1$s</string>
+    <string name="tool_catalog_count">عدد الأدوات المتاحة: %1$d</string>
+</resources>

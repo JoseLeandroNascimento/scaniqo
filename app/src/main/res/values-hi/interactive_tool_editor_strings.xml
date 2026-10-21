@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="interactive_scope_current">चुना हुआ पृष्ठ</string>
+    <string name="interactive_scope_choose">पृष्ठ चुनें…</string>
+    <string name="interactive_scope_all">सभी पृष्ठ</string>
+    <string name="interactive_scope_current_summary">केवल पृष्ठ %1$d</string>
+    <string name="interactive_scope_all_summary">सभी (%1$d)</string>
+    <plurals name="interactive_scope_selected_summary">
+        <item quantity="one">%1$d चुना गया</item>
+        <item quantity="other">%1$d चुने गए</item>
+    </plurals>
+    <string name="interactive_scope_description">यहाँ लागू करें: %1$s। पृष्ठ बदलें</string>
+    <string name="interactive_preview_page">पृष्ठ %1$d</string>
+    <string name="interactive_preview_page_description">पृष्ठ %1$d, प्रीव्यू %2$d / %3$d। प्रीव्यू चुनें</string>
+    <string name="interactive_preview_busy">प्रीव्यू अपडेट हो रहा है</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_selection_title">Merge PDFs</string>
+    <string name="merge_selection_new_document">Creates a new PDF without a password. Original files are kept.</string>
+    <string name="merge_selection_editor">Choose PDFs and set the order in which pages will be added.</string>
+    <string name="merge_selection_order_title">Order</string>
+    <string name="merge_selection_drag_hint">Touch and hold to reorder</string>
+    <string name="merge_selection_library_title">Your documents</string>
+    <string name="merge_selection_empty">Add PDFs to get started.</string>
+    <string name="merge_selection_empty_title">Your PDFs, together</string>
+    <string name="merge_selection_current">Current document · %1$s</string>
+    <string name="merge_selection_library_empty">No documents available in the library.</string>
+    <string name="merge_selection_all_added">All added.</string>
+    <string name="merge_selection_add_files">Add files from device</string>
+    <string name="merge_selection_external">File from device</string>
+    <string name="merge_selection_remove">Remove %1$s from selection</string>
+    <string name="merge_selection_move_up">Move %1$s up</string>
+    <string name="merge_selection_move_down">Move %1$s down</string>
+    <string name="merge_selection_drag_handle">Reorder %1$s, position %2$d of %3$d</string>
+    <string name="merge_selection_cancel_drag">Cancel reordering</string>
+    <string name="merge_selection_protected">Protected PDFs may ask for a password. The result will have no password.</string>
+    <string name="merge_selection_preserve_protection">The protection of the document being edited will be kept in the result.</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="one">Select %1$d PDF</item>
+        <item quantity="other">Select %1$d PDFs</item>
+    </plurals>
+</resources>

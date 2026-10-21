@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_tools_progress_title">正在合并 PDF</string>
+    <string name="merge_tools_progress_body">正在准备新页面。可取消而不更改文档。</string>
+    <string name="merge_tools_success">PDF 已合并，请保存以完成更改。</string>
+    <string name="merge_tools_error">无法合并 PDF。请确认文件有效且允许编辑。未添加任何页面。</string>
+    <string name="merge_tools_limit_error">所选 PDF 合计不得超过 100 页和 50 MB。请选择更少的文件。</string>
+    <string name="merge_tools_password_title">此 PDF 有密码</string>
+    <string name="merge_tools_password_label">PDF 密码</string>
+    <string name="merge_tools_password_error">此密码无法打开 PDF，请重试。</string>
+    <string name="merge_tools_password_protected">合并结果将使用当前文档的保护设置，所选文件保持不变。</string>
+    <string name="merge_tools_password_unprotected">当前文档未受保护。页面将添加到此文档，所选文件保持不变。</string>
+    <string name="merge_tools_selected_file">所选 PDF</string>
+    <string name="merge_tools_confirm">合并</string>
+</resources>

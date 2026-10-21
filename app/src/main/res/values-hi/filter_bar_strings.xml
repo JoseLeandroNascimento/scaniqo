@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_bar_title">फ़िल्टर</string>
+    <string name="filter_bar_scope">सभी पृष्ठ</string>
+    <string name="filter_bar_close">फ़िल्टर बंद करें</string>
+    <string name="filter_bar_samples_error">थंबनेल लोड नहीं हो सके।</string>
+    <string name="filter_bar_native_hint">टेक्स्ट वाले PDF में फ़िल्टर पृष्ठ को इमेज में बदलता है।</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="interactive_scope_current">Выбранная страница</string>
+    <string name="interactive_scope_choose">Выбрать страницы…</string>
+    <string name="interactive_scope_all">Все страницы</string>
+    <string name="interactive_scope_current_summary">Только страница %1$d</string>
+    <string name="interactive_scope_all_summary">Все (%1$d)</string>
+    <plurals name="interactive_scope_selected_summary">
+        <item quantity="one">Выбрана %1$d страница</item>
+        <item quantity="few">Выбрано %1$d страницы</item>
+        <item quantity="many">Выбрано %1$d страниц</item>
+        <item quantity="other">Выбрано %1$d страницы</item>
+    </plurals>
+    <string name="interactive_scope_description">Применить к: %1$s. Изменить страницы</string>
+    <string name="interactive_preview_page">Страница %1$d</string>
+    <string name="interactive_preview_page_description">Страница %1$d, предпросмотр %2$d из %3$d. Выбрать предпросмотр</string>
+    <string name="interactive_preview_busy">Обновление предпросмотра</string>
+</resources>

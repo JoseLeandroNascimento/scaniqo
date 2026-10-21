@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">Достигнут предел штрихов. Отмените один штрих для продолжения.</string>
+    <string name="runtime_signature_image_required">Выберите изображение подписи.</string>
+    <string name="runtime_password_required">Введите пароль PDF.</string>
+    <string name="runtime_unlock_required">Разблокируйте доступ к защищённым PDF.</string>
+    <string name="runtime_merge_paused">Объединение приостановлено. Нажмите «Повторить» для продолжения.</string>
+    <string name="runtime_password_setup_required">Настройте общий пароль, чтобы безопасно сохранить пароль этого PDF.</string>
+    <string name="runtime_password_incorrect">Неверный пароль. Повторите попытку.</string>
+    <string name="runtime_signed_pdf_saved">Подписанный PDF сохранён.</string>
+    <string name="runtime_zip_exported">Изображения экспортированы в ZIP.</string>
+    <string name="runtime_csv_exported">Проверенные данные экспортированы в CSV.</string>
+    <string name="runtime_receipt_page_required">Укажите допустимую страницу чека.</string>
+    <string name="runtime_receipt_review_required">Проверьте данные ещё раз перед экспортом.</string>
+    <string name="runtime_document_unavailable">Документ больше недоступен.</string>
+    <string name="runtime_imported_document">Импортированный документ</string>
+    <string name="runtime_signature_default_name">Моя подпись</string>
+    <string name="runtime_name_invalid">Введите название до 100 символов.</string>
+    <string name="runtime_pdf_size_limit">Выберите PDF размером до 50 MB.</string>
+    <string name="runtime_pdf_page_limit">Выберите PDF с числом страниц от 1 до 100.</string>
+    <string name="runtime_pdf_unprotected_required">Откройте копию без пароля для использования этого инструмента.</string>
+    <string name="runtime_new_file_required">Выберите новый файл, чтобы сохранить исходный PDF.</string>
+    <string name="runtime_destination_failed">Не удалось сохранить в выбранном месте.</string>
+    <string name="runtime_certificate_select_again">Выберите сертификат в Android ещё раз.</string>
+    <string name="runtime_certificate_chain_unavailable">Цепочка сертификатов недоступна.</string>
+    <string name="runtime_certificate_rsa_ec">Выберите сертификат RSA или EC.</string>
+    <string name="runtime_certificate_sign_failed">Не удалось подписать этим сертификатом.</string>
+    <string name="runtime_certificate_sign_disallowed">Этот документ не разрешает новую подпись в этом инструменте.</string>
+    <string name="runtime_pdf_copy_disallowed">Пароль этого PDF не разрешает копирование страниц в другой документ.</string>
+    <string name="runtime_pdf_extract_disallowed">Этот PDF не разрешает извлечение содержимого.</string>
+    <string name="runtime_pdf_edit_disallowed">Введённый пароль не разрешает редактирование этого PDF.</string>
+    <string name="runtime_two_pdfs_required">Выберите хотя бы два PDF.</string>
+    <string name="runtime_scan_page_limit">Сканируйте от 1 до 20 страниц за раз.</string>
+    <string name="runtime_images_size_limit">Изображения превышают 200 MB. Экспортируйте меньше страниц за раз.</string>
+    <string name="runtime_ocr_empty">Текст не распознан. Попробуйте более чёткое сканирование.</string>
+    <string name="runtime_signature_empty">Нарисуйте или введите подпись перед сохранением.</string>
+    <string name="runtime_image_size_limit">Выберите изображение до 10 MB.</string>
+    <string name="runtime_selected_pdf">Выбранный PDF</string>
+    <string name="runtime_signature_name_invalid">Введите название до 80 символов.</string>
+    <string name="runtime_signature_text_invalid">Введите имя до 80 символов.</string>
+    <string name="runtime_signature_drawing_large">Рисунок слишком большой. Упростите подпись.</string>
+    <string name="runtime_image_invalid">Выберите допустимое изображение.</string>
+    <string name="runtime_signature_not_found">Подпись не найдена.</string>
+</resources>

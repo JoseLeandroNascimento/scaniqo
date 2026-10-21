@@ -30,6 +30,7 @@ class PdfImportViewModel(
     private val documents: DocumentRepository,
     private val vault: PasswordVault,
     private val savedState: SavedStateHandle,
+    private val defaultName: () -> String = { "Imported document" },
 ) : ViewModel() {
     private val restored = restorePending()
     private val restoredDestination = savedState.get<String>("tool_destination")?.let { name ->
@@ -46,7 +47,7 @@ class PdfImportViewModel(
     private val channel = Channel<PdfImportEffect>(Channel.UNLIMITED)
     val effects = channel.receiveAsFlow()
     private var uri: String? = null
-    private var name = "Documento importado"
+    private var name = defaultName()
     private var pendingPassword: String? = null
     private var job: Job? = null
     private var generation = 0
@@ -98,7 +99,7 @@ class PdfImportViewModel(
         state.value = PdfImportUiState()
     }
 
-    fun fileSelected(uri: String?, filename: suspend () -> String = { "Documento importado" }) {
+    fun fileSelected(uri: String?, filename: suspend () -> String = { defaultName() }) {
         if (!state.value.isActive || state.value.isLoading || state.value.pending != null ||
             state.value.importedDocumentId != null) return
         savedState["awaiting_picker"] = false
@@ -168,7 +169,7 @@ class PdfImportViewModel(
             try {
                 if (resolveName != null) {
                     name = resolveName().trim().let { if (it.endsWith(".pdf", true)) it.dropLast(4) else it }
-                        .ifBlank { "Documento importado" }.take(100)
+                        .ifBlank { defaultName() }.take(100)
                 }
                 currentCoroutineContext().ensureActive()
                 val keyId = password?.let { vault.rememberDocumentPassword(it) }
@@ -221,7 +222,7 @@ class PdfImportViewModel(
                 thumbnailUri = savedState["pending_thumbnail"],
                 protectionKeyId = savedState["pending_key"],
             ),
-            savedState["pending_name"] ?: "Documento importado",
+            savedState["pending_name"] ?: defaultName(),
         )
     }
 

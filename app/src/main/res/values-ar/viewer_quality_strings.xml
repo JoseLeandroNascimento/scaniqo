@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="viewer_tool_corrections">تصحيح</string>
+    <string name="viewer_tool_quality">الجودة</string>
+    <string name="viewer_compare_before">قبل</string>
+    <string name="viewer_compare_after">بعد</string>
+    <string name="viewer_compare_description">مقارنة تحسينات الصفحة %1$d</string>
+    <string name="viewer_compare_before_description">عرض الصفحة دون تحسينات</string>
+    <string name="viewer_compare_after_description">عرض الصفحة مع التحسينات</string>
+    <string name="viewer_preview_updating">جارٍ تحديث المعاينة…</string>
+    <string name="viewer_preview_stale">تعذر التحديث. تم الاحتفاظ بالمعاينة السابقة.</string>
+    <string name="viewer_preparing_tools">جارٍ تجهيز الأدوات…</string>
+    <string name="viewer_undo_description">التراجع عن آخر تغيير</string>
+</resources>

@@ -1,0 +1,35 @@
+<resources>
+    <string name="tools_hub_title">সব টুল</string>
+    <string name="tools_hub_hint">আপনার PDF-এর জন্য আরও সুবিধা</string>
+    <string name="tools_hub_organize">তৈরি ও সংগঠিত করুন</string>
+    <string name="tools_hub_convert">রূপান্তর ও নিষ্কাশন করুন</string>
+    <string name="tools_hub_edit">PDF সম্পাদনা করুন</string>
+    <string name="tools_hub_originals">সনদ</string>
+    <string name="tools_hub_split">পৃষ্ঠা বের করুন</string>
+    <string name="tools_hub_split_hint">বেছে নেওয়া পৃষ্ঠা অন্য PDF-এ সংরক্ষণ করুন</string>
+    <string name="tools_hub_images_pdf">ছবি থেকে PDF</string>
+    <string name="tools_hub_images_pdf_hint">আপনার ছবি দিয়ে নথি তৈরি করুন</string>
+    <string name="tools_hub_id">নথির সামনে ও পেছনে</string>
+    <string name="tools_hub_id_hint">দুই দিক এক শিটে সাজান</string>
+    <string name="tools_hub_pdf_images">PDF থেকে ছবি</string>
+    <string name="tools_hub_pdf_images_hint">JPG বা PNG-তে পৃষ্ঠা রপ্তানি করুন</string>
+    <string name="tools_hub_receipt">রসিদ থেকে তথ্য বের করুন</string>
+    <string name="tools_hub_receipt_hint">শনাক্ত তথ্য দেখে CSV-তে রপ্তানি করুন</string>
+    <string name="tools_hub_fill">পৃষ্ঠার উপরে পূরণ করুন</string>
+    <string name="tools_hub_fill_hint">স্ক্যান করা ফর্মে টেক্সট ও চিহ্ন যোগ করুন</string>
+    <string name="tools_hub_annotate">টীকা যোগ করুন</string>
+    <string name="tools_hub_annotate_hint">অংশ হাইলাইট করে মন্তব্য যোগ করুন</string>
+    <string name="tools_hub_watermark">চিহ্ন ও হেডার</string>
+    <string name="tools_hub_watermark_hint">টেক্সট ও চিহ্ন দিয়ে PDF সাজান</string>
+    <string name="tools_hub_redact">তথ্য আড়াল করুন</string>
+    <string name="tools_hub_redact_hint">বেছে নেওয়া অংশ সরিয়ে কপি তৈরি করুন</string>
+    <string name="tools_hub_certificates">সনদ দিয়ে স্বাক্ষর</string>
+    <string name="tools_hub_certificates_hint">ডিজিটাল স্বাক্ষর করুন বা PDF-এর অখণ্ডতা যাচাই করুন</string>
+    <string name="tools_hub_editor">PDF এডিটর</string>
+    <string name="tools_hub_editor_hint">পৃষ্ঠা, ফিল্টার, OCR, কম্প্রেশন ও সুরক্ষা</string>
+    <string name="tools_hub_choose">নথি বেছে নিন</string>
+    <string name="tools_hub_choose_hint">চালিয়ে যেতে লাইব্রেরি থেকে PDF খুলুন।</string>
+    <string name="tools_hub_search">নাম দিয়ে খুঁজুন</string>
+    <string name="tools_hub_empty">এই সম্পাদনার জন্য PDF আমদানি বা স্ক্যান করুন।</string>
+    <string name="tools_hub_back">ফিরে যান</string>
+</resources>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="gesture_move_handle">Arraste a alça para alinhar o conteúdo. Toque para centralizar.</string>
-    <string name="gesture_rotate_handle">Arraste ao redor da folha para girar. Toque para girar 90 graus.</string>
-    <string name="gesture_scale_handle">Arraste o canto na diagonal para redimensionar o conteúdo.</string>
-    <string name="gesture_straighten_handle">Arraste a alça para os lados para ajustar a inclinação.</string>
-    <string name="gesture_curvature_handle">Arraste a alça para cima ou para baixo para corrigir a curvatura.</string>
-    <string name="gesture_scale_increase">Ampliar 5 por cento</string>
-    <string name="gesture_scale_decrease">Reduzir 5 por cento</string>
-    <string name="gesture_angle_increase">Girar 1 grau para a direita</string>
-    <string name="gesture_angle_decrease">Girar 1 grau para a esquerda</string>
-    <string name="gesture_curve_increase">Curvar para baixo</string>
-    <string name="gesture_curve_decrease">Curvar para cima</string>
-    <string name="gesture_drag_handle">Arraste a alça</string>
+    <string name="gesture_move_handle">Drag the handle to align content. Tap to center.</string>
+    <string name="gesture_rotate_handle">Drag around the sheet to rotate. Tap to rotate 90 degrees.</string>
+    <string name="gesture_scale_handle">Drag the corner diagonally to resize content.</string>
+    <string name="gesture_straighten_handle">Drag the handle sideways to adjust the tilt.</string>
+    <string name="gesture_curvature_handle">Drag the handle up or down to correct curvature.</string>
+    <string name="gesture_scale_increase">Enlarge by 5 percent</string>
+    <string name="gesture_scale_decrease">Reduce by 5 percent</string>
+    <string name="gesture_angle_increase">Rotate 1 degree right</string>
+    <string name="gesture_angle_decrease">Rotate 1 degree left</string>
+    <string name="gesture_curve_increase">Curve down</string>
+    <string name="gesture_curve_decrease">Curve up</string>
+    <string name="gesture_drag_handle">Drag the handle</string>
 </resources>

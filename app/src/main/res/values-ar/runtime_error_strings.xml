@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">بلغت الحد الأقصى للخطوط. تراجع عن خط للمتابعة.</string>
+    <string name="runtime_signature_image_required">اختر صورة للتوقيع.</string>
+    <string name="runtime_password_required">أدخل كلمة مرور PDF.</string>
+    <string name="runtime_unlock_required">افتح القفل للوصول إلى ملفات PDF المحمية.</string>
+    <string name="runtime_merge_paused">تم إيقاف الدمج مؤقتًا. اضغط على إعادة المحاولة للمتابعة.</string>
+    <string name="runtime_password_setup_required">اضبط كلمة المرور العامة لحفظ كلمة مرور هذا PDF بأمان.</string>
+    <string name="runtime_password_incorrect">كلمة المرور غير صحيحة. أعد المحاولة.</string>
+    <string name="runtime_signed_pdf_saved">تم حفظ PDF الموقّع.</string>
+    <string name="runtime_zip_exported">تم تصدير الصور في ملف ZIP.</string>
+    <string name="runtime_csv_exported">تم تصدير البيانات المراجعة بصيغة CSV.</string>
+    <string name="runtime_receipt_page_required">أدخل صفحة صالحة للإيصال.</string>
+    <string name="runtime_receipt_review_required">راجع البيانات مجددًا قبل التصدير.</string>
+    <string name="runtime_document_unavailable">لم يعد المستند متاحًا.</string>
+    <string name="runtime_imported_document">مستند مستورد</string>
+    <string name="runtime_signature_default_name">توقيعي</string>
+    <string name="runtime_name_invalid">أدخل اسمًا لا يتجاوز 100 حرف.</string>
+    <string name="runtime_pdf_size_limit">اختر PDF لا يتجاوز 50 MB.</string>
+    <string name="runtime_pdf_page_limit">اختر PDF يحتوي على 1 إلى 100 صفحة.</string>
+    <string name="runtime_pdf_unprotected_required">افتح نسخة بلا كلمة مرور لاستخدام هذه الأداة.</string>
+    <string name="runtime_new_file_required">اختر ملفًا جديدًا للحفاظ على PDF الأصلي.</string>
+    <string name="runtime_destination_failed">تعذر الحفظ في الموقع المحدد.</string>
+    <string name="runtime_certificate_select_again">اختر الشهادة مجددًا في Android.</string>
+    <string name="runtime_certificate_chain_unavailable">سلسلة الشهادات غير متاحة.</string>
+    <string name="runtime_certificate_rsa_ec">اختر شهادة RSA أو EC.</string>
+    <string name="runtime_certificate_sign_failed">تعذر استخدام هذه الشهادة للتوقيع.</string>
+    <string name="runtime_certificate_sign_disallowed">لا يسمح هذا المستند بتوقيع جديد في هذه الأداة.</string>
+    <string name="runtime_pdf_copy_disallowed">لا تسمح كلمة مرور هذا PDF بنسخ الصفحات إلى مستند آخر.</string>
+    <string name="runtime_pdf_extract_disallowed">لا يسمح هذا PDF باستخراج المحتوى.</string>
+    <string name="runtime_pdf_edit_disallowed">لا تسمح كلمة المرور المدخلة بتعديل هذا PDF.</string>
+    <string name="runtime_two_pdfs_required">اختر ملفي PDF على الأقل.</string>
+    <string name="runtime_scan_page_limit">امسح من 1 إلى 20 صفحة في المرة الواحدة.</string>
+    <string name="runtime_images_size_limit">تجاوزت الصور 200 MB. صدّر صفحات أقل في كل مرة.</string>
+    <string name="runtime_ocr_empty">لم يُتعرف على نص. حاول مسحًا أوضح.</string>
+    <string name="runtime_signature_empty">ارسم توقيعًا أو اكتبه قبل الحفظ.</string>
+    <string name="runtime_image_size_limit">اختر صورة لا تتجاوز 10 MB.</string>
+    <string name="runtime_selected_pdf">ملف PDF المحدد</string>
+    <string name="runtime_signature_name_invalid">أدخل اسمًا لا يتجاوز 80 حرفًا.</string>
+    <string name="runtime_signature_text_invalid">اكتب اسمًا لا يتجاوز 80 حرفًا.</string>
+    <string name="runtime_signature_drawing_large">الرسم كبير جدًا. بسّط التوقيع.</string>
+    <string name="runtime_image_invalid">اختر صورة صالحة.</string>
+    <string name="runtime_signature_not_found">لم يُعثر على التوقيع.</string>
+</resources>

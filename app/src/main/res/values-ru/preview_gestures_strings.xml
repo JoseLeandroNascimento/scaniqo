@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preview_zoom_expand">Развернуть на весь экран</string>
+    <string name="preview_zoom_close">Закрыть увеличенный просмотр</string>
+    <string name="preview_zoom_reset">Вписать страницу в экран</string>
+    <string name="preview_controls_show">Настройки</string>
+    <string name="preview_controls_hide">Скрыть настройки</string>
+    <string name="preview_gestures_hint">Используйте два пальца для увеличения и перемещения.</string>
+</resources>

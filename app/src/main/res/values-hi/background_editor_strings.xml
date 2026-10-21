@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_editor_title">बैकग्राउंड</string>
+    <string name="background_editor_remove">बैकग्राउंड हटाएँ</string>
+    <string name="background_editor_retry">फिर से पहचानें</string>
+    <string name="background_editor_adjust">आउटलाइन ठीक करें</string>
+    <string name="background_editor_detecting">शीट ढूँढी जा रही है…</string>
+    <string name="background_editor_suggested">लागू करने से पहले परिणाम देखें या आउटलाइन ठीक करें।</string>
+    <string name="background_editor_no_edges">शीट चुनने के लिए कोने खुद ठीक करें।</string>
+    <string name="background_editor_failed">शीट नहीं मिली। कोने खुद ठीक करें।</string>
+    <string name="background_editor_hint">कैप्चर से बैकग्राउंड अपने आप हटता है। शीट का कंटेंट सुरक्षित रहता है।</string>
+</resources>

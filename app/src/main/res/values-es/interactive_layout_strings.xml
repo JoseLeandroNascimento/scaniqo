@@ -1,0 +1,10 @@
+<resources>
+    <string name="layout_interactive_position">Posición</string>
+    <string name="layout_interactive_rotate">Girar</string>
+    <string name="layout_interactive_drag">Arrastra para alinear</string>
+    <string name="layout_interactive_twist">Gira con dos dedos</string>
+    <string name="layout_interactive_pinch">Usa dos dedos para ampliar</string>
+    <string name="layout_interactive_position_space">Reduce el Tamaño para crear márgenes.</string>
+    <string name="layout_interactive_rotate_left">Girar 90 grados a la izquierda</string>
+    <string name="layout_interactive_rotate_right">Girar 90 grados a la derecha</string>
+</resources>

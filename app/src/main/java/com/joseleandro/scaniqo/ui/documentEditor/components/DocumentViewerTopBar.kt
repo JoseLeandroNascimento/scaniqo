@@ -29,6 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
@@ -107,7 +108,7 @@ internal fun DocumentViewerTopBar(
                                 painterResource(R.drawable.more_vert_24px),
                                 contentDescription = stringResource(
                                     R.string.document_actions,
-                                    document.name
+                                    bidiArgument(document.name)
                                 ),
                             )
                         }

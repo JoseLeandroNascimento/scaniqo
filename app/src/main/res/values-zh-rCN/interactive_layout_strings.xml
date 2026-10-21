@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_interactive_position">位置</string>
+    <string name="layout_interactive_rotate">旋转</string>
+    <string name="layout_interactive_drag">拖动以对齐</string>
+    <string name="layout_interactive_twist">双指旋转</string>
+    <string name="layout_interactive_pinch">双指缩放</string>
+    <string name="layout_interactive_position_space">在“大小”中缩小内容以留出边距。</string>
+    <string name="layout_interactive_rotate_left">向左旋转 90 度</string>
+    <string name="layout_interactive_rotate_right">向右旋转 90 度</string>
+</resources>

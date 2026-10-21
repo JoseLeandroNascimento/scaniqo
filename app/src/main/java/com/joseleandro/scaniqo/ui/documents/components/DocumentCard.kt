@@ -25,12 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.core.utils.documentDate
 import com.joseleandro.scaniqo.core.utils.documentFileSize
 import com.joseleandro.scaniqo.domain.model.DocumentModel
@@ -89,7 +91,7 @@ internal fun DocumentCard(
                         modifier = Modifier
                             .weight(1f)
                             .padding(top = 5.dp),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(textDirection = TextDirection.ContentOrLtr),
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
@@ -107,7 +109,7 @@ internal fun DocumentCard(
                                     painterResource(R.drawable.more_vert_24px),
                                     contentDescription = stringResource(
                                         R.string.document_actions,
-                                        document.name
+                                        bidiArgument(document.name)
                                     ),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -178,7 +180,7 @@ internal fun DocumentCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = stringResource(R.string.document_pdf_size, documentFileSize(document)),
+                    text = stringResource(R.string.document_pdf_size, bidiArgument(documentFileSize(document))),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

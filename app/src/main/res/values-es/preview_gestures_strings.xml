@@ -1,0 +1,8 @@
+<resources>
+    <string name="preview_zoom_expand">Ampliar a pantalla completa</string>
+    <string name="preview_zoom_close">Cerrar vista ampliada</string>
+    <string name="preview_zoom_reset">Ajustar página a la pantalla</string>
+    <string name="preview_controls_show">Ajustes</string>
+    <string name="preview_controls_hide">Ocultar ajustes</string>
+    <string name="preview_gestures_hint">Usa dos dedos para ampliar y navegar.</string>
+</resources>

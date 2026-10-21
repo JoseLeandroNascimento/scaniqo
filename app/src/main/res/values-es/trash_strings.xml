@@ -1,0 +1,19 @@
+<resources>
+    <string name="trash_title">Papelera</string>
+    <string name="trash_description">Los documentos permanecen aquí hasta que los restaures o elimines definitivamente. Siguen ocupando espacio en el dispositivo y no se incluyen en nuevas copias de seguridad.</string>
+    <string name="trash_empty_title">La papelera está vacía</string>
+    <string name="trash_empty_body">Los documentos enviados a la papelera aparecerán aquí para recuperarlos.</string>
+    <string name="trash_load_error">No se pudo cargar la papelera.</string>
+    <string name="trash_restore">Restaurar</string>
+    <string name="trash_restore_document">Restaurar %1$s</string>
+    <string name="trash_delete_document">Eliminar definitivamente %1$s</string>
+    <string name="trash_restored">Documento restaurado en la biblioteca</string>
+    <string name="trash_restore_error">No se pudo restaurar. Reintenta.</string>
+    <string name="trash_permanent_delete">Eliminar definitivamente</string>
+    <string name="trash_delete_title">¿Eliminar definitivamente?</string>
+    <string name="trash_delete_body">El documento “%1$s” y sus archivos se borrarán de este dispositivo. Esta acción no se puede deshacer.</string>
+    <string name="trash_deleted">Documento eliminado definitivamente</string>
+    <string name="trash_delete_error">No se pudo eliminar. El documento sigue en la papelera; reintenta.</string>
+    <string name="trash_deleted_on">En la papelera desde %1$s</string>
+    <string name="trash_working">Procesando documento…</string>
+</resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_scope_current">Эта страница</string>
+    <string name="document_scope_select">Выбрать</string>
+    <string name="document_scope_all">Все</string>
+    <string name="document_scope_title">К каким страницам применить?</string>
+    <string name="document_scope_hint">Настройка применяется только к отмеченным страницам.</string>
+    <string name="document_scope_select_all">Выбрать все</string>
+    <string name="document_scope_clear">Очистить</string>
+    <string name="document_scope_confirm">Использовать выбранные</string>
+    <string name="document_scope_cancel">Отмена</string>
+    <string name="document_scope_page">Страница %1$d</string>
+    <string name="document_scope_selected_count">Выбрать (%1$d)</string>
+    <string name="document_scope_empty">Выберите хотя бы одну страницу.</string>
+    <plurals name="document_scope_apply_count">
+        <item quantity="one">Применить к %1$d странице</item>
+        <item quantity="few">Применить к %1$d страницам</item>
+        <item quantity="many">Применить к %1$d страницам</item>
+        <item quantity="other">Применить к страницам: %1$d</item>
+    </plurals>
+    <plurals name="document_scope_count">
+        <item quantity="one">Выбрана %1$d страница</item>
+        <item quantity="few">Выбрано %1$d страницы</item>
+        <item quantity="many">Выбрано %1$d страниц</item>
+        <item quantity="other">Выбрано %1$d страницы</item>
+    </plurals>
+    <string name="corrections_tab_angle">Наклон</string>
+    <string name="corrections_tab_perspective">Края</string>
+    <string name="corrections_tab_curve">Изгиб</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">Страница %1$d из %2$d. Выбрать страницу предпросмотра</string>
+    <string name="corrections_live_title">Предпросмотр настройки</string>
+    <string name="corrections_live_hint">Предпросмотр обновляется при настройке. Документ меняется только после применения.</string>
+    <string name="corrections_preview_previous">Предпросмотр предыдущей страницы</string>
+    <string name="corrections_preview_next">Предпросмотр следующей страницы</string>
+    <string name="corrections_preview_choose">Выбрать страницу предпросмотра</string>
+    <string name="corrections_preview_pages">Выбрать страницу для просмотра</string>
+    <string name="corrections_preview_before">До</string>
+    <string name="corrections_preview_after">После</string>
+    <string name="corrections_preview_before_description">Показать страницу до настройки</string>
+    <string name="corrections_preview_after_description">Показать результат настройки</string>
+    <string name="corrections_preview_before_hint">До этой настройки</string>
+    <string name="corrections_preview_after_hint">Результат настройки</string>
+    <string name="corrections_preview_updating">Обновление…</string>
+    <string name="corrections_preview_error">Не удалось обновить предпросмотр.</string>
+    <string name="corrections_preview_retry">Повторить</string>
+    <string name="corrections_preview_native_hint">Текст и векторная графика сохраняются. Для коррекции страницы как изображения включите параметр ниже.</string>
+    <string name="corrections_page_navigation_hint">При смене предпросмотра настройки сохраняются, чтобы оценить их на других страницах.</string>
+    <string name="corrections_perspective_editor">Настроить края снимка</string>
+    <string name="corrections_perspective_live_hint">Тяните углы на изображении ниже и следите за результатом выше.</string>
+</resources>

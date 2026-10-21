@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_tools_progress_title">جارٍ دمج ملفات PDF</string>
+    <string name="merge_tools_progress_body">جارٍ تجهيز الصفحات الجديدة. يمكنك الإلغاء دون تغيير المستند.</string>
+    <string name="merge_tools_success">تم دمج ملفات PDF. احفظ لإكمال التغييرات.</string>
+    <string name="merge_tools_error">تعذر دمج ملفات PDF. تحقق من صلاحية الملفات والسماح بتعديلها. لم تُضف أي صفحة.</string>
+    <string name="merge_tools_limit_error">الحد الإجمالي هو 100 صفحة و50 MB لملفات PDF. اختر ملفات أقل.</string>
+    <string name="merge_tools_password_title">ملف PDF هذا محمي بكلمة مرور</string>
+    <string name="merge_tools_password_label">كلمة مرور PDF</string>
+    <string name="merge_tools_password_error">لم تفتح كلمة المرور ملف PDF هذا. أعد المحاولة.</string>
+    <string name="merge_tools_password_protected">ستستخدم النتيجة حماية المستند المفتوح. سيبقى الملف المحدد دون تغيير.</string>
+    <string name="merge_tools_password_unprotected">المستند المفتوح غير محمي. ستُضاف الصفحات إليه وسيبقى الملف المحدد دون تغيير.</string>
+    <string name="merge_tools_selected_file">ملف PDF المحدد</string>
+    <string name="merge_tools_confirm">دمج</string>
+</resources>

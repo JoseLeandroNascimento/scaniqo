@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_bar_title">滤镜</string>
+    <string name="filter_bar_scope">所有页面</string>
+    <string name="filter_bar_close">关闭滤镜</string>
+    <string name="filter_bar_samples_error">无法加载缩略图。</string>
+    <string name="filter_bar_native_hint">含文字的 PDF 应用滤镜时，页面会转换为图像。</string>
+</resources>

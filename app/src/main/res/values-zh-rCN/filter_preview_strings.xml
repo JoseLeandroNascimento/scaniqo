@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_preview_options">选择效果</string>
+    <string name="filter_preview_samples">以最高强度显示此页的缩略图。</string>
+    <string name="filter_preview_loading">正在准备效果…</string>
+    <string name="filter_preview_thumbnails_error">无法加载缩略图。</string>
+    <string name="filter_preview_retry">重试</string>
+    <string name="filter_preview_thumbnail_error">预览不可用</string>
+    <string name="filter_preview_thumbnail_description">%1$s 滤镜预览</string>
+    <string name="filter_preview_native_preserved">此页包含文字或矢量图形。请在下方允许转换为图像，以预览效果。</string>
+    <string name="filter_preview_live_hint">应用前检查效果，强度仅影响大图预览。</string>
+</resources>

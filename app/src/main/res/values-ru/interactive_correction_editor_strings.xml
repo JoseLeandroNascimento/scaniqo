@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">Выпрямить</string>
+    <string name="correction_editor_perspective">Обрезать</string>
+    <string name="correction_editor_curve">Изгиб</string>
+    <string name="correction_editor_angle">Наклон</string>
+    <string name="correction_editor_auto">Авто</string>
+    <string name="correction_editor_use_angle">Использовать %1$.1f°</string>
+    <string name="correction_editor_already_straight">Наклон не обнаружен.</string>
+    <string name="correction_editor_corners">Углы</string>
+    <string name="correction_editor_result">Результат</string>
+    <string name="correction_editor_show_before">Сравнить со страницей до коррекции</string>
+    <string name="correction_editor_show_result">Показать результат коррекции</string>
+    <string name="correction_editor_options">Параметры коррекции</string>
+    <string name="correction_editor_native_hint">Разрешает коррекцию текста и векторной графики как изображения.</string>
+    <string name="correction_editor_native_required">Фильтр этой страницы требует преобразования в изображение.</string>
+    <string name="correction_editor_drag_hint">Тяните ↔</string>
+    <string name="correction_editor_angle_gesture">Тяните в стороны, чтобы выпрямить страницу</string>
+    <string name="correction_editor_curve_gesture">Тяните в стороны для настройки изгиба</string>
+</resources>

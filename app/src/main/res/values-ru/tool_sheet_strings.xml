@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_sheet_close">Закрыть инструмент</string>
+    <string name="tool_sheet_saved_signatures">Сохранённые подписи</string>
+    <string name="tool_sheet_placed_signatures">На этой странице</string>
+</resources>

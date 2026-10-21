@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_selection_title">Combinar PDF</string>
+    <string name="merge_selection_new_document">Crea un nuevo PDF sin contraseña. Se conservan los archivos originales.</string>
+    <string name="merge_selection_editor">Elige los PDF y define el orden en que se agregarán las páginas.</string>
+    <string name="merge_selection_order_title">Orden</string>
+    <string name="merge_selection_drag_hint">Mantén pulsado para reordenar</string>
+    <string name="merge_selection_library_title">Tus documentos</string>
+    <string name="merge_selection_empty">Agrega PDF para empezar.</string>
+    <string name="merge_selection_empty_title">Tus PDF, juntos</string>
+    <string name="merge_selection_current">Documento actual · %1$s</string>
+    <string name="merge_selection_library_empty">No hay documentos disponibles en la biblioteca.</string>
+    <string name="merge_selection_all_added">Todos agregados.</string>
+    <string name="merge_selection_add_files">Agregar archivos del dispositivo</string>
+    <string name="merge_selection_external">Archivo del dispositivo</string>
+    <string name="merge_selection_remove">Quitar %1$s de la selección</string>
+    <string name="merge_selection_move_up">Subir %1$s</string>
+    <string name="merge_selection_move_down">Bajar %1$s</string>
+    <string name="merge_selection_drag_handle">Reordenar %1$s, posición %2$d de %3$d</string>
+    <string name="merge_selection_cancel_drag">Cancelar cambio de orden</string>
+    <string name="merge_selection_protected">Los PDF protegidos pueden solicitar contraseña. El resultado no tendrá contraseña.</string>
+    <string name="merge_selection_preserve_protection">Se mantendrá en el resultado la protección del documento en edición.</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="one">Selecciona %1$d PDF</item>
+        <item quantity="many">Selecciona %1$d PDF</item>
+        <item quantity="other">Selecciona %1$d PDF</item>
+    </plurals>
+</resources>

@@ -1,0 +1,21 @@
+<resources>
+    <string name="tool_catalog_title">Ferramentas</string>
+    <string name="tool_catalog_heading">O que você quer fazer?</string>
+    <string name="tool_catalog_search">Buscar ferramenta</string>
+    <string name="tool_catalog_clear">Limpar busca</string>
+    <string name="tool_catalog_all">Todas</string>
+    <string name="tool_catalog_organize">Organizar</string>
+    <string name="tool_catalog_convert">Converter</string>
+    <string name="tool_catalog_edit">Editar</string>
+    <string name="tool_catalog_fill">Preencher e assinar</string>
+    <string name="tool_catalog_empty">Nenhuma ferramenta encontrada.</string>
+    <string name="tool_catalog_reset">Ver todas as ferramentas</string>
+    <string name="tool_catalog_compress">Comprimir PDF</string>
+    <string name="tool_catalog_compress_hint">Reduza o tamanho para enviar e compartilhar</string>
+    <string name="tool_catalog_fill_page">Preencher sobre a página</string>
+    <string name="tool_catalog_fill_hint">Posicione textos e marcações no documento</string>
+    <string name="tool_catalog_watermark">Marca d’água</string>
+    <string name="tool_catalog_watermark_hint">Personalize com texto, imagem ou carimbo</string>
+    <string name="tool_catalog_choose_for">Escolha o documento para %1$s</string>
+    <string name="tool_catalog_count">%1$d ferramentas disponíveis</string>
+</resources>

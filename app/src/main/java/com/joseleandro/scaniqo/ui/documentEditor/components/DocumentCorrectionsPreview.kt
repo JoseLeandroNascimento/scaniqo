@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
@@ -174,9 +175,9 @@ internal fun DocumentSourceSelectionEditor(
                 IntSize(width.roundToPx(), (width / ratio).roundToPx())
             }
             val lineColor = MaterialTheme.colorScheme.primary
-            Box(Modifier.width(width + 48.dp).height(width / ratio + 48.dp)) {
+            Box(Modifier.width(width + 48.dp).height(width / ratio + 48.dp), contentAlignment = AbsoluteAlignment.TopLeft) {
                 Surface(
-                    modifier = Modifier.offset(24.dp, 24.dp).width(width).height(width / ratio),
+                    modifier = Modifier.absoluteOffset(24.dp, 24.dp).width(width).height(width / ratio),
                     color = Color.White,
                     shape = RectangleShape,
                     shadowElevation = 2.dp,
@@ -216,7 +217,7 @@ internal fun DocumentSourceSelectionEditor(
                     viewportSize = with(LocalDensity.current) {
                         IntSize(maxWidth.roundToPx(), maxHeight.roundToPx())
                     },
-                    modifier = Modifier.align(Alignment.TopStart),
+                    modifier = Modifier.align(AbsoluteAlignment.TopLeft),
                 )
             }
         }
@@ -261,7 +262,7 @@ private fun PerspectiveCorner(
     val down = stringResource(R.string.quality_corner_down)
     Box(
         Modifier
-            .offset {
+            .absoluteOffset {
                 IntOffset(
                     (point.x * size.width).roundToInt(),
                     (point.y * size.height).roundToInt()
@@ -400,6 +401,7 @@ private fun DocumentCorrectionsPreviewErrorPreview() {
     }
 }
 
+@Preview(name = "Máscara de fundo - Árabe", locale = "ar", widthDp = 390, heightDp = 600, showBackground = true)
 @Preview(name = "Máscara de fundo - Claro", widthDp = 390, heightDp = 600, showBackground = true)
 @Preview(name = "Máscara de fundo - Escuro", widthDp = 390, heightDp = 600, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Máscara de fundo - Fonte ampliada", widthDp = 360, heightDp = 600, fontScale = 1.3f)

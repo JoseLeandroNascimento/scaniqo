@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_screen_title">ডিজিটাল সনদ</string>
+    <string name="certificate_intro">Android-এ ইনস্টল করা সনদ দিয়ে একটি কপিতে স্বাক্ষর করুন বা PDF-এর স্বাক্ষর যাচাই করুন।</string>
+    <string name="certificate_pick_pdf">PDF বেছে নিন</string>
+    <string name="certificate_choose">সনদ বেছে নিন</string>
+    <string name="certificate_change">সনদ বদলান</string>
+    <string name="certificate_install">Android-এ সনদ ইনস্টল করুন</string>
+    <string name="certificate_sign">কপিতে স্বাক্ষর করুন</string>
+    <string name="certificate_save">স্বাক্ষরিত PDF সংরক্ষণ করুন</string>
+    <string name="certificate_unsigned">এই PDF-এ ডিজিটাল স্বাক্ষর নেই।</string>
+    <string name="certificate_sign_unavailable">এই টুলে এই নথির শুধু স্বাক্ষর যাচাই করা যাবে।</string>
+    <string name="certificate_verification_scope">যাচাইয়ে স্বাক্ষরিত বাইট ও সনদের বর্তমান মেয়াদ পরীক্ষা করা হয়। কর্তৃপক্ষের বিশ্বস্ততা, প্রত্যাহার ও টাইমস্ট্যাম্প পরীক্ষা করা হয় না।</string>
+    <string name="certificate_sign_scope">স্বাক্ষরে SHA-256 ব্যবহার হয় এবং টাইমস্ট্যাম্প থাকে না। ব্যক্তিগত কী Android-এর নিয়ন্ত্রণে থাকে।</string>
+    <string name="certificate_integrity_verified">সংস্করণের অখণ্ডতা যাচাই হয়েছে</string>
+    <string name="certificate_integrity_invalid">অখণ্ডতা নিশ্চিত হয়নি</string>
+    <string name="certificate_integrity_unsupported">স্বাক্ষরের ফরম্যাট সমর্থিত নয়</string>
+    <string name="certificate_whole_file">স্বাক্ষর বর্তমান ফাইলের সম্পূর্ণ অংশ জুড়ে আছে।</string>
+    <string name="certificate_earlier_revision">স্বাক্ষর বর্তমান ফাইলের সম্পূর্ণ অংশ জুড়ে নেই।</string>
+    <string name="certificate_current">সনদ বৈধ মেয়াদের মধ্যে আছে।</string>
+    <string name="certificate_not_current">সনদ বৈধ মেয়াদের বাইরে বা শনাক্ত করা যায়নি।</string>
+    <string name="certificate_picker_error">সনদ বাছাইয়ের পর্দা খোলা যায়নি।</string>
+    <string name="certificate_file_error">ফাইল বাছাইয়ের পর্দা খোলা যায়নি।</string>
+    <string name="certificate_back">ফিরে যান</string>
+</resources>

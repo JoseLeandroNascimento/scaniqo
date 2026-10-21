@@ -11,7 +11,8 @@ data class DocumentModel(
     val sizeBytes: Long,
     val thumbnailUri: String? = null,
     val tagId: Long? = null,
-    val protectionKeyId: String? = null
+    val protectionKeyId: String? = null,
+    val deletedAt: Long? = null
 ) {
     val isProtected: Boolean get() = protectionKeyId != null
 }

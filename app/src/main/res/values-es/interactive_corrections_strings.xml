@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_scope_current">Esta página</string>
+    <string name="document_scope_select">Elegir</string>
+    <string name="document_scope_all">Todas</string>
+    <string name="document_scope_title">¿A qué páginas aplicar?</string>
+    <string name="document_scope_hint">El mismo ajuste se aplicará solo a las páginas marcadas.</string>
+    <string name="document_scope_select_all">Marcar todas</string>
+    <string name="document_scope_clear">Limpiar</string>
+    <string name="document_scope_confirm">Usar selección</string>
+    <string name="document_scope_cancel">Cancelar</string>
+    <string name="document_scope_page">Página %1$d</string>
+    <string name="document_scope_selected_count">Elegir (%1$d)</string>
+    <string name="document_scope_empty">Selecciona al menos una página.</string>
+    <plurals name="document_scope_apply_count">
+        <item quantity="one">Aplicar a %1$d página</item>
+        <item quantity="many">Aplicar a %1$d páginas</item>
+        <item quantity="other">Aplicar a %1$d páginas</item>
+    </plurals>
+    <plurals name="document_scope_count">
+        <item quantity="one">%1$d página seleccionada</item>
+        <item quantity="many">%1$d páginas seleccionadas</item>
+        <item quantity="other">%1$d páginas seleccionadas</item>
+    </plurals>
+    <string name="corrections_tab_angle">Inclinar</string>
+    <string name="corrections_tab_perspective">Bordes</string>
+    <string name="corrections_tab_curve">Curva</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">Página %1$d de %2$d. Elegir página de vista previa</string>
+    <string name="corrections_live_title">Vista previa del ajuste</string>
+    <string name="corrections_live_hint">La vista previa sigue los controles. El documento solo cambia al aplicar.</string>
+    <string name="corrections_preview_previous">Vista previa de la página anterior</string>
+    <string name="corrections_preview_next">Vista previa de la página siguiente</string>
+    <string name="corrections_preview_choose">Elegir página de vista previa</string>
+    <string name="corrections_preview_pages">Elegir página para visualizar</string>
+    <string name="corrections_preview_before">Antes</string>
+    <string name="corrections_preview_after">Después</string>
+    <string name="corrections_preview_before_description">Ver página antes de este ajuste</string>
+    <string name="corrections_preview_after_description">Ver resultado de este ajuste</string>
+    <string name="corrections_preview_before_hint">Antes de este ajuste</string>
+    <string name="corrections_preview_after_hint">Resultado del ajuste</string>
+    <string name="corrections_preview_updating">Actualizando…</string>
+    <string name="corrections_preview_error">No se pudo actualizar la vista previa.</string>
+    <string name="corrections_preview_retry">Reintentar</string>
+    <string name="corrections_preview_native_hint">Se conservan texto y vectores. Para corregir esta página como imagen, activa la opción de abajo.</string>
+    <string name="corrections_page_navigation_hint">Cambiar la vista previa conserva los controles para revisar el ajuste en otras páginas.</string>
+    <string name="corrections_perspective_editor">Ajustar bordes en la captura</string>
+    <string name="corrections_perspective_live_hint">Arrastra las esquinas de la imagen de abajo y revisa el resultado arriba.</string>
+</resources>

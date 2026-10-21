@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="certificate_unknown_signer">Подписант не определён</string>
+    <string name="certificate_invalid_ranges">Подпись содержит недопустимые диапазоны байтов.</string>
+    <string name="certificate_unsupported_format">Этот формат подписи не поддерживается локальной проверкой.</string>
+    <string name="certificate_supported_hashes">Локальная проверка поддерживает подписи SHA-256, SHA-384 и SHA-512.</string>
+    <string name="certificate_later_bytes">После подписанной версии есть дополнительные байты.</string>
+    <string name="certificate_integrity_failed">Не удалось подтвердить целостность этой подписи.</string>
+    <string name="runtime_image_count_limit">Выберите не более 20 изображений.</string>
+</resources>

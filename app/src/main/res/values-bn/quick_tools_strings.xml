@@ -1,0 +1,21 @@
+<resources>
+    <string name="quick_tools_import">PDF আমদানি করুন</string>
+    <string name="quick_tools_import_hint">আপনার ডিভাইস থেকে</string>
+    <string name="quick_tools_merge">PDF একত্র করুন</string>
+    <string name="quick_tools_merge_hint">একত্র করে গুছিয়ে নিন</string>
+    <string name="quick_tools_sign">নথিতে স্বাক্ষর করুন</string>
+    <string name="quick_tools_sign_hint">স্বাক্ষরের অবস্থান ঠিক করুন</string>
+    <string name="quick_merge_title">PDF একত্র করুন</string>
+    <string name="quick_merge_working">আপনার নতুন PDF প্রস্তুত হচ্ছে…</string>
+    <string name="quick_merge_name">একত্র করা নথি</string>
+    <string name="quick_merge_password">%1$s-এর পাসওয়ার্ড</string>
+    <string name="quick_merge_password_label">PDF-এর পাসওয়ার্ড</string>
+    <string name="quick_merge_password_wrong">ভুল পাসওয়ার্ড। আবার চেষ্টা করুন।</string>
+    <string name="quick_merge_continue">চালিয়ে যান</string>
+    <string name="quick_merge_picker_error">ফাইল বাছাইয়ের পর্দা খোলা যায়নি।</string>
+    <string name="quick_sign_choose">কোন নথিতে স্বাক্ষর করতে চান?</string>
+    <string name="quick_sign_description">স্বাক্ষরের অবস্থান, ঘূর্ণন ও আকার ঠিক করতে PDF বেছে নিন।</string>
+    <string name="quick_sign_empty">শুরু করতে নথি আমদানি বা স্ক্যান করুন।</string>
+    <string name="quick_sign_search">নথি খুঁজুন</string>
+    <string name="quick_sign_no_results">কোনো নথি পাওয়া যায়নি।</string>
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tools_hub_title">Все инструменты</string>
+    <string name="tools_hub_hint">Больше возможностей для PDF</string>
+    <string name="tools_hub_organize">Создание и организация</string>
+    <string name="tools_hub_convert">Преобразование и извлечение</string>
+    <string name="tools_hub_edit">Редактирование PDF</string>
+    <string name="tools_hub_originals">Сертификаты</string>
+    <string name="tools_hub_split">Извлечь страницы</string>
+    <string name="tools_hub_split_hint">Сохраните выбранные страницы в отдельный PDF</string>
+    <string name="tools_hub_images_pdf">Изображения в PDF</string>
+    <string name="tools_hub_images_pdf_hint">Создайте документ из фото</string>
+    <string name="tools_hub_id">Документ с двух сторон</string>
+    <string name="tools_hub_id_hint">Разместите обе стороны на одном листе</string>
+    <string name="tools_hub_pdf_images">PDF в изображения</string>
+    <string name="tools_hub_pdf_images_hint">Экспортируйте страницы в JPG или PNG</string>
+    <string name="tools_hub_receipt">Извлечь данные чеков</string>
+    <string name="tools_hub_receipt_hint">Проверьте данные и экспортируйте в CSV</string>
+    <string name="tools_hub_fill">Заполнить на странице</string>
+    <string name="tools_hub_fill_hint">Добавьте текст и отметки на отсканированные бланки</string>
+    <string name="tools_hub_annotate">Аннотации</string>
+    <string name="tools_hub_annotate_hint">Выделяйте фрагменты и добавляйте заметки</string>
+    <string name="tools_hub_watermark">Метки и колонтитулы</string>
+    <string name="tools_hub_watermark_hint">Настройте PDF с текстом и метками</string>
+    <string name="tools_hub_redact">Скрыть информацию</string>
+    <string name="tools_hub_redact_hint">Создайте копию с удалёнными областями</string>
+    <string name="tools_hub_certificates">Подпись сертификатом</string>
+    <string name="tools_hub_certificates_hint">Подпишите цифровой подписью или проверьте целостность PDF</string>
+    <string name="tools_hub_editor">Редактор PDF</string>
+    <string name="tools_hub_editor_hint">Страницы, фильтры, OCR, сжатие и защита</string>
+    <string name="tools_hub_choose">Выберите документ</string>
+    <string name="tools_hub_choose_hint">Откройте PDF из библиотеки для продолжения.</string>
+    <string name="tools_hub_search">Поиск по названию</string>
+    <string name="tools_hub_empty">Импортируйте или отсканируйте PDF для редактирования.</string>
+    <string name="tools_hub_back">Назад</string>
+</resources>

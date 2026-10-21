@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tools_hub_title">所有工具</string>
+    <string name="tools_hub_hint">让 PDF 拥有更多可能</string>
+    <string name="tools_hub_organize">创建与整理</string>
+    <string name="tools_hub_convert">转换与提取</string>
+    <string name="tools_hub_edit">编辑 PDF</string>
+    <string name="tools_hub_originals">证书</string>
+    <string name="tools_hub_split">提取页面</string>
+    <string name="tools_hub_split_hint">将所选页面保存为另一个 PDF</string>
+    <string name="tools_hub_images_pdf">图片转 PDF</string>
+    <string name="tools_hub_images_pdf_hint">用照片创建文档</string>
+    <string name="tools_hub_id">证件正反面</string>
+    <string name="tools_hub_id_hint">将正反面放在同一页</string>
+    <string name="tools_hub_pdf_images">PDF 转图片</string>
+    <string name="tools_hub_pdf_images_hint">将页面导出为 JPG 或 PNG</string>
+    <string name="tools_hub_receipt">提取收据数据</string>
+    <string name="tools_hub_receipt_hint">核对识别结果并导出 CSV</string>
+    <string name="tools_hub_fill">在页面上填写</string>
+    <string name="tools_hub_fill_hint">在扫描表单上添加文字和标记</string>
+    <string name="tools_hub_annotate">批注</string>
+    <string name="tools_hub_annotate_hint">高亮内容并添加备注</string>
+    <string name="tools_hub_watermark">水印与页眉</string>
+    <string name="tools_hub_watermark_hint">使用文字和标记自定义 PDF</string>
+    <string name="tools_hub_redact">遮盖信息</string>
+    <string name="tools_hub_redact_hint">创建移除所选区域的副本</string>
+    <string name="tools_hub_certificates">使用证书签名</string>
+    <string name="tools_hub_certificates_hint">数字签名或检查 PDF 完整性</string>
+    <string name="tools_hub_editor">PDF 编辑器</string>
+    <string name="tools_hub_editor_hint">页面、滤镜、OCR、压缩和保护</string>
+    <string name="tools_hub_choose">选择文档</string>
+    <string name="tools_hub_choose_hint">打开文档库中的 PDF 以继续。</string>
+    <string name="tools_hub_search">按名称搜索</string>
+    <string name="tools_hub_empty">导入或扫描 PDF 以使用此编辑功能。</string>
+    <string name="tools_hub_back">返回</string>
+</resources>

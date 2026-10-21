@@ -1,0 +1,22 @@
+<resources>
+    <string name="document_search_title">নথি খুঁজুন</string>
+    <string name="document_search_query_label">ফাইলের নাম বা বিষয়বস্তু</string>
+    <string name="document_search_query_placeholder">যেমন: চুক্তি, রসিদ, ঠিকানা</string>
+    <string name="document_search_clear">অনুসন্ধান মুছুন</string>
+    <string name="document_search_helper">বিষয়বস্তুর অনুসন্ধানে শুধু PDF-এর নির্বাচনযোগ্য টেক্সট ব্যবহৃত হয়।</string>
+    <string name="document_search_initial_title">আপনার নথি খুঁজুন</string>
+    <string name="document_search_initial_body">নাম বা PDF-এর নির্বাচনযোগ্য টেক্সট দিয়ে খুঁজুন।</string>
+    <string name="document_search_loading">নথিতে অনুসন্ধান হচ্ছে…</string>
+    <string name="document_search_empty_title">কোনো ফলাফল নেই</string>
+    <string name="document_search_empty_body">অন্য নাম বা শব্দ ব্যবহার করুন। টেক্সটহীন PDF নাম দিয়ে পাওয়া যায়।</string>
+    <string name="document_search_error_title">অনুসন্ধান সম্পন্ন করা যায়নি</string>
+    <string name="document_search_error_body">আপনার নথি খুঁজতে আবার চেষ্টা করুন।</string>
+    <string name="document_search_match_name">নামে পাওয়া গেছে</string>
+    <string name="document_search_match_content">বিষয়বস্তুতে</string>
+    <string name="document_search_match_page">পৃষ্ঠা %1$d</string>
+    <string name="document_search_metadata">%1$s · %2$s</string>
+    <plurals name="document_search_result_count">
+        <item quantity="one">%dটি নথি পাওয়া গেছে</item>
+        <item quantity="other">%dটি নথি পাওয়া গেছে</item>
+    </plurals>
+</resources>

@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -50,6 +51,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -57,6 +59,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.core.utils.documentFileSize
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.DocumentSearchResult
@@ -71,7 +74,7 @@ fun DocumentSearchScreen(
     onQueryChanged: (String) -> Unit,
     onRetry: () -> Unit,
     onBack: () -> Unit,
-    onOpenDocument: (Long) -> Unit,
+    onOpenDocument: (documentId: Long, pageNumber: Int?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -105,7 +108,7 @@ fun DocumentSearchScreen(
                                     overflow = TextOverflow.Ellipsis,
                                 )
                             },
-                            textStyle = MaterialTheme.typography.bodyLarge,
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
                             singleLine = true,
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = Color.Transparent,
@@ -224,10 +227,11 @@ fun DocumentSearchScreen(
                         items(uiState.results, key = { it.document.id }) { result ->
                             SearchResultRow(
                                 result = result,
+                                query = uiState.query,
                                 onOpen = {
                                     focusManager.clearFocus()
                                     keyboard?.hide()
-                                    onOpenDocument(result.document.id)
+                                    onOpenDocument(result.document.id, result.pageNumber)
                                 },
                             )
                         }
@@ -239,12 +243,17 @@ fun DocumentSearchScreen(
 }
 
 @Composable
-private fun SearchResultRow(result: DocumentSearchResult, onOpen: () -> Unit) {
+private fun SearchResultRow(result: DocumentSearchResult, query: String, onOpen: () -> Unit) {
     val document = result.document
+    val highlightStyle = SpanStyle(
+        background = MaterialTheme.colorScheme.primaryContainer,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        fontWeight = FontWeight.SemiBold,
+    )
     val metadata = stringResource(
         R.string.document_search_metadata,
         pluralStringResource(R.plurals.document_page_count, document.pageCount, document.pageCount),
-        documentFileSize(document),
+        bidiArgument(documentFileSize(document)),
     )
     val contentMatch = when {
         result.matchesName -> null
@@ -275,8 +284,10 @@ private fun SearchResultRow(result: DocumentSearchResult, onOpen: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                text = document.name,
-                style = MaterialTheme.typography.bodyLarge,
+                text = remember(document.name, query, highlightStyle) {
+                    highlightSearchMatches(document.name, query, highlightStyle)
+                },
+                style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
                 fontWeight = FontWeight.Medium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -290,8 +301,10 @@ private fun SearchResultRow(result: DocumentSearchResult, onOpen: () -> Unit) {
             )
             if (!result.contentSnippet.isNullOrBlank()) {
                 Text(
-                    text = result.contentSnippet,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = remember(result.contentSnippet, query, highlightStyle) {
+                        highlightSearchMatches(result.contentSnippet, query, highlightStyle)
+                    },
+                    style = MaterialTheme.typography.bodyMedium.copy(textDirection = TextDirection.ContentOrLtr),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -342,7 +355,7 @@ private fun DocumentSearchInitialPreview() {
             onQueryChanged = {},
             onRetry = {},
             onBack = {},
-            onOpenDocument = {},
+            onOpenDocument = { _, _ -> },
         )
     }
 }
@@ -380,7 +393,7 @@ private fun DocumentSearchResultsPreview() {
             onQueryChanged = {},
             onRetry = {},
             onBack = {},
-            onOpenDocument = {},
+            onOpenDocument = { _, _ -> },
         )
     }
 }

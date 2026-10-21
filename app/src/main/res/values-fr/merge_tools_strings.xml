@@ -1,0 +1,14 @@
+<resources>
+    <string name="merge_tools_progress_title">Fusion des PDF</string>
+    <string name="merge_tools_progress_body">Préparation des nouvelles pages. Vous pouvez annuler sans modifier le document.</string>
+    <string name="merge_tools_success">PDF fusionnés. Enregistrez pour finaliser les modifications.</string>
+    <string name="merge_tools_error">Impossible de fusionner les PDF. Vérifiez que les fichiers sont valides et autorisent les modifications. Aucune page n’a été ajoutée.</string>
+    <string name="merge_tools_limit_error">La limite est de 100 pages et 50 Mo pour l’ensemble des PDF. Sélectionnez moins de fichiers.</string>
+    <string name="merge_tools_password_title">Ce PDF est protégé par un mot de passe</string>
+    <string name="merge_tools_password_label">Mot de passe du PDF</string>
+    <string name="merge_tools_password_error">Ce mot de passe n’a pas permis d’ouvrir le PDF. Réessayez.</string>
+    <string name="merge_tools_password_protected">Le résultat utilisera la protection du document ouvert. Le fichier sélectionné restera intact.</string>
+    <string name="merge_tools_password_unprotected">Le document ouvert n’est pas protégé. Les pages y seront ajoutées et le fichier sélectionné restera intact.</string>
+    <string name="merge_tools_selected_file">PDF sélectionné</string>
+    <string name="merge_tools_confirm">Fusionner</string>
+</resources>

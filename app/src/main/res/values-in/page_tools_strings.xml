@@ -1,0 +1,21 @@
+<resources>
+    <string name="pages_scan">Pindai</string>
+    <string name="pages_merge">Gabungkan PDF</string>
+    <string name="pages_numbering">Nomori semua halaman</string>
+    <string name="pages_numbering_global_hint">Termasuk halaman yang ditambahkan nanti.</string>
+    <string name="pages_move_title">Pindahkan langsung</string>
+    <string name="pages_move_from">Asal</string>
+    <string name="pages_move_to">Tujuan</string>
+    <string name="pages_move_action">Pindahkan halaman</string>
+    <string name="pages_move_range">Masukkan halaman antara 1 dan %1$d.</string>
+    <string name="pages_move_same">Pilih posisi yang berbeda dari asal.</string>
+    <string name="pages_move_hint">Gunakan nomor urutan saat ini.</string>
+    <string name="pages_drag_hint">Tekan lama dan seret halaman untuk mengurutkan.</string>
+    <string name="pages_drag_handle">Urutkan halaman %1$d</string>
+    <string name="pages_drag_cancel">Batalkan pemindahan</string>
+    <string name="pages_page">Halaman %1$d</string>
+    <string name="pages_selected">Dipilih</string>
+    <string name="pages_move_up">Pindahkan ke atas</string>
+    <string name="pages_move_down">Pindahkan ke bawah</string>
+    <string name="pages_one_page">Tambahkan halaman untuk mengubah urutan.</string>
+</resources>

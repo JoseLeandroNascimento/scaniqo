@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="signature_resize_top_left">Redimensionar pelo canto superior esquerdo</string>
-    <string name="signature_resize_top_right">Redimensionar pelo canto superior direito</string>
-    <string name="signature_resize_bottom_right">Redimensionar pelo canto inferior direito</string>
-    <string name="signature_resize_bottom_left">Redimensionar pelo canto inferior esquerdo</string>
+    <string name="signature_resize_top_left">Resize from top left corner</string>
+    <string name="signature_resize_top_right">Resize from top right corner</string>
+    <string name="signature_resize_bottom_right">Resize from bottom right corner</string>
+    <string name="signature_resize_bottom_left">Resize from bottom left corner</string>
 </resources>

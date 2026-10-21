@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_stroke_limit">Batas goresan tercapai. Urungkan satu goresan untuk melanjutkan.</string>
+    <string name="runtime_signature_image_required">Pilih gambar tanda tangan.</string>
+    <string name="runtime_password_required">Masukkan kata sandi PDF.</string>
+    <string name="runtime_unlock_required">Buka kunci untuk mengakses PDF yang dilindungi.</string>
+    <string name="runtime_merge_paused">Penggabungan dijeda. Ketuk coba lagi untuk melanjutkan.</string>
+    <string name="runtime_password_setup_required">Atur kata sandi umum untuk menyimpan kata sandi PDF ini dengan aman.</string>
+    <string name="runtime_password_incorrect">Kata sandi salah. Coba lagi.</string>
+    <string name="runtime_signed_pdf_saved">PDF bertanda tangan disimpan.</string>
+    <string name="runtime_zip_exported">Gambar diekspor dalam berkas ZIP.</string>
+    <string name="runtime_csv_exported">Data yang ditinjau diekspor ke CSV.</string>
+    <string name="runtime_receipt_page_required">Masukkan halaman bukti pembayaran yang valid.</string>
+    <string name="runtime_receipt_review_required">Tinjau data lagi sebelum mengekspor.</string>
+    <string name="runtime_document_unavailable">Dokumen tidak lagi tersedia.</string>
+    <string name="runtime_imported_document">Dokumen yang diimpor</string>
+    <string name="runtime_signature_default_name">Tanda tangan saya</string>
+    <string name="runtime_name_invalid">Masukkan nama hingga 100 karakter.</string>
+    <string name="runtime_pdf_size_limit">Pilih PDF hingga 50 MB.</string>
+    <string name="runtime_pdf_page_limit">Pilih PDF dengan 1 hingga 100 halaman.</string>
+    <string name="runtime_pdf_unprotected_required">Buka salinan tanpa kata sandi untuk menggunakan alat ini.</string>
+    <string name="runtime_new_file_required">Pilih berkas baru untuk mempertahankan PDF asli.</string>
+    <string name="runtime_destination_failed">Tidak dapat menyimpan di lokasi yang dipilih.</string>
+    <string name="runtime_certificate_select_again">Pilih kembali sertifikat di Android.</string>
+    <string name="runtime_certificate_chain_unavailable">Rantai sertifikat tidak tersedia.</string>
+    <string name="runtime_certificate_rsa_ec">Pilih sertifikat RSA atau EC.</string>
+    <string name="runtime_certificate_sign_failed">Sertifikat ini tidak dapat digunakan untuk menandatangani.</string>
+    <string name="runtime_certificate_sign_disallowed">Dokumen ini tidak mengizinkan tanda tangan baru melalui alat ini.</string>
+    <string name="runtime_pdf_copy_disallowed">Kata sandi PDF ini tidak mengizinkan penyalinan halaman ke dokumen lain.</string>
+    <string name="runtime_pdf_extract_disallowed">PDF ini tidak mengizinkan ekstraksi konten.</string>
+    <string name="runtime_pdf_edit_disallowed">Kata sandi yang dimasukkan tidak mengizinkan pengeditan PDF ini.</string>
+    <string name="runtime_two_pdfs_required">Pilih minimal dua PDF.</string>
+    <string name="runtime_scan_page_limit">Pindai 1 hingga 20 halaman sekaligus.</string>
+    <string name="runtime_images_size_limit">Gambar melebihi 200 MB. Ekspor lebih sedikit halaman sekaligus.</string>
+    <string name="runtime_ocr_empty">Tidak ada teks dikenali. Coba pindai dengan lebih jelas.</string>
+    <string name="runtime_signature_empty">Gambar atau ketik tanda tangan sebelum menyimpan.</string>
+    <string name="runtime_image_size_limit">Pilih gambar hingga 10 MB.</string>
+    <string name="runtime_selected_pdf">PDF yang dipilih</string>
+    <string name="runtime_signature_name_invalid">Masukkan nama hingga 80 karakter.</string>
+    <string name="runtime_signature_text_invalid">Ketik nama hingga 80 karakter.</string>
+    <string name="runtime_signature_drawing_large">Gambar terlalu besar. Sederhanakan tanda tangan.</string>
+    <string name="runtime_image_invalid">Pilih gambar yang valid.</string>
+    <string name="runtime_signature_not_found">Tanda tangan tidak ditemukan.</string>
+</resources>

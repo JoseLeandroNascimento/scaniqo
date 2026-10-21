@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="document_scope_current">Cette page</string>
+    <string name="document_scope_select">Choisir</string>
+    <string name="document_scope_all">Toutes</string>
+    <string name="document_scope_title">À quelles pages appliquer ?</string>
+    <string name="document_scope_hint">Le même réglage sera appliqué uniquement aux pages cochées.</string>
+    <string name="document_scope_select_all">Tout sélectionner</string>
+    <string name="document_scope_clear">Effacer</string>
+    <string name="document_scope_confirm">Utiliser la sélection</string>
+    <string name="document_scope_cancel">Annuler</string>
+    <string name="document_scope_page">Page %1$d</string>
+    <string name="document_scope_selected_count">Choisir (%1$d)</string>
+    <string name="document_scope_empty">Sélectionnez au moins une page.</string>
+    <plurals name="document_scope_apply_count">
+        <item quantity="one">Appliquer à %1$d page</item>
+        <item quantity="many">Appliquer à %1$d pages</item>
+        <item quantity="other">Appliquer à %1$d pages</item>
+    </plurals>
+    <plurals name="document_scope_count">
+        <item quantity="one">%1$d page sélectionnée</item>
+        <item quantity="many">%1$d pages sélectionnées</item>
+        <item quantity="other">%1$d pages sélectionnées</item>
+    </plurals>
+    <string name="corrections_tab_angle">Incliner</string>
+    <string name="corrections_tab_perspective">Bords</string>
+    <string name="corrections_tab_curve">Courbe</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">Page %1$d sur %2$d. Choisir la page d’aperçu</string>
+    <string name="corrections_live_title">Aperçu du réglage</string>
+    <string name="corrections_live_hint">L’aperçu suit les commandes. Le document ne change que lorsque vous appliquez.</string>
+    <string name="corrections_preview_previous">Aperçu de la page précédente</string>
+    <string name="corrections_preview_next">Aperçu de la page suivante</string>
+    <string name="corrections_preview_choose">Choisir la page d’aperçu</string>
+    <string name="corrections_preview_pages">Choisir une page à prévisualiser</string>
+    <string name="corrections_preview_before">Avant</string>
+    <string name="corrections_preview_after">Après</string>
+    <string name="corrections_preview_before_description">Voir la page avant ce réglage</string>
+    <string name="corrections_preview_after_description">Voir le résultat de ce réglage</string>
+    <string name="corrections_preview_before_hint">Avant ce réglage</string>
+    <string name="corrections_preview_after_hint">Résultat du réglage</string>
+    <string name="corrections_preview_updating">Mise à jour…</string>
+    <string name="corrections_preview_error">Impossible de mettre à jour l’aperçu.</string>
+    <string name="corrections_preview_retry">Réessayer</string>
+    <string name="corrections_preview_native_hint">Le texte et les vecteurs sont conservés. Pour corriger cette page sous forme d’image, activez l’option ci-dessous.</string>
+    <string name="corrections_page_navigation_hint">Le changement d’aperçu conserve les commandes pour vérifier le réglage sur d’autres pages.</string>
+    <string name="corrections_perspective_editor">Ajuster les bords de la capture</string>
+    <string name="corrections_perspective_live_hint">Faites glisser les coins de l’image ci-dessous et observez le résultat au-dessus.</string>
+</resources>

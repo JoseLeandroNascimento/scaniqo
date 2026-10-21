@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_editor_straighten">Luruskan</string>
+    <string name="correction_editor_perspective">Pangkas</string>
+    <string name="correction_editor_curve">Kelengkungan</string>
+    <string name="correction_editor_angle">Kemiringan</string>
+    <string name="correction_editor_auto">Otomatis</string>
+    <string name="correction_editor_use_angle">Gunakan %1$.1f°</string>
+    <string name="correction_editor_already_straight">Tidak ada kemiringan terdeteksi.</string>
+    <string name="correction_editor_corners">Sudut</string>
+    <string name="correction_editor_result">Hasil</string>
+    <string name="correction_editor_show_before">Bandingkan dengan halaman sebelum koreksi</string>
+    <string name="correction_editor_show_result">Lihat hasil koreksi</string>
+    <string name="correction_editor_options">Opsi koreksi</string>
+    <string name="correction_editor_native_hint">Memungkinkan koreksi teks dan vektor sebagai gambar.</string>
+    <string name="correction_editor_native_required">Filter halaman ini memerlukan konversi menjadi gambar.</string>
+    <string name="correction_editor_drag_hint">Seret ↔</string>
+    <string name="correction_editor_angle_gesture">Seret ke samping untuk meluruskan halaman</string>
+    <string name="correction_editor_curve_gesture">Seret ke samping untuk menyesuaikan kelengkungan</string>
+</resources>

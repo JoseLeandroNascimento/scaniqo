@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_workspace_source">Документ</string>
+    <string name="utility_workspace_importing">Импорт документа…</string>
+    <string name="utility_workspace_choose_hint">Выберите PDF из библиотеки или импортируйте файл с устройства.</string>
+    <string name="utility_workspace_import_device">Импорт с устройства</string>
+    <string name="utility_workspace_search">Найти документ</string>
+    <string name="utility_workspace_no_match">Документы не найдены.</string>
+    <string name="utility_workspace_pages">Выберите страницы</string>
+    <string name="utility_workspace_selection">Выбрано %1$d из %2$d</string>
+    <string name="utility_workspace_select_all">Все</string>
+    <string name="utility_workspace_clear">Очистить</string>
+    <string name="utility_workspace_range">Ввести диапазон</string>
+    <string name="utility_workspace_page">Страница %1$d</string>
+    <string name="utility_workspace_order">Нажмите на страницы для выбора. Ввод диапазона позволяет задать порядок.</string>
+    <string name="utility_workspace_locked_pages">Для конфиденциальности миниатюры PDF скрыты. Выбирайте по номерам страниц.</string>
+    <string name="utility_workspace_empty_selection">Выберите хотя бы одну страницу.</string>
+    <string name="utility_workspace_output">Результат</string>
+    <string name="utility_workspace_format">Формат изображений</string>
+    <string name="utility_workspace_jpg_hint">Небольшие файлы для отправки</string>
+    <string name="utility_workspace_png_hint">Больше деталей, больше размер</string>
+    <string name="utility_workspace_zip_hint">Каждая страница станет изображением. Все изображения будут в одном ZIP.</string>
+    <string name="utility_workspace_copy_hint">Будет создана новая копия. Исходный документ сохранится.</string>
+    <string name="utility_workspace_busy">Подготовка файла…</string>
+    <string name="utility_workspace_change_destination">Сменить место</string>
+    <string name="utility_workspace_compress_title">Сжать PDF</string>
+    <string name="utility_workspace_compress_hint">Уменьшите размер изображений в PDF, сохранив поиск по тексту.</string>
+    <string name="utility_workspace_compress_level">Уровень сжатия</string>
+    <string name="utility_workspace_balanced">Сбалансированное</string>
+    <string name="utility_workspace_balanced_hint">Хорошая читаемость при умеренном сжатии.</string>
+    <string name="utility_workspace_strong">Сильное сжатие</string>
+    <string name="utility_workspace_strong_hint">Файл меньше. Проверьте мелкий текст и изображения.</string>
+    <string name="utility_workspace_compress_action">Сжать и создать копию</string>
+    <string name="utility_workspace_original_size">Оригинал</string>
+    <string name="utility_workspace_result_size">После сжатия</string>
+    <string name="utility_workspace_compress_complete">PDF стал меньше</string>
+    <string name="utility_workspace_compress_no_gain">Этот PDF уже компактен</string>
+    <string name="utility_workspace_compress_no_gain_hint">Копия не создана, так как размер не уменьшился.</string>
+    <string name="utility_workspace_compress_note">Результат зависит от изображений. PDF с текстом или уже оптимизированными изображениями могут сохранить размер.</string>
+    <string name="utility_workspace_open_result">Открыть сжатый PDF</string>
+    <string name="utility_workspace_saved">Меньше на %1$d%%</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — сжатый</string>
+    <string name="utility_workspace_inspect_page">Увеличить страницу %1$d</string>
+    <string name="utility_workspace_select_page">Выбрать эту страницу</string>
+    <string name="utility_workspace_deselect_page">Убрать из выбранных</string>
+</resources>

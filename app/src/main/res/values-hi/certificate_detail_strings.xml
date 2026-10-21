@@ -1,0 +1,9 @@
+<resources>
+    <string name="certificate_unknown_signer">हस्ताक्षरकर्ता की पहचान नहीं हुई</string>
+    <string name="certificate_invalid_ranges">हस्ताक्षर में बाइट की सीमाएँ गलत हैं।</string>
+    <string name="certificate_unsupported_format">हस्ताक्षर का यह फ़ॉर्मैट स्थानीय जाँच में समर्थित नहीं है।</string>
+    <string name="certificate_supported_hashes">स्थानीय जाँच SHA-256, SHA-384 या SHA-512 वाले हस्ताक्षर स्वीकार करती है।</string>
+    <string name="certificate_later_bytes">हस्ताक्षरित संस्करण के बाद अतिरिक्त बाइट हैं।</string>
+    <string name="certificate_integrity_failed">इस हस्ताक्षर की अखंडता की पुष्टि नहीं हो सकी।</string>
+    <string name="runtime_image_count_limit">अधिकतम 20 इमेज चुनें।</string>
+</resources>

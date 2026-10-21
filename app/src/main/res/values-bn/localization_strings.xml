@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="localization_title">ভাষা ও অঞ্চল</string>
+    <string name="localization_summary">ভাষা, স্থানীয় ফরম্যাট ও পড়ার দিক</string>
+    <string name="localization_system">সিস্টেম অনুসরণ করুন</string>
+    <string name="localization_system_description">ডিভাইসের পছন্দের ভাষা ব্যবহার করে। কোনোটি উপলব্ধ না থাকলে ইংরেজি ব্যবহার করে।</string>
+    <string name="localization_language">অ্যাপের ভাষা</string>
+    <string name="localization_regional_formats">অঞ্চলের ফরম্যাট</string>
+    <string name="localization_formats_description">তারিখ, সময় ও সংখ্যা বেছে নেওয়া ভাষা ও অঞ্চল অনুসরণ করে। সময় অঞ্চল ডিভাইসের মতোই থাকবে।</string>
+    <string name="localization_date_example">তারিখ ও সময়: %1$s</string>
+    <string name="localization_number_example">সংখ্যা: %1$s</string>
+    <string name="localization_direction_description">ইন্টারফেসের দিক ভাষা অনুসরণ করে। নথির পৃষ্ঠায় বিষয়বস্তু ও অবস্থান অক্ষত থাকে।</string>
+    <string name="localization_apply">ভাষা প্রয়োগ করুন</string>
+    <string name="localization_cancel">বাতিল</string>
+    <string name="localization_restart_hint">ভাষা প্রয়োগ করতে বর্তমান পর্দা আবার খুলবে।</string>
+    <string name="localization_flag_description">পতাকা আঞ্চলিক ধরন বোঝায়, যা অন্য দেশেও ব্যবহার করা যেতে পারে।</string>
+</resources>

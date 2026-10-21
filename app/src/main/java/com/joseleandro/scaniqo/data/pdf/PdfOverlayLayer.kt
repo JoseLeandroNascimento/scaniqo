@@ -1,15 +1,22 @@
 package com.joseleandro.scaniqo.data.pdf
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
+import com.joseleandro.scaniqo.domain.model.PdfCheckmarkGeometry
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.font.PDType1Font
+import com.tom_roush.pdfbox.pdmodel.graphics.image.LosslessFactory
 import com.tom_roush.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState
 import kotlin.math.min
+import kotlin.math.sqrt
 
-/** Camada vetorial exportável; a receita mantém os elementos editáveis dentro do app. */
+/** Preserva vetores quando possível e usa texto moldado pelo Android para outros alfabetos. */
 internal object PdfOverlayLayer {
-    fun draw(stream: PDPageContentStream, overlays: List<PdfOverlay>, pageNumber: Int, count: Int) {
+    fun draw(document: PDDocument, stream: PDPageContentStream, overlays: List<PdfOverlay>, pageNumber: Int, count: Int) {
         require(overlays.size <= 100 && overlays.all(PdfOverlay::isValid))
         overlays.forEach { overlay ->
             stream.saveGraphicsState()
@@ -40,9 +47,13 @@ internal object PdfOverlayLayer {
                         stream.stroke()
                     }
                     PdfOverlayKind.CHECKMARK -> {
-                        stream.moveTo(x, top - height * .5f)
-                        stream.lineTo(x + width * .35f, top - height)
-                        stream.lineTo(x + width, top)
+                        stream.setLineWidth(PdfCheckmarkGeometry.strokeWidth(width, height))
+                        stream.setLineCapStyle(1)
+                        stream.setLineJoinStyle(1)
+                        PdfCheckmarkGeometry.trace(
+                            x, top, width, -height,
+                            stream::moveTo, stream::lineTo, stream::curveTo,
+                        )
                         stream.stroke()
                     }
                     PdfOverlayKind.ARROW -> {
@@ -69,7 +80,7 @@ internal object PdfOverlayLayer {
                         }
                         val content = overlay.text.replace("{pagina}", pageNumber.toString())
                             .replace("{total}", count.toString())
-                        drawText(stream, overlay, content, x, top, width, height)
+                        drawText(document, stream, overlay, content, x, top, width, height)
                     }
                 }
             } finally {
@@ -79,18 +90,23 @@ internal object PdfOverlayLayer {
     }
 
     private fun drawText(
-        stream: PDPageContentStream, overlay: PdfOverlay, content: String,
+        document: PDDocument, stream: PDPageContentStream, overlay: PdfOverlay, content: String,
         x: Float, top: Float, width: Float, height: Float,
     ) {
         val font = PDType1Font.HELVETICA
-        val clean = content.map { char ->
-            if (char == '\n') char else try {
-                font.encode(char.toString())
-                char
-            } catch (_: IllegalArgumentException) { '?' }
-        }.joinToString("")
+        val normalized = content.replace("\r\n", "\n").replace('\r', '\n')
+        val vectorText = try {
+            font.encode(normalized.replace("\n", ""))
+            true
+        } catch (_: IllegalArgumentException) {
+            false
+        }
+        if (!vectorText) {
+            drawShapedText(document, stream, overlay, normalized, x, top, width, height)
+            return
+        }
         val padding = if (overlay.kind == PdfOverlayKind.STAMP) 6f else 0f
-        val lines = clean.lines()
+        val lines = normalized.lines()
         val maxWidth = lines.maxOfOrNull { font.getStringWidth(it) / 1000f } ?: 0f
         val size = min(overlay.fontSize, min(
             (width - padding * 2).coerceAtLeast(1f) / maxWidth.coerceAtLeast(.1f),
@@ -105,5 +121,41 @@ internal object PdfOverlayLayer {
             stream.showText(line)
         }
         stream.endText()
+    }
+
+    private fun drawShapedText(
+        document: PDDocument, stream: PDPageContentStream, overlay: PdfOverlay, content: String,
+        x: Float, top: Float, width: Float, height: Float,
+    ) {
+        // At most 2 million pixels (8 MB ARGB) per element, released before the next one.
+        val rasterScale = min(3f, min(
+            2048f / maxOf(width, height),
+            sqrt(2_000_000f / (width * height)),
+        ))
+        val bitmap = Bitmap.createBitmap(
+            (width * rasterScale).toInt().coerceAtLeast(1),
+            (height * rasterScale).toInt().coerceAtLeast(1),
+            Bitmap.Config.ARGB_8888,
+        )
+        try {
+            val padding = if (overlay.kind == PdfOverlayKind.STAMP) {
+                min(6f, min(width, height) / 4f)
+            } else 0f
+            val innerWidth = (width - padding * 2).coerceAtLeast(.001f)
+            val innerHeight = (height - padding * 2).coerceAtLeast(.001f)
+            val layout = ShapedTextLayout.create(
+                text = content, fontSize = overlay.fontSize,
+                // The PDF graphics state applies opacity once, to the whole shaped image.
+                color = overlay.color or (0xFF shl 24),
+                maxWidth = innerWidth, maxHeight = innerHeight,
+            )
+            val canvas = Canvas(bitmap)
+            canvas.scale(bitmap.width / width, bitmap.height / height)
+            layout.draw(canvas, padding, padding, availableWidth = innerWidth)
+            val image = LosslessFactory.createFromImage(document, bitmap)
+            stream.drawImage(image, x, top - height, width, height)
+        } finally {
+            bitmap.recycle()
+        }
     }
 }

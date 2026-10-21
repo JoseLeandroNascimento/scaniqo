@@ -10,7 +10,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun DocumentSearchRoute(
     onBack: () -> Unit,
-    onOpenDocument: (Long) -> Unit,
+    onOpenDocument: (documentId: Long, pageNumber: Int?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DocumentSearchViewModel = koinViewModel(),
 ) {

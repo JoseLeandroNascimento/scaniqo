@@ -1,0 +1,8 @@
+<resources>
+    <string name="preview_zoom_expand">Expand to full screen</string>
+    <string name="preview_zoom_close">Close expanded view</string>
+    <string name="preview_zoom_reset">Fit page to screen</string>
+    <string name="preview_controls_show">Adjustments</string>
+    <string name="preview_controls_hide">Hide adjustments</string>
+    <string name="preview_gestures_hint">Use two fingers to zoom and navigate.</string>
+</resources>
