@@ -18,4 +18,5 @@
     <string name="tool_catalog_watermark_hint">टेक्स्ट, इमेज या स्टैम्प से अपना रूप दें</string>
     <string name="tool_catalog_choose_for">%1$s के लिए दस्तावेज़ चुनें</string>
     <string name="tool_catalog_count">%1$d टूल उपलब्ध हैं</string>
+    <string name="tool_catalog_empty_hint">कोई दूसरा खोज शब्द या श्रेणी आज़माएँ।</string>
 </resources>

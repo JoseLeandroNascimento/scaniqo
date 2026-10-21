@@ -18,4 +18,5 @@
     <string name="tool_catalog_watermark_hint">Customize with text, images, or stamps</string>
     <string name="tool_catalog_choose_for">Choose a document for %1$s</string>
     <string name="tool_catalog_count">%1$d tools available</string>
+    <string name="tool_catalog_empty_hint">Try another search or category.</string>
 </resources>

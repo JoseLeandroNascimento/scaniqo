@@ -1,4 +1,4 @@
-package com.joseleandro.scaniqo.data.local.document
+ package com.joseleandro.scaniqo.data.local.document
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

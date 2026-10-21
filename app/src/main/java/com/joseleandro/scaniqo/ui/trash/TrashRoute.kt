@@ -21,6 +21,7 @@ fun TrashRoute(onBack: () -> Unit, viewModel: TrashViewModel = koinViewModel()) 
             TrashMessage.RESTORED -> R.string.trash_restored
             TrashMessage.DELETED -> R.string.trash_deleted
             TrashMessage.RESTORE_ERROR -> R.string.trash_restore_error
+            TrashMessage.CLEARED -> R.string.trash_cleared
         })
     }
     LaunchedEffect(state.message) {
@@ -38,6 +39,9 @@ fun TrashRoute(onBack: () -> Unit, viewModel: TrashViewModel = koinViewModel()) 
         onRequestDeletion = viewModel::requestDeletion,
         onConfirmDeletion = viewModel::confirmDeletion,
         onDismissDeletion = viewModel::dismissDeletion,
+        onRequestClearAll = viewModel::requestClearAll,
+        onConfirmClearAll = viewModel::confirmClearAll,
+        onDismissClearAll = viewModel::dismissClearAll,
         snackbarHost = { AppToastHost(toast) },
     )
 }

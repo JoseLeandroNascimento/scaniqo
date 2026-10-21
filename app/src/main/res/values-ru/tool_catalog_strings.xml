@@ -19,4 +19,5 @@
     <string name="tool_catalog_watermark_hint">Добавьте текст, изображение или штамп</string>
     <string name="tool_catalog_choose_for">Выберите документ для: %1$s</string>
     <string name="tool_catalog_count">Доступно инструментов: %1$d</string>
+    <string name="tool_catalog_empty_hint">Попробуйте другой запрос или категорию.</string>
 </resources>

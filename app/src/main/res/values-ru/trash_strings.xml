@@ -2,8 +2,8 @@
 <resources>
     <string name="trash_title">Корзина</string>
     <string name="trash_description">Документы хранятся здесь до восстановления или удаления навсегда. Они занимают место на устройстве и не входят в новые резервные копии.</string>
-    <string name="trash_empty_title">Корзина пуста</string>
-    <string name="trash_empty_body">Здесь появятся документы, перемещённые в корзину, чтобы их можно было восстановить.</string>
+    <string name="trash_empty_title">Ваша корзина пуста</string>
+    <string name="trash_empty_body">Здесь появятся документы, перемещённые в корзину. Вы сможете восстановить их, когда потребуется.</string>
     <string name="trash_load_error">Не удалось загрузить корзину.</string>
     <string name="trash_restore">Восстановить</string>
     <string name="trash_restore_document">Восстановить %1$s</string>
@@ -17,4 +17,28 @@
     <string name="trash_delete_error">Не удалось удалить. Документ остаётся в корзине. Повторите попытку.</string>
     <string name="trash_deleted_on">В корзине с %1$s</string>
     <string name="trash_working">Обработка документа…</string>
+    <string name="trash_info">Как работает корзина</string>
+    <string name="trash_help_title">О корзине</string>
+    <string name="trash_help_close">Понятно</string>
+    <string name="trash_restoring">Восстановление…</string>
+    <string name="trash_delete_short">Удалить</string>
+    <string name="trash_loading">Загрузка корзины…</string>
+    <plurals name="trash_document_count">
+        <item quantity="one">%d документ в корзине</item>
+        <item quantity="few">%d документа в корзине</item>
+        <item quantity="many">%d документов в корзине</item>
+        <item quantity="other">%d документа в корзине</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">Очистить корзину</string>
+    <string name="trash_clear_all_title">Очистить корзину?</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="one">%d документ и его файлы будут навсегда удалены с этого устройства. Это действие нельзя отменить.</item>
+        <item quantity="few">%d документа и их файлы будут навсегда удалены с этого устройства. Это действие нельзя отменить.</item>
+        <item quantity="many">%d документов и их файлы будут навсегда удалены с этого устройства. Это действие нельзя отменить.</item>
+        <item quantity="other">%d документа и их файлы будут навсегда удалены с этого устройства. Это действие нельзя отменить.</item>
+    </plurals>
+    <string name="trash_clear_all_error">Не удалось удалить некоторые документы. Оставшиеся документы по-прежнему находятся в корзине. Повторите попытку.</string>
+    <string name="trash_cleared">Документы удалены из корзины</string>
+    <string name="trash_clearing">Очистка корзины…</string>
 </resources>

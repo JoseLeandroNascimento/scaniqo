@@ -1,8 +1,8 @@
 <resources>
     <string name="trash_title">Lixeira</string>
     <string name="trash_description">Os documentos ficam aqui até você restaurar ou excluir definitivamente. Eles continuam ocupando espaço no aparelho e não entram em novos backups.</string>
-    <string name="trash_empty_title">Lixeira vazia</string>
-    <string name="trash_empty_body">Os documentos enviados para a lixeira aparecerão aqui para recuperação.</string>
+    <string name="trash_empty_title">Sua lixeira está vazia</string>
+    <string name="trash_empty_body">Documentos enviados para a lixeira aparecerão aqui. Você poderá restaurá-los quando precisar.</string>
     <string name="trash_load_error">Não foi possível carregar a lixeira.</string>
     <string name="trash_restore">Restaurar</string>
     <string name="trash_restore_document">Restaurar %1$s</string>
@@ -16,4 +16,26 @@
     <string name="trash_delete_error">Não foi possível excluir. O documento continua na lixeira; tente novamente.</string>
     <string name="trash_deleted_on">Na lixeira desde %1$s</string>
     <string name="trash_working">Processando documento…</string>
+    <string name="trash_info">Como funciona a lixeira</string>
+    <string name="trash_help_title">Sobre a lixeira</string>
+    <string name="trash_help_close">Entendi</string>
+    <string name="trash_restoring">Restaurando…</string>
+    <string name="trash_delete_short">Excluir</string>
+    <string name="trash_loading">Carregando lixeira…</string>
+    <plurals name="trash_document_count">
+        <item quantity="one">%d documento na lixeira</item>
+        <item quantity="many">%d documentos na lixeira</item>
+        <item quantity="other">%d documentos na lixeira</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">Esvaziar lixeira</string>
+    <string name="trash_clear_all_title">Esvaziar lixeira?</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="one">%d documento e seus arquivos serão excluídos definitivamente deste aparelho. Esta ação não pode ser desfeita.</item>
+        <item quantity="many">%d documentos e seus arquivos serão excluídos definitivamente deste aparelho. Esta ação não pode ser desfeita.</item>
+        <item quantity="other">%d documentos e seus arquivos serão excluídos definitivamente deste aparelho. Esta ação não pode ser desfeita.</item>
+    </plurals>
+    <string name="trash_clear_all_error">Não foi possível excluir alguns documentos. Os documentos restantes continuam na lixeira. Tente novamente.</string>
+    <string name="trash_cleared">Documentos excluídos da lixeira</string>
+    <string name="trash_clearing">Esvaziando lixeira…</string>
 </resources>

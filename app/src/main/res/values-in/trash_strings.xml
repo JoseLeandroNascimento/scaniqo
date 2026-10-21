@@ -1,8 +1,8 @@
 <resources>
     <string name="trash_title">Sampah</string>
     <string name="trash_description">Dokumen tetap di sini sampai Anda memulihkan atau menghapusnya secara permanen. Dokumen masih menggunakan ruang perangkat dan tidak disertakan dalam cadangan baru.</string>
-    <string name="trash_empty_title">Sampah kosong</string>
-    <string name="trash_empty_body">Dokumen yang dipindahkan ke sampah akan muncul di sini untuk dipulihkan.</string>
+    <string name="trash_empty_title">Sampah Anda kosong</string>
+    <string name="trash_empty_body">Dokumen yang dipindahkan ke sampah akan muncul di sini. Anda dapat memulihkannya saat diperlukan.</string>
     <string name="trash_load_error">Sampah tidak dapat dimuat.</string>
     <string name="trash_restore">Pulihkan</string>
     <string name="trash_restore_document">Pulihkan %1$s</string>
@@ -16,4 +16,22 @@
     <string name="trash_delete_error">Tidak dapat menghapus. Dokumen masih di sampah; coba lagi.</string>
     <string name="trash_deleted_on">Di sampah sejak %1$s</string>
     <string name="trash_working">Memproses dokumen…</string>
+    <string name="trash_info">Cara kerja sampah</string>
+    <string name="trash_help_title">Tentang sampah</string>
+    <string name="trash_help_close">Mengerti</string>
+    <string name="trash_restoring">Memulihkan…</string>
+    <string name="trash_delete_short">Hapus</string>
+    <string name="trash_loading">Memuat sampah…</string>
+    <plurals name="trash_document_count">
+        <item quantity="other">%d dokumen di sampah</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">Kosongkan sampah</string>
+    <string name="trash_clear_all_title">Kosongkan sampah?</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="other">%d dokumen beserta berkasnya akan dihapus secara permanen dari perangkat ini. Tindakan ini tidak dapat dibatalkan.</item>
+    </plurals>
+    <string name="trash_clear_all_error">Beberapa dokumen tidak dapat dihapus. Dokumen yang tersisa masih berada di sampah. Coba lagi.</string>
+    <string name="trash_cleared">Dokumen dihapus dari sampah</string>
+    <string name="trash_clearing">Mengosongkan sampah…</string>
 </resources>

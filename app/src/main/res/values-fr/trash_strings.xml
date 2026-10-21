@@ -1,8 +1,8 @@
 <resources>
     <string name="trash_title">Corbeille</string>
     <string name="trash_description">Les documents restent ici jusqu’à leur restauration ou suppression définitive. Ils occupent toujours de l’espace sur l’appareil et sont exclus des nouvelles sauvegardes.</string>
-    <string name="trash_empty_title">La corbeille est vide</string>
-    <string name="trash_empty_body">Les documents mis à la corbeille apparaîtront ici pour être restaurés.</string>
+    <string name="trash_empty_title">Votre corbeille est vide</string>
+    <string name="trash_empty_body">Les documents mis à la corbeille apparaîtront ici. Vous pourrez les restaurer quand vous en aurez besoin.</string>
     <string name="trash_load_error">Impossible de charger la corbeille.</string>
     <string name="trash_restore">Restaurer</string>
     <string name="trash_restore_document">Restaurer %1$s</string>
@@ -16,4 +16,26 @@
     <string name="trash_delete_error">Impossible de supprimer. Le document reste dans la corbeille ; réessayez.</string>
     <string name="trash_deleted_on">Dans la corbeille depuis le %1$s</string>
     <string name="trash_working">Traitement du document…</string>
+    <string name="trash_info">Fonctionnement de la corbeille</string>
+    <string name="trash_help_title">À propos de la corbeille</string>
+    <string name="trash_help_close">Compris</string>
+    <string name="trash_restoring">Restauration…</string>
+    <string name="trash_delete_short">Supprimer</string>
+    <string name="trash_loading">Chargement de la corbeille…</string>
+    <plurals name="trash_document_count">
+        <item quantity="one">%d document dans la corbeille</item>
+        <item quantity="many">%d documents dans la corbeille</item>
+        <item quantity="other">%d documents dans la corbeille</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">Vider la corbeille</string>
+    <string name="trash_clear_all_title">Vider la corbeille ?</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="one">%d document et ses fichiers seront définitivement supprimés de cet appareil. Cette action est irréversible.</item>
+        <item quantity="many">%d documents et leurs fichiers seront définitivement supprimés de cet appareil. Cette action est irréversible.</item>
+        <item quantity="other">%d documents et leurs fichiers seront définitivement supprimés de cet appareil. Cette action est irréversible.</item>
+    </plurals>
+    <string name="trash_clear_all_error">Certains documents n’ont pas pu être supprimés. Les documents restants sont toujours dans la corbeille. Réessayez.</string>
+    <string name="trash_cleared">Documents supprimés de la corbeille</string>
+    <string name="trash_clearing">Vidage de la corbeille…</string>
 </resources>

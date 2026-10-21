@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -145,11 +146,14 @@ fun ToolsHubScreen(
                     }
                 }
             }
-            if (visible.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
-                Column(Modifier.fillMaxWidth().padding(vertical = 32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.tool_catalog_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    TextButton(onClick = { query = ""; group = ToolGroup.ALL }) { Text(stringResource(R.string.tool_catalog_reset)) }
-                }
+            if (visible.isEmpty()) item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
+                ScaniqoEmptyState(
+                    title = stringResource(R.string.tool_catalog_empty),
+                    description = stringResource(R.string.tool_catalog_empty_hint),
+                    iconRes = R.drawable.ic_document_search,
+                    actionLabel = stringResource(R.string.tool_catalog_reset),
+                    onAction = { query = ""; group = ToolGroup.ALL },
+                )
             }
             items(visible, key = { it.name }) { tool ->
                 ToolTile(tool, labels.getValue(tool).first, labels.getValue(tool).second, enabled) { open(tool) }

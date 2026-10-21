@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">Tanda tangan disimpan.</string>
     <string name="runtime_signature_deleted">Tanda tangan dihapus.</string>
     <string name="runtime_signature_renamed">Nama tanda tangan diubah.</string>
+    <string name="runtime_signatures_empty_title">Belum ada tanda tangan tersimpan</string>
 </resources>

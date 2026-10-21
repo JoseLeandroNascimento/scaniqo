@@ -30,6 +30,7 @@ import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverlays
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
+import com.joseleandro.scaniqo.ui.documentCommon.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
@@ -180,11 +181,14 @@ fun DocumentsScreen(
 
                 visibleDocuments.isEmpty() -> item(key = "empty") {
                     val filtered = uiState.selectedTagId != null
-                    DocumentStatus(
+                    ScaniqoEmptyState(
                         title = stringResource(if (filtered) R.string.documents_filter_empty_title else R.string.documents_empty_title),
                         description = stringResource(if (filtered) R.string.documents_filter_empty_body else R.string.documents_empty_body),
+                        iconRes = if (filtered) R.drawable.ic_tag_document else R.drawable.ic_document_scan,
                         actionLabel = if (filtered) stringResource(R.string.documents_clear_filter) else null,
-                        onAction = { onEvent(DocumentsEvent.SelectTag(null)) },
+                        onAction = if (filtered) {
+                            { onEvent(DocumentsEvent.SelectTag(null)) }
+                        } else null,
                     )
                 }
 

@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">签名已保存。</string>
     <string name="runtime_signature_deleted">签名已删除。</string>
     <string name="runtime_signature_renamed">签名已重命名。</string>
+    <string name="runtime_signatures_empty_title">暂无已保存的签名</string>
 </resources>

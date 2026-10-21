@@ -65,6 +65,7 @@ import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.DocumentSearchResult
 import com.joseleandro.scaniqo.domain.repository.DocumentSearchRepository
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentSearch.state.DocumentSearchUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
@@ -179,9 +180,11 @@ fun DocumentSearchScreen(
                     }
 
                     uiState.query.isBlank() -> item(key = "initial") {
-                        SearchStatus(
+                        ScaniqoEmptyState(
                             title = stringResource(R.string.document_search_initial_title),
                             description = stringResource(R.string.document_search_initial_body),
+                            iconRes = R.drawable.ic_document_search,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
                         )
                     }
 
@@ -204,9 +207,18 @@ fun DocumentSearchScreen(
                     }
 
                     uiState.results.isEmpty() -> item(key = "empty") {
-                        SearchStatus(
+                        ScaniqoEmptyState(
                             title = stringResource(R.string.document_search_empty_title),
                             description = stringResource(R.string.document_search_empty_body),
+                            iconRes = R.drawable.ic_document_search,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)
+                                .semantics { liveRegion = LiveRegionMode.Polite },
+                            actionLabel = stringResource(R.string.document_search_clear),
+                            onAction = {
+                                onQueryChanged("")
+                                focusRequester.requestFocus()
+                                keyboard?.show()
+                            },
                         )
                     }
 
@@ -378,6 +390,26 @@ private fun DocumentSearchInitialPreview() {
     ScaniqoTheme {
         DocumentSearchScreen(
             uiState = DocumentSearchUiState(),
+            onQueryChanged = {},
+            onRetry = {},
+            onBack = {},
+            onOpenDocument = { _, _ -> },
+        )
+    }
+}
+
+@Preview(name = "Pesquisa sem resultados", showBackground = true)
+@Preview(
+    name = "Pesquisa sem resultados escuro",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Preview(name = "Pesquisa sem resultados RTL", showBackground = true, locale = "ar")
+@Composable
+private fun DocumentSearchEmptyPreview() {
+    ScaniqoTheme {
+        DocumentSearchScreen(
+            uiState = DocumentSearchUiState(query = "contrato"),
             onQueryChanged = {},
             onRetry = {},
             onBack = {},

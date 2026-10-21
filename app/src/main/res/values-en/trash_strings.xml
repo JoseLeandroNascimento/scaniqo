@@ -1,8 +1,8 @@
 <resources>
     <string name="trash_title">Trash</string>
     <string name="trash_description">Documents stay here until you restore or permanently delete them. They still take up space on your device and are not included in new backups.</string>
-    <string name="trash_empty_title">Trash is empty</string>
-    <string name="trash_empty_body">Documents moved to trash will appear here so you can restore them.</string>
+    <string name="trash_empty_title">Your trash is empty</string>
+    <string name="trash_empty_body">Documents moved to trash will appear here. You can restore them whenever you need them.</string>
     <string name="trash_load_error">Could not load trash.</string>
     <string name="trash_restore">Restore</string>
     <string name="trash_restore_document">Restore %1$s</string>
@@ -16,4 +16,24 @@
     <string name="trash_delete_error">Could not delete. The document is still in trash; try again.</string>
     <string name="trash_deleted_on">In trash since %1$s</string>
     <string name="trash_working">Processing document…</string>
+    <string name="trash_info">How trash works</string>
+    <string name="trash_help_title">About trash</string>
+    <string name="trash_help_close">Got it</string>
+    <string name="trash_restoring">Restoring…</string>
+    <string name="trash_delete_short">Delete</string>
+    <string name="trash_loading">Loading trash…</string>
+    <plurals name="trash_document_count">
+        <item quantity="one">%d document in trash</item>
+        <item quantity="other">%d documents in trash</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">Empty trash</string>
+    <string name="trash_clear_all_title">Empty trash?</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="one">%d document and its files will be permanently deleted from this device. This cannot be undone.</item>
+        <item quantity="other">%d documents and their files will be permanently deleted from this device. This cannot be undone.</item>
+    </plurals>
+    <string name="trash_clear_all_error">Some documents could not be deleted. Remaining documents are still in trash. Try again.</string>
+    <string name="trash_cleared">Documents deleted from trash</string>
+    <string name="trash_clearing">Emptying trash…</string>
 </resources>

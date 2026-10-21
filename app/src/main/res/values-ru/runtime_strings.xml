@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">Подпись сохранена.</string>
     <string name="runtime_signature_deleted">Подпись удалена.</string>
     <string name="runtime_signature_renamed">Подпись переименована.</string>
+    <string name="runtime_signatures_empty_title">Нет сохранённых подписей</string>
 </resources>

@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">Signature saved.</string>
     <string name="runtime_signature_deleted">Signature deleted.</string>
     <string name="runtime_signature_renamed">Signature renamed.</string>
+    <string name="runtime_signatures_empty_title">No saved signatures</string>
 </resources>

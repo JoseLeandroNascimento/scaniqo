@@ -2,8 +2,8 @@
 <resources>
     <string name="trash_title">回收站</string>
     <string name="trash_description">文档会保留在此处，直到您恢复或永久删除。它们仍占用设备空间，且不会包含在新的备份中。</string>
-    <string name="trash_empty_title">回收站为空</string>
-    <string name="trash_empty_body">移至回收站的文档会显示在此处，以便恢复。</string>
+    <string name="trash_empty_title">您的回收站为空</string>
+    <string name="trash_empty_body">移至回收站的文档会显示在此处。您可以在需要时恢复它们。</string>
     <string name="trash_load_error">无法加载回收站。</string>
     <string name="trash_restore">恢复</string>
     <string name="trash_restore_document">恢复 %1$s</string>
@@ -17,4 +17,22 @@
     <string name="trash_delete_error">无法删除。文档仍在回收站中，请重试。</string>
     <string name="trash_deleted_on">移入时间：%1$s</string>
     <string name="trash_working">正在处理文档…</string>
+    <string name="trash_info">回收站的工作方式</string>
+    <string name="trash_help_title">关于回收站</string>
+    <string name="trash_help_close">知道了</string>
+    <string name="trash_restoring">正在恢复…</string>
+    <string name="trash_delete_short">删除</string>
+    <string name="trash_loading">正在加载回收站…</string>
+    <plurals name="trash_document_count">
+        <item quantity="other">回收站中有 %d 个文档</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">清空回收站</string>
+    <string name="trash_clear_all_title">清空回收站？</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="other">%d 个文档及其相关文件将从此设备永久删除。此操作无法撤销。</item>
+    </plurals>
+    <string name="trash_clear_all_error">部分文档无法删除。未删除的文档仍在回收站中，请重试。</string>
+    <string name="trash_cleared">已从回收站删除文档</string>
+    <string name="trash_clearing">正在清空回收站…</string>
 </resources>

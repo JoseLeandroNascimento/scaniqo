@@ -2,8 +2,8 @@
 <resources>
     <string name="trash_title">سلة المهملات</string>
     <string name="trash_description">تبقى المستندات هنا حتى تستعيدها أو تحذفها نهائيًا. وتستمر في شغل مساحة على الجهاز ولا تُضمّن في النسخ الاحتياطية الجديدة.</string>
-    <string name="trash_empty_title">سلة المهملات فارغة</string>
-    <string name="trash_empty_body">ستظهر هنا المستندات المنقولة إلى سلة المهملات لاستعادتها.</string>
+    <string name="trash_empty_title">سلة المهملات لديك فارغة</string>
+    <string name="trash_empty_body">ستظهر هنا المستندات المنقولة إلى سلة المهملات. يمكنك استعادتها متى احتجت إليها.</string>
     <string name="trash_load_error">تعذر تحميل سلة المهملات.</string>
     <string name="trash_restore">استعادة</string>
     <string name="trash_restore_document">استعادة %1$s</string>
@@ -17,4 +17,32 @@
     <string name="trash_delete_error">تعذر الحذف. ما زال المستند في سلة المهملات؛ أعد المحاولة.</string>
     <string name="trash_deleted_on">في سلة المهملات منذ %1$s</string>
     <string name="trash_working">جارٍ معالجة المستند…</string>
+    <string name="trash_info">كيف تعمل سلة المهملات</string>
+    <string name="trash_help_title">حول سلة المهملات</string>
+    <string name="trash_help_close">فهمت</string>
+    <string name="trash_restoring">جارٍ الاستعادة…</string>
+    <string name="trash_delete_short">حذف</string>
+    <string name="trash_loading">جارٍ تحميل سلة المهملات…</string>
+    <plurals name="trash_document_count">
+        <item quantity="zero">لا توجد مستندات في سلة المهملات</item>
+        <item quantity="one">مستند واحد في سلة المهملات</item>
+        <item quantity="two">مستندان في سلة المهملات</item>
+        <item quantity="few">%d مستندات في سلة المهملات</item>
+        <item quantity="many">%d مستندًا في سلة المهملات</item>
+        <item quantity="other">%d مستند في سلة المهملات</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">إفراغ سلة المهملات</string>
+    <string name="trash_clear_all_title">إفراغ سلة المهملات؟</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="zero">لا توجد مستندات لحذفها من هذا الجهاز. الحذف النهائي لا يمكن التراجع عنه.</item>
+        <item quantity="one">سيتم حذف مستند واحد وملفاته نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="two">سيتم حذف مستندين وملفاتهما نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="few">سيتم حذف %d مستندات وملفاتها نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="many">سيتم حذف %d مستندًا وملفاتها نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</item>
+        <item quantity="other">سيتم حذف %d مستند وملفاتها نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</item>
+    </plurals>
+    <string name="trash_clear_all_error">تعذر حذف بعض المستندات. ما زالت المستندات المتبقية في سلة المهملات. أعد المحاولة.</string>
+    <string name="trash_cleared">تم حذف المستندات من سلة المهملات</string>
+    <string name="trash_clearing">جارٍ إفراغ سلة المهملات…</string>
 </resources>

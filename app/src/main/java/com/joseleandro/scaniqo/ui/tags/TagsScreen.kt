@@ -54,6 +54,7 @@ import com.joseleandro.scaniqo.domain.model.TagModel
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.components.toast.AppToastType
 import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
+import com.joseleandro.scaniqo.ui.documentCommon.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import com.joseleandro.scaniqo.ui.theme.dimensions
 
@@ -301,29 +302,11 @@ private fun TagItemCard(
 
 @Composable
 private fun TagsEmptyState() {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 48.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        TagIconBadge(
-            icon = TagIcon.LABEL,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 8.dp),
-            size = 72.dp,
-        )
-        Text(
-            text = stringResource(R.string.tags_empty_title),
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = stringResource(R.string.tags_empty_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
-    }
+    ScaniqoEmptyState(
+        title = stringResource(R.string.tags_empty_title),
+        description = stringResource(R.string.tags_empty_description),
+        iconRes = R.drawable.ic_tag_label,
+    )
 }
 
 @Composable
@@ -416,6 +399,8 @@ private fun TagsScreenPreview() {
 }
 
 @Preview(name = "Sem tags", showBackground = true)
+@Preview(name = "Sem tags escuro", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Sem tags fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
 @Composable
 private fun TagsEmptyPreview() {
     ScaniqoTheme {

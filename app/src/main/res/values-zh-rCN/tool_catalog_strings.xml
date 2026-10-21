@@ -19,4 +19,5 @@
     <string name="tool_catalog_watermark_hint">添加文字、图片或印章</string>
     <string name="tool_catalog_choose_for">选择用于“%1$s”的文档</string>
     <string name="tool_catalog_count">%1$d 个可用工具</string>
+    <string name="tool_catalog_empty_hint">请尝试其他搜索词或分类。</string>
 </resources>

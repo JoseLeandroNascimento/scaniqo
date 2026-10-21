@@ -18,4 +18,5 @@
     <string name="tool_catalog_watermark_hint">Personaliza con texto, imágenes o sellos</string>
     <string name="tool_catalog_choose_for">Elige el documento para %1$s</string>
     <string name="tool_catalog_count">%1$d herramientas disponibles</string>
+    <string name="tool_catalog_empty_hint">Prueba otra búsqueda o categoría.</string>
 </resources>

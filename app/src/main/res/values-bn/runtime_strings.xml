@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">স্বাক্ষর সংরক্ষিত হয়েছে।</string>
     <string name="runtime_signature_deleted">স্বাক্ষর মুছে ফেলা হয়েছে।</string>
     <string name="runtime_signature_renamed">স্বাক্ষরের নাম বদলেছে।</string>
+    <string name="runtime_signatures_empty_title">কোনো স্বাক্ষর সংরক্ষিত নেই</string>
 </resources>

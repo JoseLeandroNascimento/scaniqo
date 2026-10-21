@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">हस्ताक्षर सहेजा गया।</string>
     <string name="runtime_signature_deleted">हस्ताक्षर मिटाया गया।</string>
     <string name="runtime_signature_renamed">हस्ताक्षर का नाम बदला गया।</string>
+    <string name="runtime_signatures_empty_title">कोई हस्ताक्षर सेव नहीं है</string>
 </resources>

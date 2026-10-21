@@ -1,5 +1,6 @@
 package com.joseleandro.scaniqo.ui.signatures
 
+import android.content.res.Configuration
 import android.graphics.Typeface
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +31,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,6 +42,8 @@ import com.joseleandro.scaniqo.domain.model.SignaturePoint
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
+import com.joseleandro.scaniqo.ui.documentCommon.components.ScaniqoEmptyState
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,12 +89,14 @@ fun SignaturesScreen(
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 100.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item {
-                Text(
-                    stringResource(R.string.runtime_signatures_body),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            if (state.isLoading || state.loadError || state.signatures.isNotEmpty()) {
+                item {
+                    Text(
+                        stringResource(R.string.runtime_signatures_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             when {
                 state.isLoading -> item { CircularProgressIndicator(Modifier.padding(24.dp)) }
@@ -98,8 +104,8 @@ fun SignaturesScreen(
                     Text(stringResource(R.string.runtime_signatures_load_error))
                     TextButton(onClick = { viewModel.onEvent(SignaturesEvent.Retry) }) { Text(stringResource(R.string.runtime_retry)) }
                 }
-                state.signatures.isEmpty() -> item {
-                    Text(stringResource(R.string.runtime_signatures_empty), Modifier.padding(vertical = 32.dp))
+                state.signatures.isEmpty() -> item(key = "empty") {
+                    SignaturesEmptyState()
                 }
                 else -> items(state.signatures, key = { it.id }) { signature ->
                     Card {
@@ -175,6 +181,27 @@ fun SignaturesScreen(
                 )
             },
         )
+    }
+}
+
+@Composable
+private fun SignaturesEmptyState() {
+    ScaniqoEmptyState(
+        title = stringResource(R.string.runtime_signatures_empty_title),
+        description = stringResource(R.string.runtime_signatures_body),
+        iconRes = R.drawable.ic_tool_signature,
+    )
+}
+
+@Preview(name = "Sem assinaturas", showBackground = true, locale = "pt-rBR")
+@Preview(name = "Sem assinaturas escuro", showBackground = true, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Sem assinaturas fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
+@Composable
+private fun SignaturesEmptyPreview() {
+    ScaniqoTheme {
+        Surface {
+            SignaturesEmptyState()
+        }
     }
 }
 

@@ -1,8 +1,8 @@
 <resources>
     <string name="trash_title">ট্র্যাশ</string>
     <string name="trash_description">আপনি পুনরুদ্ধার বা স্থায়ীভাবে মুছে না ফেলা পর্যন্ত নথিগুলো এখানে থাকবে। এগুলো ডিভাইসে জায়গা নেবে এবং নতুন ব্যাকআপে অন্তর্ভুক্ত হবে না।</string>
-    <string name="trash_empty_title">ট্র্যাশ খালি</string>
-    <string name="trash_empty_body">ট্র্যাশে পাঠানো নথি পুনরুদ্ধারের জন্য এখানে দেখা যাবে।</string>
+    <string name="trash_empty_title">আপনার ট্র্যাশ খালি</string>
+    <string name="trash_empty_body">ট্র্যাশে পাঠানো নথিগুলো এখানে দেখা যাবে। প্রয়োজন হলে আপনি সেগুলো পুনরুদ্ধার করতে পারবেন।</string>
     <string name="trash_load_error">ট্র্যাশ লোড করা যায়নি।</string>
     <string name="trash_restore">পুনরুদ্ধার করুন</string>
     <string name="trash_restore_document">%1$s পুনরুদ্ধার করুন</string>
@@ -16,4 +16,24 @@
     <string name="trash_delete_error">মুছে ফেলা যায়নি। নথি ট্র্যাশে আছে; আবার চেষ্টা করুন।</string>
     <string name="trash_deleted_on">%1$s থেকে ট্র্যাশে</string>
     <string name="trash_working">নথি প্রক্রিয়াকরণ হচ্ছে…</string>
+    <string name="trash_info">ট্র্যাশ কীভাবে কাজ করে</string>
+    <string name="trash_help_title">ট্র্যাশ সম্পর্কে</string>
+    <string name="trash_help_close">বুঝেছি</string>
+    <string name="trash_restoring">পুনরুদ্ধার হচ্ছে…</string>
+    <string name="trash_delete_short">মুছুন</string>
+    <string name="trash_loading">ট্র্যাশ লোড হচ্ছে…</string>
+    <plurals name="trash_document_count">
+        <item quantity="one">ট্র্যাশে %dটি নথি</item>
+        <item quantity="other">ট্র্যাশে %dটি নথি</item>
+    </plurals>
+    <string name="trash_document_metadata">%1$s · %2$s</string>
+    <string name="trash_clear_all">ট্র্যাশ খালি করুন</string>
+    <string name="trash_clear_all_title">ট্র্যাশ খালি করবেন?</string>
+    <plurals name="trash_clear_all_body">
+        <item quantity="one">%dটি নথি ও সংশ্লিষ্ট ফাইলগুলো এই ডিভাইস থেকে স্থায়ীভাবে মুছে ফেলা হবে। এই কাজ পূর্বাবস্থায় ফেরানো যাবে না।</item>
+        <item quantity="other">%dটি নথি ও সংশ্লিষ্ট ফাইলগুলো এই ডিভাইস থেকে স্থায়ীভাবে মুছে ফেলা হবে। এই কাজ পূর্বাবস্থায় ফেরানো যাবে না।</item>
+    </plurals>
+    <string name="trash_clear_all_error">কিছু নথি মুছে ফেলা যায়নি। বাকি নথিগুলো এখনও ট্র্যাশে আছে। আবার চেষ্টা করুন।</string>
+    <string name="trash_cleared">ট্র্যাশ থেকে নথি মুছে ফেলা হয়েছে</string>
+    <string name="trash_clearing">ট্র্যাশ খালি করা হচ্ছে…</string>
 </resources>

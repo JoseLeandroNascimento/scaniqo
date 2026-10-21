@@ -18,4 +18,5 @@
     <string name="tool_catalog_watermark_hint">Sesuaikan dengan teks, gambar, atau stempel</string>
     <string name="tool_catalog_choose_for">Pilih dokumen untuk %1$s</string>
     <string name="tool_catalog_count">%1$d alat tersedia</string>
+    <string name="tool_catalog_empty_hint">Coba kata pencarian atau kategori lain.</string>
 </resources>

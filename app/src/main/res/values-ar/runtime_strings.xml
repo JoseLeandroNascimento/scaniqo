@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">تم حفظ التوقيع.</string>
     <string name="runtime_signature_deleted">تم حذف التوقيع.</string>
     <string name="runtime_signature_renamed">تمت إعادة تسمية التوقيع.</string>
+    <string name="runtime_signatures_empty_title">لا توجد توقيعات محفوظة</string>
 </resources>

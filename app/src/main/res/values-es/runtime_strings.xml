@@ -63,4 +63,5 @@
     <string name="runtime_signature_saved">Firma guardada.</string>
     <string name="runtime_signature_deleted">Firma eliminada.</string>
     <string name="runtime_signature_renamed">Firma renombrada.</string>
+    <string name="runtime_signatures_empty_title">No hay firmas guardadas</string>
 </resources>

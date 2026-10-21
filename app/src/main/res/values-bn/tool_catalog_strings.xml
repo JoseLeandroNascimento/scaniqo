@@ -18,4 +18,5 @@
     <string name="tool_catalog_watermark_hint">টেক্সট, ছবি বা স্ট্যাম্প দিয়ে সাজান</string>
     <string name="tool_catalog_choose_for">%1$s-এর জন্য নথি বেছে নিন</string>
     <string name="tool_catalog_count">%1$dটি টুল উপলব্ধ</string>
+    <string name="tool_catalog_empty_hint">অন্য কোনো শব্দ দিয়ে খুঁজুন বা অন্য বিভাগ বেছে নিন।</string>
 </resources>
