@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-labelledby="title">
+  <title id="title">Scaniqo — smiling document</title>
+  <rect width="108" height="108" rx="26" fill="#06364A"/>
+  <g transform="translate(-27 -27) scale(1.5)">
+  <path d="M31,40V36Q31,31 36,31H40M77,68V72Q77,77 72,77H68" fill="none" stroke="#71E2C3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="rotate(-8 54 54)">
+    <path d="M42,30H59L73,44V68Q73,76 65,76H42Q34,76 34,68V38Q34,30 42,30Z" fill="#FFF9EC"/>
+    <path d="M59,30L73,44H65Q59,44 59,38Z" fill="#FF866F"/>
+    <path d="M43 41H50" fill="none" stroke="#7DABA8" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M44.5 49.5V53" fill="none" stroke="#06364A" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M57 52Q60 48.5 63 52" fill="none" stroke="#06364A" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M45.5 61Q53.5 68.5 62 60" fill="none" stroke="#06364A" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+  </g>
+</svg>

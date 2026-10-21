@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="scaniqo_brand_background">#06364A</color>
+    <integer name="scaniqo_splash_duration">5000</integer>
+</resources>

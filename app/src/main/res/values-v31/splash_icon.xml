@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The platform starts the same vector animation before the first app frame. -->
+    <item name="scaniqo_splash_icon" type="drawable">@drawable/scaniqo_splash_animated</item>
+</resources>

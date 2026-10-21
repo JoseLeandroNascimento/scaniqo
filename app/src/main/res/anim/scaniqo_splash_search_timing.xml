@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Monotone pacing: no stops between 2% and 82%, with continuous endpoint slopes. -->
+<pathInterpolator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:pathData="M0,0 C0.006667,0 0.013333,0 0.02,0 C0.073333,0 0.126667,0.078477 0.18,0.14 C0.223333,0.189988 0.266667,0.295936 0.31,0.36 C0.363333,0.438848 0.416667,0.498938 0.47,0.57 C0.526667,0.645503 0.583333,0.730858 0.64,0.8 C0.7,0.87321 0.76,1 0.82,1 C0.88,1 0.94,1 1,1" />

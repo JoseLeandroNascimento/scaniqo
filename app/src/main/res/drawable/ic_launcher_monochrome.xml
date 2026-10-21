@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:pathData="M31,40V36Q31,31 36,31H40M77,68V72Q77,77 72,77H68" android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF" android:strokeWidth="3.5"
+        android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <group android:rotation="-8" android:pivotX="54" android:pivotY="54">
+        <!-- Transparent cutouts preserve the face when the launcher supplies its own colors. -->
+        <path android:fillColor="#FFFFFF" android:fillType="evenOdd"
+            android:pathData="M42,30H59L73,44V68Q73,76 65,76H42Q34,76 34,68V38Q34,30 42,30Z
+                M61,35L69,43H65Q61,43 61,39Z
+                M43,39.6H50A1.4,1.4 0,0 1,50,42.4H43A1.4,1.4 0,0 1,43,39.6Z
+                M42.7,49.5A1.8,1.8 0,0 1,46.3,49.5V53A1.8,1.8 0,0 1,42.7,53Z
+                M55.7,50.9Q60,46.4 64.3,50.9A1.7,1.7 0,0 1,61.7,53.1Q60,51 58.3,53.1A1.7,1.7 0,0 1,55.7,50.9Z
+                M44.3,62.3Q53.5,71.3 63.2,61.2A1.75,1.75 0,0 0,60.8,58.8Q53.5,65.8 46.7,59.7A1.75,1.75 0,0 0,44.3,62.3Z" />
+    </group>
+</vector>

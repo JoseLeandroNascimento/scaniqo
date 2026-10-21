@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="432dp" android:height="432dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Rest geometry and palette exactly match ic_launcher_foreground. -->
+    <!-- Motion remains inside the 72-unit safe circle throughout the animation. -->
+    <group android:name="scaniqo_scanner">
+        <group android:name="scaniqo_scanner_top_left" android:pivotX="54" android:pivotY="54">
+            <path android:name="scaniqo_scanner_rest_top_left" android:pathData="M31,40V36Q31,31 36,31H40" android:fillColor="@android:color/transparent"
+                android:strokeColor="#71E2C3" android:strokeWidth="3.5"
+                android:strokeLineCap="round" android:strokeLineJoin="round" />
+        </group>
+        <group android:name="scaniqo_scanner_bottom_right" android:pivotX="54" android:pivotY="54">
+            <path android:name="scaniqo_scanner_rest_bottom_right" android:pathData="M77,68V72Q77,77 72,77H68" android:fillColor="@android:color/transparent"
+                android:strokeColor="#71E2C3" android:strokeWidth="3.5"
+                android:strokeLineCap="round" android:strokeLineJoin="round" />
+        </group>
+    </group>
+    <group android:name="scaniqo_document"
+        android:rotation="-8" android:pivotX="54" android:pivotY="54">
+        <path android:fillColor="#FFF9EC" android:pathData="M42,30H59L73,44V68Q73,76 65,76H42Q34,76 34,68V38Q34,30 42,30Z" />
+        <path android:fillColor="#FF866F" android:pathData="M59,30L73,44H65Q59,44 59,38Z" />
+        <path android:pathData="M43,41H50" android:fillColor="@android:color/transparent"
+            android:strokeColor="#7DABA8" android:strokeWidth="2.8" android:strokeLineCap="round" />
+        <group android:name="scaniqo_blinking_eye" android:pivotX="44.5" android:pivotY="51.25">
+            <path android:name="scaniqo_eye_stroke"
+                android:pathData="M44.5,49.5V53" android:fillColor="@android:color/transparent"
+                android:strokeColor="#06364A" android:strokeWidth="3.6" android:strokeLineCap="round" />
+        </group>
+        <path android:pathData="M57,52Q60,48.5 63,52" android:fillColor="@android:color/transparent"
+            android:strokeColor="#06364A" android:strokeWidth="3.4" android:strokeLineCap="round" />
+        <path android:pathData="M45.5,61Q53.5,68.5 62,60" android:fillColor="@android:color/transparent"
+            android:strokeColor="#06364A" android:strokeWidth="3.5" android:strokeLineCap="round" />
+    </group>
+    <!-- Draw the moving frame above the document so both corners remain visible. -->
+    <!-- It is transparent in the original resting pose, including the final frame. -->
+    <group android:name="scaniqo_scanner_search" android:pivotX="54" android:pivotY="54">
+        <path android:name="scaniqo_scanner_search_stroke"
+            android:pathData="M31,40V36Q31,31 36,31H40M77,68V72Q77,77 72,77H68"
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#71E2C3" android:strokeAlpha="0" android:strokeWidth="3.5"
+            android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+</vector>

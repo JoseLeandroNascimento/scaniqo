@@ -2,10 +2,15 @@ package com.joseleandro.scaniqo.core.navigation
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -19,7 +24,9 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,14 +57,33 @@ internal fun AppNavigationDrawer(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp),
         ) {
-            Text(
-                stringResource(R.string.app_name),
-                modifier = Modifier.padding(start = 28.dp, end = 28.dp, top = 28.dp, bottom = 24.dp)
-                    .semantics { heading() },
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.primary,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = 28.dp, end = 28.dp, top = 28.dp, bottom = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.size(52.dp).clip(RoundedCornerShape(16.dp))) {
+                    Image(
+                        painterResource(R.drawable.ic_launcher_background),
+                        contentDescription = null,
+                        modifier = Modifier.matchParentSize(),
+                    )
+                    Image(
+                        painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        // Desenha o vetor na dimensão final, sem ampliar uma camada rasterizada.
+                        modifier = Modifier.requiredSize(52.dp * 1.5f).align(Alignment.Center),
+                    )
+                }
+                Text(
+                    stringResource(R.string.app_name),
+                    modifier = Modifier.weight(1f).semantics { heading() },
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
             DrawerDestination(
                 label = stringResource(R.string.documents_title),
                 icon = R.drawable.ic_tool_pages,
@@ -145,6 +171,7 @@ private fun DrawerDestination(
 @Preview(name = "Menu escuro", widthDp = 320, heightDp = 700, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Menu fonte ampliada", widthDp = 320, heightDp = 700, fontScale = 1.5f, locale = "pt-rBR")
 @Preview(name = "Menu compacto", widthDp = 320, heightDp = 360, locale = "pt-rBR")
+@Preview(name = "Menu árabe fonte ampliada", widthDp = 320, heightDp = 700, fontScale = 1.5f, locale = "ar")
 @Composable
 private fun AppNavigationDrawerPreview() {
     ScaniqoTheme {

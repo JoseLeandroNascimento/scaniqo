@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The search frame fades above the page only after the original rear corners are visible. -->
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/scaniqo_splash_duration"
+    android:interpolator="@android:interpolator/linear"
+    android:repeatCount="0">
+    <propertyValuesHolder android:propertyName="strokeAlpha" android:valueType="floatType">
+        <keyframe android:fraction="0" android:value="0" />
+        <keyframe android:fraction="0.02" android:value="1" android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <keyframe android:fraction="0.825" android:value="1" android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <keyframe android:fraction="0.855" android:value="0" android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <keyframe android:fraction="1" android:value="0" android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </propertyValuesHolder>
+</objectAnimator>

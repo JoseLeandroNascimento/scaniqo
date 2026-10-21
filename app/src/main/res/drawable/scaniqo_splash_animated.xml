@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/scaniqo_splash_vector">
+    <target android:name="scaniqo_document" android:animation="@animator/scaniqo_splash_document" />
+    <target android:name="scaniqo_scanner_rest_top_left" android:animation="@animator/scaniqo_splash_scanner_top_left" />
+    <target android:name="scaniqo_scanner_rest_bottom_right" android:animation="@animator/scaniqo_splash_scanner_bottom_right" />
+    <target android:name="scaniqo_scanner_search" android:animation="@animator/scaniqo_splash_scanner_search" />
+    <target android:name="scaniqo_scanner_search_stroke" android:animation="@animator/scaniqo_splash_scanner_search_alpha" />
+    <target android:name="scaniqo_blinking_eye" android:animation="@animator/scaniqo_splash_eye" />
+    <target android:name="scaniqo_eye_stroke" android:animation="@animator/scaniqo_splash_eye_stroke" />
+</animated-vector>
