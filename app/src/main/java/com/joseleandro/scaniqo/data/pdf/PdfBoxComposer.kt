@@ -348,6 +348,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
             "Mantenha entre 1 e 100 páginas no documento."
         }
         val sources = linkedMapOf<String, PDDocument>()
+        val sourcePages = mutableMapOf<String, PdfPageIndex>()
         var failure: Throwable? = null
         var filteredPages: PdfFilteredPageRenderer? = null
         var previousDocument: PDDocument? = null
@@ -387,6 +388,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
             val previous = previousFile?.let { load(it).also { loaded -> previousDocument = loaded } }
             val expectedPages = final?.visual?.pages?.size ?: reusable?.key?.pages?.size
             val reusedIndices = contentIndices.takeIf { previous?.numberOfPages == expectedPages }
+            val previousPages = previous?.let { PdfPageIndex(it, currentCoroutineContext()) }
             val rasterizer = PdfFilteredPageRenderer(sourceFiles).also { filteredPages = it }
             PDDocument(memory()).use { output ->
                 val importer = LayerUtility(output)
@@ -413,14 +415,15 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                     currentCoroutineContext().ensureActive()
                     val previousIndex = reusedIndices?.get(index)
                     if (previous != null && previousIndex != null) {
-                        val ready = previous.getPage(previousIndex)
+                        val ready = requireNotNull(previousPages)[previousIndex]
                         val numbered = final?.visual?.showPageNumbers == true
                         val removeNumber = numbered && PdfPageNumberLayer.hasLayer(ready)
                         val compatible = final == null || !numbered || removeNumber ||
                             matchingIndices?.get(index) == previousIndex
-                        if (compatible && pageCopier.copy(ready, removePageNumber = removeNumber)) {
+                        val copied = if (compatible) pageCopier.copyPage(ready, removePageNumber = removeNumber) else null
+                        if (copied != null) {
                             if (final != null && workspace.showPageNumbers && (!numbered || removeNumber)) {
-                                PdfPageNumberLayer.append(output, output.getPage(index), index + 1, workspace.pages.size)
+                                PdfPageNumberLayer.append(output, copied, index + 1, workspace.pages.size)
                             }
                             // A folha pronta já contém filtros, OCR e compressão na qualidade final correta.
                             return@forEachIndexed
@@ -429,8 +432,11 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                     val source = sources.getOrPut(spec.sourceUri) {
                         load(requireNotNull(sourceFiles[spec.sourceUri]))
                     }
-                    require(spec.sourcePageIndex in 0 until source.numberOfPages)
-                    val sourcePage = source.getPage(spec.sourcePageIndex)
+                    val indexedPages = sourcePages.getOrPut(spec.sourceUri) {
+                        PdfPageIndex(source, currentCoroutineContext())
+                    }
+                    require(spec.sourcePageIndex in 0 until indexedPages.size)
+                    val sourcePage = indexedPages[spec.sourcePageIndex]
                     if (sourcePage.resources == null) sourcePage.resources = PDResources()
                     val layout = if (originalsOnly) PdfPageLayout() else spec.layout
                     layout.validateImageProcessing()
@@ -452,7 +458,9 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                     output.addPage(page)
                     val needsProcessing = layout.needsImageProcessing()
                     val native = if (needsProcessing || (!originalsOnly && forExport && workspace.ocrEnabled)) {
-                        inspectContent(requireNotNull(sourceFiles[spec.sourceUri]), source, spec.sourcePageIndex)
+                        nativeContentCache.get(requireNotNull(sourceFiles[spec.sourceUri]), spec.sourcePageIndex) {
+                            PdfNativeContent.inspect(sourcePage)
+                        }
                     } else null
                     // Filtros nunca removem texto ou vetores sem a confirmação explícita da interface.
                     val rasterize = needsProcessing &&
@@ -610,6 +618,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
         workspace: PdfWorkspace,
         pageIndices: List<Int>,
     ) {
+        val pages = PdfPageIndex(output, currentCoroutineContext())
         val scratch = File(files.directory(workspace), "ocr_${UUID.randomUUID()}.pdf")
         try {
             // O reconhecedor recebe apenas as folhas alteradas, sem regravar todo o PDF como intermediário.
@@ -617,7 +626,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                 val copier = PdfReadyPageCopier(subset)
                 for (index in pageIndices) {
                     currentCoroutineContext().ensureActive()
-                    val source = output.getPage(index)
+                    val source = pages[index]
                     check(copier.copy(source, removePageNumber = PdfPageNumberLayer.hasLayer(source))) {
                         "Não foi possível preparar a página para OCR."
                     }
@@ -634,7 +643,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                     for ((temporaryIndex, outputIndex) in pageIndices.withIndex()) {
                         currentCoroutineContext().ensureActive()
                         renderer.render("ocr", temporaryIndex, maxSide = 2400).use { rendered ->
-                            ocr.append(output.getPage(outputIndex), rendered.bitmap)
+                            ocr.append(pages[outputIndex], rendered.bitmap)
                         }
                     }
                 }

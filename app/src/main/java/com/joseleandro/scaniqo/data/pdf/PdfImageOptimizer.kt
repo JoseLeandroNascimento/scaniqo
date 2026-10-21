@@ -38,7 +38,11 @@ internal object PdfImageOptimizer {
                 }
             }
         }
-        pageIndices.forEach { index -> visit(document.getPage(index).resources, 0) }
+        val pages = PdfPageIndex(document, currentCoroutineContext())
+        pageIndices.forEach { index ->
+            currentCoroutineContext().ensureActive()
+            visit(pages[index].resources, 0)
+        }
     }
 
     private suspend fun shrink(

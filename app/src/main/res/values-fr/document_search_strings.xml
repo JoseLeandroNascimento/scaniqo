@@ -20,4 +20,5 @@
         <item quantity="many">%d documents trouvés</item>
         <item quantity="other">%d documents trouvés</item>
     </plurals>
+    <string name="document_search_result_limit">Affichage des %1$d premiers résultats. Affinez la recherche pour trouver d’autres documents.</string>
 </resources>

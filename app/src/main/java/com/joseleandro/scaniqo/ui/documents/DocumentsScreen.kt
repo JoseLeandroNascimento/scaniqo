@@ -192,7 +192,7 @@ fun DocumentsScreen(
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         DocumentCard(
                             document = document,
-                            tag = uiState.tags.firstOrNull { it.id == document.tagId },
+                            tag = uiState.tagsById[document.tagId],
                             isBusy = actionsState.busyDocumentId == document.id,
                             actionsEnabled = !actionsBusy,
                             onOpen = { if (!actionsBusy) onOpenDocument(document.id) },

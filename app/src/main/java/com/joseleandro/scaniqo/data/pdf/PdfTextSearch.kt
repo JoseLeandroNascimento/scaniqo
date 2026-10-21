@@ -46,84 +46,121 @@ internal suspend fun findPdfTextMatch(document: PDDocument, query: String): PdfT
     }
 }
 
-/** Mantém apenas uma janela de texto e encerra a leitura após o primeiro trecho encontrado. */
+/**
+ * KMP evita rescans de prefixos repetidos; a janela circular conserva só a consulta e
+ * 64 caracteres de contexto em cada lado, independentemente do tamanho do texto extraído.
+ */
 internal class PdfSearchSnippetWriter(
     query: String,
-    private val context: CoroutineContext
+    private val context: CoroutineContext,
 ) : Writer() {
-    private val query = normalizeSearchWhitespace(query).also { require(it.isNotEmpty()) }
-    private val buffer = StringBuilder()
+    private val pattern = normalizeSearchWhitespace(query).also { require(it.isNotEmpty()) }
+        .map { foldCase(it) }.toCharArray()
+    private val prefixes = IntArray(pattern.size).apply {
+        var matched = 0
+        for (index in 1 until size) {
+            while (matched > 0 && pattern[index] != pattern[matched]) matched = this[matched - 1]
+            if (pattern[index] == pattern[matched]) matched++
+            this[index] = matched
+        }
+    }
+    private val window = CharArray(pattern.size + CONTEXT_LENGTH * 2)
+    private var next = 0
+    private var retained = 0
+    private var normalizedCharacters = 0L
+    private var previousWasSpace = false
+    private var matchedPrefix = 0
+    private var matchEnd = -1L
     private var pageNumber = 1
-    private var discardedCharacters = false
-    private var pendingMatch = -1
 
     fun startPage(pageNumber: Int) {
         context.ensureActive()
         this.pageNumber = pageNumber
-        buffer.clear()
-        discardedCharacters = false
-        pendingMatch = -1
+        next = 0
+        retained = 0
+        normalizedCharacters = 0
+        previousWasSpace = false
+        matchedPrefix = 0
+        matchEnd = -1
     }
 
     override fun write(chars: CharArray, offset: Int, length: Int) {
+        checkBounds(chars.size, offset, length)
         context.ensureActive()
         for (index in offset until offset + length) {
-            val character = chars[index]
-            if (character.isWhitespace()) {
-                if (buffer.isNotEmpty() && buffer.last() != ' ') buffer.append(' ')
-            } else {
-                buffer.append(character)
+            if ((index - offset) % CANCELLATION_INTERVAL == 0) context.ensureActive()
+            appendCharacter(chars[index])
+        }
+    }
+
+    // Writer's default implementation creates a char array as large as the supplied string.
+    override fun write(value: String, offset: Int, length: Int) {
+        checkBounds(value.length, offset, length)
+        context.ensureActive()
+        for (index in offset until offset + length) {
+            if ((index - offset) % CANCELLATION_INTERVAL == 0) context.ensureActive()
+            appendCharacter(value[index])
+        }
+    }
+
+    private fun appendCharacter(raw: Char) {
+        val space = raw.isWhitespace()
+        if (space && (normalizedCharacters == 0L || previousWasSpace)) return
+        val character = if (space) ' ' else raw
+        previousWasSpace = space
+        window[next] = character
+        next = (next + 1) % window.size
+        retained = (retained + 1).coerceAtMost(window.size)
+        normalizedCharacters++
+
+        if (matchEnd < 0) {
+            val folded = foldCase(character)
+            while (matchedPrefix > 0 && pattern[matchedPrefix] != folded) {
+                matchedPrefix = prefixes[matchedPrefix - 1]
             }
-            if (pendingMatch >= 0) {
-                if (buffer.length >= pendingMatch + query.length + CONTEXT_LENGTH) {
-                    finishMatch(hasMoreText = true)
-                }
-            } else if (buffer.length >= query.length + CONTEXT_LENGTH + SCAN_CHUNK_LENGTH) {
-                scan()
-            }
-            if ((index - offset) % SCAN_CHUNK_LENGTH == 0) context.ensureActive()
+            if (pattern[matchedPrefix] == folded) matchedPrefix++
+            if (matchedPrefix == pattern.size) matchEnd = normalizedCharacters
+        }
+        if (matchEnd >= 0 && normalizedCharacters >= matchEnd + CONTEXT_LENGTH) {
+            finishMatch(hasMoreText = true)
         }
     }
 
     fun finishPage() {
         context.ensureActive()
-        if (pendingMatch < 0) scan()
-        if (pendingMatch >= 0) finishMatch(hasMoreText = false)
+        if (matchEnd >= 0) finishMatch(hasMoreText = false)
     }
 
     override fun flush() = Unit
     override fun close() = Unit
 
-    private fun scan() {
-        pendingMatch = buffer.indexOf(query, ignoreCase = true)
-        if (pendingMatch >= 0) {
-            if (buffer.length >= pendingMatch + query.length + CONTEXT_LENGTH) {
-                finishMatch(hasMoreText = true)
-            }
-        } else {
-            // Preserva início de frase entre blocos e contexto suficiente para o trecho.
-            val keep = query.length - 1 + CONTEXT_LENGTH
-            if (buffer.length > keep) {
-                buffer.delete(0, buffer.length - keep)
-                discardedCharacters = true
-            }
-        }
-    }
-
     private fun finishMatch(hasMoreText: Boolean): Nothing {
-        val start = (pendingMatch - CONTEXT_LENGTH).coerceAtLeast(0)
-        val end = (pendingMatch + query.length + CONTEXT_LENGTH).coerceAtMost(buffer.length)
+        val start = (matchEnd - pattern.size - CONTEXT_LENGTH).coerceAtLeast(0)
+        val end = (matchEnd + CONTEXT_LENGTH).coerceAtMost(normalizedCharacters)
+        val windowStart = normalizedCharacters - retained
+        val oldest = (next - retained + window.size) % window.size
+        val excerpt = buildString {
+            for (position in start until end) {
+                append(window[(oldest + (position - windowStart).toInt()) % window.size])
+            }
+        }.trim()
         val snippet = buildString {
-            if (discardedCharacters || start > 0) append('…')
-            append(buffer.substring(start, end).trim())
-            if (hasMoreText || end < buffer.length) append('…')
+            if (start > 0) append('…')
+            append(excerpt)
+            if (hasMoreText) append('…')
         }
         throw PdfTextMatchFound(PdfTextMatch(snippet, pageNumber))
     }
 
+    private fun checkBounds(size: Int, offset: Int, length: Int) {
+        if (offset < 0 || length < 0 || offset > size - length) throw IndexOutOfBoundsException()
+    }
+
     private companion object {
         const val CONTEXT_LENGTH = 64
-        const val SCAN_CHUNK_LENGTH = 1_024
+        const val CANCELLATION_INTERVAL = 1_024
+
+        fun foldCase(character: Char): Char = character.uppercaseChar().lowercaseChar()
     }
 }
 

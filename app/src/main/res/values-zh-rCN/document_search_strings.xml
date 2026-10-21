@@ -19,4 +19,5 @@
     <plurals name="document_search_result_count">
         <item quantity="other">找到 %d 个文档</item>
     </plurals>
+    <string name="document_search_result_limit">仅显示前 %1$d 条结果。请缩小搜索范围以查找其他文档。</string>
 </resources>

@@ -12,14 +12,17 @@ import kotlin.math.abs
 internal class PdfReadyPageCopier(private val output: PDDocument) {
     private val resources = PDFCloneUtility(output)
 
-    fun copy(source: PDPage, removePageNumber: Boolean = false): Boolean {
-        val content = if (removePageNumber) PdfPageNumberLayer.withoutNumber(source) ?: return false else source
+    fun copy(source: PDPage, removePageNumber: Boolean = false): Boolean =
+        copyPage(source, removePageNumber) != null
+
+    fun copyPage(source: PDPage, removePageNumber: Boolean = false): PDPage? {
+        val content = if (removePageNumber) PdfPageNumberLayer.withoutNumber(source) ?: return null else source
         val box = content.cropBox
         if (source.rotation % 360 != 0 || source.annotations.isNotEmpty() ||
             abs(box.lowerLeftX) > .01f || abs(box.lowerLeftY) > .01f ||
             abs(box.width - PdfPageGeometry.WIDTH) > .01f ||
             abs(box.height - PdfPageGeometry.HEIGHT) > .01f
-        ) return false
+        ) return null
         val imported = output.importPage(content)
         imported.resources = source.resources?.let {
             PDResources(resources.cloneForNewDocument(it.cosObject) as COSDictionary)
@@ -27,6 +30,6 @@ internal class PdfReadyPageCopier(private val output: PDDocument) {
         imported.mediaBox = PDRectangle(PdfPageGeometry.WIDTH, PdfPageGeometry.HEIGHT)
         imported.cropBox = PDRectangle(PdfPageGeometry.WIDTH, PdfPageGeometry.HEIGHT)
         imported.rotation = 0
-        return true
+        return imported
     }
 }

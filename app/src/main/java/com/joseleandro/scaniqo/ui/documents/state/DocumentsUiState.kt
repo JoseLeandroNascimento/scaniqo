@@ -11,8 +11,25 @@ data class DocumentsUiState(
     val isLoading: Boolean = true,
     val loadError: Boolean = false,
 ) {
-    val visibleDocuments: List<DocumentModel>
-        get() = selectedTagId?.let { tagId ->
+    private var preparedDocumentIndex: DocumentTagIndex? = null
+    private var preparedTagIndex: Map<Long, TagModel>? = null
+
+    // Cada copy cria caches próprios, sem conservar resultados de documentos/tags anteriores.
+    val visibleDocuments: List<DocumentModel> by lazy {
+        preparedDocumentIndex?.visibleDocuments(selectedTagId) ?: selectedTagId?.let { tagId ->
             documents.filter { it.tagId == tagId }
         } ?: documents
+    }
+    val tagsById: Map<Long, TagModel> by lazy {
+        preparedTagIndex ?: tags.associateBy { it.id }
+    }
+
+    /** Prepara outro snapshot antes de publicá-lo; nunca altera um estado já observado pela UI. */
+    internal fun withPreparedLookups(
+        index: DocumentTagIndex,
+        tagLookup: Map<Long, TagModel>,
+    ): DocumentsUiState = copy(documents = index.documents).also {
+        it.preparedDocumentIndex = index
+        it.preparedTagIndex = tagLookup
+    }
 }

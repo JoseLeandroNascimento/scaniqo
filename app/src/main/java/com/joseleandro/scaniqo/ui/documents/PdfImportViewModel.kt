@@ -13,6 +13,7 @@ import com.joseleandro.scaniqo.ui.documents.model.PendingPdfImport
 import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
 import com.joseleandro.scaniqo.ui.documents.state.PdfImportUiState
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
@@ -154,7 +155,9 @@ class PdfImportViewModel(
         savedState.remove<Long>("tool_document_id")
         clearPending()
         state.value = PdfImportUiState()
-        if (pending != null) viewModelScope.launch {
+        // Enter the cleanup before onCleared can cancel a queued coroutine: this draft is
+        // no longer saved anywhere. The repository still moves its file work to the IO dispatcher.
+        if (pending != null) viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
             withContext(NonCancellable) { runCatching { documents.discardScan(pending.scan) } }
         }
         channel.trySend(PdfImportEffect.Cancelled)

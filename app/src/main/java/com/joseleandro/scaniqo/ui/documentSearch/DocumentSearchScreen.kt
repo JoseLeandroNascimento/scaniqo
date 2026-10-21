@@ -63,6 +63,7 @@ import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.core.utils.documentFileSize
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.DocumentSearchResult
+import com.joseleandro.scaniqo.domain.repository.DocumentSearchRepository
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
 import com.joseleandro.scaniqo.ui.documentSearch.state.DocumentSearchUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -184,7 +185,7 @@ fun DocumentSearchScreen(
                         )
                     }
 
-                    uiState.isSearching -> item(key = "loading") {
+                    uiState.isSearching && uiState.results.isEmpty() -> item(key = "loading") {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -210,6 +211,31 @@ fun DocumentSearchScreen(
                     }
 
                     else -> {
+                        if (uiState.isSearching) item(key = "search_progress") {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            ) {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                                Text(
+                                    text = stringResource(R.string.document_search_loading),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                        if (uiState.resultLimitReached) item(key = "result_limit") {
+                            Text(
+                                text = stringResource(
+                                    R.string.document_search_result_limit,
+                                    DocumentSearchRepository.MAX_RESULTS,
+                                ),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                         item(key = "count") {
                             Text(
                                 text = pluralStringResource(

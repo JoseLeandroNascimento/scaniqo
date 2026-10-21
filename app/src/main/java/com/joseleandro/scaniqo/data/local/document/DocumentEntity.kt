@@ -18,7 +18,12 @@ import com.joseleandro.scaniqo.data.local.tag.TagEntity
             onDelete = ForeignKey.SET_NULL
         )
     ],
-    indices = [Index(value = ["tagId"])]
+    indices = [
+        Index(value = ["tagId"]),
+        Index(value = ["pdfUri"]),
+        Index(value = ["deletedAt", "createdAt", "id"]),
+        Index(value = ["deletedAt", "id"]),
+    ]
 )
 data class DocumentEntity(
     @PrimaryKey(autoGenerate = true)

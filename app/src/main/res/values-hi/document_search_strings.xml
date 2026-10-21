@@ -19,4 +19,5 @@
         <item quantity="one">%d दस्तावेज़ मिला</item>
         <item quantity="other">%d दस्तावेज़ मिले</item>
     </plurals>
+    <string name="document_search_result_limit">पहले %1$d परिणाम दिखाए जा रहे हैं। अन्य दस्तावेज़ ढूँढने के लिए खोज को और विशिष्ट बनाएँ।</string>
 </resources>

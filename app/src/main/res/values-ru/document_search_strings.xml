@@ -22,4 +22,5 @@
         <item quantity="many">Найдено %d документов</item>
         <item quantity="other">Найдено %d документа</item>
     </plurals>
+    <string name="document_search_result_limit">Показаны первые %1$d результатов. Уточните поиск, чтобы найти другие документы.</string>
 </resources>

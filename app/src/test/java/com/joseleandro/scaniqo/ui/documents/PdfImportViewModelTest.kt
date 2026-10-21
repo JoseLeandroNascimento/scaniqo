@@ -14,6 +14,8 @@ import com.joseleandro.scaniqo.ui.documentCommon.FakeDocumentRepository
 import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -123,6 +125,63 @@ class PdfImportViewModelTest {
         assertEquals(listOf(editor.scan), documents.discarded)
         assertTrue(documents.created.isEmpty())
         assertFalse(viewModel.uiState.value.isActive)
+    }
+
+    @Test fun cancellingPreparedImportStillDiscardsWhenTheViewModelIsClearedImmediately() = runTest(dispatcher) {
+        viewModel.chooseFile()
+        viewModel.fileSelected("content://external/report")
+        runCurrent()
+        val prepared = requireNotNull(viewModel.uiState.value.pending).scan
+
+        viewModel.cancel()
+        // Teardown happens before the main dispatcher runs the queued cleanup.
+        store.clear()
+        runCurrent()
+
+        assertEquals(listOf(prepared), documents.discarded)
+        assertNull(saved.get<String>("pending_pdf"))
+        assertTrue(documents.created.isEmpty())
+    }
+
+    @Test fun aCancelledLateImportDiscardsOnlyItsOwnDraftAndCannotReplaceTheNextImport() = runTest(dispatcher) {
+        val first = editor.scan
+        val gate = CompletableDeferred<Unit>()
+        editor.completionGate = gate
+        viewModel.chooseFile()
+        viewModel.fileSelected("content://external/first")
+        runCurrent()
+        viewModel.cancel()
+
+        editor.completionGate = null
+        editor.scan = first.copy(pdfUri = "file:///owned/second.pdf")
+        viewModel.chooseFile()
+        viewModel.fileSelected("content://external/second") { "Second.pdf" }
+        runCurrent()
+        val second = requireNotNull(viewModel.uiState.value.pending)
+        gate.complete(Unit)
+        runCurrent()
+
+        assertEquals(second, viewModel.uiState.value.pending)
+        assertEquals("Second", second.name)
+        assertEquals(listOf(first), documents.discarded)
+        assertTrue(documents.created.isEmpty())
+    }
+
+    @Test fun cancellationAfterLibraryCommitCannotDeleteTheOwnedDocument() = runTest(dispatcher) {
+        viewModel.chooseFile(PdfImportDestination.EDITOR)
+        viewModel.fileSelected("content://external/report")
+        runCurrent()
+        viewModel.saveForTool()
+        runCurrent()
+        val id = requireNotNull(viewModel.uiState.value.importedDocumentId)
+
+        viewModel.cancel()
+        store.clear()
+        runCurrent()
+
+        assertTrue(documents.documents.value.any { it.id == id })
+        assertTrue(documents.discarded.isEmpty())
+        assertTrue(documents.deleted.isEmpty())
     }
 
     @Test fun committingCannotBeCancelledHalfwayOrCreateDuplicates() = runTest(dispatcher) {
@@ -238,11 +297,15 @@ class PdfImportViewModelTest {
     private class FakeEditor : PdfEditorRepository {
         var scan = ScannedDocument("file:///owned/import.pdf", 3, 10, 4096, "file:///owned/preview.jpg")
         var failure: Exception? = null
+        var completionGate: CompletableDeferred<Unit>? = null
         val imported = mutableListOf<String>()
         override suspend fun importPdf(uri: String, password: String?, protectionKeyId: String?): ScannedDocument {
             imported += uri
             failure?.let { throw it }
-            return scan
+            val prepared = scan
+            val gate = completionGate
+            if (gate != null) withContext(NonCancellable) { gate.await() }
+            return prepared
         }
         override suspend fun open(document: DocumentModel, password: String?): PdfWorkspace = error("Fora deste fluxo")
         override suspend fun appendScans(workspace: PdfWorkspace, pageUris: List<String>): PdfWorkspace = error("Fora deste fluxo")

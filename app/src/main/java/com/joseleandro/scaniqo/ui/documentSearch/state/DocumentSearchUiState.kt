@@ -7,4 +7,5 @@ data class DocumentSearchUiState(
     val results: List<DocumentSearchResult> = emptyList(),
     val isSearching: Boolean = false,
     val loadError: Boolean = false,
+    val resultLimitReached: Boolean = false,
 )

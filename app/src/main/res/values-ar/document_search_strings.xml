@@ -24,4 +24,5 @@
         <item quantity="many">عُثر على %d مستندًا</item>
         <item quantity="other">عُثر على %d مستند</item>
     </plurals>
+    <string name="document_search_result_limit">تُعرض أول %1$d نتيجة. حدّد البحث أكثر للعثور على مستندات أخرى.</string>
 </resources>

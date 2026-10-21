@@ -111,11 +111,12 @@ class AndroidPdfUtilityRepository(
             }
             // A cópia local perde a interatividade dos campos, mantendo sua aparência preenchida.
             source.documentCatalog.acroForm?.flatten()
+            val sourcePages = PdfPageIndex(source, currentCoroutineContext())
             PDDocument().use { output ->
                 val copier = PdfExtractPageCopier(output)
                 pages.forEach { index ->
                     currentCoroutineContext().ensureActive()
-                    copier.copy(source.getPage(index))
+                    copier.copy(sourcePages[index])
                 }
                 if (document.isProtected) PdfProtection.apply(output, requireNotNull(password))
                 output.save(target)

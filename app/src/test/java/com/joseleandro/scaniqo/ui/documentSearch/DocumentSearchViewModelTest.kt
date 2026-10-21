@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.DocumentSearchResult
+import com.joseleandro.scaniqo.domain.model.DocumentSearchUpdate
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import com.joseleandro.scaniqo.domain.repository.DocumentSearchRepository
 import com.joseleandro.scaniqo.ui.documentCommon.FakeDocumentRepository
 import kotlinx.coroutines.CompletableDeferred
@@ -86,12 +89,15 @@ class DocumentSearchViewModelTest {
 
     @Test
     fun replacingQueryCancelsAnInFlightSearchAndNeverShowsItsResults() = runTest(dispatcher) {
+        search.progressive = true
         val gate = CompletableDeferred<Unit>()
         search.gate = gate
         observe()
         viewModel.onQueryChanged("old")
         finishDebounce()
         assertEquals(listOf("old"), search.queries)
+        assertEquals("old partial", viewModel.uiState.value.results.single().contentSnippet)
+        assertTrue(viewModel.uiState.value.isSearching)
 
         search.gate = null
         viewModel.onQueryChanged("new")
@@ -212,6 +218,18 @@ class DocumentSearchViewModelTest {
         var gate: CompletableDeferred<Unit>? = null
         var failure: Exception? = null
         var nonCancellable = false
+        var progressive = false
+
+        override fun searchUpdates(
+            documents: List<DocumentModel>,
+            query: String,
+        ): Flow<DocumentSearchUpdate> = if (!progressive) super.searchUpdates(documents, query) else flow {
+            emit(DocumentSearchUpdate(
+                documents.map { DocumentSearchResult(it, false, "$query partial", 1) },
+                isComplete = false,
+            ))
+            emit(DocumentSearchUpdate(search(documents, query), isComplete = true))
+        }
 
         override suspend fun search(
             documents: List<DocumentModel>,

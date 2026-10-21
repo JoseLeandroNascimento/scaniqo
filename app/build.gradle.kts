@@ -69,7 +69,16 @@ val extractPdfBoxUnitTestAssets = tasks.register<Sync>("extractPdfBoxUnitTestAss
     }
     into(layout.buildDirectory.dir("generated/pdfboxUnitTestAssets"))
 }
+// Heavy fixtures are opt-in so everyday unit tests do not create hundreds of MiB of data.
+val runLoadTests = providers.gradleProperty("scaniqo.loadTests").map(String::toBoolean).orElse(false)
 android.testOptions.unitTests.all { test ->
+    if (!runLoadTests.get()) {
+        test.filter.excludeTestsMatching("*LoadTest")
+    } else {
+        test.maxParallelForks = 1
+        test.maxHeapSize = "512m"
+        test.testLogging.showStandardStreams = true
+    }
     test.dependsOn(extractPdfBoxUnitTestAssets)
     test.classpath += files(extractPdfBoxUnitTestAssets)
     // Robolectric usa APIs Android reais nos testes de campos e camadas PDF.

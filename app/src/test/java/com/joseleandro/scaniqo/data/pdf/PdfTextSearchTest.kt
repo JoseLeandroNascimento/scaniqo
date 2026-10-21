@@ -128,6 +128,25 @@ class PdfTextSearchTest {
         }
     }
 
+    @Test
+    fun overlappingPrefixesAndUnicodeCasePairsKeepTheFirstMatch() {
+        assertEquals(PdfTextMatch("AAAAAAAB trailing", 1), find("aaaaab", listOf("AAAA", "AAAB trailing")))
+        assertEquals(PdfTextMatch("İsτΣ", 1), find("isΤσ", listOf("İs", "τΣ")))
+    }
+
+    @Test
+    fun deterministicChunkingsAgreeWithAWholePageSearch() {
+        val random = kotlin.random.Random(42)
+        repeat(200) {
+            val text = buildString { repeat(500) { append("abAB\n\t "[random.nextInt(7)]) } }
+            val query = listOf("aab", "bb a", "aba", "bbaab")[random.nextInt(4)]
+            val normalized = normalizeSearchWhitespace(text)
+            val match = find(query, text.chunked(random.nextInt(1, 25)))
+            assertEquals(normalized.contains(query, ignoreCase = true), match != null)
+            if (match != null) assertTrue(match.snippet.contains(query, ignoreCase = true))
+        }
+    }
+
     private fun find(query: String, pieces: List<String>): PdfTextMatch? {
         val writer = PdfSearchSnippetWriter(query, EmptyCoroutineContext)
         return captureMatch {

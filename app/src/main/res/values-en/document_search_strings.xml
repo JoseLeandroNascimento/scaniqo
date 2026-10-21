@@ -19,4 +19,5 @@
         <item quantity="one">%d document found</item>
         <item quantity="other">%d documents found</item>
     </plurals>
+    <string name="document_search_result_limit">Showing the first %1$d results. Refine your search to find other documents.</string>
 </resources>

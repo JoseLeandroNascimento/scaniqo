@@ -11,6 +11,7 @@ import com.tom_roush.pdfbox.cos.COSStream
 import com.tom_roush.pdfbox.cos.COSString
 import com.tom_roush.pdfbox.pdfparser.PDFStreamParser
 import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.pdmodel.PDPage
 import com.tom_roush.pdfbox.pdmodel.PDResources
 import com.tom_roush.pdfbox.pdmodel.graphics.form.PDFormXObject
 import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject
@@ -31,9 +32,11 @@ internal data class PdfNativeContent(
     val shouldPreserve: Boolean get() = hasText || hasVectors
 
     companion object {
-        suspend fun inspect(document: PDDocument, pageIndex: Int): PdfNativeContent {
+        suspend fun inspect(document: PDDocument, pageIndex: Int): PdfNativeContent =
+            inspect(document.getPage(pageIndex))
+
+        suspend fun inspect(page: PDPage): PdfNativeContent {
             currentCoroutineContext().ensureActive()
-            val page = document.getPage(pageIndex)
             var text = false
             var largestImage = 0
             var vectors = false

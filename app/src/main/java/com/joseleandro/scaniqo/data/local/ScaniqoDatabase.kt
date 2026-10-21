@@ -12,7 +12,7 @@ import com.joseleandro.scaniqo.data.local.document.DocumentEntity
 
 @Database(
     entities = [DocumentEntity::class, TagEntity::class],
-    version = 6,
+    version = 7,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -20,6 +20,7 @@ import com.joseleandro.scaniqo.data.local.document.DocumentEntity
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5),
         AutoMigration(from = 5, to = 6),
+        AutoMigration(from = 6, to = 7),
     ],
 )
 abstract class ScaniqoDatabase : RoomDatabase() {

@@ -19,4 +19,5 @@
         <item quantity="one">%dটি নথি পাওয়া গেছে</item>
         <item quantity="other">%dটি নথি পাওয়া গেছে</item>
     </plurals>
+    <string name="document_search_result_limit">প্রথম %1$dটি ফলাফল দেখানো হচ্ছে। অন্য নথি খুঁজতে অনুসন্ধান আরও নির্দিষ্ট করুন।</string>
 </resources>

@@ -53,11 +53,14 @@ internal class OriginalPdfFiles(context: Context, feature: String) {
                     }
                 }
             } ?: throw IOException("Não foi possível abrir o arquivo selecionado.")
+            // A provider may complete its final blocking read after cancellation.
+            currentCoroutineContext().ensureActive()
             val name = runCatching {
                 resolver.query(uri.toUri(), arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use {
                     if (it.moveToFirst()) it.getString(0) else null
                 }
             }.getOrNull()?.takeIf { it.isNotBlank() }?.take(160) ?: "Documento.pdf"
+            currentCoroutineContext().ensureActive()
             origins[target.name] = uri
             return target to name
         } catch (failure: Throwable) {

@@ -8,16 +8,25 @@ import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.repository.DocumentRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DocumentRepositoryImpl(
     private val documentDatasource: DocumentDatasource,
     private val fileStore: DocumentFileStore,
+    private val mappingDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val nowMillis: () -> Long = System::currentTimeMillis
 ) : DocumentRepository {
 
@@ -25,10 +34,22 @@ class DocumentRepositoryImpl(
     private val mutationMutex = Mutex()
 
     override fun observeDocuments(): Flow<List<DocumentModel>> =
-        documentDatasource.documentsObserver.map { documents -> documents.map { it.toModel() } }
+        documentDatasource.documentsObserver.models()
 
     override fun observeTrashedDocuments(): Flow<List<DocumentModel>> =
-        documentDatasource.trashedDocumentsObserver.map { documents -> documents.map { it.toModel() } }
+        documentDatasource.trashedDocumentsObserver.models()
+
+    // O Room lê em background; a projeção também precisa ficar fora da thread da interface.
+    private fun Flow<List<DocumentEntity>>.models(): Flow<List<DocumentModel>> =
+        mapLatest { documents ->
+            val context = currentCoroutineContext()
+            ArrayList<DocumentModel>(documents.size).apply {
+                documents.forEachIndexed { index, document ->
+                    if (index % 256 == 0) context.ensureActive()
+                    add(document.toModel())
+                }
+            }
+        }.distinctUntilChanged().flowOn(mappingDispatcher)
 
     override suspend fun findById(id: Long): DocumentModel? =
         documentDatasource.findById(id)?.toModel()

@@ -7,6 +7,8 @@ import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import java.io.IOException
+import java.util.concurrent.Executors
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -401,6 +403,34 @@ class DocumentRepositoryImplTest {
 
         assertEquals(1, repository.observeTrashedDocuments().first().size)
         assertTrue(fileStore.deletedUris.isEmpty())
+    }
+
+    @Test
+    fun metadataProjectionDoesNotRunOnTheCollectorsThread() = runBlocking {
+        val collectorThread = Thread.currentThread()
+        val threads = mutableSetOf<Thread>()
+        lateinit var workerThread: Thread
+        val entity = DocumentEntity(
+            id = 1L, name = "Invoice", pdfUri = "file:///fixture.pdf", pageCount = 1,
+        )
+        datasource.documents.value = object : AbstractList<DocumentEntity>() {
+            override val size = 1
+            override fun get(index: Int): DocumentEntity {
+                threads += Thread.currentThread()
+                return entity
+            }
+        }
+        Executors.newSingleThreadExecutor { task ->
+            Thread(task, "metadata-projection").also { workerThread = it }
+        }.asCoroutineDispatcher().use { dispatcher ->
+            val observed = DocumentRepositoryImpl(
+                datasource, fileStore, mappingDispatcher = dispatcher,
+            ).observeDocuments().first()
+            assertEquals(listOf(entity.id), observed.map { it.id })
+        }
+
+        assertEquals(setOf(workerThread), threads)
+        assertTrue(workerThread !== collectorThread)
     }
 
     private suspend inline fun <reified T : Throwable> expectFailure(

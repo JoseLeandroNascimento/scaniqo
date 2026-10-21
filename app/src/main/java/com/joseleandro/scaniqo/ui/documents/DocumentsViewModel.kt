@@ -7,21 +7,32 @@ import com.joseleandro.scaniqo.domain.repository.DocumentRepository
 import com.joseleandro.scaniqo.domain.repository.TagRepository
 import com.joseleandro.scaniqo.ui.documents.event.DocumentsEvent
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
+import com.joseleandro.scaniqo.ui.documents.state.DocumentTagIndex
+import com.joseleandro.scaniqo.domain.model.TagModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /** Observa a biblioteca e mantém apenas o filtro da lista. */
+@OptIn(ExperimentalCoroutinesApi::class)
 class DocumentsViewModel(
     private val repository: DocumentRepository,
     private val tagRepository: TagRepository,
     private val savedStateHandle: SavedStateHandle,
+    private val computationDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
     private val mutableUiState = MutableStateFlow(
         DocumentsUiState(selectedTagId = savedStateHandle[SELECTED_TAG_ID]),
@@ -29,6 +40,8 @@ class DocumentsViewModel(
     val uiState: StateFlow<DocumentsUiState> = mutableUiState.asStateFlow()
     private var observationJob: Job? = null
     private var tagsLoaded = false
+    private var documentIndex = DocumentTagIndex.build(emptyList())
+    private var tagsById: Map<Long, TagModel> = emptyMap()
     private var lastCreatedDocumentId: Long? = savedStateHandle[LAST_CREATED_DOCUMENT_ID]
 
     init {
@@ -63,21 +76,27 @@ class DocumentsViewModel(
             previousJob?.cancelAndJoin()
             try {
                 combine(
-                    repository.observeDocuments(),
+                    repository.observeDocuments().mapLatest { documents ->
+                        val context = currentCoroutineContext()
+                        DocumentTagIndex.build(documents) { context.ensureActive() }
+                    },
                     tagRepository.observeTags(),
-                ) { documents, tags -> documents to tags }.collect { (documents, tags) ->
-                    tagsLoaded = true
-                    val tagIds = tags.mapTo(mutableSetOf()) { it.id }
-                    updateState {
-                        it.copy(
-                            documents = documents,
-                            tags = tags,
-                            selectedTagId = it.selectedTagId?.takeIf(tagIds::contains),
-                            isLoading = false,
-                            loadError = false,
-                        )
+                ) { index, tags -> Triple(index, tags, tags.associateBy { it.id }) }
+                    .flowOn(computationDispatcher)
+                    .collect { (index, tags, tagMap) ->
+                        tagsLoaded = true
+                        documentIndex = index
+                        tagsById = tagMap
+                        updateState {
+                            it.copy(
+                                documents = index.documents,
+                                tags = tags,
+                                selectedTagId = it.selectedTagId?.takeIf(tagsById::containsKey),
+                                isLoading = false,
+                                loadError = false,
+                            )
+                        }
                     }
-                }
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {
@@ -87,10 +106,13 @@ class DocumentsViewModel(
     }
 
     private fun validTagId(tagId: Long?): Long? =
-        tagId?.takeIf { id -> !tagsLoaded || uiState.value.tags.any { it.id == id } }
+        tagId?.takeIf { id -> !tagsLoaded || tagsById.containsKey(id) }
 
     private fun updateState(update: (DocumentsUiState) -> DocumentsUiState) {
-        mutableUiState.update(update)
+        mutableUiState.update { current ->
+            val updated = update(current)
+            updated.withPreparedLookups(documentIndex, tagsById)
+        }
         savedStateHandle[SELECTED_TAG_ID] = uiState.value.selectedTagId
         savedStateHandle[LAST_CREATED_DOCUMENT_ID] = lastCreatedDocumentId
     }

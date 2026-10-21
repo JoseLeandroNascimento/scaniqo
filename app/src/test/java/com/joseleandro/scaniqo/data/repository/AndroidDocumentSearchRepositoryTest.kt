@@ -8,7 +8,14 @@ import com.tom_roush.pdfbox.pdmodel.encryption.AccessPermission
 import com.tom_roush.pdfbox.pdmodel.encryption.StandardProtectionPolicy
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
+import com.joseleandro.scaniqo.domain.model.DocumentSearchUpdate
+import com.joseleandro.scaniqo.domain.repository.DocumentSearchRepository
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -16,6 +23,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class AndroidDocumentSearchRepositoryTest {
     @Test
     fun blankQueryDoesNotOpenAnyFiles() = runTest {
@@ -205,6 +213,90 @@ class AndroidDocumentSearchRepositoryTest {
         )
 
         assertTrue(repository.search(listOf(document(1, "Digitalização")), "contrato").isEmpty())
+    }
+
+    @Test
+    fun publishesNamesWhilePdfSearchIsStillRunningAndNeverDuplicatesDocuments() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        val updates = mutableListOf<DocumentSearchUpdate>()
+        val originals = listOf(document(1, "Other"), document(2, "Contract"), document(1, "Other"))
+        val repository = AndroidDocumentSearchRepository(
+            openPdf = { PDDocument() },
+            ioDispatcher = StandardTestDispatcher(testScheduler),
+            searchContent = { _, _ -> gate.await(); PdfTextMatch("contract content", 4) },
+        )
+        val collecting = launch { repository.searchUpdates(originals, "contract").toList(updates) }
+        runCurrent()
+        assertEquals(listOf(2L), updates.last().results.map { it.document.id })
+        assertFalse(updates.last().isComplete)
+        gate.complete(Unit)
+        collecting.join()
+        assertEquals(listOf(2L, 1L), updates.last().results.map { it.document.id })
+        assertEquals(4, updates.last().results.last().pageNumber)
+        assertTrue(updates.last().isComplete)
+        assertFalse(updates.last().resultLimitReached)
+    }
+
+    @Test
+    fun enoughNameMatchesStopBeforeOpeningPdfsAndPublishOnlyBatches() = runTest {
+        var opened = 0
+        val originals = listOf(document(0, "Content candidate")) +
+            (1L..1_000L).flatMap { id -> listOf(document(id, "Contract"), document(id, "Contract")) }
+        val repository = AndroidDocumentSearchRepository(
+            openPdf = { opened++; PDDocument() },
+            ioDispatcher = StandardTestDispatcher(testScheduler),
+        )
+        val updates = repository.searchUpdates(originals, "contract").toList()
+        val final = updates.last()
+        assertEquals(DocumentSearchRepository.MAX_RESULTS, final.results.size)
+        assertEquals(final.results.size, final.results.map { it.document.id }.distinct().size)
+        assertTrue(final.isComplete)
+        assertTrue(final.resultLimitReached)
+        assertTrue(updates.size <= 17)
+        assertEquals(0, opened)
+    }
+
+    @Test
+    fun contentResultLimitStopsOpeningAdditionalFiles() = runTest {
+        var opened = 0
+        val repository = AndroidDocumentSearchRepository(
+            openPdf = { opened++; PDDocument() },
+            ioDispatcher = StandardTestDispatcher(testScheduler),
+            searchContent = { _, _ -> PdfTextMatch("contract", 2) },
+        )
+        val updates = repository.searchUpdates(
+            (1L..1_000L).map { document(it, "Other") }, "contract",
+        ).toList()
+        assertEquals(DocumentSearchRepository.MAX_RESULTS, opened)
+        assertEquals(DocumentSearchRepository.MAX_RESULTS, updates.last().results.size)
+        assertTrue(updates.last().resultLimitReached)
+        assertTrue(updates.last().isComplete)
+    }
+
+    @Test
+    fun cancellingProgressiveCollectionClosesTheActivePdfAndDoesNotOpenTheNextOne() = runTest {
+        var opened = 0
+        var closed = 0
+        val gate = CompletableDeferred<Unit>()
+        val repository = AndroidDocumentSearchRepository(
+            openPdf = {
+                opened++
+                object : PDDocument() {
+                    override fun close() { closed++; super.close() }
+                }
+            },
+            ioDispatcher = StandardTestDispatcher(testScheduler),
+            searchContent = { _, _ -> gate.await(); null },
+        )
+        val collecting = launch {
+            repository.searchUpdates(listOf(document(1, "One"), document(2, "Two")), "contract").toList()
+        }
+        runCurrent()
+        assertEquals(1, opened)
+        collecting.cancel()
+        collecting.join()
+        assertEquals(1, closed)
+        assertEquals(1, opened)
     }
 
     private fun document(id: Long, name: String, protected: Boolean = false) = DocumentModel(

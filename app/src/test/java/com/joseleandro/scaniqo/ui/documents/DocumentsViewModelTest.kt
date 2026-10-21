@@ -38,7 +38,7 @@ class DocumentsViewModelTest {
 
     // A coleta inicial começa dentro do teste, após configurar os valores e as falhas do fake.
     private val viewModel by lazy {
-        DocumentsViewModel(repository, tagRepository, savedStateHandle)
+        DocumentsViewModel(repository, tagRepository, savedStateHandle, dispatcher)
             .also { viewModelStore.put("documents", it) }
     }
 
@@ -305,7 +305,7 @@ class DocumentsViewModelTest {
         val savedValues = savedStateHandle.keys().associateWith { savedStateHandle.get<Any?>(it) }
         viewModelStore.clear()
         dispatcher.scheduler.runCurrent()
-        return DocumentsViewModel(repository, tagRepository, SavedStateHandle(savedValues))
+        return DocumentsViewModel(repository, tagRepository, SavedStateHandle(savedValues), dispatcher)
             .also { viewModelStore.put("restored", it) }
     }
 }

@@ -48,8 +48,11 @@ import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+
+private val pageRenderGate = DocumentPageRenderGate()
 
 /** Renderiza o próprio PDF exportável; as margens e o enquadramento pertencem ao arquivo. */
 @Composable
@@ -147,7 +150,7 @@ private fun DocumentPageImage(
     var retry by remember(pdfUri, pageIndex, thumbnailUri) { mutableIntStateOf(0) }
     val state by produceState<PageImageState>(
         initialValue = PageImageState.Loading,
-        pdfUri, pageIndex, thumbnailUri, retry,
+        pdfUri, pageIndex, thumbnailUri, compact, retry,
     ) {
         val previous = if (retainPrevious) when (val current = value) {
             is PageImageState.Ready -> current.bitmap
@@ -158,14 +161,16 @@ private fun DocumentPageImage(
         var decoded: Bitmap? = null
         try {
             withContext(Dispatchers.IO) {
-                decoded = if (compact && thumbnailUri != null) {
-                    runCatching { decodeThumbnail(context, thumbnailUri) }.getOrNull()
-                } else null
-                ensureActive()
-                if (decoded == null) {
-                    decoded = renderPage(context, pdfUri, pageIndex, if (compact) 280 else 1400)
+                pageRenderGate.render {
+                    decoded = if (compact && thumbnailUri != null) {
+                        runCatching { decodeThumbnail(context, thumbnailUri) }.getOrNull()
+                    } else null
+                    currentCoroutineContext().ensureActive()
+                    if (decoded == null) {
+                        decoded = renderPage(context, pdfUri, pageIndex, if (compact) 280 else 1400)
+                    }
+                    currentCoroutineContext().ensureActive()
                 }
-                ensureActive()
             }
             value = PageImageState.Ready(requireNotNull(decoded))
         } catch (cancelled: CancellationException) {
@@ -267,11 +272,8 @@ private fun renderPage(context: Context, uri: String, pageIndex: Int, maxWidth: 
         PdfRenderer(file).use { renderer ->
             require(pageIndex in 0 until renderer.pageCount)
             renderer.openPage(pageIndex).use { page ->
-                val width = maxWidth
-                val height = (width.toFloat() * page.height / page.width).toInt().coerceAtLeast(1)
-                // Protege a memória caso um arquivo antigo tenha proporções inesperadas.
-                require(height <= maxWidth * 4)
-                val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                val size = documentPageRasterSize(page.width, page.height, maxWidth)
+                val bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
                 try {
                     bitmap.eraseColor(android.graphics.Color.WHITE)
                     page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)

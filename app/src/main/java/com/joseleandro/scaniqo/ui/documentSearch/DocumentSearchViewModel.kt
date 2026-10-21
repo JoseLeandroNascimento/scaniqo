@@ -57,9 +57,15 @@ class DocumentSearchViewModel(
             // Evita abrir PDFs a cada tecla e permite cancelar ao mudar a consulta.
             delay(SEARCH_DEBOUNCE_MILLIS)
             try {
-                val results = searchRepository.search(documents, query.trim())
-                currentCoroutineContext().ensureActive()
-                emit(DocumentSearchUiState(query = query, results = results))
+                searchRepository.searchUpdates(documents, query.trim()).collect { update ->
+                    currentCoroutineContext().ensureActive()
+                    emit(DocumentSearchUiState(
+                        query = query,
+                        results = update.results,
+                        isSearching = !update.isComplete,
+                        resultLimitReached = update.resultLimitReached,
+                    ))
+                }
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {

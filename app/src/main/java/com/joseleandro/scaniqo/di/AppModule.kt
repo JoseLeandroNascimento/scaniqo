@@ -65,7 +65,8 @@ val appModule = module {
     viewModelOf(::NavigationViewModel)
 
     viewModelOf(::TagsViewModel)
-    viewModelOf(::DocumentsViewModel)
+    // Usa o dispatcher padrão do ViewModel sem exigir um binding global no Koin.
+    viewModel { DocumentsViewModel(get(), get(), get()) }
     viewModelOf(::TrashViewModel)
     viewModelOf(::DocumentSearchViewModel)
     viewModelOf(::PdfUtilityViewModel)

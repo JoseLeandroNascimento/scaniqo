@@ -18,4 +18,5 @@
     <plurals name="document_search_result_count">
         <item quantity="other">%d dokumen ditemukan</item>
     </plurals>
+    <string name="document_search_result_limit">Menampilkan %1$d hasil pertama. Persempit pencarian untuk menemukan dokumen lain.</string>
 </resources>

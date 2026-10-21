@@ -1,0 +1,233 @@
+{
+  "date": "2026-10-21",
+  "environment": {
+    "runner": "Gradle JVM unit tests and Robolectric; Windows host",
+    "maxHeapMiB": 512,
+    "parallelForks": 1,
+    "deviceMeasurements": false,
+    "timingCaveat": "Single diagnostic samples, not warmed repeated benchmarks. Times are not Android device latency."
+  },
+  "commands": {
+    "load": "./gradlew :app:testDebugUnitTest -Pscaniqo.loadTests=true --tests '*LoadTest'",
+    "regression": "./gradlew :app:testDebugUnitTest",
+    "build": "./gradlew :app:assembleDebug",
+    "repeatLoadMeasurements": "./gradlew :app:testDebugUnitTest -Pscaniqo.loadTests=true --tests '*LoadTest' --rerun-tasks"
+  },
+  "baseline": {
+    "library": {
+      "documents": 100000,
+      "filterReads": 20100000,
+      "filterRepeats": 200,
+      "filterElapsedMs": 189.9708,
+      "filterSetupMs": 1.0182
+    },
+    "database": {
+      "rows": 100000,
+      "insertMs": 539.9768,
+      "activeQueryMs": 2088.4525,
+      "trashQueryMs": 181.2111,
+      "uriLookup26Ms": 237.5408,
+      "queryPlans": {
+        "active": "SCAN TABLE documents | USE TEMP B-TREE FOR ORDER BY",
+        "trash": "SCAN TABLE documents | USE TEMP B-TREE FOR ORDER BY",
+        "uri": "SCAN TABLE documents"
+      }
+    },
+    "pdfPageAccess": {
+      "pages": 10000,
+      "result": "Regression test failed at 20001 Kids-array reads; aborted before completing quadratic traversal"
+    }
+  },
+  "measuredAfter": {
+    "database": {
+      "rows": 100000,
+      "insertMs": 725.5231,
+      "activeQueryMs": 714.8529,
+      "trashQueryMs": 89.8449,
+      "uriLookup26Ms": 17.6099,
+      "queryPlans": {
+        "active": "SEARCH TABLE documents USING INDEX index_documents_deletedAt_createdAt_id (deletedAt=?)",
+        "trash": "SCAN TABLE documents USING INDEX index_documents_deletedAt_id",
+        "uri": "SEARCH TABLE documents USING INDEX index_documents_pdfUri (pdfUri=?)"
+      }
+    },
+    "streamingExport": {
+      "bytes": 536871340,
+      "readCalls": 65538,
+      "maxReadRequestBytes": 8192,
+      "elapsedMs": 1418,
+      "observedHeapBytes": 103628016,
+      "integrity": "SHA-256 of exported bytes verified",
+      "fixture": "Valid one-page PDF padded with comments; measures streaming copy only, not rendering/parsing or import support"
+    },
+    "originalCopy": {
+      "boundaryBytes": 52428800,
+      "maxReadRequestBytes": 32768,
+      "boundaryElapsedMs": 172,
+      "rejectedSourceBytes": 536870912,
+      "bytesReadBeforeRejection": 52461568,
+      "partialCopyCleaned": true
+    },
+    "importStateMachine": {
+      "requests": 2500,
+      "committed": 2000,
+      "cancelled": 500,
+      "elapsedMs": 259,
+      "fixture": "Fake PDF repository; metadata delivery/state cleanup, not 2500 real PDF imports"
+    },
+    "renderScheduling": {
+      "requests": 10000,
+      "cancelledBeforeDecode": 9000,
+      "executed": 1000,
+      "peakConcurrent": 2,
+      "fixture": "Coroutine scheduling test; no native PDF rendering benchmark"
+    },
+    "library": {
+      "documents": 100000,
+      "filterReads": 100000,
+      "filterRepeats": 200,
+      "filterSetupMs": 0.0197,
+      "filterElapsedMs": 12.2082,
+      "viewModel": {
+        "documents": 100000,
+        "filters": 200,
+        "additionalFilterReads": 0,
+        "initialMs": 22.5324,
+        "filterMs": 2.9981
+      }
+    },
+    "pdfPageAccess": {
+      "pages": 10000,
+      "bytes": 1327038,
+      "kidsReads": 10000,
+      "reorderedAndReopened": true,
+      "elapsedMs": 986
+    },
+    "pdfTextSearch": {
+      "pages": 10000,
+      "bytes": 1518651,
+      "lastMatchPage": 10000,
+      "elapsedMs": 565
+    },
+    "pdfTextMatcher": {
+      "characters": 8388609,
+      "queryCharacters": 16385,
+      "snippetCharacters": 16450,
+      "elapsedMs": 64
+    },
+    "physicalDocumentLibrary": {
+      "physicalFiles": 10000,
+      "catalogCreations": 10000,
+      "templatePdfBytes": 440,
+      "totalPdfBytes": 4400000,
+      "fileCreationMs": 9026.7067,
+      "registrationMs": 5992.6863,
+      "listingMs": 153.9656,
+      "lookupAndIdempotence256Ms": 177.9807,
+      "trashRestore100Ms": 225.7729,
+      "fixture": "10000 small valid PDFs in real temporary files with on-disk Room and the production repository/file store; not complete PDF import or native rendering",
+      "validated": [
+        "registration",
+        "URI lookup and idempotent delivery",
+        "trash and restore",
+        "late-discard ownership protection",
+        "permanent deletion",
+        "original-file preservation",
+        "PDF bytes and sample parsing",
+        "database reopen and integrity"
+      ]
+    },
+    "largePdfImagePayload": {
+      "pages": 32,
+      "imageWidth": 4096,
+      "imageHeight": 4096,
+      "payloadBytes": 536870912,
+      "fileBytes": 536887779,
+      "verifiedImageBytes": 536870912,
+      "bufferBytes": 65536,
+      "generationMs": 1580.7832,
+      "saveMs": 2368.6861,
+      "openMs": 1875.3292,
+      "readAndVerifyMs": 952.4922,
+      "generationScratchBytes": 537067520,
+      "readingScratchBytes": 537001984,
+      "initialObservedHeapBytes": 84283144,
+      "peakObservedHeapBytes": 136878048,
+      "integrity": "SHA-256 verified for all image streams; scratch directories empty after close",
+      "fixture": "PDFBox with disk scratch; real uncompressed grayscale image streams, not native bitmap rendering or the full app import/edit workflow",
+      "heapCaveat": "Sampled JVM heap, not a continuously measured peak, isolated allocation cost, or device/native memory"
+    }
+  },
+  "productLimits": {
+    "importAndEditing": {
+      "maxPages": 100,
+      "maxBytes": 52428800
+    },
+    "note": "Large fixtures exercise isolated components beyond product limits. These measurements do not certify 512 MiB or 10000-page editing support.",
+    "search": {
+      "maxResults": 500,
+      "progressive": true,
+      "persistentTextIndex": false,
+      "note": "A missing content query still scans candidate PDFs sequentially; PDFTextStripper keeps per-page text positions."
+    },
+    "rendering": {
+      "maxConcurrentDecodes": 2,
+      "maxPixelsPerFullPageBitmap": 3920000,
+      "note": "Bounds generated overview bitmap dimensions and overlapping decodes; does not bound PDF native allocations, displayed bitmap lifetime, or zoom detail on extreme aspect ratios."
+    },
+    "library": {
+      "pagination": false,
+      "note": "All document metadata is still materialized. Tag lookups reuse a prepared index per document snapshot."
+    }
+  },
+  "status": "completed",
+  "changes": [
+    "Room version 7 migration adds indices for active/trash sorting and PDF URI lookup.",
+    "Metadata projection and tag indexing run off the collecting UI thread; tag filter changes reuse prepared lookups.",
+    "Per-operation PDF page indexing avoids repeatedly traversing the page tree.",
+    "Text matching uses bounded query/context storage; search publishes progressive batches and limits results to 500.",
+    "PDF preview scheduling permits two simultaneous decodes; raster dimensions obey a pixel budget.",
+    "Cancellation closes streams and cleans pending imports and partial copies without deleting previously committed documents."
+  ],
+  "validation": {
+    "regression": {
+      "task": ":app:testDebugUnitTest",
+      "passed": 1140,
+      "skipped": 0,
+      "failed": 0
+    },
+    "loadScenarios": {
+      "status": "passed",
+      "execution": "Targeted Gradle runs with -Pscaniqo.loadTests=true; scenarios and component limits recorded above.",
+      "classes": [
+        "DocumentMetadataLoadTest",
+        "DocumentLibraryViewModelLoadTest",
+        "DocumentDatabaseLoadTest",
+        "PhysicalDocumentLibraryLoadTest",
+        "PdfPageIndexLoadTest",
+        "PdfTextSearchLoadTest",
+        "LargePdfPayloadLoadTest",
+        "DocumentFileStoreLoadTest",
+        "OriginalPdfFilesLoadTest",
+        "PdfImportVolumeLoadTest",
+        "DocumentPageRenderLoadTest"
+      ]
+    },
+    "finalTargetedRun": {
+      "tests": [
+        "PhysicalDocumentLibraryLoadTest",
+        "LargePdfPayloadLoadTest",
+        "AndroidDocumentSearchRepositoryTest"
+      ],
+      "passed": 16,
+      "skipped": 0,
+      "failed": 0
+    },
+    "build": {
+      "task": ":app:assembleDebug",
+      "status": "passed"
+    },
+    "deviceOrInstrumentationTestsRun": false,
+    "fixtureSafety": "Load fixtures are temporary and do not use user documents. Streams and databases close before teardown; scratch cleanup and partial-copy cleanup are asserted. General TemporaryFolder deletion is requested by JUnit but not asserted as successful."
+  }
+}
