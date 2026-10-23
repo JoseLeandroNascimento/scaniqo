@@ -1,6 +1,7 @@
 package com.joseleandro.scaniqo.data.backup
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.joseleandro.scaniqo.data.pdf.PdfProjectRecipe
 import com.joseleandro.scaniqo.data.pdf.PdfProtection
 import com.joseleandro.scaniqo.data.pdf.RecipePage
@@ -24,7 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -39,29 +39,69 @@ import org.junit.rules.TemporaryFolder
 class AndroidDocumentBackupRepositoryTest {
     @get:Rule val temporary = TemporaryFolder()
 
-    @Test fun editableProjectRestoresAsANewCopyWithItsOriginalMetadataAndRelativeRecipe() = runBlocking {
+    @Test fun newBackupsRestoreOnlyFinalPdfsWithoutTagsOrEditingFiles() = runBlocking {
         val fixture = fixture()
         val tag = TagModel(9L, "Recibos", Color(0xff556677.toInt()), "folder")
         fixture.tags.state.value = listOf(tag)
         val original = fixture.seed(editable = true, tagId = tag.id)
         val directory = File(URI(original.pdfUri)).parentFile!!
         val originalRecipe = File(directory, "recipe.json").readBytes()
+        File(directory, "thumbnail.jpg").writeText("private thumbnail")
         val backup = fixture.repository.createBackup()
+        assertEquals(0, backup.editableProjectCount)
         val result = fixture.repository.restoreBackup(backup.file)
         assertEquals(1, result.documentCount)
-        assertEquals(1, result.editableProjectCount)
+        assertEquals(0, result.editableProjectCount)
         val restored = fixture.documents.state.value.single { it.id != original.id }
         assertNotEquals(original.pdfUri, restored.pdfUri)
+        assertEquals(original.name, restored.name)
         assertEquals(original.createdAt, restored.createdAt)
-        assertEquals(original.tagId, restored.tagId)
-        assertEquals(1, fixture.tags.state.value.size)
+        assertNull(restored.tagId)
+        assertNull(restored.thumbnailUri)
+        assertEquals(listOf(tag), fixture.tags.state.value)
         val newDirectory = File(URI(restored.pdfUri)).parentFile!!
-        assertArrayEquals(originalRecipe, File(newDirectory, "recipe.json").readBytes())
-        assertArrayEquals(File(directory, "sources.pdf").readBytes(), File(newDirectory, "sources.pdf").readBytes())
-        assertTrue(File(newDirectory, "signature_1234.png").isFile)
-        assertTrue(File(URI(original.pdfUri)).isFile)
+        assertEquals(listOf("document.pdf"), newDirectory.list()!!.toList())
+        assertArrayEquals(File(directory, "document.pdf").readBytes(), File(newDirectory, "document.pdf").readBytes())
+        assertArrayEquals(originalRecipe, File(directory, "recipe.json").readBytes())
+        assertTrue(File(directory, "sources.pdf").isFile)
+        assertTrue(File(directory, "signature_1234.png").isFile)
         fixture.repository.discard(backup.file)
         assertFalse(backup.file.exists())
+    }
+
+    @Test fun legacyBackupsStillRestoreEditableProjectsAndTags() = runBlocking {
+        val source = fixture()
+        val tag = TagModel(9L, "Recibos", Color(0xff556677.toInt()), "folder")
+        source.tags.state.value = listOf(tag)
+        val original = source.seed(editable = true, tagId = tag.id)
+        val directory = File(URI(original.pdfUri)).parentFile!!
+        val backup = legacyBackup(source)
+        val destination = fixture()
+        val download = destination.repository.createRestoreFile()
+        backup.copyTo(download, overwrite = true)
+        val result = destination.repository.restoreBackup(download)
+        assertEquals(1, result.editableProjectCount)
+        val restored = destination.documents.state.value.single()
+        val restoredTag = destination.tags.state.value.single()
+        assertEquals(tag.name, restoredTag.name)
+        assertEquals(tag.color, restoredTag.color)
+        assertEquals(restoredTag.id, restored.tagId)
+        val newDirectory = File(URI(restored.pdfUri)).parentFile!!
+        listOf("document.pdf", "sources.pdf", "recipe.json", "signature_1234.png").forEach {
+            assertArrayEquals(File(directory, it).readBytes(), File(newDirectory, it).readBytes())
+        }
+    }
+
+    @Test fun brokenAuxiliaryFilesDoNotPreventBackingUpTheFinalPdf() = runBlocking {
+        val fixture = fixture()
+        val original = fixture.seed(editable = true)
+        val directory = File(URI(original.pdfUri)).parentFile!!
+        File(directory, "recipe.json").writeText("{broken")
+        File(directory, "sources.pdf").writeText("not a PDF")
+        val backup = fixture.repository.createBackup()
+        assertEquals(1, backup.documentCount)
+        assertEquals(0, backup.editableProjectCount)
+        ZipFile(backup.file).use { assertEquals(2, it.size()) }
     }
 
     @Test fun backupIncludesOnlyActiveDocumentsAndPreservesTrashedProjectFiles() = runBlocking {
@@ -114,10 +154,10 @@ class AndroidDocumentBackupRepositoryTest {
         source.tags.state.value = listOf(TagModel(8L, "Trabalho", Color.Blue))
         source.seed(tagId = 8L)
         source.seed(tagId = 8L)
-        val backup = source.repository.createBackup()
+        val backup = legacyBackup(source)
         val destination = fixture()
         val download = destination.repository.createRestoreFile()
-        backup.file.copyTo(download, overwrite = true)
+        backup.copyTo(download, overwrite = true)
         destination.documents.failAfterInsertOnCall = 2
         expectFailure { destination.repository.restoreBackup(download) }
         assertTrue(destination.documents.state.value.isEmpty())
@@ -163,7 +203,7 @@ class AndroidDocumentBackupRepositoryTest {
         val archive = temporary.newFile()
         DocumentBackupArchive().write(archive, listOf(BackupDocumentSource(
             BackupDocument(UUID.randomUUID().toString(), "Inválido", 1, 1L, null, false, false),
-            source, listOf("document.pdf"))), emptyList())
+            source, listOf("document.pdf"))))
         val destination = fixture()
         val download = destination.repository.createRestoreFile()
         archive.copyTo(download, overwrite = true)
@@ -180,6 +220,26 @@ class AndroidDocumentBackupRepositoryTest {
         val download = fixture.repository.createRestoreFile()
         fixture.repository.discard(download)
         assertFalse(download.exists())
+    }
+
+    private fun legacyBackup(fixture: Fixture): File {
+        val tagKeys = fixture.tags.state.value.associate { it.id to UUID.randomUUID().toString() }
+        val sources = fixture.documents.state.value.map { document ->
+            val directory = File(URI(document.pdfUri)).parentFile!!
+            val names = directory.listFiles()!!.map { it.name }.sorted()
+            BackupDocumentSource(
+                BackupDocument(
+                    key = UUID.randomUUID().toString(), name = document.name, pageCount = document.pageCount,
+                    createdAt = document.createdAt, tagKey = document.tagId?.let(tagKeys::getValue),
+                    protected = document.isProtected, editableProject = "sources.pdf" in names,
+                ), directory, names,
+            )
+        }
+        return temporary.newFile().also { target ->
+            writeLegacyDocumentBackup(target, sources, fixture.tags.state.value.map {
+                BackupTag(tagKeys.getValue(it.id), it.name, it.color.toArgb(), it.iconKey)
+            })
+        }
     }
 
     private fun fixture(): Fixture {

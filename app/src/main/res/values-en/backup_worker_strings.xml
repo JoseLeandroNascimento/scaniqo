@@ -1,0 +1,5 @@
+<resources>
+    <string name="backup_notification_channel">Document backup</string>
+    <string name="backup_notification_title">Backup in progress</string>
+    <string name="backup_notification_message">Saving your PDFs to Google Drive.</string>
+</resources>

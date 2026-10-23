@@ -74,6 +74,7 @@ internal fun DriveAuthorizationHandler(viewModel: DriveBackupViewModel) {
         try {
             val request = AuthorizationRequest.builder()
                 .setRequestedScopes(listOf(Scope(DRIVE_FILE_SCOPE)))
+                .apply { viewModel.authorizationAccount(requestId)?.let { setAccount(Account(it, "com.google")) } }
                 .build()
             client.authorize(request)
                 .addOnSuccessListener { result ->
@@ -81,6 +82,10 @@ internal fun DriveAuthorizationHandler(viewModel: DriveBackupViewModel) {
                     if (!lifetime.active || !viewModel.isAwaitingAuthorization(requestId)) return@addOnSuccessListener
                     if (lifetime.inFlight == requestId) lifetime.inFlight = null
                     if (result.hasResolution()) {
+                        if (!viewModel.authorizationMayShowUi(requestId)) {
+                            viewModel.authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION)
+                            return@addOnSuccessListener
+                        }
                         val intent = result.pendingIntent
                         if (intent == null) {
                             viewModel.authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION)
@@ -113,16 +118,20 @@ internal fun DriveAuthorizationHandler(viewModel: DriveBackupViewModel) {
             when (effect) {
                 is DriveBackupEffect.Authorize -> authorize(effect.requestId)
                 is DriveBackupEffect.ClearToken -> {
-                    client.clearToken(ClearTokenRequest.builder().setToken(effect.token).build())
+                    runCatching { client.clearToken(ClearTokenRequest.builder().setToken(effect.token).build()) }
                 }
                 is DriveBackupEffect.Revoke -> {
-                    val request = RevokeAccessRequest.builder()
-                        .setAccount(Account(effect.email, "com.google"))
-                        .setScopes(listOf(Scope(DRIVE_FILE_SCOPE)))
-                        .build()
-                    client.revokeAccess(request)
-                        .addOnSuccessListener { viewModel.disconnected(effect.requestId, success = true) }
-                        .addOnFailureListener { viewModel.disconnected(effect.requestId, success = false) }
+                    try {
+                        val request = RevokeAccessRequest.builder()
+                            .setAccount(Account(effect.email, "com.google"))
+                            .setScopes(listOf(Scope(DRIVE_FILE_SCOPE)))
+                            .build()
+                        client.revokeAccess(request)
+                            .addOnSuccessListener { viewModel.disconnected(effect.requestId, success = true) }
+                            .addOnFailureListener { viewModel.disconnected(effect.requestId, success = false) }
+                    } catch (_: Exception) {
+                        viewModel.disconnected(effect.requestId, success = false)
+                    }
                 }
             }
         }

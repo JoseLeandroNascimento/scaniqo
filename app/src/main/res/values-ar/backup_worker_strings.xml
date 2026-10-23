@@ -1,0 +1,5 @@
+<resources>
+    <string name="backup_notification_channel">النسخ الاحتياطي للمستندات</string>
+    <string name="backup_notification_title">جارٍ النسخ الاحتياطي</string>
+    <string name="backup_notification_message">جارٍ حفظ ملفات PDF في Google Drive.</string>
+</resources>

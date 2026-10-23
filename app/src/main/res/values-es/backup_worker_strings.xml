@@ -1,0 +1,5 @@
+<resources>
+    <string name="backup_notification_channel">Copia de seguridad de documentos</string>
+    <string name="backup_notification_title">Copia de seguridad en curso</string>
+    <string name="backup_notification_message">Guardando tus PDF en Google Drive.</string>
+</resources>

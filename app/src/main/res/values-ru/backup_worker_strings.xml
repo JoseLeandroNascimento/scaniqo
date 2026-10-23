@@ -1,0 +1,5 @@
+<resources>
+    <string name="backup_notification_channel">Резервное копирование документов</string>
+    <string name="backup_notification_title">Создание резервной копии</string>
+    <string name="backup_notification_message">Сохранение PDF на Google Диске.</string>
+</resources>

@@ -56,7 +56,8 @@ class GoogleDriveBackupRemote internal constructor(
     override suspend fun listBackups(accessToken: String): List<DriveBackupEntry> = withContext(Dispatchers.IO) {
         val query = "trashed = false and mimeType = 'application/zip' and " +
             "appProperties has { key='kind' and value='scaniqo-backup' } and " +
-            "appProperties has { key='version' and value='1' }"
+            "(appProperties has { key='version' and value='1' } or " +
+            "appProperties has { key='version' and value='2' })"
         listFiles(accessToken, query, ENTRY_FIELDS).map(::entry)
             .distinctBy(DriveBackupEntry::id).sortedByDescending(DriveBackupEntry::modifiedTimeMillis)
     }
@@ -81,7 +82,7 @@ class GoogleDriveBackupRemote internal constructor(
             put("parents", JsonArray(listOf(JsonPrimitive(folder))))
             putJsonObject("appProperties") {
                 put("kind", "scaniqo-backup")
-                put("version", "1")
+                put("version", "2")
             }
         }.toString().toByteArray(Charsets.UTF_8)
         val session = request(
@@ -337,7 +338,15 @@ class GoogleDriveBackupRemote internal constructor(
         val reasons = (error?.get("errors") as? JsonArray)?.mapNotNull {
             (it as? JsonObject)?.string("reason")
         }.orEmpty()
+        val detailReasons = (error?.get("details") as? JsonArray)?.mapNotNull {
+            (it as? JsonObject)?.string("reason")
+        }.orEmpty()
         return when {
+            reasons.any { it == "accessNotConfigured" || it == "serviceDisabled" } ||
+                "SERVICE_DISABLED" in detailReasons -> DriveBackupException.ApiDisabled()
+            reasons.any { it == "domainPolicy" } ||
+                detailReasons.any { it == "ORG_RESTRICTION_VIOLATION" || it == "SECURITY_POLICY_VIOLATED" } ->
+                DriveBackupException.AccessBlocked()
             reasons.any { it in QUOTA_REASONS } -> DriveBackupException.Quota()
             reasons.any { it == "authError" || it == "insufficientPermissions" } -> DriveBackupException.Unauthorized()
             else -> DriveBackupException.Remote(response.status)

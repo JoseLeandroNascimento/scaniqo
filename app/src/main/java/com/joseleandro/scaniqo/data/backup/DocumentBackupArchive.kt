@@ -17,7 +17,6 @@ import java.util.zip.ZipOutputStream
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Serializable
@@ -49,6 +48,34 @@ internal data class BackupFile(val name: String, val size: Long, val sha256: Str
 
 internal data class BackupDocumentSource(val document: BackupDocument, val directory: File, val filenames: List<String>)
 
+/** Versão 2: PDFs finais e somente os metadados necessários à restauração e integridade. */
+@Serializable
+private data class BackupPdfManifest(
+    val format: String = "scaniqo.document-backup",
+    val version: Int = 2,
+    val createdAt: Long,
+    val documents: List<BackupPdfDocument>,
+)
+
+@Serializable
+private data class BackupPdfDocument(
+    val filename: String,
+    val name: String,
+    val pageCount: Int,
+    val createdAt: Long,
+    val protected: Boolean,
+    val size: Long,
+    val sha256: String,
+)
+
+@Serializable
+private data class BackupFormatHeader(val format: String, val version: Int)
+
+private data class DecodedBackup(
+    val manifest: DocumentBackupManifest,
+    val archivePaths: Map<String, String>,
+)
+
 /** Formato portátil fechado: somente os arquivos declarados, com limites antes e durante a leitura. */
 internal class DocumentBackupArchive(
     private val maxArchiveBytes: Long = DocumentBackupLimits.MAX_ARCHIVE_BYTES,
@@ -60,43 +87,41 @@ internal class DocumentBackupArchive(
     suspend fun write(
         target: File,
         sources: List<BackupDocumentSource>,
-        tags: List<BackupTag>,
         onProgress: (DocumentBackupProgress) -> Unit = {},
     ): DocumentBackupManifest {
-        require(sources.size <= DocumentBackupLimits.MAX_DOCUMENTS) { "Há documentos demais para este backup." }
+        require(sources.isNotEmpty() && sources.size <= DocumentBackupLimits.MAX_DOCUMENTS) {
+            "Há documentos demais ou nenhum documento para este backup."
+        }
         val createdAt = System.currentTimeMillis()
         var total = 0L
-        val documents = mutableListOf<BackupDocument>()
+        val documents = mutableListOf<BackupPdfDocument>()
         try {
             ZipOutputStream(target.outputStream().buffered().let { BoundedOutput(it, maxArchiveBytes) }).use { zip ->
                 sources.forEachIndexed { index, source ->
                     currentCoroutineContext().ensureActive()
-                    require(validKey(source.document.key))
-                    require(source.filenames.distinct().size == source.filenames.size)
-                    val files = source.filenames.map { name ->
-                        val limit = fileLimit(name)
-                        val input = File(source.directory, name).canonicalFile
-                        require(input.parentFile == source.directory.canonicalFile && input.isFile)
-                        require(input.length() in 1..limit) { "Um arquivo do documento excede o limite do backup." }
-                        if (source.document.protected) require(name == "document.pdf")
-                        zip.putNextEntry(ZipEntry(path(source.document.key, name)))
-                        val digest = MessageDigest.getInstance("SHA-256")
-                        val size = input.inputStream().use { stream ->
-                            transfer(stream, zip, limit, digest) { count ->
-                                total += count
-                                require(total <= maxUncompressedBytes) { "O backup excede o limite de tamanho." }
-                            }
+                    val input = File(source.directory, "document.pdf").canonicalFile
+                    require(input.parentFile == source.directory.canonicalFile && input.isFile)
+                    val limit = fileLimit("document.pdf")
+                    require(input.length() in 1..limit) { "Um PDF excede o limite do backup." }
+                    val filename = readablePdfFilename(source.document.name, index, sources.size)
+                    zip.putNextEntry(ZipEntry(filename))
+                    val digest = MessageDigest.getInstance("SHA-256")
+                    val size = input.inputStream().use { stream ->
+                        transfer(stream, zip, limit, digest) { count ->
+                            total += count
+                            require(total <= maxUncompressedBytes) { "O backup excede o limite de tamanho." }
                         }
-                        zip.closeEntry()
-                        BackupFile(name, size, digest.hex())
                     }
-                    documents += source.document.copy(files = files)
+                    zip.closeEntry()
+                    documents += BackupPdfDocument(
+                        filename = filename, name = source.document.name, pageCount = source.document.pageCount,
+                        createdAt = source.document.createdAt, protected = source.document.protected,
+                        size = size, sha256 = digest.hex(),
+                    )
                     onProgress(DocumentBackupProgress(index + 1, sources.size))
                 }
-                val manifest = DocumentBackupManifest(
-                    createdAt = createdAt, documents = documents, tags = tags,
-                )
-                validate(manifest)
+                val manifest = BackupPdfManifest(createdAt = createdAt, documents = documents)
+                validatePdfManifest(manifest)
                 val bytes = json.encodeToString(manifest).toByteArray(Charsets.UTF_8)
                 require(bytes.size.toLong() <= maxManifestBytes && total + bytes.size <= maxUncompressedBytes) {
                     "O manifesto do backup excede o limite."
@@ -106,9 +131,7 @@ internal class DocumentBackupArchive(
                 zip.closeEntry()
             }
             currentCoroutineContext().ensureActive()
-            return DocumentBackupManifest(
-                createdAt = createdAt, documents = documents, tags = tags,
-            )
+            return normalizePdfManifest(BackupPdfManifest(createdAt = createdAt, documents = documents)).manifest
         } catch (failure: Throwable) {
             target.delete()
             throw failure
@@ -138,11 +161,9 @@ internal class DocumentBackupArchive(
                     zip.getInputStream(manifestEntry).use { transfer(it, output, maxManifestBytes) }
                     output.toByteArray()
                 }
-                val manifest = json.decodeFromString<DocumentBackupManifest>(manifestBytes.toString(Charsets.UTF_8))
-                validate(manifest)
-                val expected = manifest.documents.flatMap { document ->
-                    document.files.map { path(document.key, it.name) }
-                }.toSet() + MANIFEST
+                val decoded = decodeManifest(manifestBytes.toString(Charsets.UTF_8))
+                val manifest = decoded.manifest
+                val expected = decoded.archivePaths.values.toSet() + MANIFEST
                 require(entries.keys == expected) { "O backup contém arquivos ausentes ou não declarados." }
                 var total = manifestBytes.size.toLong()
                 manifest.documents.forEachIndexed { index, document ->
@@ -150,7 +171,7 @@ internal class DocumentBackupArchive(
                     require(directory.mkdir())
                     document.files.forEach { file ->
                         currentCoroutineContext().ensureActive()
-                        val entry = entries.getValue(path(document.key, file.name))
+                        val entry = entries.getValue(decoded.archivePaths.getValue(path(document.key, file.name)))
                         require(entry.size == file.size) { "O tamanho de um arquivo não corresponde ao manifesto." }
                         val target = File(directory, file.name).canonicalFile
                         require(target.parentFile == directory.canonicalFile)
@@ -178,7 +199,73 @@ internal class DocumentBackupArchive(
         }
     }
 
-    private fun validate(manifest: DocumentBackupManifest) {
+    private fun decodeManifest(text: String): DecodedBackup {
+        val header = json.decodeFromString<BackupFormatHeader>(text)
+        require(header.format == "scaniqo.document-backup") { "O arquivo não contém um backup do Scaniqo." }
+        return when (header.version) {
+            1 -> {
+                val manifest = json.decodeFromString<DocumentBackupManifest>(text)
+                validateLegacyManifest(manifest)
+                val paths = manifest.documents.flatMap { document ->
+                    document.files.map { path(document.key, it.name) }
+                }.associateWith { it }
+                DecodedBackup(manifest, paths)
+            }
+            2 -> {
+                val manifest = json.decodeFromString<BackupPdfManifest>(text)
+                validatePdfManifest(manifest)
+                normalizePdfManifest(manifest)
+            }
+            else -> error("Esta versão do backup não é compatível.")
+        }
+    }
+
+    private fun normalizePdfManifest(manifest: BackupPdfManifest): DecodedBackup {
+        val documents = manifest.documents.mapIndexed { index, item ->
+            BackupDocument(
+                key = UUID(0L, index.toLong() + 1).toString(), name = item.name, pageCount = item.pageCount,
+                createdAt = item.createdAt, tagKey = null, protected = item.protected, editableProject = false,
+                files = listOf(BackupFile("document.pdf", item.size, item.sha256)),
+            )
+        }
+        val paths = documents.zip(manifest.documents).associate { (document, pdf) ->
+            path(document.key, "document.pdf") to pdf.filename
+        }
+        return DecodedBackup(
+            DocumentBackupManifest(version = 2, createdAt = manifest.createdAt, documents = documents, tags = emptyList()),
+            paths,
+        )
+    }
+
+    private fun validatePdfManifest(manifest: BackupPdfManifest) {
+        require(manifest.format == "scaniqo.document-backup" && manifest.version == 2)
+        require(manifest.documents.isNotEmpty() && manifest.documents.size <= DocumentBackupLimits.MAX_DOCUMENTS)
+        require(manifest.documents.map { it.filename }.distinct().size == manifest.documents.size)
+        var total = 0L
+        manifest.documents.forEach { document ->
+            require(document.name.isNotBlank() && document.name.length <= DOCUMENT_NAME_MAX_LENGTH &&
+                document.pageCount in 1..100)
+            require(document.filename.length in 1..160 && document.filename.endsWith(".pdf") &&
+                document.filename.none { it.isISOControl() || it in "/\\\\:*?\"<>|" }) {
+                "Nome de PDF inválido no backup."
+            }
+            require(document.size in 1..fileLimit("document.pdf") && document.sha256.matches(Regex("[a-f0-9]{64}")))
+            total += document.size
+            require(total <= maxUncompressedBytes)
+        }
+    }
+
+    private fun readablePdfFilename(name: String, index: Int, count: Int): String {
+        var stem = name.trim().map { character ->
+            if (character.isISOControl() || character in "/\\\\:*?\"<>|") '_' else character
+        }.joinToString("").trim(' ', '.')
+        while (stem.endsWith(".pdf", ignoreCase = true)) stem = stem.dropLast(4).trimEnd(' ', '.')
+        stem = stem.take(100).trimEnd(' ', '.').ifBlank { "documento" }
+        val ordinal = (index + 1).toString().padStart(count.toString().length.coerceAtLeast(3), '0')
+        return "$ordinal - $stem.pdf"
+    }
+
+    private fun validateLegacyManifest(manifest: DocumentBackupManifest) {
         require(manifest.format == "scaniqo.document-backup" && manifest.version == 1) {
             "Esta versão do backup não é compatível."
         }

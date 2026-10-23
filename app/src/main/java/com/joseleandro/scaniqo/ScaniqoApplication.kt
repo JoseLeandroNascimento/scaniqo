@@ -3,6 +3,8 @@ package com.joseleandro.scaniqo
 import android.app.Application
 import android.util.Log
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
+import com.joseleandro.scaniqo.domain.repository.BackupScheduler
+import com.joseleandro.scaniqo.domain.repository.BackupSettingsRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,16 @@ class ScaniqoApplication : Application() {
         val dependencyGraph = startKoin {
             androidContext(this@ScaniqoApplication)
             modules(appModule)
+        }
+        applicationScope.launch {
+            try {
+                val settings = dependencyGraph.koin.get<BackupSettingsRepository>().settings.value
+                dependencyGraph.koin.get<BackupScheduler>().schedule(settings)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                Log.w("Scaniqo", "Não foi possível atualizar o agendamento do backup.")
+            }
         }
         applicationScope.launch {
             try {

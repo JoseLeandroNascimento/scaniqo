@@ -60,35 +60,23 @@ class AndroidDocumentBackupRepository internal constructor(
                     ensureRoots()
                     val stored = documents.observeDocuments().first()
                     require(stored.isNotEmpty()) { "Não há documentos salvos para incluir no backup." }
-                    val storedTags = tags.observeTags().first()
-                    val tagKeys = storedTags.associate { it.id to UUID.randomUUID().toString() }
                     val sources = stored.map { document ->
                         currentCoroutineContext().ensureActive()
                         val directory = ownedDocumentDirectory(document.pdfUri)
-                        val filenames = if (document.isProtected) listOf("document.pdf") else {
-                            directory.listFiles().orEmpty().filter {
-                                it.isFile && (it.name in setOf("document.pdf", "sources.pdf", "recipe.json", "thumbnail.jpg") ||
-                                    it.name.matches(Regex("signature_[a-fA-F0-9-]+\\.png")))
-                            }.map { it.name }.sorted()
-                        }
-                        require(document.tagId == null || document.tagId in tagKeys) {
-                            "As tags foram alteradas durante o backup. Tente novamente."
-                        }
                         val metadata = BackupDocument(
                             UUID.randomUUID().toString(), document.name, document.pageCount, document.createdAt,
-                            document.tagId?.let(tagKeys::getValue), document.isProtected,
-                            editableProject = "sources.pdf" in filenames,
+                            tagKey = null, protected = document.isProtected, editableProject = false,
                         )
+                        // O backup novo inclui somente o PDF final salvo; auxiliares não participam da validação.
+                        val filenames = listOf("document.pdf")
                         validateProject(directory, metadata, filenames)
                         BackupDocumentSource(metadata, directory, filenames)
                     }
                     val output = File.createTempFile("backup_", ".scaniqo", temporaryRoot).also { target = it }
                     onProgress(DocumentBackupProgress(0, sources.size))
-                    val manifest = archive.write(output, sources, storedTags.map {
-                        BackupTag(tagKeys.getValue(it.id), it.name, it.color.toArgb(), it.iconKey)
-                    }, onProgress)
+                    val manifest = archive.write(output, sources, onProgress)
                     // Arquivos permanentes são imutáveis. Se trocaram durante a cópia, não publicamos o snapshot.
-                    check(documents.observeDocuments().first() == stored && tags.observeTags().first() == storedTags) {
+                    check(documents.observeDocuments().first() == stored) {
                         "A biblioteca foi alterada durante o backup. Tente novamente."
                     }
                     PreparedDocumentBackup(output, manifest.documents.size,

@@ -12,6 +12,15 @@ import com.joseleandro.scaniqo.core.security.PasswordAccess
 import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.data.backup.AndroidDocumentBackupRepository
 import com.joseleandro.scaniqo.data.backup.GoogleDriveBackupRemote
+import com.joseleandro.scaniqo.data.backup.AndroidBackupSettingsRepository
+import com.joseleandro.scaniqo.data.backup.AutomaticBackupRunner
+import com.joseleandro.scaniqo.data.backup.BackupAuthorizationProvider
+import com.joseleandro.scaniqo.data.backup.BackupOperationGate
+import com.joseleandro.scaniqo.data.backup.BackupSnapshotFingerprint
+import com.joseleandro.scaniqo.data.backup.GoogleBackupAuthorizationProvider
+import com.joseleandro.scaniqo.data.backup.WorkManagerBackupScheduler
+import com.joseleandro.scaniqo.domain.repository.BackupScheduler
+import com.joseleandro.scaniqo.domain.repository.BackupSettingsRepository
 import com.joseleandro.scaniqo.domain.repository.DocumentBackupRepository
 import com.joseleandro.scaniqo.domain.repository.DriveBackupRemote
 import com.joseleandro.scaniqo.ui.backup.DriveBackupViewModel
@@ -83,6 +92,12 @@ val appModule = module {
     viewModel { PdfImportViewModel(get(), get(), get(), get(), get<LocalizedNames>()::importedDocument) }
     viewModelOf(::DocumentQuickMergeViewModel)
     viewModel { SignaturesViewModel(get(), get<LocalizedNames>()::signature) }
+    single<BackupSettingsRepository> { AndroidBackupSettingsRepository(androidContext()) }
+    single<BackupScheduler> { WorkManagerBackupScheduler(androidContext()) }
+    single<BackupAuthorizationProvider> { GoogleBackupAuthorizationProvider(androidContext()) }
+    single { BackupOperationGate() }
+    single { BackupSnapshotFingerprint(get()) }
+    single { AutomaticBackupRunner(get(), get(), get(), get(), get(), get()) }
     viewModelOf(::DriveBackupViewModel)
     single<DocumentBackupRepository> { AndroidDocumentBackupRepository(androidContext(), get(), get()) }
     single<DriveBackupRemote> { GoogleDriveBackupRemote() }

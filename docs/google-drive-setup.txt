@@ -27,36 +27,61 @@ Erro de configuração do OAuth (código 10) normalmente indica pacote/certifica
 projeto ou consentimento configurados incorretamente.
 
 FLUXO DISPONÍVEL
-- Backup manual dos documentos já salvos, nomes, tags e arquivos de edição dos
-  documentos sem senha. ZIP visível na pasta "Scaniqo backups" do Google Drive.
-- Cada backup é uma nova cópia datada; versões antigas não são apagadas pelo app.
-- Restauração adiciona novas cópias. Não sobrescreve documentos existentes.
-- PDFs protegidos incluem somente o PDF cifrado. Fontes de edição, miniaturas
-  e imagens auxiliares de assinatura desses PDFs são excluídas. A senha original
-  será pedida ao abrir a cópia restaurada.
-- O cofre, suas chaves e senhas, a biblioteca de assinaturas e rascunhos ainda
-  não salvos no editor não entram no backup.
-- Nomes e tags do manifesto não são cifrados pelo formato ZIP.
+- Novos backups usam o formato v2: somente PDFs finais salvos, com nomes legíveis
+  na raiz do ZIP, e um manifesto mínimo de nomes, datas, páginas, proteção,
+  tamanho e SHA-256 para restauração e integridade.
+- Fontes de edição, receitas, miniaturas, tags, imagens auxiliares, cofre,
+  biblioteca de assinaturas, lixeira e rascunhos não entram nos novos backups.
+  Assinaturas já aplicadas ao PDF permanecem no próprio PDF final.
+- ZIP visível na pasta "Scaniqo backups" do Google Drive. Cada backup é uma
+  cópia datada; versões anteriores não são apagadas pelo app.
+- Restauração adiciona cópias novas. PDFs protegidos continuam exigindo a senha
+  original. Novas cópias não recuperam as camadas de edição do projeto.
+- Backups antigos v1 continuam listados e podem restaurar seu conteúdo legado.
+- Os nomes e os metadados mínimos não são cifrados pelo ZIP.
 - Backup máximo: 2 GiB; PDF individual: 50 MiB; até 100 páginas por documento.
-- Operação em primeiro plano; manter o app aberto. Não há envio periódico
-  automático ou retomada entre encerramentos do processo nesta versão.
-- Cancelamento/falhas limpam os temporários; restauração interrompida durante
-  a execução desfaz as cópias já inseridas. Encerramento abrupto do processo pode
-  deixar cópias parciais já importadas; originais permanecem preservados.
-- Desconectar revoga a autorização Google; backups existentes permanecem no Drive.
+- A conta escolhida e as preferências permanecem salvas; tokens não são gravados.
+- O backup manual e a restauração pedem confirmação antes de sair/cancelar.
+  Falhas e cancelamentos limpam temporários e desfazem a restauração em curso.
+  Encerramento abrupto do processo ainda pode deixar cópias parcialmente importadas.
+- Desconectar desativa o automático e revoga o acesso; cópias no Drive permanecem.
+
+BACKUP AUTOMÁTICO
+- Desativado por padrão. Pode ser ativado após conectar uma conta.
+- Frequência diária ou semanal, somente rede não tarifada (Wi-Fi) por padrão
+  e opção de executar apenas enquanto carrega.
+- WorkManager aguarda rede, bateria e armazenamento adequados. O horário exato
+  depende do Android; o primeiro trabalho pode executar assim que as condições
+  forem atendidas. A agenda sobrevive a reinícios.
+- Só envia se os PDFs finais ou seus nomes mudaram desde o último backup.
+  Tags e ajustes não aplicados ao PDF final não geram uma nova cópia.
+- Execução serializada com backup/restauração manuais. Desativar cancela o trabalho.
+- Operações longas usam foreground service dataSync. A notificação respeita
+  as permissões/configurações de notificações do sistema.
+- Autorizações são obtidas em memória para a conta salva. Se o Google exigir
+  interação novamente, o automático aguarda reconexão feita na tela.
+- Erros transitórios têm até três tentativas com intervalo crescente. Não há
+  retomada do mesmo upload após morte do processo; uma nova execução pode reiniciar.
+- Limites de bateria, quotas de tarefas do Android e encerramento forçado pelo
+  usuário podem adiar a execução. Abrir o app restaura o agendamento configurado.
+- Para distribuição, declarar o uso do serviço de sincronização de dados
+  nos campos correspondentes da Play Console.
 
 VALIDAÇÃO EM CONTA REAL
 1. Salvar um PDF normal, um projeto com recorte/assinatura e um PDF protegido.
 2. Conectar e autorizar somente o escopo de arquivos do app.
-3. Fazer backup, conferir a pasta no Drive e atualizar a lista.
-4. Restaurar em outra instalação autorizada no mesmo projeto/conta.
-5. Conferir nomes, tags, PDF e continuidade de edição do projeto sem senha.
-6. Abrir o PDF protegido com a senha original e verificar que o cofre não viajou.
-7. Verificar cancelamento, internet indisponível, falta de espaço e reconexão.
+3. Fazer backup e conferir que o ZIP contém os PDFs finais e o manifesto mínimo.
+4. Restaurar em outra instalação; conferir nomes, páginas, conteúdo e senha original.
+5. Verificar que os backups v1 continuam listados e restauráveis.
+6. Ativar o automático; testar Wi-Fi, carregamento, reinício e desativação em curso.
+7. Repetir sem alterações e conferir que não surgiu outra cópia automática.
+8. Salvar uma alteração de PDF e conferir uma nova cópia na próxima execução.
+9. Verificar cancelamento, internet indisponível, falta de espaço e reconexão.
+10. API Drive desativada e bloqueio administrativo devem mostrar mensagens específicas.
 
 FONTES OFICIAIS
 https://developer.android.com/identity/authorization
-https://developers.google.com/workspace/drive/api/guides/enable-drive-api
+https://developers.google.com/workspace/guides/enable-apis
 https://developers.google.com/workspace/drive/api/guides/api-specific-auth
 https://developers.google.com/workspace/drive/api/guides/manage-uploads
 

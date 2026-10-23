@@ -1,0 +1,5 @@
+<resources>
+    <string name="backup_notification_channel">文档备份</string>
+    <string name="backup_notification_title">正在备份</string>
+    <string name="backup_notification_message">正在将您的 PDF 保存到 Google 云端硬盘。</string>
+</resources>

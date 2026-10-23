@@ -1,0 +1,5 @@
+<resources>
+    <string name="backup_notification_channel">ডকুমেন্ট ব্যাকআপ</string>
+    <string name="backup_notification_title">ব্যাকআপ চলছে</string>
+    <string name="backup_notification_message">আপনার PDF ফাইল Google Drive-এ সেভ করা হচ্ছে।</string>
+</resources>

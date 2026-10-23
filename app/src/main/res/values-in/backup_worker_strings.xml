@@ -1,0 +1,5 @@
+<resources>
+    <string name="backup_notification_channel">Cadangan dokumen</string>
+    <string name="backup_notification_title">Pencadangan berlangsung</string>
+    <string name="backup_notification_message">Menyimpan PDF Anda ke Google Drive.</string>
+</resources>

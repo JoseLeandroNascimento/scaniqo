@@ -1,6 +1,15 @@
 package com.joseleandro.scaniqo.ui.backup
 
 import androidx.lifecycle.ViewModelStore
+import com.joseleandro.scaniqo.data.backup.BackupOperationGate
+import com.joseleandro.scaniqo.data.backup.BackupSnapshotFingerprint
+import com.joseleandro.scaniqo.domain.model.BackupSettings
+import com.joseleandro.scaniqo.domain.model.BackupFrequency
+import com.joseleandro.scaniqo.domain.repository.BackupSettingsRepository
+import com.joseleandro.scaniqo.domain.repository.BackupScheduler
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import com.joseleandro.scaniqo.domain.model.DocumentBackupProgress
 import com.joseleandro.scaniqo.domain.model.DocumentBackupRestoreResult
 import com.joseleandro.scaniqo.domain.model.DocumentModel
@@ -44,8 +53,13 @@ class DriveBackupViewModelTest {
     private val local = FakeLocalBackup()
     private val remote = FakeDrive()
     private val effects = mutableListOf<DriveBackupEffect>()
+    @get:Rule val temporary = TemporaryFolder()
+    private val preferences = FakeBackupSettings()
+    private val scheduler = FakeBackupScheduler()
+    private val gate = BackupOperationGate()
     private val viewModel by lazy {
-        DriveBackupViewModel(local, remote, documents).also { store.put("backup", it) }
+        DriveBackupViewModel(local, remote, documents, preferences, scheduler, gate,
+            BackupSnapshotFingerprint(documents, dispatcher)).also { store.put("backup", it) }
     }
 
     @Before
@@ -487,6 +501,7 @@ class DriveBackupViewModelTest {
         start()
         connectAccount()
         viewModel.disconnect()
+        runCurrent()
         val revoke = effects.filterIsInstance<DriveBackupEffect.Revoke>().single()
         assertEquals(remote.email, revoke.email)
         assertEquals(DriveBackupPhase.DISCONNECTING, viewModel.uiState.value.phase)
@@ -496,6 +511,7 @@ class DriveBackupViewModelTest {
         assertEquals(DriveBackupPhase.DISCONNECTING, viewModel.uiState.value.phase)
 
         viewModel.disconnected(revoke.requestId, true)
+        runCurrent()
         assertNull(viewModel.uiState.value.accountEmail)
         assertTrue(viewModel.uiState.value.backups.isEmpty())
         assertEquals(2, viewModel.uiState.value.localDocumentCount)
@@ -511,6 +527,7 @@ class DriveBackupViewModelTest {
         start()
         connectAccount()
         viewModel.disconnect()
+        runCurrent()
         val revoke = effects.filterIsInstance<DriveBackupEffect.Revoke>().single()
         viewModel.disconnected(revoke.requestId, false)
 
@@ -548,9 +565,131 @@ class DriveBackupViewModelTest {
         assertNull(viewModel.uiState.value.backedUpCount)
     }
 
+    @Test
+    fun connectionIsRememberedAndSilentRefreshDoesNotRequestConsentUi() = runTest(dispatcher) {
+        preferences.settings.value = BackupSettings(accountEmail = "owner@example.com")
+        start()
+        assertEquals("owner@example.com", viewModel.uiState.value.accountEmail)
+        viewModel.refreshIfConnected()
+        val id = authorizationId()
+        assertEquals("owner@example.com", viewModel.authorizationAccount(id))
+        assertFalse(viewModel.authorizationMayShowUi(id))
+        viewModel.authorized(id, "refresh-token")
+        runCurrent()
+        assertTrue(viewModel.uiState.value.hasLoadedBackups)
+        val count = effects.size
+        viewModel.refreshIfConnected()
+        assertEquals(count, effects.size)
+    }
+
+    @Test
+    fun enablingAutomaticBackupRequiresAConnectedAccountAndPersistsOptions() = runTest(dispatcher) {
+        start()
+        viewModel.setAutomaticEnabled(true)
+        runCurrent()
+        assertFalse(preferences.settings.value.automaticEnabled)
+        assertTrue(scheduler.scheduled.isEmpty())
+        connectAccount()
+        viewModel.setAutomaticEnabled(true)
+        runCurrent()
+        assertTrue(preferences.settings.value.automaticEnabled)
+        assertTrue(scheduler.scheduled.last().automaticEnabled)
+        viewModel.setFrequency(BackupFrequency.WEEKLY)
+        runCurrent()
+        viewModel.setWifiOnly(false)
+        runCurrent()
+        viewModel.setChargingOnly(true)
+        runCurrent()
+        assertEquals(BackupFrequency.WEEKLY, preferences.settings.value.frequency)
+        assertFalse(preferences.settings.value.wifiOnly)
+        assertTrue(preferences.settings.value.chargingOnly)
+    }
+
+    @Test
+    fun automaticExecutionBlocksManualActionsButCanBeDisabled() = runTest(dispatcher) {
+        start()
+        connectAccount()
+        preferences.settings.value = preferences.settings.value.copy(automaticEnabled = true)
+        gate.automaticRunning.value = true
+        runCurrent()
+        val count = effects.size
+        viewModel.backup()
+        viewModel.restore(remote.existing)
+        viewModel.disconnect()
+        assertEquals(count, effects.size)
+        viewModel.setAutomaticEnabled(false)
+        runCurrent()
+        assertFalse(preferences.settings.value.automaticEnabled)
+        assertFalse(scheduler.scheduled.last().automaticEnabled)
+    }
+
+    @Test
+    fun successfulManualBackupRecordsHistoryAndFingerprintForAutomaticDeduplication() = runTest(dispatcher) {
+        start()
+        connectAccount()
+        viewModel.backup()
+        viewModel.authorized(authorizationId(), "backup-token")
+        runCurrent()
+        assertTrue(requireNotNull(preferences.settings.value.lastBackupAt) > 0)
+        assertEquals(800L, preferences.settings.value.lastBackupBytes)
+        assertEquals(2, preferences.settings.value.lastBackupDocumentCount)
+        assertEquals(
+            BackupSnapshotFingerprint(documents, dispatcher).current(),
+            preferences.settings.value.lastSnapshotFingerprint,
+        )
+    }
+
+    @Test
+    fun apiDisabledHasAnActionableErrorAndDoesNotClaimAnEmptyHistory() = runTest(dispatcher) {
+        start()
+        remote.accountFailure = DriveBackupException.ApiDisabled()
+        viewModel.connect()
+        viewModel.authorized(authorizationId(), "token")
+        runCurrent()
+        assertEquals(DriveBackupProblem.API_DISABLED, viewModel.uiState.value.problem)
+        assertFalse(viewModel.uiState.value.hasLoadedBackups)
+        assertNull(preferences.settings.value.accountEmail)
+    }
+
+    @Test
+    fun failedSettingsWriteDoesNotEnableOrScheduleAutomaticBackup() = runTest(dispatcher) {
+        start()
+        connectAccount()
+        val count = scheduler.scheduled.size
+        preferences.failure = IOException("settings unavailable")
+        viewModel.setAutomaticEnabled(true)
+        runCurrent()
+        assertFalse(preferences.settings.value.automaticEnabled)
+        assertEquals(count, scheduler.scheduled.size)
+        assertEquals(DriveBackupProblem.LOCAL_STORAGE, viewModel.uiState.value.problem)
+        assertFalse(viewModel.uiState.value.isSavingSettings)
+    }
+
+    @Test
+    fun disconnectDisablesAutomaticBackupAndClearsRememberedHistory() = runTest(dispatcher) {
+        start()
+        connectAccount()
+        preferences.settings.value = preferences.settings.value.copy(
+            automaticEnabled = true, lastBackupAt = 123, lastSnapshotFingerprint = "snapshot",
+        )
+        runCurrent()
+        viewModel.disconnect()
+        runCurrent()
+        assertFalse(preferences.settings.value.automaticEnabled)
+        assertTrue(scheduler.cancellations > 0)
+        val revoke = effects.filterIsInstance<DriveBackupEffect.Revoke>().single()
+        viewModel.disconnected(revoke.requestId, true)
+        runCurrent()
+        assertNull(preferences.settings.value.accountEmail)
+        assertNull(preferences.settings.value.lastBackupAt)
+        assertNull(preferences.settings.value.lastSnapshotFingerprint)
+        assertFalse(gate.mutex.isLocked)
+    }
+
     private fun TestScope.start(documentCount: Int = 2) {
         documents.documents.value = List(documentCount) { index ->
-            DocumentModel(index.toLong() + 1, "Document $index", "content://documents/$index.pdf", 1, 1L, 1024L)
+            val pdf = temporary.newFile("document-$index.pdf").apply { writeText("PDF fixture $index") }
+            DocumentModel(index.toLong() + 1, "Document $index", pdf.toURI().toString(), 1, 1L, pdf.length())
         }
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.effects.collect(effects::add) }
         runCurrent()
@@ -565,6 +704,22 @@ class DriveBackupViewModelTest {
     }
 
     private fun authorizationId() = effects.filterIsInstance<DriveBackupEffect.Authorize>().last().requestId
+
+    private class FakeBackupSettings : BackupSettingsRepository {
+        override val settings = MutableStateFlow(BackupSettings())
+        var failure: Exception? = null
+        override suspend fun update(transform: (BackupSettings) -> BackupSettings) {
+            failure?.let { throw it }
+            settings.value = transform(settings.value)
+        }
+    }
+
+    private class FakeBackupScheduler : BackupScheduler {
+        val scheduled = mutableListOf<BackupSettings>()
+        var cancellations = 0
+        override fun schedule(settings: BackupSettings) { scheduled += settings }
+        override fun cancel() { cancellations++ }
+    }
 
     private class FakeLocalBackup : DocumentBackupRepository {
         val prepared = PreparedDocumentBackup(File("temporary-backup.zip"), 2, 1, 1)
@@ -622,6 +777,7 @@ class DriveBackupViewModelTest {
         val uploads = mutableListOf<Upload>()
         val downloads = mutableListOf<Download>()
         var email: String? = "owner@example.com"
+        var accountFailure: Exception? = null
         var uploadFailure: Exception? = null
         var downloadFailure: Exception? = null
         var accountGate: CompletableDeferred<Unit>? = null
@@ -634,6 +790,7 @@ class DriveBackupViewModelTest {
 
         override suspend fun accountEmail(accessToken: String): String? {
             accountTokens += accessToken
+            accountFailure?.let { throw it }
             if (ignoreAccountCancellation) withContext(NonCancellable) { accountGate?.await() }
             else accountGate?.await()
             return email

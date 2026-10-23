@@ -112,6 +112,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.google.auth)
+    implementation(libs.androidx.work.runtime)
     implementation(libs.mlkit.document.scanner)
     implementation(libs.mlkit.text.recognition)
     implementation(libs.androidx.navigation3.runtime)

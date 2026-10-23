@@ -34,6 +34,7 @@ class GoogleDriveBackupRemoteTest {
                 assertEquals("drive", query["spaces"])
                 assertTrue(query.getValue("q").contains("key='kind' and value='scaniqo-backup'"))
                 assertTrue(query.getValue("q").contains("key='version' and value='1'"))
+                assertTrue(query.getValue("q").contains("key='version' and value='2'"))
                 assertTrue(query.getValue("q").contains("trashed = false"))
                 json("""{"files":[""" + metadata("old", size = 7, time = "2024-01-01T00:00:00Z") +
                     """],"nextPageToken":"next+/="}""")
@@ -96,7 +97,7 @@ class GoogleDriveBackupRemoteTest {
                 val metadata = body.toString(Charsets.UTF_8)
                 assertTrue(metadata.contains("\"parents\":[\"folder\"]"))
                 assertTrue(metadata.contains("\"kind\":\"scaniqo-backup\""))
-                assertTrue(metadata.contains("\"version\":\"1\""))
+                assertTrue(metadata.contains("\"version\":\"2\""))
                 assertTrue(metadata.contains("backup.zip"))
                 Reply(200, mapOf("Location" to SESSION))
             },
@@ -299,6 +300,21 @@ class GoogleDriveBackupRemoteTest {
             json("""{"error":{"errors":[{"reason":"insufficientPermissions"}]}}""", 403)
         })
         expect<DriveBackupException.Unauthorized> { remote(noPermission).accountEmail(TOKEN) }
+    }
+
+    @Test fun configurationFailuresAreDistinguishedWithoutExposingServerDetails() = runTest {
+        val cases = listOf(
+            """{"error":{"errors":[{"reason":"accessNotConfigured"}],"message":"private server details"}}""" to DriveBackupException.ApiDisabled::class.java,
+            """{"error":{"details":[{"reason":"SERVICE_DISABLED"}]}}""" to DriveBackupException.ApiDisabled::class.java,
+            """{"error":{"errors":[{"reason":"domainPolicy"}]}}""" to DriveBackupException.AccessBlocked::class.java,
+        )
+        for ((body, expected) in cases) {
+            val error = expect<DriveBackupException> {
+                remote(FakeTransport({ _, _ -> json(body, 403) })).accountEmail(TOKEN)
+            }
+            assertEquals(expected, error.javaClass)
+            assertFalse(error.stackTraceToString().contains("private server details"))
+        }
     }
 
     @Test fun malformedMetadataAndConnectionFailureAreTypedAndSanitizedAcrossExceptionChains() = runTest {
