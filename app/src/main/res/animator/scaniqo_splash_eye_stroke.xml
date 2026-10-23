@@ -3,12 +3,10 @@
     android:duration="@integer/scaniqo_splash_duration"
     android:interpolator="@android:interpolator/linear"
     android:repeatCount="0">
-    <propertyValuesHolder android:propertyName="strokeWidth" android:valueType="floatType">
-        <keyframe android:fraction="0" android:value="3.6" />
-        <keyframe android:fraction="0.86" android:value="3.6" android:interpolator="@android:interpolator/fast_out_slow_in" />
-        <keyframe android:fraction="0.885" android:value="2.2" android:interpolator="@android:interpolator/fast_out_slow_in" />
-        <keyframe android:fraction="0.905" android:value="2.2" android:interpolator="@android:interpolator/fast_out_slow_in" />
-        <keyframe android:fraction="0.94" android:value="3.6" android:interpolator="@android:interpolator/fast_out_slow_in" />
-        <keyframe android:fraction="1" android:value="3.6" android:interpolator="@android:interpolator/fast_out_slow_in" />
+    <propertyValuesHolder android:propertyName="strokeAlpha" android:valueType="floatType">
+        <keyframe android:fraction="0" android:value="0" />
+        <keyframe android:fraction="0.86" android:value="0" />
+        <keyframe android:fraction="0.94" android:value="1" android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <keyframe android:fraction="1" android:value="1" />
     </propertyValuesHolder>
 </objectAnimator>

@@ -20,6 +20,7 @@ class ScaniqoSplashResourcesTest {
     @Test
     fun animationInflatesOnBothLegacyAndNativeSplashPlatforms() {
         val context = RuntimeEnvironment.getApplication()
+        assertEquals(3000, context.resources.getInteger(R.integer.scaniqo_splash_duration))
         assertTrue(context.getDrawable(R.drawable.scaniqo_splash_animated) is AnimatedVectorDrawable)
         assertTrue(context.getDrawable(R.drawable.scaniqo_splash_vector) is VectorDrawable)
     }

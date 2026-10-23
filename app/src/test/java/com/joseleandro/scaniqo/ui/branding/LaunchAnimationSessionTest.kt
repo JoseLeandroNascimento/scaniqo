@@ -25,28 +25,28 @@ class LaunchAnimationSessionTest {
         val session = LaunchAnimationSession()
         assertFalse(session.shouldAnimate(restored = false, animationScale = 0f))
         assertFalse(session.shouldAnimate(restored = false, animationScale = 1f))
-        assertEquals(0L, remainingSplashAnimationMillis(0, 0, 5000, 0f))
+        assertEquals(0L, remainingSplashAnimationMillis(0, 0, 3000, 0f))
     }
 
     @Test
     fun nativeHandoffWaitsOnlyForTheUnplayedPart() {
-        assertEquals(5000L, remainingSplashAnimationMillis(0, 0, 5000, 1f))
-        assertEquals(4650L, remainingSplashAnimationMillis(10_000, 10_350, 5000, 1f))
-        assertEquals(100L, remainingSplashAnimationMillis(10_000, 14_900, 5000, 1f))
-        assertEquals(0L, remainingSplashAnimationMillis(10_000, 15_200, 5000, 1f))
+        assertEquals(3000L, remainingSplashAnimationMillis(0, 0, 3000, 1f))
+        assertEquals(2650L, remainingSplashAnimationMillis(10_000, 10_350, 3000, 1f))
+        assertEquals(100L, remainingSplashAnimationMillis(10_000, 12_900, 3000, 1f))
+        assertEquals(0L, remainingSplashAnimationMillis(10_000, 13_200, 3000, 1f))
     }
 
     @Test
     fun fasterSystemAnimationsShortenTheWait() {
-        assertEquals(2150L, remainingSplashAnimationMillis(10_000, 10_350, 5000, .5f))
-        assertEquals(2500L, remainingSplashAnimationMillis(0, 0, 5000, .5f))
+        assertEquals(1150L, remainingSplashAnimationMillis(10_000, 10_350, 3000, .5f))
+        assertEquals(1500L, remainingSplashAnimationMillis(0, 0, 3000, .5f))
     }
 
     @Test
-    fun debugAnimationScaleCannotHoldStartupForFiftySeconds() {
-        assertEquals(7500L, remainingSplashAnimationMillis(0, 0, 5000, 10f))
-        assertEquals(1000L, remainingSplashAnimationMillis(10_000, 16_500, 5000, 10f))
-        assertEquals(0L, remainingSplashAnimationMillis(10_000, 18_000, 5000, 10f))
+    fun slowSystemAnimationScaleIsCappedAtSevenAndAHalfSeconds() {
+        assertEquals(7500L, remainingSplashAnimationMillis(0, 0, 3000, 10f))
+        assertEquals(1000L, remainingSplashAnimationMillis(10_000, 16_500, 3000, 10f))
+        assertEquals(0L, remainingSplashAnimationMillis(10_000, 18_000, 3000, 10f))
     }
 
     @Test

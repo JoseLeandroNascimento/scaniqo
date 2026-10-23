@@ -23,7 +23,7 @@ internal fun remainingSplashAnimationMillis(
     animationScale: Float,
 ): Long {
     if (!animationScale.isFinite() || animationScale <= 0f || durationMillis <= 0L) return 0L
-    // Allow the full five-second search, but bound delays from very slow system animator scales.
+    // Allow the full splash animation, but bound delays from very slow system animator scales.
     val duration = (durationMillis.toDouble() * animationScale).coerceIn(0.0, 7_500.0).toLong()
     if (startMillis <= 0L) return duration
     if (startMillis > nowMillis) return 0L

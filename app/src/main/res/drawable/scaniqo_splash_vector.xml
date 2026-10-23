@@ -22,13 +22,16 @@
         <path android:fillColor="#FF866F" android:pathData="M59,30L73,44H65Q59,44 59,38Z" />
         <path android:pathData="M43,41H50" android:fillColor="@android:color/transparent"
             android:strokeColor="#7DABA8" android:strokeWidth="2.8" android:strokeLineCap="round" />
-        <group android:name="scaniqo_blinking_eye" android:pivotX="44.5" android:pivotY="51.25">
-            <path android:name="scaniqo_eye_stroke"
-                android:pathData="M44.5,49.5V53" android:fillColor="@android:color/transparent"
-                android:strokeColor="#06364A" android:strokeWidth="3.6" android:strokeLineCap="round" />
-        </group>
-        <path android:pathData="M57,52Q60,48.5 63,52" android:fillColor="@android:color/transparent"
-            android:strokeColor="#06364A" android:strokeWidth="3.4" android:strokeLineCap="round" />
+        <path android:pathData="M44.5,49.5V53" android:fillColor="@android:color/transparent"
+            android:strokeColor="#06364A" android:strokeWidth="3.6" android:strokeLineCap="round" />
+        <path android:name="scaniqo_right_eye_open"
+            android:pathData="M60,49.5V53" android:fillColor="@android:color/transparent"
+            android:strokeColor="#06364A" android:strokeAlpha="1" android:strokeWidth="3.4"
+            android:strokeLineCap="round" />
+        <path android:name="scaniqo_right_eye_wink"
+            android:pathData="M57,52Q60,48.5 63,52" android:fillColor="@android:color/transparent"
+            android:strokeColor="#06364A" android:strokeAlpha="0" android:strokeWidth="3.4"
+            android:strokeLineCap="round" />
         <path android:pathData="M45.5,61Q53.5,68.5 62,60" android:fillColor="@android:color/transparent"
             android:strokeColor="#06364A" android:strokeWidth="3.5" android:strokeLineCap="round" />
     </group>

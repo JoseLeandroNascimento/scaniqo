@@ -6,6 +6,6 @@
     <target android:name="scaniqo_scanner_rest_bottom_right" android:animation="@animator/scaniqo_splash_scanner_bottom_right" />
     <target android:name="scaniqo_scanner_search" android:animation="@animator/scaniqo_splash_scanner_search" />
     <target android:name="scaniqo_scanner_search_stroke" android:animation="@animator/scaniqo_splash_scanner_search_alpha" />
-    <target android:name="scaniqo_blinking_eye" android:animation="@animator/scaniqo_splash_eye" />
-    <target android:name="scaniqo_eye_stroke" android:animation="@animator/scaniqo_splash_eye_stroke" />
+    <target android:name="scaniqo_right_eye_open" android:animation="@animator/scaniqo_splash_eye" />
+    <target android:name="scaniqo_right_eye_wink" android:animation="@animator/scaniqo_splash_eye_stroke" />
 </animated-vector>
