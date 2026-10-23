@@ -1,0 +1,4 @@
+<resources>
+    <string name="fill_tap_to_write">लिखने के लिए पेज पर टैप करें</string>
+    <string name="fill_tap_to_mark">चिह्न लगाने के लिए पेज पर टैप करें</string>
+</resources>

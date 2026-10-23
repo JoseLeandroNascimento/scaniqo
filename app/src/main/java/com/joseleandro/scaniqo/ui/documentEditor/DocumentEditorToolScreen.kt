@@ -16,6 +16,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -81,7 +86,7 @@ internal fun DocumentEditorToolScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        if (tool == DocumentTool.FORMS && imeVisible) {
+                        if (imeVisible) {
                             keyboard?.hide(); focusManager.clearFocus()
                         } else onBack()
                     }, enabled = canBack) {
@@ -89,9 +94,19 @@ internal fun DocumentEditorToolScreen(
                     }
                 },
                 actions = {
-                    if (tool in setOf(DocumentTool.PAGES, DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK) && state.canUndo && sameSession) {
-                        IconButton(onClick = { onEvent(DocumentToolsEvent.Undo) }, enabled = enabled && state.canEdit && !hasLocalDraft) {
-                            Icon(painterResource(R.drawable.ic_document_undo), stringResource(R.string.viewer_undo_description))
+                    if (tool in setOf(DocumentTool.PAGES, DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK) && sameSession) {
+                        val undoLabel = stringResource(R.string.viewer_undo_description)
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                            tooltip = { PlainTooltip { Text(undoLabel) } },
+                            state = rememberTooltipState(),
+                        ) {
+                            IconButton(
+                                onClick = { onEvent(DocumentToolsEvent.Undo) },
+                                enabled = enabled && state.canEdit && state.canUndo && !hasLocalDraft,
+                            ) {
+                                Icon(painterResource(R.drawable.ic_document_undo), undoLabel)
+                            }
                         }
                     }
                 },

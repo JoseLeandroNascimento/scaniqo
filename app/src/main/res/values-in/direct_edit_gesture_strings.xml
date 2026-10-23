@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">Seret untuk meratakan</string>
+    <string name="direct_edit_rotate">Putar dengan dua jari</string>
+    <string name="direct_edit_scale">Cubit untuk mengubah ukuran</string>
+    <string name="direct_edit_crop">Seret tepi · Cubit</string>
+    <string name="direct_edit_straighten">Seret ke samping</string>
+    <string name="direct_edit_curve">Seret ke atas atau bawah</string>
+    <string name="direct_edit_background">Seret sudut</string>
+</resources>

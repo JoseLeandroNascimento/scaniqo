@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">संरेखित करने के लिए खींचें</string>
+    <string name="direct_edit_rotate">दो उंगलियों से घुमाएँ</string>
+    <string name="direct_edit_scale">आकार बदलने के लिए पिंच करें</string>
+    <string name="direct_edit_crop">किनारे खींचें · पिंच करें</string>
+    <string name="direct_edit_straighten">दाएँ या बाएँ खींचें</string>
+    <string name="direct_edit_curve">ऊपर या नीचे खींचें</string>
+    <string name="direct_edit_background">कोनों को खींचें</string>
+</resources>

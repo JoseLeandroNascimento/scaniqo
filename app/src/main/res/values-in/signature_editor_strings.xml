@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">Edit tanda tangan</string>
+    <string name="runtime_signature_preview">Pratinjau</string>
+    <string name="runtime_signature_font">Gaya tulisan tangan</string>
+    <string name="runtime_signature_draw_hint">Gambar tanda tangan dengan jari.</string>
+    <string name="runtime_signature_legacy_hint">Tanda tangan ini berupa gambar. Untuk mengubah isinya, gambar, ketik, atau pilih gambar lain.</string>
+    <string name="runtime_font_pen">Pena</string>
+    <string name="runtime_font_script">Kaligrafi</string>
+    <string name="runtime_font_brush">Kuas</string>
+    <string name="runtime_signature_updated">Tanda tangan diperbarui.</string>
+</resources>

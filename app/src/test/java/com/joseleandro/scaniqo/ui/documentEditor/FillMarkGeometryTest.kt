@@ -6,6 +6,7 @@ import com.joseleandro.scaniqo.domain.model.PdfPoint
 import com.joseleandro.scaniqo.ui.documentEditor.components.containsFillMarkPoint
 import com.joseleandro.scaniqo.ui.documentEditor.components.isFillMarkResizePoint
 import com.joseleandro.scaniqo.ui.documentEditor.components.resizedFillMark
+import com.joseleandro.scaniqo.ui.documentEditor.components.resizedFillMarkBoxFromCorner
 import com.joseleandro.scaniqo.ui.documentEditor.components.placedFillMarkAt
 import com.joseleandro.scaniqo.ui.documentEditor.components.FillMarkGestureIntent
 import org.junit.Assert.*
@@ -82,6 +83,49 @@ class FillMarkGeometryTest {
         assertEquals(.4f, resized.points.last().x, .00001f)
         assertEquals(.5f, resized.points.last().y, .00001f)
         assertTrue(resized.isValid())
+    }
+
+    @Test fun textBoxResizeKeepsFontSizeAndChangesOnlyTheDraggedAxes() {
+        val resized = element.copy(autoSizeText = true).resizedFillMarkBoxFromCorner(2, 100f, 0f, 1000f, 1000f)
+        assertEquals(.5f, resized.width, .00001f)
+        assertEquals(element.height, resized.height, .00001f)
+        assertEquals(element.fontSize, resized.fontSize, .00001f)
+        assertEquals(element.x, resized.x, .00001f)
+        assertEquals(element.y, resized.y, .00001f)
+        assertFalse(resized.autoSizeText)
+        assertTrue(resized.wrapText)
+    }
+
+    @Test fun textBoxResizeAnchorsOppositeCornerForEveryHandle() {
+        for (corner in 0..3) {
+            val fromLeft = corner == 0 || corner == 3
+            val fromTop = corner < 2
+            val resized = element.resizedFillMarkBoxFromCorner(corner, 50f, 30f, 1000f, 1000f)
+            assertEquals(if (fromLeft) element.x + element.width else element.x,
+                if (fromLeft) resized.x + resized.width else resized.x, .00001f)
+            assertEquals(if (fromTop) element.y + element.height else element.y,
+                if (fromTop) resized.y + resized.height else resized.y, .00001f)
+            assertTrue(resized.isValid())
+        }
+    }
+
+    @Test fun textBoxResizeCannotInvertOrLeaveThePage() {
+        for (corner in 0..3) for (delta in listOf(-10000f, 10000f)) {
+            val resized = element.resizedFillMarkBoxFromCorner(corner, delta, delta, 1000f, 1000f)
+            assertTrue(resized.isValid())
+            assertEquals(element.fontSize, resized.fontSize, .00001f)
+        }
+    }
+
+    @Test fun textBoxResizeIsIndependentOfPreviewZoom() {
+        assertEquals(element.resizedFillMarkBoxFromCorner(0, 20f, -15f, 595f, 842f),
+            element.resizedFillMarkBoxFromCorner(0, 60f, -45f, 1785f, 2526f))
+    }
+
+    @Test fun textBoxResizeIgnoresInvalidGeometry() {
+        assertEquals(element, element.resizedFillMarkBoxFromCorner(4, 1f, 1f, 595f, 842f))
+        assertEquals(element, element.resizedFillMarkBoxFromCorner(2, Float.NaN, 1f, 595f, 842f))
+        assertEquals(element, element.resizedFillMarkBoxFromCorner(2, 1f, 1f, 0f, 842f))
     }
 
     @Test fun resizeNearPageCornerRemainsValid() {

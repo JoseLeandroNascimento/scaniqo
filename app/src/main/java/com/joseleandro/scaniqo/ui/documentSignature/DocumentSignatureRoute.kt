@@ -21,7 +21,7 @@ import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentToolsViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
-import com.joseleandro.scaniqo.ui.signatures.SignatureEditorSheet
+import com.joseleandro.scaniqo.ui.signatures.SignatureEditorScreen
 import com.joseleandro.scaniqo.ui.signatures.SignaturesEvent
 import com.joseleandro.scaniqo.ui.signatures.SignaturesViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -73,34 +73,38 @@ fun DocumentSignatureRoute(
         }
     }
     BackHandler(enabled = isActive && !leaving, onBack = requestBack)
-    DocumentSignatureScreen(
-        documentId = documentId,
-        state = tools,
-        documentName = document?.name.orEmpty(),
-        isLoadingDocument = viewer.isLoading || viewer.requestedDocumentId != documentId,
-        documentError = viewer.loadError || (!viewer.isLoading && viewer.requestedDocumentId == documentId && document == null),
-        onEvent = toolsViewModel::onEvent,
-        onBack = requestBack,
-        onCreateSignature = { signaturesViewModel.onEvent(SignaturesEvent.CreateForDocument(documentId)) },
-        onRetry = {
-            viewerViewModel.retry()
-            toolsViewModel.onEvent(DocumentToolsEvent.Retry)
-        },
-        onApply = {
-            val current = toolsViewModel.uiState.value
-            if (active && !leaving && current.document?.id == documentId && current.signatureDraft != null) {
-                toolsViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
-                if (toolsViewModel.uiState.value.signatureDraft == null) leave()
-            }
-        },
-    )
     val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         signaturesViewModel.onEvent(SignaturesEvent.ImageSelected(uri?.toString()))
     }
-    signatures.editor?.takeIf { isActive && it.targetDocumentId == documentId }?.let { editor ->
-        SignatureEditorSheet(editor, signaturesViewModel::onEvent) {
-            imagePicker.launch(arrayOf("image/*"))
-        }
+    val editor = signatures.editor?.takeIf { isActive && it.targetDocumentId == documentId }
+    if (editor != null) {
+        SignatureEditorScreen(
+            editor = editor,
+            onEvent = signaturesViewModel::onEvent,
+            onPickImage = { imagePicker.launch(arrayOf("image/*")) },
+        )
+    } else {
+        DocumentSignatureScreen(
+            documentId = documentId,
+            state = tools,
+            documentName = document?.name.orEmpty(),
+            isLoadingDocument = viewer.isLoading || viewer.requestedDocumentId != documentId,
+            documentError = viewer.loadError || (!viewer.isLoading && viewer.requestedDocumentId == documentId && document == null),
+            onEvent = toolsViewModel::onEvent,
+            onBack = requestBack,
+            onCreateSignature = { signaturesViewModel.onEvent(SignaturesEvent.CreateForDocument(documentId)) },
+            onRetry = {
+                viewerViewModel.retry()
+                toolsViewModel.onEvent(DocumentToolsEvent.Retry)
+            },
+            onApply = {
+                val current = toolsViewModel.uiState.value
+                if (active && !leaving && current.document?.id == documentId && current.signatureDraft != null) {
+                    toolsViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+                    if (toolsViewModel.uiState.value.signatureDraft == null) leave()
+                }
+            },
+        )
     }
     if (confirmExit && isActive) {
         AlertDialog(

@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">框内文字</string>
+    <string name="fill_text_align_action">文字对齐</string>
+    <string name="fill_text_horizontal">水平</string>
+    <string name="fill_text_vertical">垂直</string>
+    <string name="fill_text_start">起始</string>
+    <string name="fill_text_center">居中</string>
+    <string name="fill_text_end">末尾</string>
+    <string name="fill_text_top">顶部</string>
+    <string name="fill_text_middle">中部</string>
+    <string name="fill_text_bottom">底部</string>
+    <string name="fill_text_auto_box">根据文字调整文本框</string>
+    <string name="fill_text_page_position">页面位置</string>
+</resources>

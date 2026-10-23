@@ -1,6 +1,18 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
+import com.joseleandro.scaniqo.ui.documentEditor.util.resizeManualCropEdge
+import com.joseleandro.scaniqo.ui.documentEditor.util.transformManualCrop
+import kotlin.math.abs
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.absoluteOffset
@@ -56,12 +68,136 @@ internal fun DocumentManualCropEditor(
     DocumentSourceSelectionEditor(
         page, corners, enabled, pageNumber, modifier, sourceState, onRetry, magnifier,
     ) { size ->
+        CropSelectionBody(page.id, crop, size, enabled, onChange)
+        repeat(4) { edge ->
+            CropEdge(edge, crop, size, enabled, onChange, sourceState.source?.pixels) { magnifier = it }
+        }
         corners.forEachIndexed { index, point ->
             CropCorner(
                 index, point, crop, size, enabled, onChange, sourceState.source?.pixels,
                 onMagnifierChange = { magnifier = it },
             )
         }
+    }
+}
+
+@Composable
+private fun CropSelectionBody(
+    pageId: String,
+    crop: PdfCropBounds,
+    imageSize: IntSize,
+    enabled: Boolean,
+    onChange: (PdfCropBounds) -> Unit,
+) {
+    val latestCrop by rememberUpdatedState(crop)
+    val latestOnChange by rememberUpdatedState(onChange)
+    val density = LocalDensity.current
+    val minimumPixels = with(density) { 48.dp.toPx() }
+    val guide = MaterialTheme.colorScheme.primary.copy(alpha = .35f)
+    Canvas(
+        Modifier.absoluteOffset(24.dp, 24.dp)
+            .width(with(density) { imageSize.width.toDp() })
+            .height(with(density) { imageSize.height.toDp() })
+            .pointerInput(pageId, imageSize, enabled) {
+                if (!enabled || imageSize.width <= 0 || imageSize.height <= 0) return@pointerInput
+                awaitEachGesture {
+                    val down = awaitFirstDown()
+                    var current = latestCrop
+                    val startsInside = down.position.x / imageSize.width in current.left..current.right &&
+                        down.position.y / imageSize.height in current.top..current.bottom
+                    var transforming = false
+                    var totalPan = Offset.Zero
+                    var totalZoom = 1f
+                    do {
+                        val event = awaitPointerEvent()
+                        if (event.changes.any { it.isConsumed }) break
+                        val twoFingers = event.changes.count { it.pressed && it.previousPressed } >= 2
+                        if (!transforming && !startsInside && !twoFingers) {
+                            // Um arraste fora da seleção não deve se acumular antes da pinça.
+                            totalPan = Offset.Zero
+                            totalZoom = 1f
+                            continue
+                        }
+                        val pan = event.calculatePan()
+                        val zoom = event.calculateZoom()
+                        totalPan += pan
+                        totalZoom *= zoom
+                        if (!transforming) {
+                            val zoomMotion = abs(1f - totalZoom) * minOf(imageSize.width, imageSize.height) / 2f
+                            transforming = totalPan.getDistance() > viewConfiguration.touchSlop ||
+                                zoomMotion > viewConfiguration.touchSlop
+                        }
+                        if (transforming) {
+                            current = transformManualCrop(
+                                current, totalPan.x / imageSize.width, totalPan.y / imageSize.height, totalZoom,
+                                minimumPixels / imageSize.width, minimumPixels / imageSize.height,
+                            )
+                            latestOnChange(current)
+                            totalPan = Offset.Zero
+                            totalZoom = 1f
+                            event.changes.forEach { it.consume() }
+                        }
+                    } while (event.changes.any { it.pressed })
+                }
+            },
+    ) {
+        val left = crop.left * size.width
+        val right = crop.right * size.width
+        val top = crop.top * size.height
+        val bottom = crop.bottom * size.height
+        for (third in 1..2) {
+            val x = left + (right - left) * third / 3f
+            val y = top + (bottom - top) * third / 3f
+            drawLine(guide, Offset(x, top), Offset(x, bottom), 1.dp.toPx())
+            drawLine(guide, Offset(left, y), Offset(right, y), 1.dp.toPx())
+        }
+    }
+}
+
+private fun PdfCropBounds.edgePoint(edge: Int): PdfPoint = when (edge) {
+    0 -> PdfPoint((left + right) / 2f, top)
+    1 -> PdfPoint(right, (top + bottom) / 2f)
+    2 -> PdfPoint((left + right) / 2f, bottom)
+    else -> PdfPoint(left, (top + bottom) / 2f)
+}
+
+@Composable
+private fun CropEdge(
+    edge: Int,
+    crop: PdfCropBounds,
+    imageSize: IntSize,
+    enabled: Boolean,
+    onChange: (PdfCropBounds) -> Unit,
+    sourceKey: Any?,
+    onMagnifierChange: (CaptureMagnifierFocus?) -> Unit,
+) {
+    val point = crop.edgePoint(edge)
+    val minimumPixels = with(LocalDensity.current) { 48.dp.toPx() }
+    val horizontal = edge % 2 == 0
+    Box(
+        Modifier.absoluteOffset {
+            IntOffset((point.x * imageSize.width).roundToInt(), (point.y * imageSize.height).roundToInt())
+        }.size(48.dp).captureSelectionDrag(
+            index = edge + 4,
+            imageSize = imageSize,
+            enabled = enabled,
+            sourceKey = sourceKey,
+            current = crop,
+            pointOf = { it.edgePoint(edge) },
+            move = { current, dx, dy ->
+                resizeManualCropEdge(current, edge, dx, dy, minimumPixels / imageSize.width, minimumPixels / imageSize.height)
+            },
+            onChange = onChange,
+            onMagnifierChange = onMagnifierChange,
+        ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Surface(
+            Modifier.width(if (horizontal) 28.dp else 6.dp).height(if (horizontal) 6.dp else 28.dp),
+            shape = CircleShape,
+            color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+            shadowElevation = 2.dp,
+        ) {}
     }
 }
 

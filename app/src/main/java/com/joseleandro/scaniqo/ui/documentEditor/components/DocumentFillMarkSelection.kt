@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import kotlin.math.roundToInt
 
 /** Camada visual em pixels do palco: alças conservam tamanho mesmo com zoom. */
@@ -72,14 +73,25 @@ internal fun DocumentFillMarkSelection(
         if (enabled) selection.visibleHandles.forEach { index ->
             val handle = selection.handles[index]
             val isMove = index == 4
+            fun resize(factor: Float) {
+                val resized = if (draft.kind == PdfOverlayKind.TEXT) {
+                    draft.resizedFillMarkBoxFromCorner(
+                        index,
+                        draft.width * 595f * (factor - 1f) * if (index == 0 || index == 3) -1f else 1f,
+                        draft.height * 842f * (factor - 1f) * if (index < 2) -1f else 1f,
+                        595f, 842f,
+                    )
+                } else draft.scaledFillMarkAtCorner(index, factor)
+                onUpdate(resized)
+            }
             val actions = if (isMove) listOf(
                 CustomAccessibilityAction(left) { onUpdate(draft.movedTo(draft.x - .005f, draft.y)); true },
                 CustomAccessibilityAction(right) { onUpdate(draft.movedTo(draft.x + .005f, draft.y)); true },
                 CustomAccessibilityAction(up) { onUpdate(draft.movedTo(draft.x, draft.y - .005f)); true },
                 CustomAccessibilityAction(down) { onUpdate(draft.movedTo(draft.x, draft.y + .005f)); true },
             ) else listOf(
-                CustomAccessibilityAction(grow) { onUpdate(draft.scaledFillMarkAtCorner(index, 1.1f)); true },
-                CustomAccessibilityAction(shrink) { onUpdate(draft.scaledFillMarkAtCorner(index, .9f)); true },
+                CustomAccessibilityAction(grow) { resize(1.1f); true },
+                CustomAccessibilityAction(shrink) { resize(.9f); true },
             )
             Box(
                 Modifier.absoluteOffset {

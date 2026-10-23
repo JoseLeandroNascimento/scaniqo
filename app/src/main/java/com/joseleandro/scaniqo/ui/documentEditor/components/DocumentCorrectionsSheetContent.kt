@@ -5,9 +5,8 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -70,6 +68,7 @@ import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentBackgroundSuggest
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolPreviewState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.util.PdfPageLayoutSaver
+import com.joseleandro.scaniqo.ui.documentEditor.util.withCorrectionAdjustmentsFrom
 import com.joseleandro.scaniqo.ui.documentEditor.util.DocumentCaptureCoordinates
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import kotlin.math.roundToInt
@@ -112,15 +111,7 @@ internal fun DocumentCorrectionsSheetContent(
     val canEdit = state.canEdit && backgroundSuggestion.pending == null
     val canEditCapture = canEdit && (sourceReady || inspecting)
 
-    fun correctedLayout(original: PdfPageLayout): PdfPageLayout = original.copy(
-        crop = draft.crop,
-        backgroundMask = draft.backgroundMask,
-        perspective = if ((tool == CorrectionEditorTool.CROP && sourceReady) || draft.crop != null) null else draft.perspective,
-        straightenDegrees = draft.straightenDegrees,
-        curvature = draft.curvature,
-        rasterizeText = draft.rasterizeText || (original.rasterizeText &&
-            original.imageFilter != PdfImageFilter.ORIGINAL && original.filterIntensity > 0f),
-    )
+    fun correctedLayout(original: PdfPageLayout): PdfPageLayout = original.withCorrectionAdjustmentsFrom(draft)
     val previewLayout = correctedLayout(page.layout)
     val preserveFilterRasterization = page.layout.rasterizeText &&
         page.layout.imageFilter != PdfImageFilter.ORIGINAL && page.layout.filterIntensity > 0f
@@ -182,23 +173,12 @@ internal fun DocumentCorrectionsSheetContent(
     }
 
     val header: @Composable () -> Unit = {
-        FlowRow(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                stringResource(tool.labelResource()),
-                modifier = Modifier.heightIn(min = 48.dp).wrapContentHeight(Alignment.CenterVertically),
-                style = MaterialTheme.typography.titleSmall,
-            )
-            Text(
-                stringResource(R.string.interactive_preview_page, workspace.pages.indexOf(page) + 1),
-                modifier = Modifier.heightIn(min = 48.dp).wrapContentHeight(Alignment.CenterVertically),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        Text(
+            stringResource(R.string.interactive_preview_page, workspace.pages.indexOf(page) + 1),
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
     val selectionControls: @Composable () -> Unit = {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -283,9 +263,9 @@ internal fun DocumentCorrectionsSheetContent(
             }
         }
     }
-    val toolButtons: @Composable ColumnScope.() -> Unit = {
+    val toolButtons: @Composable RowScope.() -> Unit = {
         CorrectionEditorTool.entries.forEach { item ->
-            DocumentPreviewToolButton(
+            DocumentToolModeButton(
                 label = stringResource(item.labelResource()),
                 iconRes = item.iconResource(),
                 selected = tool == item,
@@ -364,7 +344,8 @@ internal fun DocumentCorrectionsSheetContent(
             enabled = canEdit && (!usesCapture || canEditCapture),
             applyEnabled = source?.preservesNativeContent != true ||
                 draft.backgroundMask == null || previewLayout.rasterizeText,
-            applyLabel = pluralStringResource(R.plurals.document_scope_apply_count, targets.size, targets.size),
+            applyLabel = if (targets.size == 1) stringResource(R.string.tools_apply_compact)
+                else pluralStringResource(R.plurals.document_scope_apply_count, targets.size, targets.size),
             onReset = {
                 updateDraft(when (tool) {
                     CorrectionEditorTool.CROP -> draft.copy(crop = null, perspective = null)
@@ -392,7 +373,18 @@ internal fun DocumentCorrectionsSheetContent(
         modifier = modifier,
         previewKey = page.id,
         onGestureStart = { gestureStartLayout.value = draft },
-        onTransformStart = { draft = gestureStartLayout.value },        header = header,
+        onTransformStart = { draft = gestureStartLayout.value },
+        previewTransformGestures = tool != CorrectionEditorTool.CROP || !editingSelection,
+        gestureHint = stringResource(when (tool) {
+            CorrectionEditorTool.CROP -> if (editingSelection) R.string.direct_edit_crop else R.string.correction_editor_result
+            CorrectionEditorTool.BACKGROUND -> if (editingSelection) R.string.direct_edit_background else R.string.correction_editor_result
+            CorrectionEditorTool.STRAIGHTEN -> R.string.direct_edit_straighten
+            CorrectionEditorTool.CURVATURE -> R.string.direct_edit_curve
+        }),
+        // A conversão de conteúdo nativo e o resultado da detecção precisam continuar visíveis.
+        keepControlsVisible = tool == CorrectionEditorTool.BACKGROUND ||
+            (source?.preservesNativeContent == true && draft.backgroundMask != null),
+        header = header,
         preview = canvas,
         tools = toolButtons,
         controls = adjustments,
@@ -451,12 +443,11 @@ private fun BackgroundRemovalControls(
                 Text(stringResource(R.string.background_editor_retry))
             }
         }
-        Text(
+        if (feedback != null) Text(
             stringResource(when (feedback) {
                 DocumentBackgroundFeedback.SUGGESTED -> R.string.background_editor_suggested
                 DocumentBackgroundFeedback.NO_EDGES -> R.string.background_editor_no_edges
                 DocumentBackgroundFeedback.FAILED -> R.string.background_editor_failed
-                null -> R.string.background_editor_hint
             }),
             modifier = Modifier.padding(horizontal = 8.dp),
             style = MaterialTheme.typography.bodySmall,

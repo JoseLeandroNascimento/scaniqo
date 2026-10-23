@@ -4,11 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,9 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -26,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -137,50 +130,9 @@ private fun DocumentToolSheetContent(
             DocumentTool.PAGES -> Unit // Páginas usa a tela dedicada.
             DocumentTool.MERGE -> Unit // Mesclagem usa a tela compartilhada.
             DocumentTool.SIGNATURES -> Unit // Assinaturas usam a tela dedicada.
-            DocumentTool.PROTECTION -> ProtectionOptions(state, onEvent)
+            DocumentTool.PROTECTION -> DocumentProtectionOptions(state, onEvent)
             DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION -> Unit
         }
-    }
-}
-
-@Composable
-private fun ProtectionOptions(state: DocumentToolsUiState, onEvent: (DocumentToolsEvent) -> Unit) {
-    val workspace = state.workspace ?: return
-    Column(
-        Modifier.fillMaxWidth().heightIn(max = 640.dp).verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLow) {
-            Column(
-                Modifier.fillMaxWidth()
-                    .toggleable(
-                        value = workspace.isProtected,
-                        enabled = state.canEdit,
-                        role = Role.Switch,
-                        onValueChange = { onEvent(DocumentToolsEvent.SetProtection(it)) },
-                    ).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text(
-                        stringResource(R.string.tools_protect_title),
-                        Modifier.weight(1f),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    Switch(checked = workspace.isProtected, onCheckedChange = null, enabled = state.canEdit)
-                }
-                Text(
-                    stringResource(R.string.tools_protect_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        OutlinedButton(
-            onClick = { onEvent(DocumentToolsEvent.PasswordSettings) },
-            enabled = state.canEdit,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-        ) { Text(stringResource(R.string.tools_password_settings)) }
     }
 }
 

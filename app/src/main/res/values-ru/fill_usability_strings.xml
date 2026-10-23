@@ -1,0 +1,4 @@
+<resources>
+    <string name="fill_tap_to_write">Нажмите на страницу, чтобы написать</string>
+    <string name="fill_tap_to_mark">Нажмите на страницу, чтобы поставить отметку</string>
+</resources>

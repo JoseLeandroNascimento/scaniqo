@@ -2,6 +2,8 @@ package com.joseleandro.scaniqo.ui.documentEditor
 
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
+import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
 import com.joseleandro.scaniqo.ui.documentEditor.components.FillMarkStyle
 import com.joseleandro.scaniqo.ui.documentEditor.components.alignedFillMark
 import com.joseleandro.scaniqo.ui.documentEditor.components.duplicatedFillMark
@@ -32,6 +34,34 @@ class FillMarkEditingTest {
         assertEquals(text.width, restored.width, .00001f)
         assertEquals(text.height, restored.height, .00001f)
         assertEquals(text.opacity, restored.opacity, .00001f)
+    }
+
+    @Test fun oldSavedStyleUsesStartAndTopAlignment() {
+        val legacy = """{"color":-16777216,"fontSize":18.0,"width":0.4,"height":0.1,"opacity":1.0}"""
+        val style = Json.decodeFromString<FillMarkStyle>(legacy)
+
+        assertEquals(PdfTextHorizontalAlignment.START, style.textHorizontalAlignment)
+        assertEquals(PdfTextVerticalAlignment.TOP, style.textVerticalAlignment)
+        assertTrue(style.isValid())
+    }
+
+    @Test fun rememberedAlignmentDoesNotRestoreManualSizingOrPrivateText() {
+        val manuallySized = text.copy(
+            textHorizontalAlignment = PdfTextHorizontalAlignment.END,
+            textVerticalAlignment = PdfTextVerticalAlignment.CENTER,
+            autoSizeText = false, wrapText = false,
+        )
+        val encoded = Json.encodeToString(FillMarkStyle.from(manuallySized))
+        val fresh = PdfOverlay("new", PdfOverlayKind.TEXT, autoSizeText = true, wrapText = true)
+        val restored = Json.decodeFromString<FillMarkStyle>(encoded).applyTo(fresh)
+
+        assertEquals(PdfTextHorizontalAlignment.END, restored.textHorizontalAlignment)
+        assertEquals(PdfTextVerticalAlignment.CENTER, restored.textVerticalAlignment)
+        assertTrue(restored.autoSizeText)
+        assertTrue(restored.wrapText)
+        assertEquals("", restored.text)
+        assertEquals(fresh.id, restored.id)
+        assertFalse(encoded.contains(manuallySized.text))
     }
 
     @Test fun corruptRememberedAppearanceFallsBackToFreshDefaults() {

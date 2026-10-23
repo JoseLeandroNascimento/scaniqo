@@ -68,9 +68,12 @@ internal fun DocumentFillMarkEditor(
 
     fun stopTyping() { editingText = false; keyboard?.hide(); focusManager.clearFocus() }
     fun update(value: PdfOverlay) {
-        encoded = Json.encodeToString(value)
+        val fitted = if (value.kind == PdfOverlayKind.TEXT && value.autoSizeText &&
+            (value.text != draft.text || value.fontSize != draft.fontSize || !draft.autoSizeText)
+        ) value.fittedFillMarkText() else value
+        encoded = Json.encodeToString(fitted)
         active = true
-        dirty = if (existing != null) value != existing else value.kind !in textKinds || value.text.isNotBlank()
+        dirty = if (existing != null) fitted != existing else fitted.kind !in textKinds || fitted.text.isNotBlank()
     }
     fun reset() {
         stopTyping()
@@ -109,17 +112,36 @@ internal fun DocumentFillMarkEditor(
         dirty = false
         active = true
         allPages = false
-        if (value.kind in textKinds) focusText() else stopTyping()
+        // O primeiro toque seleciona para mover; Texto ou um segundo toque abre o teclado.
+        stopTyping()
     }
     fun insert(point: PdfPoint) {
         if (!commitCurrent()) return
-        val value = styles.newOverlay(mode).placedFillMarkAt(point)
+        val repeatCheckmark = mode == PdfOverlayKind.CHECKMARK && draft.kind == PdfOverlayKind.CHECKMARK && !editingText
+        if (active && !repeatCheckmark) {
+            reset()
+            return
+        }
+        val value = styles.newOverlay(mode).placedFillMarkAt(point).let {
+            if (it.kind == PdfOverlayKind.TEXT && it.autoSizeText) it.fittedFillMarkText() else it
+        }
         selectedId = null
         encoded = Json.encodeToString(value)
         active = true
         dirty = mode == PdfOverlayKind.CHECKMARK
         allPages = false
         if (mode == PdfOverlayKind.TEXT) focusText() else stopTyping()
+    }
+
+    fun changeMode(value: PdfOverlayKind) {
+        if (!commitCurrent()) return
+        mode = value
+        reset()
+    }
+
+    fun deleteCurrent() {
+        if (existing != null) onEvent(DocumentToolsEvent.RemoveOverlay(draft.id, targets))
+        reset()
     }
 
     fun canDuplicateCurrent(): Boolean = active && draft.kind in repeatableFillMarkKinds &&
@@ -152,7 +174,7 @@ internal fun DocumentFillMarkEditor(
     Column(Modifier.fillMaxSize()) {
         Box(Modifier.weight(1f).fillMaxWidth()) {
         DocumentFillMarkStage(
-            state = state, page = page, draft = draft.takeIf { active }, dirty = dirty, inputMode = mode,
+            state = state, page = page, draft = draft.takeIf { active }, dirty = dirty,
             excludedId = existing?.id, editingText = editingText, focusRequest = focusRequest,
             onUpdate = ::update, onSelect = ::select, onInsert = ::insert,
             onStopTyping = ::stopTyping, onEvent = onEvent,
@@ -169,17 +191,33 @@ internal fun DocumentFillMarkEditor(
             Box(Modifier.fillMaxWidth()) {
                 FillMarkControls(
                     active = active, mode = mode, textElement = draft.kind in textKinds, editingText = editingText,
-                    editable = editable, canApply = dirty && canCommit(draft),
-                    onMode = { mode = it },
+                    editable = editable, canApply = editable && active && (!dirty || canCommit(draft)),
+                    onMode = ::changeMode,
                     onApply = { if (commitCurrent()) reset() },
                     onCancel = ::reset,
                     onProperties = { stopTyping(); showProperties = true },
                     onEditText = { if (editingText) stopTyping() else if (active && draft.kind in textKinds) focusText() },
                     onMore = { more = true }, onDone = { stopTyping(); onBack() },
                     modifier = Modifier.fillMaxWidth(),
+                    draft = draft.takeIf { active }, onUpdate = ::update,
+                    canDuplicate = canDuplicateCurrent(), onDuplicate = ::duplicate,
+                    onDelete = ::deleteCurrent,
                 )
                 DropdownMenu(expanded = more, onDismissRequest = { more = false },
                     modifier = Modifier.align(Alignment.BottomEnd)) {
+                    if (active) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.fill_inline_text_mode)) },
+                            leadingIcon = { Icon(painterResource(R.drawable.edit_24px), null) },
+                            onClick = { more = false; changeMode(PdfOverlayKind.TEXT) },
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.overlay_checkmark)) },
+                            leadingIcon = { Icon(painterResource(R.drawable.ic_check_24), null) },
+                            onClick = { more = false; changeMode(PdfOverlayKind.CHECKMARK) },
+                        )
+                        HorizontalDivider()
+                    }
                     if (state.canStoreFormValues) DropdownMenuItem(
                         text = { Text(stringResource(R.string.fill_mark_values)) },
                         leadingIcon = { Icon(painterResource(R.drawable.ic_tag_person), null) },
@@ -187,14 +225,6 @@ internal fun DocumentFillMarkEditor(
                     if (page.overlays.isNotEmpty()) DropdownMenuItem(
                         text = { Text(stringResource(R.string.fill_mark_elements, page.overlays.size)) },
                         onClick = { more = false; stopTyping(); showElements = true })
-                    if (active && draft.kind in repeatableFillMarkKinds) DropdownMenuItem(
-                        text = { Text(stringResource(R.string.fill_mark_duplicate)) },
-                        enabled = canDuplicateCurrent(),
-                        onClick = { more = false; duplicate() })
-                    if (existing != null) DropdownMenuItem(
-                        text = { Text(stringResource(R.string.overlay_delete)) },
-                        leadingIcon = { Icon(painterResource(R.drawable.delete_24px), null) },
-                        onClick = { more = false; onEvent(DocumentToolsEvent.RemoveOverlay(draft.id, targets)); reset() })
                     DropdownMenuItem(text = { Text(stringResource(R.string.fill_inline_hide_controls)) },
                         onClick = { more = false; controlsVisible = false })
                 }

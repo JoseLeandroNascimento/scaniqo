@@ -6,11 +6,14 @@ import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
 import com.joseleandro.scaniqo.domain.model.PdfCheckmarkGeometry
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
+import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.font.PDType1Font
 import com.tom_roush.pdfbox.pdmodel.graphics.image.LosslessFactory
 import com.tom_roush.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState
+import com.tom_roush.pdfbox.util.Matrix
 import kotlin.math.min
 import kotlin.math.sqrt
 
@@ -105,6 +108,13 @@ internal object PdfOverlayLayer {
             drawShapedText(document, stream, overlay, normalized, x, top, width, height)
             return
         }
+        if (overlay.wrapText || overlay.autoSizeText ||
+            overlay.textHorizontalAlignment != PdfTextHorizontalAlignment.START ||
+            overlay.textVerticalAlignment != PdfTextVerticalAlignment.TOP
+        ) {
+            drawAlignedVectorText(stream, overlay, normalized, x, top, width, height)
+            return
+        }
         val padding = if (overlay.kind == PdfOverlayKind.STAMP) 6f else 0f
         val lines = normalized.lines()
         val maxWidth = lines.maxOfOrNull { font.getStringWidth(it) / 1000f } ?: 0f
@@ -119,6 +129,39 @@ internal object PdfOverlayLayer {
         lines.forEachIndexed { index, line ->
             if (index > 0) stream.newLine()
             stream.showText(line)
+        }
+        stream.endText()
+    }
+
+    /** Uses the preview's line breaks and placement while retaining searchable Latin text. */
+    private fun drawAlignedVectorText(
+        stream: PDPageContentStream, overlay: PdfOverlay, content: String,
+        x: Float, top: Float, width: Float, height: Float,
+    ) {
+        val padding = if (overlay.kind == PdfOverlayKind.STAMP) min(6f, min(width, height) / 4f) else 0f
+        val innerWidth = (width - padding * 2).coerceAtLeast(.001f)
+        val innerHeight = (height - padding * 2).coerceAtLeast(.001f)
+        val layout = ShapedTextLayout.create(
+            text = content, fontSize = overlay.fontSize, color = overlay.color,
+            maxWidth = innerWidth, maxHeight = innerHeight,
+            wrap = overlay.wrapText, horizontalAlignment = overlay.textHorizontalAlignment,
+        )
+        val font = PDType1Font.HELVETICA
+        val offsetX = layout.horizontalOffset(innerWidth)
+        val offsetY = layout.verticalOffset(innerHeight, overlay.textVerticalAlignment)
+        stream.beginText()
+        stream.setFont(font, layout.fontSize)
+        layout.lines.forEach { line ->
+            if (line.text.isNotEmpty()) {
+                val vectorWidth = font.getStringWidth(line.text) / 1000f * layout.fontSize
+                // Android and Helvetica have different advances; match the measured line width.
+                stream.setHorizontalScaling(if (vectorWidth > 0f) line.width / vectorWidth * 100f else 100f)
+                stream.setTextMatrix(Matrix.getTranslateInstance(
+                    x + padding + offsetX + line.left,
+                    top - padding - offsetY - line.baseline,
+                ))
+                stream.showText(line.text)
+            }
         }
         stream.endText()
     }
@@ -148,10 +191,14 @@ internal object PdfOverlayLayer {
                 // The PDF graphics state applies opacity once, to the whole shaped image.
                 color = overlay.color or (0xFF shl 24),
                 maxWidth = innerWidth, maxHeight = innerHeight,
+                wrap = overlay.wrapText, horizontalAlignment = overlay.textHorizontalAlignment,
             )
             val canvas = Canvas(bitmap)
             canvas.scale(bitmap.width / width, bitmap.height / height)
-            layout.draw(canvas, padding, padding, availableWidth = innerWidth)
+            layout.draw(
+                canvas, padding, padding, availableWidth = innerWidth, availableHeight = innerHeight,
+                verticalAlignment = overlay.textVerticalAlignment,
+            )
             val image = LosslessFactory.createFromImage(document, bitmap)
             stream.drawImage(image, x, top - height, width, height)
         } finally {

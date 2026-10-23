@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">बॉक्स में टेक्स्ट</string>
+    <string name="fill_text_align_action">टेक्स्ट संरेखित करें</string>
+    <string name="fill_text_horizontal">क्षैतिज</string>
+    <string name="fill_text_vertical">लंबवत</string>
+    <string name="fill_text_start">शुरुआत</string>
+    <string name="fill_text_center">केंद्र</string>
+    <string name="fill_text_end">अंत</string>
+    <string name="fill_text_top">ऊपर</string>
+    <string name="fill_text_middle">बीच</string>
+    <string name="fill_text_bottom">नीचे</string>
+    <string name="fill_text_auto_box">बॉक्स को टेक्स्ट के अनुसार करें</string>
+    <string name="fill_text_page_position">पेज पर स्थिति</string>
+</resources>

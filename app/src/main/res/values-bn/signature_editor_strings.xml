@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">স্বাক্ষর সম্পাদনা করুন</string>
+    <string name="runtime_signature_preview">পূর্বরূপ</string>
+    <string name="runtime_signature_font">হাতের লেখার ধরন</string>
+    <string name="runtime_signature_draw_hint">আঙুল দিয়ে আপনার স্বাক্ষর আঁকুন।</string>
+    <string name="runtime_signature_legacy_hint">এই স্বাক্ষরটি একটি ছবি। বিষয়বস্তু বদলাতে আঁকুন, টাইপ করুন বা অন্য ছবি বেছে নিন।</string>
+    <string name="runtime_font_pen">কলম</string>
+    <string name="runtime_font_script">ক্যালিগ্রাফি</string>
+    <string name="runtime_font_brush">ব্রাশ</string>
+    <string name="runtime_signature_updated">স্বাক্ষর আপডেট করা হয়েছে।</string>
+</resources>

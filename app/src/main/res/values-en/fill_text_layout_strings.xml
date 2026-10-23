@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">Text in box</string>
+    <string name="fill_text_align_action">Align text</string>
+    <string name="fill_text_horizontal">Horizontal</string>
+    <string name="fill_text_vertical">Vertical</string>
+    <string name="fill_text_start">Start</string>
+    <string name="fill_text_center">Center</string>
+    <string name="fill_text_end">End</string>
+    <string name="fill_text_top">Top</string>
+    <string name="fill_text_middle">Middle</string>
+    <string name="fill_text_bottom">Bottom</string>
+    <string name="fill_text_auto_box">Fit box to text</string>
+    <string name="fill_text_page_position">Position on page</string>
+</resources>

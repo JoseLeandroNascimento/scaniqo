@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">বক্সের মধ্যে টেক্সট</string>
+    <string name="fill_text_align_action">টেক্সটের সারিবদ্ধতা</string>
+    <string name="fill_text_horizontal">অনুভূমিক</string>
+    <string name="fill_text_vertical">উল্লম্ব</string>
+    <string name="fill_text_start">শুরু</string>
+    <string name="fill_text_center">কেন্দ্র</string>
+    <string name="fill_text_end">শেষ</string>
+    <string name="fill_text_top">উপরে</string>
+    <string name="fill_text_middle">মাঝে</string>
+    <string name="fill_text_bottom">নীচে</string>
+    <string name="fill_text_auto_box">টেক্সট অনুযায়ী বক্সের মাপ</string>
+    <string name="fill_text_page_position">পৃষ্ঠায় অবস্থান</string>
+</resources>

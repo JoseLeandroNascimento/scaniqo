@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">اسحب للمحاذاة</string>
+    <string name="direct_edit_rotate">دوّر بإصبعين</string>
+    <string name="direct_edit_scale">ضم إصبعيك أو باعدهما لتغيير الحجم</string>
+    <string name="direct_edit_crop">اسحب الحواف · غيّر الحجم بإصبعين</string>
+    <string name="direct_edit_straighten">اسحب جانبياً</string>
+    <string name="direct_edit_curve">اسحب لأعلى أو لأسفل</string>
+    <string name="direct_edit_background">اسحب الزوايا</string>
+</resources>

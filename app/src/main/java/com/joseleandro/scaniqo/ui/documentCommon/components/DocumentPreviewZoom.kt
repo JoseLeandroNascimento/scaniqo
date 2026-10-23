@@ -97,6 +97,7 @@ internal fun DocumentPreviewZoom(
     singleFingerPan: Boolean = false,
     allowFullscreen: Boolean = true,
     contentAspectRatio: Float? = null,
+    transformGesturesEnabled: Boolean = true,
     onGestureStart: () -> Unit = {},
     onTransformStart: () -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
@@ -110,14 +111,17 @@ internal fun DocumentPreviewZoom(
             val paperWidth = contentAspectRatio?.let { minOf(maxWidth, maxHeight * it) }
             val contentWidth = contentAspectRatio?.let { minOf(width, height * it) } ?: width
             val contentHeight = contentAspectRatio?.let { contentWidth / it } ?: height
-            LaunchedEffect(width, height, contentWidth, contentHeight) {
+            LaunchedEffect(width, height, contentWidth, contentHeight, transformGesturesEnabled) {
+                if (!transformGesturesEnabled) zoom = PreviewZoom()
                 zoom = zoom.transformed(Offset(width / 2f, height / 2f), Offset.Zero, 1f,
                     width, height, contentWidth, contentHeight)
             }
             val currentZoom by rememberUpdatedState(zoom)
             val currentGestureStart by rememberUpdatedState(onGestureStart)
             val currentTransformStart by rememberUpdatedState(onTransformStart)
-            Box(Modifier.fillMaxSize().pointerInput(contentKey, width, height, singleFingerPan) {
+            Box(Modifier.fillMaxSize().pointerInput(contentKey, width, height, singleFingerPan, transformGesturesEnabled) {
+                // Editores com pinça/giro próprios recebem o gesto sem interceptação do visor.
+                if (!transformGesturesEnabled) return@pointerInput
                 detectDocumentTransformGestures(
                     allowSinglePan = { singleFingerPan && currentZoom.scale > 1f },
                     onGestureStart = { currentGestureStart() },

@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">Texto na caixa</string>
+    <string name="fill_text_align_action">Alinhar texto</string>
+    <string name="fill_text_horizontal">Horizontal</string>
+    <string name="fill_text_vertical">Vertical</string>
+    <string name="fill_text_start">Início</string>
+    <string name="fill_text_center">Centro</string>
+    <string name="fill_text_end">Fim</string>
+    <string name="fill_text_top">Topo</string>
+    <string name="fill_text_middle">Meio</string>
+    <string name="fill_text_bottom">Base</string>
+    <string name="fill_text_auto_box">Ajustar caixa ao texto</string>
+    <string name="fill_text_page_position">Posição na página</string>
+</resources>

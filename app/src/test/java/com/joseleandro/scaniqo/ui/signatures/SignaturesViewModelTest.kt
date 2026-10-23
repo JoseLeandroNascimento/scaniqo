@@ -140,12 +140,93 @@ class SignaturesViewModelTest {
         assertEquals(1, model.uiState.value.signatures.size)
     }
 
+    @Test fun editingTypedSignatureKeepsItsIdAndPrefillsEditableSource() = runTest(dispatcher) {
+        val signature = SignatureModel(
+            "one", "Pessoal", "file:///one.png", 3f,
+            source = SignatureSource(
+                type = SignatureSourceType.TYPE,
+                text = "Maria", font = SignatureFont.CLASSIC, colorArgb = 0xFF183C9A.toInt(),
+            ),
+        )
+        repository.items.value = listOf(signature)
+        model.uiState
+        runCurrent()
+
+        model.onEvent(SignaturesEvent.Edit("one"))
+        val editor = model.uiState.value.editor!!
+        assertEquals("one", editor.editingId)
+        assertEquals("Pessoal", editor.name)
+        assertEquals(SignatureInput.TYPE, editor.input)
+        assertEquals("Maria", editor.text)
+        assertEquals(SignatureFont.CLASSIC, editor.font)
+        assertEquals(0xFF183C9A.toInt(), editor.colorArgb)
+
+        model.onEvent(SignaturesEvent.TextChanged("Maria Silva"))
+        model.onEvent(SignaturesEvent.Save)
+        runCurrent()
+
+        assertNull(model.uiState.value.editor)
+        assertEquals(1, model.uiState.value.signatures.size)
+        assertEquals("one", model.uiState.value.signatures.single().id)
+        assertEquals(1, model.uiState.value.signatures.single().imageVersion)
+        assertEquals("Maria Silva", repository.text)
+        assertEquals(1, repository.updated)
+        assertNull(model.uiState.value.pendingDocumentSelection)
+    }
+
+    @Test fun legacyPngOpensInImageModeAndKeepsEditorOnFailedUpdate() = runTest(dispatcher) {
+        val signature = SignatureModel("legacy", "Antiga", "file:///legacy.png", 3f)
+        repository.items.value = listOf(signature)
+        model.uiState
+        runCurrent()
+
+        model.onEvent(SignaturesEvent.Edit("legacy"))
+        assertEquals(SignatureInput.IMAGE, model.uiState.value.editor!!.input)
+        assertEquals("file:///legacy.png", model.uiState.value.editor!!.imageUri)
+        repository.failure = IllegalStateException("Falha de armazenamento")
+        model.onEvent(SignaturesEvent.Save)
+        runCurrent()
+        assertNotNull(model.uiState.value.editor)
+        assertEquals("legacy", model.uiState.value.editor!!.editingId)
+        assertFalse(model.uiState.value.editor!!.isSaving)
+        assertNotNull(model.uiState.value.editor!!.error)
+
+        repository.failure = null
+        model.onEvent(SignaturesEvent.Save)
+        runCurrent()
+        assertNull(model.uiState.value.editor)
+        assertEquals(1, model.uiState.value.signatures.size)
+        assertEquals("legacy", model.uiState.value.signatures.single().id)
+        assertEquals("file:///legacy.png", repository.image)
+        assertEquals(1, repository.updated)
+    }
+
+    @Test fun editingDoesNotConsumePendingDocumentSelection() = runTest(dispatcher) {
+        model.onEvent(SignaturesEvent.CreateForDocument(42))
+        model.onEvent(SignaturesEvent.InputChanged(SignatureInput.TYPE))
+        model.onEvent(SignaturesEvent.TextChanged("Ana"))
+        model.onEvent(SignaturesEvent.Save)
+        runCurrent()
+        val pending = model.uiState.value.pendingDocumentSelection
+        assertEquals(SignatureDocumentSelection(42, "new"), pending)
+
+        model.onEvent(SignaturesEvent.Edit("new"))
+        model.onEvent(SignaturesEvent.InputChanged(SignatureInput.TYPE))
+        model.onEvent(SignaturesEvent.TextChanged("Ana Silva"))
+        model.onEvent(SignaturesEvent.Save)
+        runCurrent()
+
+        assertEquals(pending, model.uiState.value.pendingDocumentSelection)
+        assertEquals(1, model.uiState.value.signatures.size)
+    }
+
     /** Permite exercitar falhas e concorrência sem depender de bitmaps Android. */
     private class FakeSignatures : SignatureRepository {
         val items = MutableStateFlow<List<SignatureModel>>(emptyList())
         var gate: CompletableDeferred<Unit>? = null
         var failure: Exception? = null
         var calls = 0
+        var updated = 0
         var text = ""
         var font: SignatureFont? = null
         var color = 0
@@ -165,6 +246,34 @@ class SignaturesViewModelTest {
         override suspend fun importImage(name: String, uri: String, removeLightBackground: Boolean): SignatureModel {
             image = uri; removeBackground = removeLightBackground
             return create(name)
+        }
+        override suspend fun updateDrawing(id: String, name: String, strokes: List<SignatureStroke>): SignatureModel {
+            this.strokes = strokes
+            return update(id, name, SignatureSource(SignatureSourceType.DRAW, strokes = strokes))
+        }
+        override suspend fun updateTyped(
+            id: String, name: String, text: String, font: SignatureFont, colorArgb: Int,
+        ): SignatureModel {
+            this.text = text; this.font = font; color = colorArgb
+            return update(id, name, SignatureSource(SignatureSourceType.TYPE, text = text, font = font, colorArgb = colorArgb))
+        }
+        override suspend fun updateImage(
+            id: String, name: String, uri: String, removeLightBackground: Boolean,
+        ): SignatureModel {
+            image = uri; removeBackground = removeLightBackground
+            return update(id, name, SignatureSource(SignatureSourceType.IMAGE))
+        }
+        private suspend fun update(id: String, name: String, source: SignatureSource): SignatureModel {
+            gate?.await()
+            failure?.let { throw it }
+            updated++
+            val previous = items.value.first { it.id == id }
+            val result = previous.copy(
+                name = name, imageUri = "file:///${id}-${previous.imageVersion + 1}.png",
+                imageVersion = previous.imageVersion + 1, source = source,
+            )
+            items.value = items.value.map { if (it.id == id) result else it }
+            return result
         }
         private suspend fun create(name: String): SignatureModel {
             calls++

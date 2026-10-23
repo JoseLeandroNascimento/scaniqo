@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">Faites glisser pour aligner</string>
+    <string name="direct_edit_rotate">Tournez avec deux doigts</string>
+    <string name="direct_edit_scale">Pincez pour redimensionner</string>
+    <string name="direct_edit_crop">Glissez les bords · Pincez</string>
+    <string name="direct_edit_straighten">Faites glisser sur les côtés</string>
+    <string name="direct_edit_curve">Faites glisser vers le haut ou le bas</string>
+    <string name="direct_edit_background">Faites glisser les coins</string>
+</resources>

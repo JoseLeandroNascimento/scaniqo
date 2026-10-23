@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joseleandro.scaniqo.domain.model.SignatureFont
 import com.joseleandro.scaniqo.domain.model.SignatureModel
+import com.joseleandro.scaniqo.domain.model.SignatureSourceType
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.domain.repository.SignatureRepository
 import kotlinx.coroutines.CancellationException
@@ -17,6 +18,7 @@ enum class SignatureInput { DRAW, TYPE, IMAGE }
 
 data class SignatureEditorState(
     val name: String = "",
+    val editingId: String? = null,
     val input: SignatureInput = SignatureInput.DRAW,
     val strokes: List<SignatureStroke> = emptyList(),
     val text: String = "",
@@ -24,6 +26,7 @@ data class SignatureEditorState(
     val colorArgb: Int = 0xFF18212B.toInt(),
     val strokeWidth: Float = 0.004f,
     val imageUri: String? = null,
+    val originalImageUri: String? = null,
     val removeLightBackground: Boolean = false,
     val isSaving: Boolean = false,
     val error: String? = null,
@@ -46,6 +49,7 @@ data class SignaturesUiState(
 
 sealed interface SignaturesEvent {
     data object Create : SignaturesEvent
+    data class Edit(val id: String) : SignaturesEvent
     data class CreateForDocument(val documentId: Long) : SignaturesEvent
     data class AcknowledgeDocumentSelection(val signatureId: String) : SignaturesEvent
     data object DismissEditor : SignaturesEvent
@@ -84,6 +88,11 @@ class SignaturesViewModel(
     fun onEvent(event: SignaturesEvent) {
         when (event) {
             SignaturesEvent.Create -> if (!state.value.isBusy && state.value.editor == null) state.update { it.copy(editor = SignatureEditorState(name = defaultName())) }
+            is SignaturesEvent.Edit -> if (!state.value.isBusy && state.value.editor == null) {
+                state.value.signatures.firstOrNull { it.id == event.id }?.let { signature ->
+                    state.update { it.copy(editor = editorFor(signature)) }
+                }
+            }
             is SignaturesEvent.CreateForDocument -> if (!state.value.isBusy && state.value.editor == null) {
                 state.update { it.copy(editor = SignatureEditorState(name = defaultName(), targetDocumentId = event.documentId)) }
             }
@@ -130,6 +139,28 @@ class SignaturesViewModel(
         if (!editor.isSaving) state.update { it.copy(editor = update(editor)) }
     }
 
+    private fun editorFor(signature: SignatureModel): SignatureEditorState {
+        val source = signature.source
+        val input = when (source?.type) {
+            SignatureSourceType.DRAW -> SignatureInput.DRAW
+            SignatureSourceType.TYPE -> SignatureInput.TYPE
+            SignatureSourceType.IMAGE, null -> SignatureInput.IMAGE
+        }
+        val lastStroke = source?.strokes?.lastOrNull()
+        return SignatureEditorState(
+            name = signature.name,
+            editingId = signature.id,
+            input = input,
+            strokes = source?.strokes.orEmpty(),
+            text = source?.text.orEmpty(),
+            font = source?.font ?: SignatureFont.CURSIVE,
+            colorArgb = lastStroke?.colorArgb ?: source?.colorArgb ?: 0xFF18212B.toInt(),
+            strokeWidth = lastStroke?.width ?: 0.004f,
+            imageUri = signature.imageUri,
+            originalImageUri = signature.imageUri,
+        )
+    }
+
     private fun observe() {
         observation?.cancel()
         observation = viewModelScope.launch {
@@ -149,21 +180,29 @@ class SignaturesViewModel(
         state.update { it.copy(editor = editor.copy(isSaving = true, error = null)) }
         viewModelScope.launch {
             try {
-                val created = when (editor.input) {
-                    SignatureInput.DRAW -> repository.createDrawing(editor.name, editor.strokes)
-                    SignatureInput.TYPE -> repository.createTyped(editor.name, editor.text, editor.font, editor.colorArgb)
-                    SignatureInput.IMAGE -> repository.importImage(
-                        editor.name, requireNotNull(editor.imageUri) { "Escolha uma imagem da assinatura." },
-                        editor.removeLightBackground,
-                    )
+                val saved = when (editor.input) {
+                    SignatureInput.DRAW -> editor.editingId?.let { id ->
+                        repository.updateDrawing(id, editor.name, editor.strokes)
+                    } ?: repository.createDrawing(editor.name, editor.strokes)
+                    SignatureInput.TYPE -> editor.editingId?.let { id ->
+                        repository.updateTyped(id, editor.name, editor.text, editor.font, editor.colorArgb)
+                    } ?: repository.createTyped(editor.name, editor.text, editor.font, editor.colorArgb)
+                    SignatureInput.IMAGE -> {
+                        val uri = requireNotNull(editor.imageUri) { "Escolha uma imagem da assinatura." }
+                        editor.editingId?.let { id ->
+                            repository.updateImage(id, editor.name, uri, editor.removeLightBackground)
+                        } ?: repository.importImage(editor.name, uri, editor.removeLightBackground)
+                    }
                 }
                 state.update {
                     it.copy(
                         editor = null,
-                        message = "Assinatura salva",
-                        pendingDocumentSelection = editor.targetDocumentId?.let { documentId ->
-                            SignatureDocumentSelection(documentId, created.id)
-                        },
+                        message = if (editor.editingId == null) "Assinatura salva" else "Assinatura atualizada",
+                        pendingDocumentSelection = if (editor.editingId == null) {
+                            editor.targetDocumentId?.let { documentId ->
+                                SignatureDocumentSelection(documentId, saved.id)
+                            }
+                        } else it.pendingDocumentSelection,
                     )
                 }
             } catch (cancelled: CancellationException) { throw cancelled }

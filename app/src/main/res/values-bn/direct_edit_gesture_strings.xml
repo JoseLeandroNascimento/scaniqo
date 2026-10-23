@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">সারিবদ্ধ করতে টানুন</string>
+    <string name="direct_edit_rotate">দুই আঙুল দিয়ে ঘোরান</string>
+    <string name="direct_edit_scale">আকার বদলাতে পিঞ্চ করুন</string>
+    <string name="direct_edit_crop">প্রান্ত টানুন · পিঞ্চ করুন</string>
+    <string name="direct_edit_straighten">পাশের দিকে টানুন</string>
+    <string name="direct_edit_curve">উপরে বা নিচে টানুন</string>
+    <string name="direct_edit_background">কোণগুলি টানুন</string>
+</resources>

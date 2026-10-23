@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">Editar firma</string>
+    <string name="runtime_signature_preview">Vista previa</string>
+    <string name="runtime_signature_font">Estilo de escritura</string>
+    <string name="runtime_signature_draw_hint">Dibuja tu firma con el dedo.</string>
+    <string name="runtime_signature_legacy_hint">Esta firma es una imagen. Para cambiar su contenido, dibuja, escribe o elige otra imagen.</string>
+    <string name="runtime_font_pen">Pluma</string>
+    <string name="runtime_font_script">Caligrafía</string>
+    <string name="runtime_font_brush">Pincel</string>
+    <string name="runtime_signature_updated">Firma actualizada.</string>
+</resources>

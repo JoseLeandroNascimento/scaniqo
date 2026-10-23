@@ -5,6 +5,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 enum class PdfOverlayKind { TEXT, CHECKMARK, HIGHLIGHT, UNDERLINE, ARROW, DRAWING, STAMP, WATERMARK, HEADER, FOOTER, PAGE_NUMBER }
 
+@Serializable
+enum class PdfTextHorizontalAlignment { START, CENTER, END }
+
+@Serializable
+enum class PdfTextVerticalAlignment { TOP, CENTER, BOTTOM }
+
 /** Elementos editáveis do Scaniqo. Coordenadas normalizadas, origem no canto superior esquerdo. */
 @Serializable
 data class PdfOverlay(
@@ -19,6 +25,10 @@ data class PdfOverlay(
     val color: Int = 0xFF202124.toInt(),
     val opacity: Float = 1f,
     val points: List<PdfPoint> = emptyList(),
+    val textHorizontalAlignment: PdfTextHorizontalAlignment = PdfTextHorizontalAlignment.START,
+    val textVerticalAlignment: PdfTextVerticalAlignment = PdfTextVerticalAlignment.TOP,
+    val autoSizeText: Boolean = false,
+    val wrapText: Boolean = false,
 ) {
     fun movedTo(newX: Float, newY: Float): PdfOverlay {
         val left = newX.coerceIn(0f, 1f - width)

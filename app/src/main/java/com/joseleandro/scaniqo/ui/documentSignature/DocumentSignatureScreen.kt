@@ -1,7 +1,6 @@
 package com.joseleandro.scaniqo.ui.documentSignature
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -12,8 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,16 +67,67 @@ internal fun DocumentSignatureScreen(
     LaunchedEffect(draft?.id) { if (draft != null) showControls = false }
     var adjustmentMode by rememberSaveable(draft?.id) { mutableStateOf(initialAdjustmentMode) }
     var adjustmentActive by remember(draft?.id) { mutableStateOf(false) }
+    val controlsPage = page?.takeIf { showControls && !state.isLocked }
+    val closeControls = {
+        showControls = false
+        adjustmentActive = false
+    }
+    BackHandler(enabled = controlsPage != null, onBack = closeControls)
     val toast = rememberAppToastState()
+    val pageStateHolder = rememberSaveableStateHolder()
     DocumentToolsMessages(state, onEvent, toast)
-    DisposableEffect(workspace?.workspaceId, page?.id) {
-        val pageId = page?.id
+    val visiblePageId = page?.id?.takeIf { controlsPage == null || draft != null }
+    DisposableEffect(workspace?.workspaceId, visiblePageId) {
+        val pageId = visiblePageId
         if (pageId != null) onEvent(DocumentToolsEvent.PageVisibility(pageId, true))
         onDispose {
             if (pageId != null) onEvent(DocumentToolsEvent.PageVisibility(pageId, false))
         }
     }
-    Scaffold(
+    if (controlsPage != null) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(stringResource(if (draft == null) R.string.signature_library else R.string.preview_controls_show))
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = closeControls) {
+                            Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.signature_back))
+                        }
+                    },
+                )
+            },
+            snackbarHost = { AppToastHost(toast) },
+        ) { padding ->
+            Column(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
+                if (draft != null) {
+                    val pageModifier = Modifier.weight(1f).fillMaxWidth()
+                    pageStateHolder.SaveableStateProvider("${workspace.workspaceId}:${controlsPage.id}") {
+                        DocumentSignaturePage(
+                            state = state, workspace = workspace, page = controlsPage, draft = draft,
+                            adjustmentMode = adjustmentMode,
+                            adjustmentActive = adjustmentActive && state.canEdit && !showCrop,
+                            onEvent = onEvent,
+                            modifier = pageModifier,
+                        )
+                    }
+                }
+                DocumentSignatureControls(
+                    state = state, page = controlsPage, draft = draft, onEvent = onEvent,
+                    adjustmentMode = adjustmentMode,
+                    onAdjustmentModeChange = { adjustmentMode = it; adjustmentActive = false },
+                    onAdjustmentActiveChange = { adjustmentActive = it },
+                    onCreateSignature = { closeControls(); onCreateSignature() },
+                    onCrop = { closeControls(); showCrop = true },
+                    onApply = { closeControls(); onApply() },
+                    modifier = if (draft == null) Modifier.fillMaxSize()
+                        else Modifier.weight(1f).fillMaxWidth(),
+                )
+            }
+        }
+    } else {
+        Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -121,13 +171,16 @@ internal fun DocumentSignatureScreen(
                 ) { CircularProgressIndicator() }
                 else -> {
                     Column(Modifier.fillMaxSize()) {
-                        DocumentSignaturePage(
-                            state = state, workspace = workspace, page = page, draft = draft,
-                            adjustmentMode = adjustmentMode,
-                            adjustmentActive = adjustmentActive && state.canEdit && !showCrop,
-                            onEvent = onEvent,
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
-                        )
+                        val pageModifier = Modifier.weight(1f).fillMaxWidth()
+                        pageStateHolder.SaveableStateProvider("${workspace.workspaceId}:${page.id}") {
+                            DocumentSignaturePage(
+                                state = state, workspace = workspace, page = page, draft = draft,
+                                adjustmentMode = adjustmentMode,
+                                adjustmentActive = adjustmentActive && state.canEdit && !showCrop,
+                                onEvent = onEvent,
+                                modifier = pageModifier,
+                            )
+                        }
                         Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             OutlinedButton(onClick = { showControls = true }, enabled = state.canEdit,
@@ -144,24 +197,6 @@ internal fun DocumentSignatureScreen(
                 }
             }
         }
-    }
-    if (showControls && page != null && sameSession && !state.isLocked) {
-        ModalBottomSheet(
-            onDismissRequest = { showControls = false; adjustmentActive = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        ) {
-            BoxWithConstraints(Modifier.fillMaxWidth()) {
-                DocumentSignatureControls(
-                    state = state, page = page, draft = draft, onEvent = onEvent,
-                    adjustmentMode = adjustmentMode,
-                    onAdjustmentModeChange = { adjustmentMode = it; adjustmentActive = false },
-                    onAdjustmentActiveChange = { adjustmentActive = it },
-                    onCreateSignature = { showControls = false; onCreateSignature() },
-                    onCrop = { adjustmentActive = false; showControls = false; showCrop = true },
-                    onApply = onApply,
-                    modifier = Modifier.fillMaxWidth().heightIn(max = maxHeight * .8f),
-                )
-            }
         }
     }
     if (showCrop && draft != null && !state.isLocked) {

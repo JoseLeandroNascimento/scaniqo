@@ -34,7 +34,7 @@ private fun DocumentInlineFillPreview() {
         Surface {
             Column(Modifier.fillMaxSize()) {
                 DocumentFillMarkStage(
-                    state, page, draft, dirty = true, inputMode = PdfOverlayKind.TEXT,
+                    state, page, draft, dirty = true,
                     excludedId = null, editingText = true, focusRequest = 1,
                     onUpdate = {}, onSelect = {}, onInsert = {}, onStopTyping = {}, onEvent = {},
                     modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -43,7 +43,7 @@ private fun DocumentInlineFillPreview() {
                     active = true, mode = PdfOverlayKind.TEXT, textElement = true, editingText = true,
                     editable = true, canApply = true, onMode = {}, onApply = {}, onCancel = {},
                     onProperties = {}, onEditText = {}, onMore = {}, onDone = {},
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(), draft = draft,
                 )
             }
         }

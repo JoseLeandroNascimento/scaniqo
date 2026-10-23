@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">Arrastra para alinear</string>
+    <string name="direct_edit_rotate">Gira con dos dedos</string>
+    <string name="direct_edit_scale">Pellizca para cambiar el tamaño</string>
+    <string name="direct_edit_crop">Arrastra bordes · Pellizca</string>
+    <string name="direct_edit_straighten">Arrastra hacia los lados</string>
+    <string name="direct_edit_curve">Arrastra hacia arriba o abajo</string>
+    <string name="direct_edit_background">Arrastra las esquinas</string>
+</resources>

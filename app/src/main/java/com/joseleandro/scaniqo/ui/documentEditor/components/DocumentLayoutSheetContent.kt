@@ -101,7 +101,14 @@ internal fun DocumentLayoutSheetContent(
         modifier = modifier,
         previewKey = page.id,
         onGestureStart = { gestureStartLayout.value = draft },
-        onTransformStart = { draft = gestureStartLayout.value },        header = {
+        onTransformStart = { draft = gestureStartLayout.value },
+        previewTransformGestures = control == DocumentLayoutControl.POSITION,
+        gestureHint = stringResource(when (control) {
+            DocumentLayoutControl.POSITION -> R.string.direct_edit_move
+            DocumentLayoutControl.ROTATION -> R.string.direct_edit_rotate
+            DocumentLayoutControl.SIZE -> R.string.direct_edit_scale
+        }),
+        header = {
             DocumentToolScopeMenu(
                 pages = workspace.pages,
                 currentPageId = anchorPageId,
@@ -112,7 +119,7 @@ internal fun DocumentLayoutSheetContent(
         },
         tools = {
             DocumentLayoutControl.entries.forEach { option ->
-                DocumentPreviewToolButton(
+                DocumentToolModeButton(
                     label = stringResource(option.labelResource()),
                     iconRes = option.iconResource(),
                     selected = control == option,
@@ -166,7 +173,8 @@ internal fun DocumentLayoutSheetContent(
             DocumentToolActions(
                 compact = true,
                 enabled = state.canEdit && targets.isNotEmpty(),
-                applyLabel = pluralStringResource(R.plurals.document_scope_apply_count, targets.size, targets.size),
+                applyLabel = if (targets.size == 1) stringResource(R.string.tools_apply_compact)
+                    else pluralStringResource(R.plurals.document_scope_apply_count, targets.size, targets.size),
                 onReset = { draft = draft.withLayoutAdjustmentsFrom(PdfPageLayout()) },
                 onApply = {
                     onEvent(DocumentToolsEvent.SelectPage(page.id))
@@ -191,9 +199,10 @@ private fun LayoutPositionControls(
     onChange: (PdfPageLayout) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        LayoutControlCaption(
-            hint = stringResource(R.string.gesture_drag_handle),
-            value = stringResource(layout.alignment.labelResource()),
+        Text(
+            stringResource(layout.alignment.labelResource()),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(
             Modifier
@@ -364,27 +373,6 @@ private fun LayoutSizeControls(
     }
 }
 
-@Composable
-private fun LayoutControlCaption(hint: String, value: String) {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            hint,
-            Modifier.weight(1f),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            value,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-}
-
 private fun DocumentLayoutControl.labelResource() = when (this) {
     DocumentLayoutControl.POSITION -> R.string.layout_interactive_position
     DocumentLayoutControl.ROTATION -> R.string.layout_interactive_rotate
@@ -413,6 +401,7 @@ private fun PageAlignment.iconResource() = when (this) {
     PageAlignment.RIGHT -> R.drawable.ic_layout_align_right
 }
 
+@Preview(name = "Ajustar estreito", widthDp = 320, heightDp = 580, fontScale = 1.3f, showBackground = true)
 @Preview(name = "Ajustar página", widthDp = 390, heightDp = 760, showBackground = true)
 @Preview(
     name = "Ajustar página escuro",
@@ -427,6 +416,8 @@ private fun DocumentLayoutSheetPreview() {
 }
 
 @Preview(name = "Ajustar rotação", widthDp = 390, heightDp = 760, showBackground = true)
+@Preview(name = "Girar compacto", widthDp = 320, heightDp = 580, fontScale = 1.3f, locale = "pt-rBR")
+@Preview(name = "Girar paisagem", widthDp = 800, heightDp = 400, locale = "pt-rBR")
 @Composable
 private fun DocumentLayoutRotationPreview() {
     DocumentLayoutPreviewContent(DocumentLayoutControl.ROTATION)

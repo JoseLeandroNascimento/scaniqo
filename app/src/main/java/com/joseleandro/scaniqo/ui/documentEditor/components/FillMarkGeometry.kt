@@ -72,6 +72,29 @@ internal fun PdfOverlay.scaledFillMarkFromCorner(
     return scaledFillMarkAtCorner(corner, 1f + (deltaX * diagonalX + deltaY * diagonalY) / lengthSquared)
 }
 
+/** Redimensiona a caixa de texto, sem alterar a fonte, mantendo o canto oposto fixo. */
+internal fun PdfOverlay.resizedFillMarkBoxFromCorner(
+    corner: Int, deltaX: Float, deltaY: Float, pageWidth: Float, pageHeight: Float,
+): PdfOverlay {
+    if (corner !in 0..3 || !isValid() ||
+        !listOf(deltaX, deltaY, pageWidth, pageHeight).all(Float::isFinite) ||
+        pageWidth <= 0f || pageHeight <= 0f) return this
+    val fromLeft = corner == 0 || corner == 3
+    val fromTop = corner < 2
+    val right = x + width
+    val bottom = y + height
+    val minWidth = minOf(.025f, width)
+    val minHeight = minOf(.018f, height)
+    val left = if (fromLeft) (x + deltaX / pageWidth).coerceIn(0f, right - minWidth) else x
+    val top = if (fromTop) (y + deltaY / pageHeight).coerceIn(0f, bottom - minHeight) else y
+    val newRight = if (fromLeft) right else (right + deltaX / pageWidth).coerceIn(x + minWidth, 1f)
+    val newBottom = if (fromTop) bottom else (bottom + deltaY / pageHeight).coerceIn(y + minHeight, 1f)
+    return copy(
+        x = left, y = top, width = newRight - left, height = newBottom - top,
+        autoSizeText = false, wrapText = true,
+    )
+}
+
 /** Os gestos usam coordenadas da folha, independentemente do zoom da visualização. */
 internal fun PdfOverlay.containsFillMarkPoint(point: PdfPoint, toleranceX: Float = 0f, toleranceY: Float = 0f): Boolean =
     point.x in (x - toleranceX)..(x + width + toleranceX) &&

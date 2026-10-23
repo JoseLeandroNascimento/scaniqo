@@ -2,6 +2,7 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateCentroid
@@ -40,12 +41,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
+import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfPoint
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
@@ -53,6 +58,7 @@ import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentSignature.DocumentSignatureViewportState
 import com.joseleandro.scaniqo.ui.documentSignature.signatureDocumentViewportBounds
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -61,7 +67,6 @@ internal fun DocumentFillMarkStage(
     page: PdfPageSpec,
     draft: PdfOverlay?,
     dirty: Boolean,
-    inputMode: com.joseleandro.scaniqo.domain.model.PdfOverlayKind,
     excludedId: String?,
     editingText: Boolean,
     focusRequest: Int,
@@ -198,7 +203,12 @@ internal fun DocumentFillMarkStage(
                                         if (initialDraft != null && (resizeCorner != null || moving)) {
                                             val delta = current - start
                                             if (resizeCorner != null) {
-                                                pending = initialDraft.scaledFillMarkFromCorner(
+                                                pending = if (initialDraft.kind == PdfOverlayKind.TEXT) {
+                                                    initialDraft.resizedFillMarkBoxFromCorner(
+                                                        resizeCorner, delta.x, delta.y,
+                                                        initialBounds.page.width, initialBounds.page.height,
+                                                    )
+                                                } else initialDraft.scaledFillMarkFromCorner(
                                                     resizeCorner, delta.x, delta.y,
                                                     initialBounds.page.width, initialBounds.page.height,
                                                 )
@@ -319,15 +329,6 @@ internal fun DocumentFillMarkStage(
                 )
             }
         }
-        if (!editingText) Text(
-            stringResource(when {
-                draft != null -> R.string.fill_selection_hint
-                inputMode == com.joseleandro.scaniqo.domain.model.PdfOverlayKind.CHECKMARK -> R.string.fill_inline_check_hint
-                else -> R.string.fill_inline_hint
-            }), style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 5.dp),
-        )
     }
 }
 
@@ -357,15 +358,19 @@ private fun InlineFillMarkText(
             keyboard?.show()
         }
     }
-    val shaped = remember(draft.text, draft.fontSize, draft.width, draft.height) {
+    val shaped = remember(draft.text, draft.fontSize, draft.width, draft.height, draft.wrapText, draft.textHorizontalAlignment) {
         ShapedTextLayout.create(
             text = draft.text, fontSize = draft.fontSize, color = draft.color,
             maxWidth = (draft.width * 595f).coerceAtLeast(.001f),
             maxHeight = (draft.height * 842f).coerceAtLeast(.001f),
+            wrap = draft.wrapText,
+            horizontalAlignment = draft.textHorizontalAlignment,
         )
     }
     val fontPixels = shaped.fontSize * pageWidth / 595f
     val linePixels = shaped.lineAdvance * pageWidth / 595f
+    val contentWidth = shaped.width * pageWidth / 595f
+    val contentLeft = shaped.horizontalOffset(draft.width * 595f) * pageWidth / 595f
     val description = stringResource(R.string.fill_inline_edit_text)
     BasicTextField(
         value = value,
@@ -384,22 +389,67 @@ private fun InlineFillMarkText(
             lineHeight = with(density) { linePixels.toSp() },
             platformStyle = PlatformTextStyle(includeFontPadding = true),
             textDirection = TextDirection.ContentOrLtr,
-            textAlign = TextAlign.Start,
+            textAlign = when (draft.textHorizontalAlignment) {
+                PdfTextHorizontalAlignment.START -> TextAlign.Start
+                PdfTextHorizontalAlignment.CENTER -> TextAlign.Center
+                PdfTextHorizontalAlignment.END -> TextAlign.End
+            },
         ),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { onDone() }),
         onTextLayout = { layout ->
             val caret = layout.getCursorRect(value.selection.end.coerceIn(0, value.text.length))
-            onCursor(Offset(caret.left, caret.bottom))
+            val extraHeight = (draft.height * pageWidth * 842f / 595f - layout.size.height).coerceAtLeast(0f)
+            val verticalOffset = when (draft.textVerticalAlignment) {
+                PdfTextVerticalAlignment.TOP -> 0f
+                PdfTextVerticalAlignment.CENTER -> extraHeight / 2f
+                PdfTextVerticalAlignment.BOTTOM -> extraHeight
+            }
+            onCursor(Offset(contentLeft + caret.left, caret.bottom + verticalOffset))
         },
         decorationBox = { field ->
-            Box {
-                if (value.text.isEmpty()) Text(stringResource(R.string.fill_inline_placeholder),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = .6f),
-                    fontSize = with(density) { fontPixels.toSp() })
-                field()
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = when (draft.textVerticalAlignment) {
+                    PdfTextVerticalAlignment.TOP -> androidx.compose.ui.AbsoluteAlignment.TopLeft
+                    PdfTextVerticalAlignment.CENTER -> androidx.compose.ui.AbsoluteAlignment.CenterLeft
+                    PdfTextVerticalAlignment.BOTTOM -> androidx.compose.ui.AbsoluteAlignment.BottomLeft
+                },
+            ) {
+                // Preserve the shaped block's width after fitting, so the editor and PDF
+                // keep identical line breaks even in a manually shortened box.
+                Box(
+                    Modifier.absoluteOffset { IntOffset(contentLeft.roundToInt(), 0) }
+                        .requiredWidth(with(density) { kotlin.math.ceil(contentWidth).coerceAtLeast(1f).toDp() }),
+                    propagateMinConstraints = true,
+                ) {
+                    field()
+                }
             }
         },
     )
+}
+
+@Preview(name = "Texto — dentro da caixa", widthDp = 320, heightDp = 220, locale = "pt-rBR")
+@Composable
+private fun FillTextBoxAlignmentPreview() {
+    val draft = PdfOverlay(
+        id = "aligned-preview", kind = PdfOverlayKind.TEXT, text = "Maria Silva\nAssinatura",
+        x = 0f, y = 0f, width = 260f / 595f, height = 160f / 842f,
+        wrapText = true, textHorizontalAlignment = PdfTextHorizontalAlignment.END,
+        textVerticalAlignment = PdfTextVerticalAlignment.BOTTOM,
+    )
+    ScaniqoTheme {
+        Surface {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                InlineFillMarkText(
+                    draft, focusRequest = 0, pageWidth = with(LocalDensity.current) { 595.dp.toPx() },
+                    enabled = true, onUpdate = {}, onDone = {}, onCursor = {},
+                    modifier = Modifier.requiredSize(260.dp, 160.dp)
+                        .border(1.dp, MaterialTheme.colorScheme.primary),
+                )
+            }
+        }
+    }
 }

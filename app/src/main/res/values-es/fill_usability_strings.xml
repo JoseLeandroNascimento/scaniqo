@@ -1,0 +1,4 @@
+<resources>
+    <string name="fill_tap_to_write">Toca la página para escribir</string>
+    <string name="fill_tap_to_mark">Toca la página para marcar</string>
+</resources>

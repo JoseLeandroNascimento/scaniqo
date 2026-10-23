@@ -1,0 +1,4 @@
+<resources>
+    <string name="fill_tap_to_write">Tap the page to write</string>
+    <string name="fill_tap_to_mark">Tap the page to add a checkmark</string>
+</resources>

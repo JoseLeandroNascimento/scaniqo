@@ -2,6 +2,8 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
+import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
 import kotlinx.serialization.Serializable
 import java.util.UUID
 import kotlin.math.abs
@@ -16,6 +18,8 @@ internal data class FillMarkStyle(
     val width: Float,
     val height: Float,
     val opacity: Float,
+    val textHorizontalAlignment: PdfTextHorizontalAlignment = PdfTextHorizontalAlignment.START,
+    val textVerticalAlignment: PdfTextVerticalAlignment = PdfTextVerticalAlignment.TOP,
 ) {
     fun isValid(): Boolean = fontSize.isFinite() && fontSize in 6f..72f &&
         width.isFinite() && width > 0f && width <= 1f &&
@@ -24,13 +28,22 @@ internal data class FillMarkStyle(
 
     fun applyTo(overlay: PdfOverlay): PdfOverlay = if (!isValid()) overlay else overlay.copy(
         color = color, fontSize = fontSize, width = width, height = height, opacity = opacity,
+        textHorizontalAlignment = textHorizontalAlignment, textVerticalAlignment = textVerticalAlignment,
     ).movedTo(overlay.x, overlay.y)
 
     companion object {
         fun from(overlay: PdfOverlay) = FillMarkStyle(
             overlay.color, overlay.fontSize, overlay.width, overlay.height, overlay.opacity,
+            overlay.textHorizontalAlignment, overlay.textVerticalAlignment,
         )
     }
+}
+
+/** A caixa automática é recalculada pelo editor; a manual conserva a proporção do gesto de escala. */
+internal fun PdfOverlay.withFillMarkFontSize(size: Float): PdfOverlay {
+    if (!size.isFinite()) return this
+    val font = size.coerceIn(6f, 72f)
+    return if (autoSizeText) copy(fontSize = font) else scaledFillMarkAtCorner(2, font / fontSize)
 }
 
 /** Uma cópia independente, próxima do original e inteiramente dentro da página. */

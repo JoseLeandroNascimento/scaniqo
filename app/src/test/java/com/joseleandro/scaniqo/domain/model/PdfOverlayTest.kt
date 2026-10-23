@@ -1,9 +1,32 @@
 package com.joseleandro.scaniqo.domain.model
 
+import kotlinx.serialization.json.Json
 import org.junit.Assert.*
 import org.junit.Test
 
 class PdfOverlayTest {
+    @Test fun legacySerializedTextKeepsItsOriginalBoxAndRenderingDefaults() {
+        val restored = Json.decodeFromString<PdfOverlay>(
+            """{"id":"legacy","kind":"TEXT","text":"Nome","width":0.4,"height":0.1}""",
+        )
+        assertEquals(.4f, restored.width, .00001f)
+        assertEquals(.1f, restored.height, .00001f)
+        assertEquals(PdfTextHorizontalAlignment.START, restored.textHorizontalAlignment)
+        assertEquals(PdfTextVerticalAlignment.TOP, restored.textVerticalAlignment)
+        assertFalse(restored.autoSizeText)
+        assertFalse(restored.wrapText)
+    }
+
+    @Test fun textAlignmentAndSizingSurviveRecipeSerialization() {
+        val original = PdfOverlay(
+            "aligned", PdfOverlayKind.TEXT, text = "Maria",
+            textHorizontalAlignment = PdfTextHorizontalAlignment.END,
+            textVerticalAlignment = PdfTextVerticalAlignment.BOTTOM,
+            autoSizeText = true, wrapText = true,
+        )
+        assertEquals(original, Json.decodeFromString<PdfOverlay>(Json.encodeToString(original)))
+    }
+
     @Test fun movingDrawingTranslatesEveryPointAndClampsToPage() {
         val drawing = PdfOverlay("d", PdfOverlayKind.DRAWING, x = .1f, y = .2f, width = .3f, height = .2f,
             points = listOf(PdfPoint(.1f, .2f), PdfPoint(.4f, .4f)))

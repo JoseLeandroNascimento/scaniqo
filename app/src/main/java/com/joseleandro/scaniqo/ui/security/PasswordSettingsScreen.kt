@@ -2,20 +2,15 @@ package com.joseleandro.scaniqo.ui.security
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,11 +32,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.R
@@ -84,6 +77,8 @@ fun PasswordSettingsScreen(
     var confirmRecovery by remember { mutableStateOf(false) }
     var recoveryAccepted by remember { mutableStateOf(false) }
 
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     SecureWindow()
     val toastState = rememberAppToastState()
     val messageText = message?.let { stringResource(it) }
@@ -149,6 +144,16 @@ fun PasswordSettingsScreen(
         else perform(action)
     }
 
+    fun submitPassword() {
+        if (!controlsEnabled) return
+        validationAttempted = true
+        if (PasswordPolicy.isValidGeneral(password) && password == confirmation) {
+            keyboard?.hide()
+            focusManager.clearFocus()
+            authorizeOrPerform(PasswordSettingsAction.SAVE)
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         snackbarHost = { AppToastHost(toastState) },
@@ -170,54 +175,11 @@ fun PasswordSettingsScreen(
                 modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Text(
-                    stringResource(R.string.password_heading),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    stringResource(R.string.password_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
                 if (!ready) {
                     CircularProgressIndicator()
                     Text(stringResource(R.string.password_loading))
                 }
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ic_document_lock),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp),
-                        )
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                stringResource(if (state.isConfigured) R.string.password_status_active else R.string.password_status_inactive),
-                                style = MaterialTheme.typography.titleSmall,
-                            )
-                            Text(
-                                stringResource(
-                                    when {
-                                        !state.isConfigured -> R.string.password_status_setup
-                                        state.isUnlocked -> R.string.password_status_unlocked
-                                        else -> R.string.password_status_locked
-                                    },
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
+                PasswordStatusCard(configured = state.isConfigured, unlocked = state.isUnlocked)
                 if (state.recoveryRequired) {
                     Card(colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -238,60 +200,34 @@ fun PasswordSettingsScreen(
                     }
                 }
                 if (!state.recoveryRequired || recoveryAccepted) {
-                    PasswordEntryField(
-                        value = password,
-                        onValueChange = {
+                    PasswordSetupForm(
+                        configured = state.isConfigured,
+                        password = password,
+                        confirmation = confirmation,
+                        passwordVisible = passwordVisible,
+                        confirmationVisible = confirmationVisible,
+                        enabled = controlsEnabled,
+                        busy = busy,
+                        passwordError = if (invalidPassword) stringResource(R.string.password_invalid) else null,
+                        confirmationError = if (mismatch) stringResource(R.string.password_mismatch) else null,
+                        onPasswordChange = {
                             if (it.length <= 256) {
                                 password = it
                                 error = null
                             } else validationAttempted = true
                         },
-                        visible = passwordVisible,
-                        onToggleVisibility = { passwordVisible = !passwordVisible },
-                        label = stringResource(R.string.password_new_label),
-                        enabled = controlsEnabled,
-                        error = if (invalidPassword) stringResource(R.string.password_invalid) else null,
-                    )
-                    PasswordEntryField(
-                        value = confirmation,
-                        onValueChange = {
+                        onConfirmationChange = {
                             if (it.length <= 256) {
                                 confirmation = it
                                 error = null
                             } else validationAttempted = true
                         },
-                        visible = confirmationVisible,
-                        onToggleVisibility = { confirmationVisible = !confirmationVisible },
-                        label = stringResource(R.string.password_confirm_label),
-                        enabled = controlsEnabled,
-                        error = if (mismatch) stringResource(R.string.password_mismatch) else null,
+                        onTogglePassword = { passwordVisible = !passwordVisible },
+                        onToggleConfirmation = { confirmationVisible = !confirmationVisible },
+                        onSubmit = ::submitPassword,
                     )
-                    Text(
-                        stringResource(R.string.password_rules),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Button(
-                        onClick = {
-                            validationAttempted = true
-                            if (PasswordPolicy.isValidGeneral(password) && password == confirmation) {
-                                authorizeOrPerform(PasswordSettingsAction.SAVE)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = controlsEnabled,
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        Text(stringResource(
-                            if (state.isConfigured) R.string.password_change else R.string.password_set,
-                        ))
-                    }
                 }
-                Text(
-                    stringResource(R.string.password_versions_explanation),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                PasswordVersionNotice()
                 if (vault.canEnableLegacyBiometrics && !state.recoveryRequired) {
                     OutlinedButton(
                         onClick = { authorizeOrPerform(PasswordSettingsAction.ENABLE_BIOMETRICS) },
@@ -423,61 +359,35 @@ private fun PasswordSettingsTopBar(onBack: () -> Unit, enabled: Boolean) {
     )
 }
 
-@androidx.compose.ui.tooling.preview.Preview(name = "Campos de senha", showBackground = true)
+@androidx.compose.ui.tooling.preview.Preview(name = "Senha dos PDFs", widthDp = 390, heightDp = 780, locale = "pt-rBR", showBackground = true)
+@androidx.compose.ui.tooling.preview.Preview(name = "Senha compacta", widthDp = 320, heightDp = 640, fontScale = 1.3f, locale = "pt-rBR", showBackground = true)
 @Composable
 private fun PasswordFieldsPreview() {
     com.joseleandro.scaniqo.ui.theme.ScaniqoTheme {
         Scaffold(topBar = { PasswordSettingsTopBar(onBack = {}, enabled = true) }) { padding ->
             Column(
-                modifier = Modifier.padding(padding).padding(20.dp),
+                modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Text(stringResource(R.string.password_heading), style = MaterialTheme.typography.titleLarge)
-                Text(stringResource(R.string.password_description), style = MaterialTheme.typography.bodyMedium)
-                PasswordEntryField(
-                    value = "Exemplo123", onValueChange = {}, visible = false,
-                    onToggleVisibility = {}, label = stringResource(R.string.password_new_label),
-                    enabled = true, error = null,
+                PasswordStatusCard(configured = false, unlocked = false)
+                PasswordSetupForm(
+                    configured = false,
+                    password = "Exemplo123",
+                    confirmation = "Exemplo123",
+                    passwordVisible = false,
+                    confirmationVisible = false,
+                    enabled = true,
+                    busy = false,
+                    passwordError = null,
+                    confirmationError = null,
+                    onPasswordChange = {},
+                    onConfirmationChange = {},
+                    onTogglePassword = {},
+                    onToggleConfirmation = {},
+                    onSubmit = {},
                 )
-                PasswordEntryField(
-                    value = "Exemplo123", onValueChange = {}, visible = true,
-                    onToggleVisibility = {}, label = stringResource(R.string.password_confirm_label),
-                    enabled = true, error = null,
-                )
+                PasswordVersionNotice()
             }
         }
     }
 }
-
-@Composable
-private fun PasswordEntryField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    visible: Boolean,
-    onToggleVisibility: () -> Unit,
-    label: String,
-    enabled: Boolean,
-    error: String?,
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(label) },
-        singleLine = true,
-        enabled = enabled,
-        isError = error != null,
-        supportingText = error?.let { { Text(it) } },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            IconButton(onClick = onToggleVisibility, enabled = enabled) {
-                Icon(
-                    painter = painterResource(if (visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-                    contentDescription = stringResource(if (visible) R.string.password_hide else R.string.password_show),
-                )
-            }
-        },
-    )
-}
-

@@ -47,7 +47,15 @@ internal fun CorrectionHandlesOverlay(
     val step = if (curvature) .05f else 1f
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val paperSize = with(LocalDensity.current) { IntSize(maxWidth.roundToPx(), maxHeight.roundToPx()) }
-        Canvas(Modifier.fillMaxSize()) {
+        Canvas(Modifier.fillMaxSize().pointerInput(curvature, paperSize, enabled) {
+            if (!enabled) return@pointerInput
+            var gestureValue = latestValue
+            detectDragGestures(onDragStart = { gestureValue = latestValue }) { change, amount ->
+                change.consume()
+                gestureValue = documentCorrectionHandleValue(gestureValue, amount, paperSize, curvature)
+                latestOnChange(gestureValue)
+            }
+        }) {
             drawRect(guide.copy(alpha = .28f), style = Stroke(1.dp.toPx()))
             if (curvature) {
                 val middle = size.height / 2f
@@ -80,9 +88,12 @@ internal fun CorrectionHandlesOverlay(
                 enabled = enabled,
                 modifier = Modifier.align(alignment).absoluteOffset(x, if (curvature) 0.dp else (-24).dp)
                     .pointerInput(curvature, paperSize, enabled) {
-                        if (enabled) detectDragGestures { change, amount ->
+                        if (!enabled) return@pointerInput
+                        var gestureValue = latestValue
+                        detectDragGestures(onDragStart = { gestureValue = latestValue }) { change, amount ->
                             change.consume()
-                            latestOnChange(documentCorrectionHandleValue(latestValue, amount, paperSize, curvature))
+                            gestureValue = documentCorrectionHandleValue(gestureValue, amount, paperSize, curvature)
+                            latestOnChange(gestureValue)
                         }
                     },
                 actions = listOf(

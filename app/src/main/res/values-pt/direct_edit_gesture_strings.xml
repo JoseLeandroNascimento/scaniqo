@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">Arraste para alinhar</string>
+    <string name="direct_edit_rotate">Gire com dois dedos</string>
+    <string name="direct_edit_scale">Use pinça para redimensionar</string>
+    <string name="direct_edit_crop">Arraste bordas · Use pinça</string>
+    <string name="direct_edit_straighten">Arraste para os lados</string>
+    <string name="direct_edit_curve">Arraste para cima ou para baixo</string>
+    <string name="direct_edit_background">Arraste os cantos</string>
+</resources>

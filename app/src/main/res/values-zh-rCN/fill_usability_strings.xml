@@ -1,0 +1,4 @@
+<resources>
+    <string name="fill_tap_to_write">点按页面以输入文字</string>
+    <string name="fill_tap_to_mark">点按页面以添加勾选标记</string>
+</resources>

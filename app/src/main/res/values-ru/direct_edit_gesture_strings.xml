@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">Перетащите для выравнивания</string>
+    <string name="direct_edit_rotate">Поверните двумя пальцами</string>
+    <string name="direct_edit_scale">Сведите или разведите пальцы</string>
+    <string name="direct_edit_crop">Тяните края · Меняйте масштаб</string>
+    <string name="direct_edit_straighten">Перетаскивайте в стороны</string>
+    <string name="direct_edit_curve">Перетаскивайте вверх или вниз</string>
+    <string name="direct_edit_background">Перетаскивайте углы</string>
+</resources>

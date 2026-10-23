@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">拖动以对齐</string>
+    <string name="direct_edit_rotate">双指旋转</string>
+    <string name="direct_edit_scale">双指捏合以调整大小</string>
+    <string name="direct_edit_crop">拖动边缘 · 双指捏合</string>
+    <string name="direct_edit_straighten">左右拖动</string>
+    <string name="direct_edit_curve">上下拖动</string>
+    <string name="direct_edit_background">拖动角点</string>
+</resources>

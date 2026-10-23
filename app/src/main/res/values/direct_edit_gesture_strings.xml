@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="direct_edit_move">Drag to align</string>
+    <string name="direct_edit_rotate">Twist with two fingers</string>
+    <string name="direct_edit_scale">Pinch to resize</string>
+    <string name="direct_edit_crop">Drag edges · Pinch to resize</string>
+    <string name="direct_edit_straighten">Drag sideways to straighten</string>
+    <string name="direct_edit_curve">Drag up or down to uncurve</string>
+    <string name="direct_edit_background">Drag the corners</string>
+</resources>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">النص داخل المربع</string>
+    <string name="fill_text_align_action">محاذاة النص</string>
+    <string name="fill_text_horizontal">أفقي</string>
+    <string name="fill_text_vertical">عمودي</string>
+    <string name="fill_text_start">البداية</string>
+    <string name="fill_text_center">الوسط</string>
+    <string name="fill_text_end">النهاية</string>
+    <string name="fill_text_top">أعلى</string>
+    <string name="fill_text_middle">منتصف</string>
+    <string name="fill_text_bottom">أسفل</string>
+    <string name="fill_text_auto_box">ضبط المربع حسب النص</string>
+    <string name="fill_text_page_position">الموضع على الصفحة</string>
+</resources>

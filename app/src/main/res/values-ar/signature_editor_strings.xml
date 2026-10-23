@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">تعديل التوقيع</string>
+    <string name="runtime_signature_preview">معاينة</string>
+    <string name="runtime_signature_font">نمط الخط اليدوي</string>
+    <string name="runtime_signature_draw_hint">ارسم توقيعك بإصبعك.</string>
+    <string name="runtime_signature_legacy_hint">هذا التوقيع صورة. لتغيير محتواه، ارسم أو اكتب أو اختر صورة أخرى.</string>
+    <string name="runtime_font_pen">قلم</string>
+    <string name="runtime_font_script">خط</string>
+    <string name="runtime_font_brush">فرشاة</string>
+    <string name="runtime_signature_updated">تم تحديث التوقيع.</string>
+</resources>

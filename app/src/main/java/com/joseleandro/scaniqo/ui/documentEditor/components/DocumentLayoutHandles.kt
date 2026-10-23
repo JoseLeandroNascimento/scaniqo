@@ -91,7 +91,7 @@ internal fun DocumentLayoutHandles(
                     description = stringResource(R.string.gesture_rotate_handle),
                     valueDescription = stringResource(R.string.tools_rotation_angle, layout.rotationQuarterTurns * 90),
                     enabled = enabled,
-                    modifier = Modifier.align(AbsoluteAlignment.TopRight).absoluteOffset(24.dp, (-24).dp)
+                    modifier = Modifier.align(Alignment.TopCenter).absoluteOffset(y = (-24).dp)
                         .documentLayoutHandleGesture(pageId, DocumentLayoutHandle.ROTATE, layout, paperSize, enabled, onLayoutChange),
                     actions = listOf(
                         CustomAccessibilityAction(left) { turn(-1); true },

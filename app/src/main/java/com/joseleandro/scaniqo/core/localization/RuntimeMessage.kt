@@ -117,6 +117,7 @@ internal fun runtimeMessageResource(message: String): Int = when (message) {
     "Assinatura excluída" -> R.string.runtime_signature_deleted
     "Assinatura renomeada" -> R.string.runtime_signature_renamed
     "Assinatura salva" -> R.string.runtime_signature_saved
+    "Assinatura atualizada" -> R.string.runtime_signature_updated
     "Informe a senha deste PDF." -> R.string.runtime_password_required
     "Senha incorreta. Confira a senha do PDF." -> R.string.runtime_password_incorrect
     "Use uma imagem de até 10 MB." -> R.string.runtime_image_size_limit

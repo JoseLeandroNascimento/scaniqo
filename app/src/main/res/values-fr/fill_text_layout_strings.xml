@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">Texte dans le cadre</string>
+    <string name="fill_text_align_action">Aligner le texte</string>
+    <string name="fill_text_horizontal">Horizontal</string>
+    <string name="fill_text_vertical">Vertical</string>
+    <string name="fill_text_start">Début</string>
+    <string name="fill_text_center">Centre</string>
+    <string name="fill_text_end">Fin</string>
+    <string name="fill_text_top">Haut</string>
+    <string name="fill_text_middle">Milieu</string>
+    <string name="fill_text_bottom">Bas</string>
+    <string name="fill_text_auto_box">Ajuster le cadre au texte</string>
+    <string name="fill_text_page_position">Position sur la page</string>
+</resources>

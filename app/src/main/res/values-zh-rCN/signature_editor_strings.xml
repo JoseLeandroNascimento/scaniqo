@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">编辑签名</string>
+    <string name="runtime_signature_preview">预览</string>
+    <string name="runtime_signature_font">手写样式</string>
+    <string name="runtime_signature_draw_hint">用手指绘制签名。</string>
+    <string name="runtime_signature_legacy_hint">此签名是图片。要修改内容，请手绘、输入文字或选择其他图片。</string>
+    <string name="runtime_font_pen">钢笔</string>
+    <string name="runtime_font_script">书法</string>
+    <string name="runtime_font_brush">画笔</string>
+    <string name="runtime_signature_updated">签名已更新。</string>
+</resources>

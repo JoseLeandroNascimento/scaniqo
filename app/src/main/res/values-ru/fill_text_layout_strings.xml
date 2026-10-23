@@ -1,0 +1,14 @@
+<resources>
+    <string name="fill_text_alignment">Текст в рамке</string>
+    <string name="fill_text_align_action">Выровнять текст</string>
+    <string name="fill_text_horizontal">По горизонтали</string>
+    <string name="fill_text_vertical">По вертикали</string>
+    <string name="fill_text_start">Начало</string>
+    <string name="fill_text_center">Центр</string>
+    <string name="fill_text_end">Конец</string>
+    <string name="fill_text_top">Сверху</string>
+    <string name="fill_text_middle">Посередине</string>
+    <string name="fill_text_bottom">Снизу</string>
+    <string name="fill_text_auto_box">Рамка по размеру текста</string>
+    <string name="fill_text_page_position">Положение на странице</string>
+</resources>

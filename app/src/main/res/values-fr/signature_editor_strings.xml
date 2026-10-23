@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">Modifier la signature</string>
+    <string name="runtime_signature_preview">Aperçu</string>
+    <string name="runtime_signature_font">Style d’écriture</string>
+    <string name="runtime_signature_draw_hint">Dessinez votre signature avec le doigt.</string>
+    <string name="runtime_signature_legacy_hint">Cette signature est une image. Pour modifier son contenu, dessinez, saisissez du texte ou choisissez une autre image.</string>
+    <string name="runtime_font_pen">Stylo</string>
+    <string name="runtime_font_script">Calligraphie</string>
+    <string name="runtime_font_brush">Pinceau</string>
+    <string name="runtime_signature_updated">Signature mise à jour.</string>
+</resources>

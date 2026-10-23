@@ -399,10 +399,12 @@ internal fun DrawScope.drawOverlayDraft(overlay: PdfOverlay, pageNumber: Int, co
             val pointHeight = overlay.height * 842f
             val padding = if (overlay.kind == PdfOverlayKind.STAMP) minOf(6f, minOf(pointWidth, pointHeight) / 4f) else 0f
             val innerWidth = (pointWidth - padding * 2).coerceAtLeast(.001f)
+            val innerHeight = (pointHeight - padding * 2).coerceAtLeast(.001f)
             val layout = ShapedTextLayout.create(
                 text = content, fontSize = overlay.fontSize,
                 color = (overlay.color and 0x00FFFFFF) or ((overlay.opacity * 255).toInt() shl 24),
-                maxWidth = innerWidth, maxHeight = (pointHeight - padding * 2).coerceAtLeast(.001f),
+                maxWidth = innerWidth, maxHeight = innerHeight,
+                wrap = overlay.wrapText, horizontalAlignment = overlay.textHorizontalAlignment,
             )
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
@@ -411,7 +413,10 @@ internal fun DrawScope.drawOverlayDraft(overlay: PdfOverlay, pageNumber: Int, co
                     native.translate(x, y)
                     native.scale(size.width / 595f, size.height / 842f)
                     native.clipRect(0f, 0f, pointWidth, pointHeight)
-                    layout.draw(native, padding, padding, availableWidth = innerWidth)
+                    layout.draw(
+                        native, padding, padding, availableWidth = innerWidth, availableHeight = innerHeight,
+                        verticalAlignment = overlay.textVerticalAlignment,
+                    )
                 } finally {
                     native.restoreToCount(save)
                 }

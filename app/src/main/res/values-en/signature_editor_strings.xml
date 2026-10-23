@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">Edit signature</string>
+    <string name="runtime_signature_preview">Preview</string>
+    <string name="runtime_signature_font">Handwriting style</string>
+    <string name="runtime_signature_draw_hint">Draw your signature with your finger.</string>
+    <string name="runtime_signature_legacy_hint">This signature is an image. To change its content, draw, type, or choose another image.</string>
+    <string name="runtime_font_pen">Pen</string>
+    <string name="runtime_font_script">Script</string>
+    <string name="runtime_font_brush">Brush</string>
+    <string name="runtime_signature_updated">Signature updated.</string>
+</resources>

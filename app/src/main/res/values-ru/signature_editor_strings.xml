@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="runtime_signature_edit">Изменить подпись</string>
+    <string name="runtime_signature_preview">Предпросмотр</string>
+    <string name="runtime_signature_font">Стиль почерка</string>
+    <string name="runtime_signature_draw_hint">Нарисуйте подпись пальцем.</string>
+    <string name="runtime_signature_legacy_hint">Эта подпись сохранена как изображение. Чтобы изменить её, нарисуйте, напечатайте или выберите другое изображение.</string>
+    <string name="runtime_font_pen">Ручка</string>
+    <string name="runtime_font_script">Каллиграфия</string>
+    <string name="runtime_font_brush">Кисть</string>
+    <string name="runtime_signature_updated">Подпись обновлена.</string>
+</resources>

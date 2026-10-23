@@ -118,7 +118,8 @@ internal fun Modifier.documentLayoutHandleGesture(
         var position = latestLayout.alignment.dragOrigin()
         var initialScale = latestLayout.contentScale
         var drag = Offset.Zero
-        var previous = Offset(paperSize.width.toFloat(), 0f)
+        val rotationOrigin = Offset(paperSize.width / 2f, 0f)
+        var previous = rotationOrigin
         val center = Offset(paperSize.width / 2f, paperSize.height / 2f)
         val rotation = DocumentLayoutRotationGesture()
         detectDragGestures(
@@ -126,7 +127,7 @@ internal fun Modifier.documentLayoutHandleGesture(
                 position = latestLayout.alignment.dragOrigin()
                 initialScale = latestLayout.contentScale
                 drag = Offset.Zero
-                previous = Offset(paperSize.width.toFloat(), 0f)
+                previous = rotationOrigin
                 rotation.reset()
             },
         ) { change, amount ->

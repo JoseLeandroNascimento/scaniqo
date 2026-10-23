@@ -10,12 +10,14 @@ internal class FillMarkStylePreferences(context: Context) {
     private val preferences = context.applicationContext.getSharedPreferences("fill_mark_styles", Context.MODE_PRIVATE)
 
     fun newOverlay(kind: PdfOverlayKind): PdfOverlay {
-        val overlay = com.joseleandro.scaniqo.ui.documentEditor.components.newOverlay(kind)
+        val overlay = com.joseleandro.scaniqo.ui.documentEditor.components.newOverlay(kind).copy(
+            autoSizeText = kind == PdfOverlayKind.TEXT, wrapText = kind == PdfOverlayKind.TEXT,
+        )
         if (kind !in repeatableFillMarkKinds) return overlay
         val style = runCatching {
             preferences.getString(kind.name, null)?.let { Json.decodeFromString<FillMarkStyle>(it) }
         }.getOrNull()
-        return style?.applyTo(overlay) ?: overlay
+        return (style?.applyTo(overlay) ?: overlay).fittedFillMarkText()
     }
 
     fun remember(overlay: PdfOverlay) {
