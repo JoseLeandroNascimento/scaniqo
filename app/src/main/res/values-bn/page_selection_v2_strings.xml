@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_v2_thumbnails">থাম্বনেইল</string>
+    <string name="pages_v2_intervals">পৃষ্ঠার পরিসর</string>
+    <string name="pages_v2_from">থেকে</string>
+    <string name="pages_v2_until">পর্যন্ত</string>
+    <string name="pages_v2_add_range">পরিসর যোগ করুন</string>
+    <string name="pages_v2_update_range">পরিসর বদলান</string>
+    <string name="pages_v2_edit_list">তালিকা সম্পাদনা</string>
+    <string name="pages_v2_confirm_selection">নির্বাচন নিশ্চিত করুন</string>
+    <string name="pages_v2_cancel_edit">সম্পাদনা বাতিল</string>
+    <string name="pages_v2_order">ক্রম: %1$s</string>
+    <string name="pages_v2_document_order">PDF-এর ক্রম ব্যবহার করুন</string>
+    <string name="pages_v2_go_to_page">পৃষ্ঠায় যান</string>
+    <string name="pages_v2_range_incomplete">পরিসরের শুরু ও শেষ লিখুন।</string>
+    <string name="pages_v2_range_reversed">শুরু শেষের আগে বা সমান হতে হবে।</string>
+    <string name="pages_v2_range_bounds">1 থেকে %1$d এর মধ্যে পৃষ্ঠা বেছে নিন।</string>
+    <string name="pages_v2_edit_range">%1$s পরিসর সম্পাদনা</string>
+    <string name="pages_v2_remove_range">%1$s পরিসর সরান</string>
+    <string name="pages_v2_drag_mode">টেনে সরান</string>
+    <string name="pages_v2_direct_mode">অবস্থানে সরান</string>
+    <string name="pages_v2_selected_position">%1$d অবস্থানে পৃষ্ঠা</string>
+    <string name="pages_v2_final_position">চূড়ান্ত অবস্থান</string>
+    <string name="pages_v2_start">শুরু</string>
+    <string name="pages_v2_end">শেষ</string>
+    <string name="pages_v2_move_to">%1$d-এ সরান</string>
+    <string name="pages_v2_same_position">ইতিমধ্যেই এই অবস্থানে আছে</string>
+    <string name="pages_v2_numbering">পৃষ্ঠা নম্বর</string>
+    <string name="pages_v2_options">পৃষ্ঠা %1$d-এর বিকল্প</string>
+    <string name="pages_v2_moved">পৃষ্ঠা %1$d-এ সরানো হয়েছে</string>
+    <string name="pages_v2_pending_selection">চালিয়ে যাওয়ার আগে নির্বাচন নিশ্চিত বা বাতিল করুন।</string>
+    <string name="pages_v2_jump_hint">1 থেকে %1$d পর্যন্ত পৃষ্ঠা</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">%1$d পৃষ্ঠার PDF তৈরি</item>
+        <item quantity="other">%1$d পৃষ্ঠার PDF তৈরি</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">%1$d পৃষ্ঠা রপ্তানি</item>
+        <item quantity="other">%1$d পৃষ্ঠা রপ্তানি</item>
+    </plurals>
+    <string name="pages_v2_list_hint">যেমন: 5, 2-4, 1. লেখা ক্রম বজায় থাকে।</string>
+</resources>

@@ -7,7 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import com.joseleandro.scaniqo.core.navigation.AppNavigation
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import com.joseleandro.scaniqo.core.ads.AdMobManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,6 +42,10 @@ class MainActivity : AppCompatActivity() {
         launchContentReady = !animateLaunch
         enableEdgeToEdge()
         setContent {
+            val ads: AdMobManager = koinInject()
+            LaunchedEffect(launchContentReady) {
+                if (launchContentReady) ads.gatherConsent(this@MainActivity)
+            }
             val repository: AppSettingsRepository = koinInject()
             val preferences by repository.settings.collectAsStateWithLifecycle()
             val dark = when (preferences.themeMode) {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">Warna terbaru</string>
+    <string name="fill_mark_palette_colors">Warna</string>
+    <string name="fill_mark_recent_color">Warna terbaru %1$d</string>
+    <string name="fill_mark_manual_size">Ukuran font dalam poin (6–72)</string>
+    <string name="fill_mark_apply_size">Terapkan ukuran</string>
+    <string name="fill_mark_green">Hijau</string>
+    <string name="fill_mark_purple">Ungu</string>
+    <string name="fill_mark_gray">Abu-abu</string>
+    <string name="fill_mark_white">Putih</string>
+    <string name="fill_mark_mark_size">Ukuran tanda</string>
+    <string name="fill_mark_mark_smaller">Perkecil tanda</string>
+    <string name="fill_mark_mark_larger">Perbesar tanda</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">Unlock strong compression</string>
+    <string name="strong_compression_reward_body">Watch a video to unlock one use for this document.</string>
+    <string name="strong_compression_reward_quality_note">May reduce sharpness and does not guarantee a smaller file.</string>
+    <string name="strong_compression_reward_retry_note">If an error occurs or the PDF does not shrink, try again without another video.</string>
+    <string name="strong_compression_watch_action">Watch and unlock</string>
+    <string name="strong_compression_loading">Preparing video…</string>
+    <string name="strong_compression_showing">Video in progress…</string>
+    <string name="strong_compression_continue_without_ad">Continue without an ad</string>
+    <string name="strong_compression_use_balanced">Use balanced</string>
+    <string name="strong_compression_close">Close</string>
+    <string name="strong_compression_first_free">First use free</string>
+    <string name="strong_compression_available">One use unlocked for this document</string>
+    <string name="strong_compression_video_hint">Watch a video to unlock one use for this document.</string>
+    <string name="strong_compression_password_again">Confirm the PDF password to continue.</string>
+    <string name="strong_compression_unavailable_note">The video is unavailable. You can continue without an ad this time.</string>
+    <string name="tool_ad_watch_apply">Watch and apply</string>
+    <string name="tool_ad_watch_save">Watch and save</string>
+    <string name="tool_ad_watch_export">Watch and export</string>
+    <string name="tool_ad_reward_hint">Watch an ad to unlock this operation.</string>
+    <string name="tool_ad_first_use_free">First use free</string>
+    <string name="tool_ad_unlocked">Operation unlocked</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_source_title">अपना PDF चुनें</string>
+    <string name="tool_source_subtitle">आप जिस फ़ाइल का उपयोग करना चाहते हैं वह कहाँ है?</string>
+    <string name="tool_source_app_hint">Scaniqo में सहेजे गए PDF</string>
+    <string name="tool_source_device_hint">PDF फ़ाइलें खोजें</string>
+    <string name="tool_source_library_empty">यहाँ अभी कोई PDF सहेजा नहीं गया है।</string>
+    <string name="tool_source_resume">सेटिंग्स पर लौटें</string>
+</resources>

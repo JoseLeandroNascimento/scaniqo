@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ads_label">विज्ञापन</string>
+    <string name="ads_preview_label">बैनर का पूर्वावलोकन</string>
+    <string name="ads_privacy_options">विज्ञापन की निजता</string>
+    <string name="ads_privacy_error">निजता के विकल्प नहीं खुल सके। फिर से कोशिश करें।</string>
+</resources>

@@ -7,6 +7,7 @@ import com.joseleandro.scaniqo.domain.model.PdfCropBounds
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
+import com.joseleandro.scaniqo.domain.model.PdfContentPosition
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
@@ -59,6 +60,8 @@ sealed interface DocumentToolsEvent {
         val rotationQuarterTurns: Int = 0,
         val contentScale: Float = 1f,
         val pageIds: Set<String>? = null,
+        val contentPosition: PdfContentPosition? = null,
+        val edgeToEdge: Boolean = false,
     ) : DocumentToolsEvent
 
     data class ApplyFilter(
@@ -89,6 +92,7 @@ sealed interface DocumentToolsEvent {
 
     data class SetCompareOriginal(val enabled: Boolean) : DocumentToolsEvent
     data object Undo : DocumentToolsEvent
+    data object Redo : DocumentToolsEvent
     data class SetNumbering(val enabled: Boolean) : DocumentToolsEvent
     data class MovePage(val pageId: String, val offset: Int) : DocumentToolsEvent
     data class MovePageTo(val pageId: String, val targetIndex: Int) : DocumentToolsEvent
@@ -126,6 +130,10 @@ sealed interface DocumentToolsEvent {
     data object PasswordSettings : DocumentToolsEvent
     data class InsertSignature(val signatureId: String) : DocumentToolsEvent
     data class EditSignature(val pageId: String, val placementId: String) : DocumentToolsEvent
+    data class PlaceSignature(val x: Float, val y: Float) : DocumentToolsEvent
+    data class ReplaceSignature(val signatureId: String) : DocumentToolsEvent
+    data object DuplicateSignatureDraft : DocumentToolsEvent
+    data object DeleteSignatureDraft : DocumentToolsEvent
     data class MoveSignature(val x: Float, val y: Float) : DocumentToolsEvent
     data class ResizeSignature(val width: Float) : DocumentToolsEvent
     data class TransformSignature(

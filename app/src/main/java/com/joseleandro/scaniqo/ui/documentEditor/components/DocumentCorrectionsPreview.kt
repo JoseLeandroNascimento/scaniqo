@@ -108,6 +108,7 @@ internal fun DocumentBackgroundMaskEditor(
     modifier: Modifier = Modifier,
     sourceState: DocumentCaptureSourceState = DocumentCaptureSourceState(),
     onRetry: () -> Unit = {},
+    onGestureEnd: () -> Unit = {},
 ) {
     var magnifier by remember(page.id, sourceState.source?.pixels) {
         mutableStateOf<CaptureMagnifierFocus?>(null)
@@ -119,7 +120,10 @@ internal fun DocumentBackgroundMaskEditor(
         points.forEachIndexed { index, point ->
             PerspectiveCorner(
                 index, point, perspective, size, enabled, onChange, sourceState.source?.pixels,
-                onMagnifierChange = { magnifier = it },
+                onMagnifierChange = {
+                    magnifier = it
+                    if (it == null) onGestureEnd()
+                },
             )
         }
     }

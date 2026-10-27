@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">সাম্প্রতিক রং</string>
+    <string name="fill_mark_palette_colors">রং</string>
+    <string name="fill_mark_recent_color">সাম্প্রতিক রং %1$d</string>
+    <string name="fill_mark_manual_size">ফন্টের আকার পয়েন্টে (6–72)</string>
+    <string name="fill_mark_apply_size">আকার প্রয়োগ করুন</string>
+    <string name="fill_mark_green">সবুজ</string>
+    <string name="fill_mark_purple">বেগুনি</string>
+    <string name="fill_mark_gray">ধূসর</string>
+    <string name="fill_mark_white">সাদা</string>
+    <string name="fill_mark_mark_size">চিহ্নের আকার</string>
+    <string name="fill_mark_mark_smaller">চিহ্ন ছোট করুন</string>
+    <string name="fill_mark_mark_larger">চিহ্ন বড় করুন</string>
+</resources>

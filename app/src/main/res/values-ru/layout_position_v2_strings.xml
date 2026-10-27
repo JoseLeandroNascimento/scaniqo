@@ -1,0 +1,5 @@
+<resources>
+    <string name="layout_margin_label">Поля</string>
+    <string name="layout_with_margin">С полями</string>
+    <string name="layout_edge_to_edge">До края</string>
+</resources>

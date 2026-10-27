@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">Liberar compressão forte</string>
+    <string name="strong_compression_reward_body">Assista a um vídeo para liberar um uso neste documento.</string>
+    <string name="strong_compression_reward_quality_note">Pode reduzir a nitidez e não garante um arquivo menor.</string>
+    <string name="strong_compression_reward_retry_note">Se houver erro ou o PDF não diminuir, tente de novo sem outro vídeo.</string>
+    <string name="strong_compression_watch_action">Assistir e liberar</string>
+    <string name="strong_compression_loading">Preparando vídeo…</string>
+    <string name="strong_compression_showing">Vídeo em andamento…</string>
+    <string name="strong_compression_continue_without_ad">Continuar sem anúncio</string>
+    <string name="strong_compression_use_balanced">Usar equilibrada</string>
+    <string name="strong_compression_close">Fechar</string>
+    <string name="strong_compression_first_free">Primeiro uso grátis</string>
+    <string name="strong_compression_available">Uso liberado neste documento</string>
+    <string name="strong_compression_video_hint">Assista a um vídeo para liberar um uso neste documento.</string>
+    <string name="strong_compression_password_again">Confirme a senha do PDF para continuar.</string>
+    <string name="strong_compression_unavailable_note">O vídeo está indisponível. Você pode continuar sem anúncio desta vez.</string>
+    <string name="tool_ad_watch_apply">Assistir e aplicar</string>
+    <string name="tool_ad_watch_save">Assistir e salvar</string>
+    <string name="tool_ad_watch_export">Assistir e exportar</string>
+    <string name="tool_ad_reward_hint">Assista a um anúncio para liberar esta operação.</string>
+    <string name="tool_ad_first_use_free">Primeiro uso grátis</string>
+    <string name="tool_ad_unlocked">Operação liberada</string>
+</resources>

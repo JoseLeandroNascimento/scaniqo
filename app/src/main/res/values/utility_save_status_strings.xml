@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_output_ready_to_save">PDF ready to save</string>
+    <string name="utility_output_finish_in_sheet">Choose a name and tag to save</string>
+    <string name="utility_zip_password_again">Enter the password for this PDF again before exporting.</string>
+</resources>

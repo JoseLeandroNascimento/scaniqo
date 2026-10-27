@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v4_tool_text">टेक्स्ट</string>
+    <string name="fill_v4_tool_mark">चिह्न</string>
+    <string name="fill_v4_mark_check">चेक</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">टेक्स्ट जोड़ें</string>
+    <string name="fill_v4_add_mark">चिह्न जोड़ें</string>
+    <string name="fill_v4_edit_text">टेक्स्ट संपादित करें</string>
+    <string name="fill_v4_edit_mark">चिह्न संपादित करें</string>
+    <string name="fill_v4_size">आकार</string>
+    <string name="fill_v4_color">रंग</string>
+    <string name="fill_v4_format">फ़ॉर्मैट</string>
+    <string name="fill_v4_bold">बोल्ड</string>
+    <string name="fill_v4_italic">इटैलिक</string>
+    <string name="fill_v4_underline">रेखांकित</string>
+    <string name="fill_v4_duplicate">प्रतिलिपि बनाएं</string>
+    <string name="fill_v4_delete">मिटाएं</string>
+    <string name="fill_v4_collapse">समेटें</string>
+    <string name="fill_v4_more_actions">क्रियाएं</string>
+    <string name="fill_v4_stop_inserting">रोकें</string>
+    <string name="fill_v4_page_hint_neutral">संपादित करने के लिए किसी तत्व पर टैप करें। जोड़ने के लिए टेक्स्ट या चिह्न चुनें।</string>
+    <string name="fill_v4_page_hint_insert_text">टेक्स्ट जोड़ने के लिए पेज पर टैप करें।</string>
+    <string name="fill_v4_page_hint_insert_mark">चिह्न जोड़ने के लिए पेज पर टैप करें।</string>
+    <string name="fill_v4_page_hint_insert_check">चेक चिह्न जोड़ने के लिए पेज पर टैप करें।</string>
+    <string name="fill_v4_page_hint_insert_cross">X चिह्न जोड़ने के लिए पेज पर टैप करें।</string>
+    <string name="fill_v4_page_hint_selected">तत्व को ले जाने के लिए खींचें। आकार बदलने के लिए हैंडल का उपयोग करें।</string>
+    <string name="fill_v4_selection_resize">तत्व का आकार बदलें</string>
+    <string name="fill_v4_updating_page">पेज अपडेट हो रहा है…</string>
+</resources>

@@ -1,6 +1,7 @@
 package com.joseleandro.scaniqo.ui.documentSignature
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,11 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
@@ -53,6 +58,7 @@ import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
 import com.joseleandro.scaniqo.ui.documentCommon.components.detectDocumentTransformGestures
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentSignatureGesture
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentSignatureOverlay
+import com.joseleandro.scaniqo.ui.documentEditor.util.signatureContainsPointer
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -76,6 +82,7 @@ internal fun DocumentSignaturePage(
     val viewport = rememberSaveable(workspace.workspaceId, page.id, saver = DocumentSignatureViewportState.Saver) {
         DocumentSignatureViewportState()
     }
+    var selectionIds by remember(page.id) { mutableStateOf(emptyList<String>()) }
     val previousPageLabel = stringResource(R.string.signature_previous_page)
     val nextPageLabel = stringResource(R.string.signature_next_page)
     val preview = state.pagePreviews[page.id]
@@ -98,6 +105,17 @@ internal fun DocumentSignaturePage(
                 modifier = Modifier.semantics { contentDescription = previousPageLabel },
             ) { Text(if (androidx.compose.ui.platform.LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl) "›" else "‹", style = MaterialTheme.typography.headlineSmall) }
             Text(stringResource(R.string.signature_page, state.selectedPageIndex + 1, workspace.pages.size))
+            if (page.signatures.size > 1) {
+                IconButton(
+                    onClick = { selectionIds = page.signatures.map { it.id } },
+                    enabled = state.canEdit && draft == null,
+                ) {
+                    Icon(
+                        painterResource(R.drawable.more_vert_24px),
+                        stringResource(R.string.signature_page_elements, page.signatures.size),
+                    )
+                }
+            }
             TextButton(
                 enabled = state.canEdit && draft == null && state.selectedPageIndex < workspace.pages.lastIndex,
                 onClick = { onEvent(DocumentToolsEvent.SelectPage(workspace.pages[state.selectedPageIndex + 1].id)) },
@@ -106,8 +124,12 @@ internal fun DocumentSignaturePage(
         }
         DocumentSignatureViewportStage(
             viewport = viewport,
-            draft = draft.takeIf { showPreview },
+            draft = draft.takeIf { showPreview && !state.signatureAwaitingPlacement },
             enabled = state.canEdit && showPreview,
+            pendingPlacement = state.signatureAwaitingPlacement && draft != null,
+            pageId = page.id,
+            placedSignatures = page.signatures,
+            onOverlappingSelection = { selectionIds = it },
             onEvent = onEvent,
             gesture = gesture,
             onGestureChange = { gesture = it },
@@ -133,6 +155,20 @@ internal fun DocumentSignaturePage(
             }
         }
     }
+    if (selectionIds.isNotEmpty() && draft == null) {
+        val placements = page.signatures.mapIndexed { index, placement -> index to placement }
+            .filter { it.second.id in selectionIds }.asReversed()
+        if (placements.isNotEmpty()) {
+            DocumentSignaturePlacementSheet(
+                placements = placements,
+                onSelect = { id ->
+                    selectionIds = emptyList()
+                    onEvent(DocumentToolsEvent.EditSignature(page.id, id))
+                },
+                onDismiss = { selectionIds = emptyList() },
+            )
+        }
+    }
 }
 
 /** A folha é uma camada estável; zoom e pan só mudam sua transformação de desenho. */
@@ -148,11 +184,16 @@ private fun DocumentSignatureViewportStage(
     documentImage: ImageBitmap? = null,
     adjustmentActive: Boolean = false,
     isContentReady: Boolean = true,
+    pendingPlacement: Boolean = false,
+    pageId: String? = null,
+    placedSignatures: List<PdfSignaturePlacement> = emptyList(),
+    onOverlappingSelection: (List<String>) -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
 ) {
     var signatureImage by remember(draft?.id, draft?.imageUri) { mutableStateOf<ImageBitmap?>(null) }
     val latestDraft by rememberUpdatedState(draft)
     val latestEvent by rememberUpdatedState(onEvent)
+    val latestOverlapSelection by rememberUpdatedState(onOverlappingSelection)
     val latestGestureChange by rememberUpdatedState(onGestureChange)
     val density = LocalDensity.current
     val documentLabel = stringResource(R.string.signature_document_zoom)
@@ -222,6 +263,27 @@ private fun DocumentSignatureViewportStage(
                                 scaleY = bounds.viewport.zoom
                                 translationX = bounds.page.center.x - bounds.basePage.center.x
                                 translationY = bounds.page.center.y - bounds.basePage.center.y
+                            }
+                            .pointerInput(enabled, pendingPlacement, pageId, placedSignatures, draft?.id, bounds.viewport.zoom) {
+                                if (!enabled || pageId == null) return@pointerInput
+                                detectTapGestures { tap ->
+                                    if (pendingPlacement) {
+                                        latestEvent(DocumentToolsEvent.PlaceSignature(
+                                            (tap.x / size.width).coerceIn(0f, 1f),
+                                            (tap.y / size.height).coerceIn(0f, 1f),
+                                        ))
+                                    } else if (latestDraft == null) {
+                                        val pageRect = Rect(0f, 0f, size.width.toFloat(), size.height.toFloat())
+                                        val hits = placedSignatures.filter { placement ->
+                                            signatureContainsPointer(placement, pageRect, tap,
+                                                48.dp.toPx() / bounds.viewport.zoom)
+                                        }
+                                        when (hits.size) {
+                                            1 -> latestEvent(DocumentToolsEvent.EditSignature(pageId, hits.single().id))
+                                            in 2..Int.MAX_VALUE -> latestOverlapSelection(hits.map { it.id })
+                                        }
+                                    }
+                                }
                             },
                     ) {
                         Surface(Modifier.fillMaxSize(), color = Color.White, shadowElevation = 3.dp) {

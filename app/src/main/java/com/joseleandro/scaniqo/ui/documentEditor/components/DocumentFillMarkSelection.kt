@@ -1,24 +1,28 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
@@ -29,10 +33,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
-import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import kotlin.math.roundToInt
 
-/** Camada visual em pixels do palco: alças conservam tamanho mesmo com zoom. */
 @Composable
 internal fun DocumentFillMarkSelection(
     selection: FillMarkSelectionGeometry,
@@ -42,76 +44,86 @@ internal fun DocumentFillMarkSelection(
     modifier: Modifier = Modifier,
 ) {
     val accent = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
-    val move = stringResource(R.string.fill_selection_move)
+    val surface = MaterialTheme.colorScheme.surface
+    val reveal = remember(draft.id) { Animatable(0f) }
+    LaunchedEffect(draft.id) { reveal.animateTo(1f, animationSpec = tween(120)) }
+    val visualProgress = if (LocalInspectionMode.current) 1f else reveal.value
+    val resizeLabel = stringResource(R.string.fill_v4_selection_resize)
     val grow = stringResource(R.string.fill_selection_grow)
     val shrink = stringResource(R.string.fill_selection_shrink)
     val left = stringResource(R.string.fill_mark_move_left)
     val right = stringResource(R.string.fill_mark_move_right)
     val up = stringResource(R.string.fill_mark_move_up)
     val down = stringResource(R.string.fill_mark_move_down)
-    val corners = listOf(
-        stringResource(R.string.fill_selection_top_left), stringResource(R.string.fill_selection_top_right),
-        stringResource(R.string.fill_selection_bottom_right), stringResource(R.string.fill_selection_bottom_left),
-    )
+    val resizeHandle = selection.handles[2]
+    val resizeAnchor = selection.corners[2]
+    val showHandle = enabled && 2 in selection.visibleHandles
+
     Box(modifier.fillMaxSize(), contentAlignment = AbsoluteAlignment.TopLeft) {
-        Canvas(Modifier.fillMaxSize()) {
-            val dash = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 4.dp.toPx()))
+        Canvas(Modifier.fillMaxSize().graphicsLayer { alpha = visualProgress }) {
             val outline = Path().apply {
                 selection.corners.forEachIndexed { index, point ->
                     if (index == 0) moveTo(point.x, point.y) else lineTo(point.x, point.y)
                 }
                 close()
             }
-            drawPath(outline, accent, style = Stroke(1.5.dp.toPx(), pathEffect = dash))
-            if (enabled) selection.visibleHandles.forEach { index ->
-                val anchor = if (index == 4) selection.topMiddle else selection.corners[index]
-                val handle = selection.handles[index]
-                drawLine(accent, Offset(anchor.x, anchor.y), Offset(handle.x, handle.y),
-                    1.dp.toPx(), pathEffect = dash)
+            drawPath(outline, accent.copy(alpha = .85f), style = Stroke(1.25.dp.toPx()))
+            if (showHandle) {
+                val anchor = Offset(resizeAnchor.x, resizeAnchor.y)
+                val handle = Offset(resizeHandle.x, resizeHandle.y)
+                if ((handle - anchor).getDistance() in 1f..28.dp.toPx()) {
+                    drawLine(accent.copy(alpha = .75f), anchor, handle, strokeWidth = 1.dp.toPx())
+                }
             }
         }
-        if (enabled) selection.visibleHandles.forEach { index ->
-            val handle = selection.handles[index]
-            val isMove = index == 4
+        if (showHandle) {
             fun resize(factor: Float) {
-                val resized = if (draft.kind == PdfOverlayKind.TEXT) {
+                val resized = if (draft.kind in textKinds) {
                     draft.resizedFillMarkBoxFromCorner(
-                        index,
-                        draft.width * 595f * (factor - 1f) * if (index == 0 || index == 3) -1f else 1f,
-                        draft.height * 842f * (factor - 1f) * if (index < 2) -1f else 1f,
-                        595f, 842f,
+                        2, draft.width * 595f * (factor - 1f),
+                        draft.height * 842f * (factor - 1f), 595f, 842f,
                     )
-                } else draft.scaledFillMarkAtCorner(index, factor)
+                } else draft.scaledFillMarkAtCorner(2, factor)
                 onUpdate(resized)
             }
-            val actions = if (isMove) listOf(
+            val actions = listOf(
+                CustomAccessibilityAction(grow) { resize(1.1f); true },
+                CustomAccessibilityAction(shrink) { resize(.9f); true },
                 CustomAccessibilityAction(left) { onUpdate(draft.movedTo(draft.x - .005f, draft.y)); true },
                 CustomAccessibilityAction(right) { onUpdate(draft.movedTo(draft.x + .005f, draft.y)); true },
                 CustomAccessibilityAction(up) { onUpdate(draft.movedTo(draft.x, draft.y - .005f)); true },
                 CustomAccessibilityAction(down) { onUpdate(draft.movedTo(draft.x, draft.y + .005f)); true },
-            ) else listOf(
-                CustomAccessibilityAction(grow) { resize(1.1f); true },
-                CustomAccessibilityAction(shrink) { resize(.9f); true },
             )
             Box(
                 Modifier.absoluteOffset {
-                    IntOffset((handle.x - selection.targetSize / 2f).roundToInt(),
-                        (handle.y - selection.targetSize / 2f).roundToInt())
+                    IntOffset(
+                        (resizeHandle.x - selection.targetSize / 2f).roundToInt(),
+                        (resizeHandle.y - selection.targetSize / 2f).roundToInt(),
+                    )
                 }.size(48.dp).semantics {
-                    contentDescription = if (isMove) move else corners[index]
+                    contentDescription = resizeLabel
                     customActions = actions
                 },
                 contentAlignment = Alignment.Center,
             ) {
                 Surface(
-                    Modifier.size(if (isMove) 32.dp else 22.dp),
-                    shape = CircleShape, color = accent,
-                    contentColor = MaterialTheme.colorScheme.onPrimary, shadowElevation = 2.dp,
+                    Modifier.size(22.dp).graphicsLayer {
+                        alpha = visualProgress
+                        scaleX = .96f + .04f * visualProgress
+                        scaleY = .96f + .04f * visualProgress
+                    },
+                    shape = CircleShape,
+                    color = surface,
+                    contentColor = accent,
+                    border = BorderStroke(1.5.dp, accent),
+                    shadowElevation = 1.dp,
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        if (isMove) Icon(
-                            painterResource(R.drawable.ic_layout_position), null, Modifier.size(20.dp),
-                        ) else Box(Modifier.size(10.dp).background(Color.White, CircleShape))
+                        Icon(
+                            painterResource(R.drawable.ic_gesture_resize),
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                        )
                     }
                 }
             }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">قبل</string>
+    <string name="layout_v3_after">بعد</string>
+    <string name="layout_v3_compare">مقارنة</string>
+    <string name="layout_v3_align">محاذاة</string>
+    <string name="layout_v3_align_target">محاذاة: %1$s، %2$s</string>
+    <string name="layout_v3_no_both_travel">لا توجد مساحة للتحريك أفقياً أو عمودياً.</string>
+    <string name="layout_v3_no_horizontal_travel">لا توجد مساحة للتحريك أفقياً.</string>
+    <string name="layout_v3_no_vertical_travel">لا توجد مساحة للتحريك عمودياً.</string>
+    <string name="layout_v3_reduce_size">تصغير الحجم</string>
+    <string name="layout_v3_hide_precise">إخفاء الموضع الدقيق</string>
+    <string name="layout_v3_precise">الموضع الدقيق</string>
+    <string name="layout_v3_nudge">التحريك نحو %1$s</string>
+    <string name="layout_v3_center">توسيط المحتوى</string>
+    <string name="layout_v3_custom_size">مخصص · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">تستخدم خيارات التأطير مقياس 100%.</string>
+    <string name="layout_v3_scale">المقياس</string>
+    <string name="layout_v3_decrease_scale" formatted="false">تقليل المقياس 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">زيادة المقياس 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">أدخل قيمة بين 25% و200%.</string>
+    <string name="layout_v3_without_margin">بلا هامش</string>
+    <string name="layout_v3_with_margin_description">كل المحتوى داخل هامش الصفحة</string>
+    <string name="layout_v3_without_margin_description">كل المحتوى داخل مساحة الصفحة</string>
+    <string name="layout_v3_restore_category">استعادة هذا التعديل</string>
+    <string name="layout_v3_more">خيارات إضافية</string>
+    <string name="layout_v3_discard_session">تجاهل جميع تعديلات هذه الجلسة</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">Débloquer la compression forte</string>
+    <string name="strong_compression_reward_body">Regardez une vidéo pour débloquer une utilisation sur ce document.</string>
+    <string name="strong_compression_reward_quality_note">Peut réduire la netteté et ne garantit pas un fichier plus petit.</string>
+    <string name="strong_compression_reward_retry_note">En cas d’erreur ou si le PDF ne diminue pas, réessayez sans autre vidéo.</string>
+    <string name="strong_compression_watch_action">Regarder et débloquer</string>
+    <string name="strong_compression_loading">Préparation de la vidéo…</string>
+    <string name="strong_compression_showing">Vidéo en cours…</string>
+    <string name="strong_compression_continue_without_ad">Continuer sans publicité</string>
+    <string name="strong_compression_use_balanced">Utiliser le mode équilibré</string>
+    <string name="strong_compression_close">Fermer</string>
+    <string name="strong_compression_first_free">Première utilisation gratuite</string>
+    <string name="strong_compression_available">Utilisation débloquée pour ce document</string>
+    <string name="strong_compression_video_hint">Regardez une vidéo pour débloquer une utilisation sur ce document.</string>
+    <string name="strong_compression_password_again">Confirmez le mot de passe du PDF pour continuer.</string>
+    <string name="strong_compression_unavailable_note">La vidéo est indisponible. Vous pouvez continuer sans publicité cette fois.</string>
+    <string name="tool_ad_watch_apply">Regarder et appliquer</string>
+    <string name="tool_ad_watch_save">Regarder et enregistrer</string>
+    <string name="tool_ad_watch_export">Regarder et exporter</string>
+    <string name="tool_ad_reward_hint">Regardez une publicité pour débloquer cette opération.</string>
+    <string name="tool_ad_first_use_free">Première utilisation gratuite</string>
+    <string name="tool_ad_unlocked">Opération débloquée</string>
+</resources>

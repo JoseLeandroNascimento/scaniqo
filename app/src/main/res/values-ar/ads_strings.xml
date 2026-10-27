@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ads_label">إعلان</string>
+    <string name="ads_preview_label">معاينة الإعلان</string>
+    <string name="ads_privacy_options">خصوصية الإعلانات</string>
+    <string name="ads_privacy_error">تعذّر فتح خيارات الخصوصية. حاول مرة أخرى.</string>
+</resources>

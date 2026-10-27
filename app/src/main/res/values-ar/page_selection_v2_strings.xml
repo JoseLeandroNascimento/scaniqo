@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_v2_thumbnails">مصغّرات</string>
+    <string name="pages_v2_intervals">نطاقات</string>
+    <string name="pages_v2_from">من</string>
+    <string name="pages_v2_until">إلى</string>
+    <string name="pages_v2_add_range">إضافة نطاق</string>
+    <string name="pages_v2_update_range">تحديث النطاق</string>
+    <string name="pages_v2_edit_list">تحرير القائمة</string>
+    <string name="pages_v2_confirm_selection">تأكيد التحديد</string>
+    <string name="pages_v2_cancel_edit">إلغاء التحرير</string>
+    <string name="pages_v2_order">الترتيب: %1$s</string>
+    <string name="pages_v2_document_order">استخدام ترتيب PDF</string>
+    <string name="pages_v2_go_to_page">الانتقال إلى صفحة</string>
+    <string name="pages_v2_range_incomplete">أدخل بداية النطاق ونهايته.</string>
+    <string name="pages_v2_range_reversed">يجب ألا تتجاوز البداية النهاية.</string>
+    <string name="pages_v2_range_bounds">اختر صفحات من 1 إلى %1$d.</string>
+    <string name="pages_v2_edit_range">تحرير النطاق %1$s</string>
+    <string name="pages_v2_remove_range">إزالة النطاق %1$s</string>
+    <string name="pages_v2_drag_mode">سحب</string>
+    <string name="pages_v2_direct_mode">نقل إلى موضع</string>
+    <string name="pages_v2_selected_position">الصفحة في الموضع %1$d</string>
+    <string name="pages_v2_final_position">الموضع النهائي</string>
+    <string name="pages_v2_start">البداية</string>
+    <string name="pages_v2_end">النهاية</string>
+    <string name="pages_v2_move_to">نقل إلى %1$d</string>
+    <string name="pages_v2_same_position">موجودة في هذا الموضع</string>
+    <string name="pages_v2_numbering">ترقيم الصفحات</string>
+    <string name="pages_v2_options">خيارات الصفحة %1$d</string>
+    <string name="pages_v2_moved">نُقلت الصفحة إلى %1$d</string>
+    <string name="pages_v2_pending_selection">أكد التحديد أو ألغِه قبل المتابعة.</string>
+    <string name="pages_v2_jump_hint">صفحة من 1 إلى %1$d</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="zero">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="one">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="two">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="few">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="many">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="other">إنشاء PDF من %1$d صفحة</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="zero">تصدير %1$d صفحة</item>
+        <item quantity="one">تصدير %1$d صفحة</item>
+        <item quantity="two">تصدير %1$d صفحة</item>
+        <item quantity="few">تصدير %1$d صفحة</item>
+        <item quantity="many">تصدير %1$d صفحة</item>
+        <item quantity="other">تصدير %1$d صفحة</item>
+    </plurals>
+    <string name="pages_v2_list_hint">مثال: 5, 2-4, 1. يُحفظ الترتيب المُدخل.</string>
+</resources>

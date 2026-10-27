@@ -1,19 +1,24 @@
 package com.joseleandro.scaniqo.ui.documentSignature
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -73,14 +78,14 @@ internal fun DocumentSignatureControls(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(stringResource(R.string.signature_library), style = MaterialTheme.typography.titleSmall)
-                    TextButton(onClick = onCreateSignature, enabled = state.canEdit) {
+                    TextButton(onClick = onCreateSignature, enabled = state.canEdit, modifier = Modifier.heightIn(min = 48.dp)) {
                         Text(stringResource(R.string.signature_new))
                     }
                 }
                 TextButton(
                     onClick = { onEvent(DocumentToolsEvent.ManageSignatures) },
                     enabled = state.canEdit,
-                    modifier = Modifier.padding(horizontal = 12.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp).heightIn(min = 48.dp),
                 ) { Text(stringResource(R.string.tools_manage_signatures)) }
                 if (state.signatures.isEmpty()) {
                     Text(
@@ -100,6 +105,7 @@ internal fun DocumentSignatureControls(
                             enabled = state.canEdit,
                             shape = MaterialTheme.shapes.medium,
                             color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                         ) {
                             Column(Modifier.width(144.dp).padding(12.dp)) {
                                 SignatureImage(
@@ -129,6 +135,7 @@ internal fun DocumentSignatureControls(
                                 OutlinedButton(
                                     onClick = { onEvent(DocumentToolsEvent.EditSignature(page.id, signature.id)) },
                                     enabled = state.canEdit,
+                                    modifier = Modifier.heightIn(min = 48.dp),
                                 ) {
                                     Text(stringResource(R.string.signature_edit_placed, page.signatures.indexOf(signature) + 1))
                                 }
@@ -152,9 +159,20 @@ internal fun DocumentSignatureControls(
         if (draft != null) {
             Button(
                 onClick = onApply,
-                enabled = state.canEdit && !state.isRendering,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 12.dp),
-            ) { Text(stringResource(R.string.signature_apply)) }
+                enabled = state.canEdit && !state.isRendering && !state.signatureAwaitingPlacement,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 12.dp)
+                    .heightIn(min = 48.dp),
+            ) {
+                if (state.isRendering) {
+                    CircularProgressIndicator(
+                        Modifier.size(18.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp,
+                    )
+                    Spacer(Modifier.width(8.dp))
+                }
+                Text(stringResource(R.string.signature_apply))
+            }
         }
     }
 }

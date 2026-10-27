@@ -9,6 +9,7 @@ import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPerspective
 import com.joseleandro.scaniqo.ui.documentEditor.util.DocumentLayoutRotationGesture
 import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutAlignmentAt
+import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutDragged
 import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutHandleRotation
 import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutHandleScale
 import com.joseleandro.scaniqo.ui.documentEditor.util.documentLayoutRotation
@@ -49,6 +50,30 @@ class DocumentLayoutGesturesTest {
         assertEquals(PageAlignment.BOTTOM, documentLayoutAlignmentAt(.5f, .95f))
         assertEquals(PageAlignment.TOP, documentLayoutAlignmentAt(.2f, .05f))
         assertEquals(PageAlignment.CENTER, documentLayoutAlignmentAt(Float.NaN, .5f))
+    }
+
+    @Test fun dragCanReachTopLeftAndTracksTheActualPaperDistance() {
+        val initial = PdfPageLayout(contentScale = .75f, edgeToEdge = true)
+        val paper = IntSize(595, 842)
+        val moved = documentLayoutDragged(initial, Offset(-100f, -120f), paper, 595f, 842f)
+        assertEquals(0f, moved.contentPosition!!.horizontal, .001f)
+        assertEquals(0f, moved.contentPosition.vertical, .001f)
+
+        val small = documentLayoutDragged(initial, Offset(30f, 20f), paper, 595f, 842f)
+        val split = documentLayoutDragged(
+            documentLayoutDragged(initial, Offset(12f, 8f), paper, 595f, 842f),
+            Offset(18f, 12f), paper, 595f, 842f,
+        )
+        assertEquals(small.contentPosition!!.horizontal, split.contentPosition!!.horizontal, .001f)
+        assertEquals(small.contentPosition.vertical, split.contentPosition.vertical, .001f)
+    }
+
+    @Test fun dragWithoutAvailableSpaceDoesNotCreateInvisibleChange() {
+        val initial = PdfPageLayout(edgeToEdge = true)
+        assertEquals(
+            initial,
+            documentLayoutDragged(initial, Offset(50f, 50f), IntSize(595, 842), 595f, 842f),
+        )
     }
 
     @Test fun pinchPreservesProportionsAndClampsToSupportedRange() {
@@ -94,6 +119,8 @@ class DocumentLayoutGesturesTest {
             scaleMode = PageScaleMode.FILL,
             rotationQuarterTurns = 3,
             contentScale = .6f,
+            contentPosition = com.joseleandro.scaniqo.domain.model.PdfContentPosition(0f, 0f),
+            edgeToEdge = true,
         )
         assertEquals(
             page.copy(
@@ -101,6 +128,8 @@ class DocumentLayoutGesturesTest {
                 scaleMode = PageScaleMode.FILL,
                 rotationQuarterTurns = 3,
                 contentScale = .6f,
+                contentPosition = draft.contentPosition,
+                edgeToEdge = true,
             ),
             page.withLayoutAdjustmentsFrom(draft),
         )

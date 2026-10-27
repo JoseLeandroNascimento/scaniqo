@@ -34,6 +34,25 @@ data class PdfPerspective(
     val bottomLeft: PdfPoint = PdfPoint(0f, 1f)
 )
 
+/** Fração do deslocamento disponível na folha: 0 = esquerda/topo, 1 = direita/base. */
+@Serializable
+data class PdfContentPosition(
+    val horizontal: Float = .5f,
+    val vertical: Float = .5f,
+) {
+    fun isValid(): Boolean = horizontal.isFinite() && vertical.isFinite() &&
+        horizontal in 0f..1f && vertical in 0f..1f
+}
+
+/** Ausência de posição livre preserva exatamente o alinhamento das receitas antigas. */
+fun PdfPageLayout.effectiveContentPosition(): PdfContentPosition = contentPosition ?: when (alignment) {
+    PageAlignment.TOP -> PdfContentPosition(.5f, 0f)
+    PageAlignment.BOTTOM -> PdfContentPosition(.5f, 1f)
+    PageAlignment.LEFT -> PdfContentPosition(0f, .5f)
+    PageAlignment.RIGHT -> PdfContentPosition(1f, .5f)
+    PageAlignment.CENTER -> PdfContentPosition()
+}
+
 @Serializable
 data class PdfPageLayout(
     val alignment: PageAlignment = PageAlignment.CENTER,
@@ -49,7 +68,11 @@ data class PdfPageLayout(
     /** Recorta a área real da fonte sem alterar as proporções do conteúdo. */
     val crop: PdfCropBounds? = null,
     /** Remove apenas o entorno da captura; não retifica nem desloca o documento. */
-    val backgroundMask: PdfPerspective? = null
+    val backgroundMask: PdfPerspective? = null,
+    /** Nulo mantém a geometria de receitas criadas antes do posicionamento livre. */
+    val contentPosition: PdfContentPosition? = null,
+    /** Permite alcançar a borda mantendo FIT e o tamanho escolhido. */
+    val edgeToEdge: Boolean = false,
 )
 
 /** Coordenadas proporcionais à folha, com origem no canto superior esquerdo. */

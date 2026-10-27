@@ -31,6 +31,7 @@ class AndroidBackupSettingsRepository(context: Context) : BackupSettingsReposito
                 .putString("frequency", next.frequency.name)
                 .putBoolean("wifi_only", next.wifiOnly)
                 .putBoolean("charging_only", next.chargingOnly)
+                .putString("last_backup_id", next.lastBackupId)
                 .putLong("last_backup_at", next.lastBackupAt ?: 0L)
                 .putLong("last_backup_bytes", next.lastBackupBytes)
                 .putInt("last_backup_document_count", next.lastBackupDocumentCount)
@@ -49,6 +50,7 @@ class AndroidBackupSettingsRepository(context: Context) : BackupSettingsReposito
         frequency = preferences.enum<BackupFrequency>("frequency") ?: BackupFrequency.DAILY,
         wifiOnly = preferences.boolean("wifi_only", true),
         chargingOnly = preferences.boolean("charging_only", false),
+        lastBackupId = preferences.text("last_backup_id")?.takeIf(String::isNotBlank),
         lastBackupAt = preferences.long("last_backup_at").takeIf { it > 0L },
         lastBackupBytes = preferences.long("last_backup_bytes").coerceAtLeast(0),
         lastBackupDocumentCount = runCatching { preferences.getInt("last_backup_document_count", 0) }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">Antes</string>
+    <string name="layout_v3_after">Después</string>
+    <string name="layout_v3_compare">Comparar</string>
+    <string name="layout_v3_align">Alinear</string>
+    <string name="layout_v3_align_target">Alinear: %1$s, %2$s</string>
+    <string name="layout_v3_no_both_travel">No hay espacio para mover horizontal ni verticalmente.</string>
+    <string name="layout_v3_no_horizontal_travel">No hay espacio para mover horizontalmente.</string>
+    <string name="layout_v3_no_vertical_travel">No hay espacio para mover verticalmente.</string>
+    <string name="layout_v3_reduce_size">Reducir tamaño</string>
+    <string name="layout_v3_hide_precise">Ocultar posición precisa</string>
+    <string name="layout_v3_precise">Posición precisa</string>
+    <string name="layout_v3_nudge">Mover hacia %1$s</string>
+    <string name="layout_v3_center">Centrar contenido</string>
+    <string name="layout_v3_custom_size">Personalizado · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">Los encuadres usan una escala del 100%.</string>
+    <string name="layout_v3_scale">Escala</string>
+    <string name="layout_v3_decrease_scale" formatted="false">Reducir escala un 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">Aumentar escala un 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">Introduce un valor entre 25% y 200%.</string>
+    <string name="layout_v3_without_margin">Sin margen</string>
+    <string name="layout_v3_with_margin_description">Todo el contenido dentro del margen de la página</string>
+    <string name="layout_v3_without_margin_description">Todo el contenido en el área de la página</string>
+    <string name="layout_v3_restore_category">Restaurar este ajuste</string>
+    <string name="layout_v3_more">Más opciones</string>
+    <string name="layout_v3_discard_session">Descartar todos los cambios de esta sesión</string>
+</resources>

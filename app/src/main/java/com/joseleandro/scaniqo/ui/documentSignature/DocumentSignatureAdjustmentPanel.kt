@@ -1,5 +1,7 @@
 package com.joseleandro.scaniqo.ui.documentSignature
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -78,15 +80,25 @@ internal fun DocumentSignatureAdjustmentPanel(
         ) {
             SignatureAdjustmentMode.entries.forEach { item ->
                 val selected = item == mode
+                val modeColor by animateColorAsState(
+                    targetValue = if (selected) MaterialTheme.colorScheme.secondaryContainer
+                        else MaterialTheme.colorScheme.surfaceContainer,
+                    animationSpec = tween(180),
+                    label = "signature adjustment selection",
+                )
+                val modeContentColor by animateColorAsState(
+                    targetValue = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                    animationSpec = tween(180),
+                    label = "signature adjustment label",
+                )
                 Surface(
                     selected = selected,
                     onClick = { onModeChange(item) },
                     enabled = enabled,
                     shape = MaterialTheme.shapes.small,
-                    color = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                        else MaterialTheme.colorScheme.surfaceContainer,
-                    contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = modeColor,
+                    contentColor = modeContentColor,
                     modifier = Modifier.weight(1f).heightIn(min = 48.dp).semantics { role = Role.Tab },
                 ) {
                     Box(Modifier.padding(horizontal = 6.dp, vertical = 8.dp), contentAlignment = Alignment.Center) {

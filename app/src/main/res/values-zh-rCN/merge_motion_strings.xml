@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_motion_library">文档库</string>
+    <string name="merge_motion_device">设备</string>
+    <string name="merge_motion_add">添加 PDF</string>
+    <string name="merge_motion_done">完成</string>
+    <string name="merge_motion_hint">添加、排序、合并。</string>
+    <string name="merge_motion_count">%1$d 个 PDF → 1</string>
+    <string name="merge_motion_one">再添加一个 PDF</string>
+    <string name="merge_motion_empty">选择 PDF</string>
+    <string name="merge_motion_search">搜索文档</string>
+    <string name="merge_motion_selected">已选：%1$d</string>
+    <string name="merge_motion_working">正在合并 PDF</string>
+    <string name="merge_motion_options">%1$s 的选项</string>
+    <string name="merge_motion_count_description">将 %1$d 个 PDF 合并为一个</string>
+</resources>

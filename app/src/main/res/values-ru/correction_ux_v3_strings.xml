@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">Определить контур</string>
+    <string name="correction_v3_detect_again">Определить снова</string>
+    <string name="correction_v3_manual">Настроить вручную</string>
+    <string name="correction_v3_edit_crop">Изменить обрезку</string>
+    <string name="correction_v3_view_result">Показать результат</string>
+    <string name="correction_v3_compare">Сравнить</string>
+    <string name="correction_v3_show_before">Показать до</string>
+    <string name="correction_v3_show_after">Показать после</string>
+    <string name="correction_v3_preparing_before">Подготовка страницы до этих изменений…</string>
+    <string name="correction_v3_undo">Отменить изменение</string>
+    <string name="correction_v3_redo">Повторить изменение</string>
+    <string name="correction_v3_discard_all">Сбросить изменения сеанса</string>
+    <string name="correction_v3_restore_crop">Восстановить обрезку</string>
+    <string name="correction_v3_restore_background">Восстановить контур</string>
+    <string name="correction_v3_zero_tilt">Обнулить наклон</string>
+    <string name="correction_v3_zero_curve">Обнулить искривление</string>
+    <string name="correction_v3_convert_warning">Для этой коррекции страницу нужно преобразовать в изображение. Исходный текст может перестать выделяться.</string>
+    <string name="correction_v3_filter_requires_conversion">Фильтр этой страницы уже требует преобразования в изображение.</string>
+    <string name="correction_v3_value_increase">Увеличить %1$s</string>
+    <string name="correction_v3_value_decrease">Уменьшить %1$s</string>
+    <string name="correction_v3_value_edit">Точно изменить %1$s</string>
+    <string name="correction_v3_value_error">Введите значение от %1$s до %2$s с шагом %3$s.</string>
+    <string name="correction_v3_value_done">Применить значение</string>
+    <string name="correction_v3_curve_title">Исправить изогнутую страницу</string>
+    <string name="correction_v3_curve_up">Изгиб вверх</string>
+    <string name="correction_v3_curve_down">Изгиб вниз</string>
+    <string name="correction_v3_result_updating">Обновление результата…</string>
+</resources>

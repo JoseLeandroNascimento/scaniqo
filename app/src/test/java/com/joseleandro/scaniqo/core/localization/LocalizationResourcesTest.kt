@@ -11,7 +11,8 @@ class LocalizationResourcesTest {
     private val directories = listOf("values-pt", "values-en", "values-es", "values-fr",
         "values-hi", "values-in", "values-bn", "values-zh-rCN", "values-ar", "values-ru")
     private val placeholders = Regex("%(?:[0-9]+\\$)?[-#+ 0,(]*[0-9]*(?:\\.[0-9]+)?[a-zA-Z]|\\{(?:pagina|total)\\}")
-    private data class Entry(val type: String, val text: String, val quantities: Map<String, String>)
+    private data class Entry(val type: String, val text: String, val quantities: Map<String, String>,
+        val formatted: Boolean)
 
     private fun read(directory: String): Map<String, Entry> {
         val result = mutableMapOf<String, Entry>()
@@ -33,7 +34,8 @@ class LocalizationResourcesTest {
                     }
                 }
                 assertNull("Duplicate $name in $directory", result.put(name,
-                    Entry(element.tagName, element.textContent, quantities)))
+                    Entry(element.tagName, element.textContent, quantities,
+                        element.getAttribute("formatted") != "false")))
             }
         }
         return result
@@ -53,8 +55,11 @@ class LocalizationResourcesTest {
                 val local = translated.getValue(key)
                 assertEquals("$directory/$key type", original.type, local.type)
                 assertTrue("$directory/$key is blank", local.text.isNotBlank())
+                assertEquals("$directory/$key formatted", original.formatted, local.formatted)
                 if (original.type == "string") {
-                    assertEquals("$directory/$key arguments", tokens(original.text), tokens(local.text))
+                    if (original.formatted) {
+                        assertEquals("$directory/$key arguments", tokens(original.text), tokens(local.text))
+                    }
                 } else {
                     val expected = tokens(original.quantities.getValue("other"))
                     assertTrue("$directory/$key must define other", "other" in local.quantities)

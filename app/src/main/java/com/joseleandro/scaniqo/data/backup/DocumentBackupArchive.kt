@@ -138,13 +138,23 @@ internal class DocumentBackupArchive(
         }
     }
 
+    suspend fun inspect(archive: File): DocumentBackupManifest = read(archive, null)
+
     suspend fun extract(
         archive: File,
         destination: File,
         onProgress: (DocumentBackupProgress) -> Unit = {},
     ): DocumentBackupManifest {
-        require(archive.isFile && archive.length() in 1..maxArchiveBytes) { "O arquivo de backup é inválido ou muito grande." }
         require(destination.isDirectory && destination.listFiles().orEmpty().isEmpty())
+        return read(archive, destination, onProgress)
+    }
+
+    private suspend fun read(
+        archive: File,
+        destination: File?,
+        onProgress: (DocumentBackupProgress) -> Unit = {},
+    ): DocumentBackupManifest {
+        require(archive.isFile && archive.length() in 1..maxArchiveBytes) { "O arquivo de backup é inválido ou muito grande." }
         try {
             return ZipFile(archive).use { zip ->
                 val entries = linkedMapOf<String, ZipEntry>()
@@ -167,17 +177,19 @@ internal class DocumentBackupArchive(
                 require(entries.keys == expected) { "O backup contém arquivos ausentes ou não declarados." }
                 var total = manifestBytes.size.toLong()
                 manifest.documents.forEachIndexed { index, document ->
-                    val directory = File(destination, document.key)
-                    require(directory.mkdir())
+                    val directory = destination?.let { parent ->
+                        File(parent, document.key).also { require(it.mkdir()) }
+                    }
                     document.files.forEach { file ->
                         currentCoroutineContext().ensureActive()
                         val entry = entries.getValue(decoded.archivePaths.getValue(path(document.key, file.name)))
                         require(entry.size == file.size) { "O tamanho de um arquivo não corresponde ao manifesto." }
-                        val target = File(directory, file.name).canonicalFile
-                        require(target.parentFile == directory.canonicalFile)
+                        val target = directory?.let { parent ->
+                            File(parent, file.name).canonicalFile.also { require(it.parentFile == parent.canonicalFile) }
+                        }
                         val digest = MessageDigest.getInstance("SHA-256")
                         val count = zip.getInputStream(entry).use { input ->
-                            target.outputStream().buffered().use { output ->
+                            (target?.outputStream()?.buffered() ?: DiscardOutput).use { output ->
                                 transfer(input, output, file.size, digest) { copied ->
                                     total += copied
                                     require(total <= maxUncompressedBytes) { "O backup excede o limite de tamanho." }
@@ -194,7 +206,7 @@ internal class DocumentBackupArchive(
                 manifest
             }
         } catch (failure: Throwable) {
-            destination.listFiles().orEmpty().forEach { it.deleteRecursively() }
+            destination?.listFiles().orEmpty().forEach { it.deleteRecursively() }
             throw failure
         }
     }
@@ -320,6 +332,11 @@ internal class DocumentBackupArchive(
             output.write(buffer, 0, count)
         }
         return total
+    }
+
+    private object DiscardOutput : OutputStream() {
+        override fun write(value: Int) = Unit
+        override fun write(bytes: ByteArray, offset: Int, length: Int) = Unit
     }
 
     private class BoundedOutput(output: OutputStream, private val limit: Long) : FilterOutputStream(output) {

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v3_add_to_page">Adicionar à página</string>
+    <string name="fill_v3_writing">Escrevendo na página</string>
+    <string name="fill_v3_text_selected">Texto selecionado</string>
+    <string name="fill_v3_mark_selected">Marca selecionada</string>
+    <string name="fill_v3_text">Texto</string>
+    <string name="fill_v3_tap_page">Toque na página para adicionar</string>
+    <string name="fill_v3_tap_again">Toque na página para adicionar uma marca</string>
+    <string name="fill_v3_hide_keyboard">Ocultar teclado</string>
+    <string name="fill_v3_edit_text">Editar texto</string>
+    <string name="fill_v3_size">Tamanho</string>
+    <string name="fill_v3_size_value">%1$s pt</string>
+    <string name="fill_v3_mark_size_short">Marca</string>
+    <string name="fill_v3_color">Cor</string>
+    <string name="fill_v3_format">Formato</string>
+    <string name="fill_v3_regular">Regular</string>
+    <string name="fill_v3_points">Pontos</string>
+    <string name="fill_v3_size_error">Digite um valor entre 6 e 72 pt.</string>
+    <string name="fill_v3_drag_corner">Você também pode arrastar um canto na página.</string>
+    <string name="fill_v3_opacity">Intensidade · %1$d%%</string>
+    <string name="fill_v3_weight">Peso</string>
+    <string name="fill_v3_text_box">Caixa de texto</string>
+    <string name="fill_v3_text_box_hint">Defina como o texto cabe na caixa.</string>
+    <string name="fill_v3_wrap">Quebrar linhas</string>
+    <string name="fill_v3_precise_position">Posição precisa</string>
+    <string name="fill_v3_position_hint">Mova em pequenos passos ou arraste o elemento na página.</string>
+    <string name="fill_v3_repeat_pages">Repetir nas páginas</string>
+    <string name="fill_v3_page_count">Destino: %1$d página(s)</string>
+    <string name="fill_v3_revert_element">Reverter edição do elemento</string>
+    <string name="fill_v3_empty_existing">Digite um texto ou use Excluir.</string>
+    <string name="fill_v3_invalid_element">Confira este elemento antes de continuar.</string>
+    <string name="fill_v3_tap_next_mark">Toque para adicionar outra marca</string>
+</resources>

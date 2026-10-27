@@ -81,6 +81,10 @@ fun DocumentViewerScreen(
     onToolsEvent: (DocumentToolsEvent) -> Unit,
     modifier: Modifier = Modifier,
     initialPageNumber: Int? = null,
+    banner: @Composable () -> Unit = {},
+    onSave: (() -> Unit)? = null,
+    saveShowsVideo: Boolean = false,
+    saveInProgress: Boolean = false,
 ) {
     val document = uiState.document
     val sameSession = toolsState.document?.id == documentId
@@ -91,11 +95,19 @@ fun DocumentViewerScreen(
         onDocumentAction(DocumentActionEvent.DismissMessage)
     }
     val documentBusy = uiState.actions.isBusy
-    val isBusy = documentBusy || toolsState.isBusy
+    val isBusy = documentBusy || toolsState.isBusy || saveInProgress
     val showScanner =
         document != null && workspace != null && !locked && toolsState.signatureDraft == null
-    val canScan = toolsState.canEdit && !documentBusy
+    val canScan = toolsState.canEdit && !documentBusy && !saveInProgress
     val scanning = toolsState.isScanning || toolsState.isAppending
+    val showBanner = document?.id == documentId && workspace?.pages?.isNotEmpty() == true &&
+        !uiState.isLoading && !uiState.loadError && !locked && !isBusy &&
+        !toolsState.isRendering && !toolsState.hasChanges && toolsState.tool == null &&
+        toolsState.signatureDraft == null && !toolsState.signatureAwaitingPlacement &&
+        !toolsState.isComparingOriginal && toolsState.pendingDeletePageId == null &&
+        !toolsState.confirmDiscard && uiState.actions.editor == null &&
+        uiState.actions.pendingDeletion == null && uiState.actions.pendingCreation == null &&
+        uiState.actions.generatedResult == null
 
     val filtersOpen = toolsState.tool == DocumentTool.FILTERS
     val listState = rememberLazyListState(
@@ -197,7 +209,14 @@ fun DocumentViewerScreen(
         },
         bottomBar = {
             if (workspace != null && !locked) {
-                DocumentToolsBar(toolsState, onToolsEvent, enabled = !documentBusy)
+                Column {
+                    // The banner is a separate measured row; it never covers the PDF or controls.
+                    if (showBanner) banner()
+                    DocumentToolsBar(
+                        toolsState, onToolsEvent, enabled = !documentBusy && !saveInProgress,
+                        onSave = onSave, saveShowsVideo = saveShowsVideo, saveInProgress = saveInProgress,
+                    )
+                }
             }
         },
     ) { innerPadding ->
@@ -430,7 +449,6 @@ fun DocumentViewerScreen(
         }
     }
     if (sameSession && !locked) {
-        DocumentActionOverlays(uiState.actions, onDocumentAction)
         DocumentToolsSheets(toolsState, onToolsEvent)
     } else if (toolsState.confirmDiscard) {
         DocumentToolsSheets(toolsState.copy(tool = null), onToolsEvent)

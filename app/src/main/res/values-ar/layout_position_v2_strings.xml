@@ -1,0 +1,5 @@
+<resources>
+    <string name="layout_margin_label">الهوامش</string>
+    <string name="layout_with_margin">مع هامش</string>
+    <string name="layout_edge_to_edge">حتى الحافة</string>
+</resources>

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import com.joseleandro.scaniqo.core.navigation.AppRoute
+import com.joseleandro.scaniqo.core.navigation.DocumentToolOrigin
 import com.joseleandro.scaniqo.core.navigation.NavigationViewModel
 import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
@@ -63,6 +64,41 @@ class NavigationViewModelTest {
         )
 
         assertEquals(AppRoute.DocumentViewer(7), restored)
+    }
+
+    @Test
+    fun standaloneToolOriginSurvivesChildRoutesAndStackRestoration() {
+        viewModel.navigateTo(AppRoute.Tools)
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        for (origin in DocumentToolOrigin.entries) {
+            val viewer = AppRoute.DocumentViewer(7, toolOrigin = origin)
+            val child = when (origin) {
+                DocumentToolOrigin.SIGNATURE -> AppRoute.DocumentSignature(7)
+                DocumentToolOrigin.FILL_PAGE -> AppRoute.DocumentEditorTool(7, DocumentTool.FORMS)
+            }
+            viewModel.navigateTo(viewer)
+            viewModel.navigateTo(child)
+            val restored = Json.decodeFromString(serializer, Json.encodeToString(
+                serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+            ))
+
+            assertEquals(listOf(AppRoute.Documents, AppRoute.Tools, viewer, child), restored.toList())
+            viewModel.goBack()
+            assertEquals(viewer, viewModel.backStack.last())
+            viewModel.goBack()
+        }
+    }
+
+    @Test
+    fun normalEditorEntryNeverInheritsThePreviousStandaloneToolOrigin() {
+        viewModel.navigateTo(AppRoute.Tools)
+        viewModel.navigateTo(AppRoute.DocumentViewer(7, toolOrigin = DocumentToolOrigin.FILL_PAGE))
+        viewModel.goBack()
+        viewModel.navigateTo(AppRoute.DocumentViewer(7))
+        viewModel.navigateTo(AppRoute.DocumentEditorTool(7, DocumentTool.FORMS))
+        viewModel.goBack()
+
+        assertEquals(AppRoute.DocumentViewer(7, toolOrigin = null), viewModel.backStack.last())
     }
 
     @Test

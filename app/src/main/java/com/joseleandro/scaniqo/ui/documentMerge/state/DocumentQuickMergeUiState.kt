@@ -11,4 +11,5 @@ data class DocumentQuickMergeUiState(
     val passwordRequest: MergePasswordRequest? = null,
     val error: String? = null,
     val pending: ScannedDocument? = null,
+    val savedDocumentId: Long? = null,
 )

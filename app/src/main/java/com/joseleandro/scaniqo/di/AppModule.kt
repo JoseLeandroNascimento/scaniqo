@@ -13,6 +13,8 @@ import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.data.backup.AndroidDocumentBackupRepository
 import com.joseleandro.scaniqo.data.backup.GoogleDriveBackupRemote
 import com.joseleandro.scaniqo.data.backup.AndroidBackupSettingsRepository
+import com.joseleandro.scaniqo.data.backup.AndroidBackupHistoryRepository
+import com.joseleandro.scaniqo.data.backup.BackupArchiveStore
 import com.joseleandro.scaniqo.data.backup.AutomaticBackupRunner
 import com.joseleandro.scaniqo.data.backup.BackupAuthorizationProvider
 import com.joseleandro.scaniqo.data.backup.BackupOperationGate
@@ -21,6 +23,7 @@ import com.joseleandro.scaniqo.data.backup.GoogleBackupAuthorizationProvider
 import com.joseleandro.scaniqo.data.backup.WorkManagerBackupScheduler
 import com.joseleandro.scaniqo.domain.repository.BackupScheduler
 import com.joseleandro.scaniqo.domain.repository.BackupSettingsRepository
+import com.joseleandro.scaniqo.domain.repository.BackupHistoryRepository
 import com.joseleandro.scaniqo.domain.repository.DocumentBackupRepository
 import com.joseleandro.scaniqo.domain.repository.DriveBackupRemote
 import com.joseleandro.scaniqo.ui.backup.DriveBackupViewModel
@@ -68,6 +71,11 @@ import org.koin.core.module.dsl.viewModel
 import com.joseleandro.scaniqo.core.localization.LocalizedNames
 
 val appModule = module {
+    single { com.joseleandro.scaniqo.core.ads.AdMobManager(androidContext()) }
+    single<com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy> {
+        com.joseleandro.scaniqo.core.ads.ToolAdAccessStore(androidContext())
+    }
+    single { com.joseleandro.scaniqo.core.ads.RewardedAdManager(get(), get()) }
 
     single<AppSettingsRepository> { AndroidAppSettingsRepository(androidContext()) }
     viewModelOf(::SettingsViewModel)
@@ -78,26 +86,25 @@ val appModule = module {
     viewModel { DocumentsViewModel(get(), get(), get()) }
     viewModelOf(::TrashViewModel)
     viewModelOf(::DocumentSearchViewModel)
-    viewModelOf(::PdfUtilityViewModel)
+    viewModel { PdfUtilityViewModel(get(), get(), get(), get()) }
     viewModelOf(::DocumentCertificatesViewModel)
     single<PdfUtilityRepository> { AndroidPdfUtilityRepository(androidContext()) }
     single<PdfCertificateRepository> { AndroidPdfCertificateRepository(androidContext()) }
     single { LocalizedNames(androidContext()) }
-    viewModel { DocumentActionsViewModel(get(), get(), get(), get<LocalizedNames>()::document) }
+    viewModel { DocumentActionsViewModel(get(), get(), get(), get<LocalizedNames>()::document, adAccess = get()) }
     viewModelOf(::DocumentViewerViewModel)
-    viewModelOf(constructor = { repository: PdfEditorRepository, signatures: SignatureRepository,
-        passwords: PasswordAccess, values: FormValueRepository ->
-        DocumentToolsViewModel(repository, signatures, passwords, values)
-    })
+    viewModel { DocumentToolsViewModel(get(), get(), get(), get(), adAccess = get()) }
     viewModel { PdfImportViewModel(get(), get(), get(), get(), get<LocalizedNames>()::importedDocument) }
-    viewModelOf(::DocumentQuickMergeViewModel)
+    viewModel { DocumentQuickMergeViewModel(get(), get(), get(), get(), adAccess = get()) }
     viewModel { SignaturesViewModel(get(), get<LocalizedNames>()::signature) }
     single<BackupSettingsRepository> { AndroidBackupSettingsRepository(androidContext()) }
+    single<BackupHistoryRepository> { AndroidBackupHistoryRepository(androidContext()) }
+    single { BackupArchiveStore(get(), get()) }
     single<BackupScheduler> { WorkManagerBackupScheduler(androidContext()) }
     single<BackupAuthorizationProvider> { GoogleBackupAuthorizationProvider(androidContext()) }
     single { BackupOperationGate() }
     single { BackupSnapshotFingerprint(get()) }
-    single { AutomaticBackupRunner(get(), get(), get(), get(), get(), get()) }
+    single { AutomaticBackupRunner(get(), get(), get(), get(), get(), get(), get()) }
     viewModelOf(::DriveBackupViewModel)
     single<DocumentBackupRepository> { AndroidDocumentBackupRepository(androidContext(), get(), get()) }
     single<DriveBackupRemote> { GoogleDriveBackupRemote() }

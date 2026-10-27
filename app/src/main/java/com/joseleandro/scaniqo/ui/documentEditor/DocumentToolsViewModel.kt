@@ -2,6 +2,9 @@ package com.joseleandro.scaniqo.ui.documentEditor
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy
+import com.joseleandro.scaniqo.core.ads.ToolAdPermit
 import com.joseleandro.scaniqo.core.security.PasswordAccess
 import com.joseleandro.scaniqo.core.security.PasswordVaultRecoveryException
 import com.joseleandro.scaniqo.core.security.PasswordVersionMissingException
@@ -35,6 +38,7 @@ import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentPagePreviewState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolPreviewState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.util.isValidSelection
+import com.joseleandro.scaniqo.ui.documentEditor.util.resizeSignatureAroundCenter
 import com.joseleandro.scaniqo.ui.documentEditor.util.transformSignaturePlacement
 import com.joseleandro.scaniqo.ui.documentEditor.util.withoutImageEnhancements
 import java.util.UUID
@@ -57,6 +61,7 @@ class DocumentToolsViewModel(
     private val signatureRepository: SignatureRepository,
     private val passwords: PasswordAccess,
     private val formValues: FormValueRepository? = null,
+    private val adAccess: ToolAdAccessPolicy? = null,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(DocumentToolsUiState())
     val uiState = mutableState.asStateFlow()
@@ -64,6 +69,8 @@ class DocumentToolsViewModel(
     val effects = effectChannel.receiveAsFlow()
     private val ioMutex = Mutex()
     private var openJob: Job? = null
+    private var saveJob: Job? = null
+    private var savePermit: ToolAdPermit? = null
     private val visiblePages = mutableMapOf<String, Int>()
     private val pagePreviews = DocumentPagePreviewController(viewModelScope, ::renderPage) { previews ->
         mutableState.update { it.withPagePreviews(previews) }
@@ -123,6 +130,7 @@ class DocumentToolsViewModel(
     )
     private var baseline: PdfWorkspace? = null
     private val undoHistory = ArrayDeque<PdfWorkspace>()
+    private val redoHistory = ArrayDeque<PdfWorkspace>()
     private var analysisJob: Job? = null
     private var analysisRevision = 0L
     private var sourceProtectionKeyId: String? = null
@@ -165,6 +173,7 @@ class DocumentToolsViewModel(
                 it.copy(
                     workspace = updated,
                     canUndo = true,
+                    canRedo = false,
                     isComparingOriginal = false,
                     qualityReport = null,
                     selectedPageId = firstAddedPageId,
@@ -219,6 +228,7 @@ class DocumentToolsViewModel(
         clearToolPreviews()
         visiblePages.clear()
         undoHistory.clear()
+        redoHistory.clear()
         cancelAnalysis(resumePreview = false)
         sourceProtectionKeyId = document.protectionKeyId
         pendingProtection = null
@@ -368,6 +378,7 @@ class DocumentToolsViewModel(
             }
             is DocumentToolsEvent.SaveRedactedCopy -> saveRedactedCopy(event)
             DocumentToolsEvent.Undo -> undo()
+            DocumentToolsEvent.Redo -> redo()
             is DocumentToolsEvent.SetNumbering -> change { it.copy(showPageNumbers = event.enabled) }
             is DocumentToolsEvent.MovePage -> movePage(event.pageId, event.offset)
             is DocumentToolsEvent.MovePageTo -> movePageTo(event.pageId, event.targetIndex)
@@ -438,6 +449,14 @@ class DocumentToolsViewModel(
             }
             is DocumentToolsEvent.InsertSignature -> insertSignature(event.signatureId)
             is DocumentToolsEvent.EditSignature -> editSignature(event.pageId, event.placementId)
+            is DocumentToolsEvent.ReplaceSignature -> replaceSignature(event.signatureId)
+            DocumentToolsEvent.DuplicateSignatureDraft -> duplicateSignatureDraft()
+            DocumentToolsEvent.DeleteSignatureDraft -> deleteSignatureDraft()
+            is DocumentToolsEvent.PlaceSignature -> if (uiState.value.signatureAwaitingPlacement &&
+                event.x.isFinite() && event.y.isFinite() && event.x in 0f..1f && event.y in 0f..1f
+            ) updateSignature { draft ->
+                transformSignaturePlacement(draft, x = event.x - draft.width / 2f, y = event.y - draft.height / 2f)
+            }
             is DocumentToolsEvent.MoveSignature -> updateSignature { draft ->
                 transformSignaturePlacement(draft, x = event.x, y = event.y)
             }
@@ -454,7 +473,7 @@ class DocumentToolsViewModel(
             is DocumentToolsEvent.CropSignature -> cropSignature(event)
             DocumentToolsEvent.ConfirmSignature -> commitSignature()
             DocumentToolsEvent.CancelSignature -> {
-                mutableState.update { it.copy(signatureDraft = null, signaturePageId = null) }
+                mutableState.update { it.copy(signatureDraft = null, signaturePageId = null, signatureAwaitingPlacement = false) }
                 renderPreview()
             }
             is DocumentToolsEvent.RemoveSignature -> change { workspace ->
@@ -576,6 +595,7 @@ class DocumentToolsViewModel(
     }
 
     private fun applyLayout(event: DocumentToolsEvent.ApplyLayout): Boolean {
+        if (event.contentPosition?.isValid() == false) return false
         // Ajustes geométricos preservam o filtro próprio de cada página, inclusive ao redefinir.
         return applyPageLayouts(event.allPages, event.pageIds) { current ->
             current.copy(
@@ -584,6 +604,8 @@ class DocumentToolsViewModel(
                 rotationQuarterTurns = ((event.rotationQuarterTurns % 4) + 4) % 4,
                 contentScale = (event.contentScale.takeIf { it.isFinite() } ?: current.contentScale)
                     .coerceIn(0.25f, 2f),
+                contentPosition = event.contentPosition?.takeIf { it.isValid() },
+                edgeToEdge = event.edgeToEdge,
             )
         }
     }
@@ -673,22 +695,49 @@ class DocumentToolsViewModel(
     }
 
     private fun rememberUndo(workspace: PdfWorkspace) {
+        redoHistory.clear()
         if (undoHistory.size == 20) undoHistory.removeFirst()
         undoHistory.addLast(workspace)
     }
 
     private fun undo() {
         if (!canChange() || uiState.value.signatureDraft != null) return
+        val current = uiState.value.workspace ?: return
         val previous = undoHistory.removeLastOrNull() ?: return
+        if (redoHistory.size == 20) redoHistory.removeFirst()
+        redoHistory.addLast(current)
         mutableState.update { state ->
             state.copy(
                 workspace = previous,
                 hasChanges = previous != baseline,
                 canUndo = undoHistory.isNotEmpty(),
+                canRedo = true,
                 isComparingOriginal = false,
                 qualityReport = null,
                 selectedPageId = state.selectedPageId?.takeIf { id -> previous.pages.any { it.id == id } }
                     ?: previous.pages.firstOrNull()?.id,
+                tool = state.tool.takeIf { it == DocumentTool.FILTERS },
+            )
+        }
+        renderPreview()
+    }
+
+    private fun redo() {
+        if (!canChange() || uiState.value.signatureDraft != null) return
+        val current = uiState.value.workspace ?: return
+        val next = redoHistory.removeLastOrNull() ?: return
+        if (undoHistory.size == 20) undoHistory.removeFirst()
+        undoHistory.addLast(current)
+        mutableState.update { state ->
+            state.copy(
+                workspace = next,
+                hasChanges = next != baseline,
+                canUndo = true,
+                canRedo = redoHistory.isNotEmpty(),
+                isComparingOriginal = false,
+                qualityReport = null,
+                selectedPageId = state.selectedPageId?.takeIf { id -> next.pages.any { it.id == id } }
+                    ?: next.pages.firstOrNull()?.id,
                 tool = state.tool.takeIf { it == DocumentTool.FILTERS },
             )
         }
@@ -728,6 +777,7 @@ class DocumentToolsViewModel(
             state.copy(
                 workspace = updated,
                 canUndo = true,
+                canRedo = false,
                 isComparingOriginal = false,
                 qualityReport = if (workspace.pages.map { it.id } == updated.pages.map { it.id }) state.qualityReport else null,
                 hasChanges = updated != baseline,
@@ -802,7 +852,7 @@ class DocumentToolsViewModel(
                 rememberUndo(workspace)
                 mutableState.update {
                     it.copy(workspace = updated, selectedPageId = updated.pages.lastOrNull()?.id, hasChanges = updated != baseline,
-                        canUndo = true, isComparingOriginal = false, qualityReport = null)
+                        canUndo = true, canRedo = false, isComparingOriginal = false, qualityReport = null)
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
@@ -903,6 +953,7 @@ class DocumentToolsViewModel(
                             (1f - width) / 2f, 0.62f - height / 2f, width, height,
                         ),
                         signaturePageId = page,
+                        signatureAwaitingPlacement = true,
                         tool = null,
                     )
                 }
@@ -925,10 +976,88 @@ class DocumentToolsViewModel(
         if (!canChange()) return
         val placement = uiState.value.workspace?.pages?.find { it.id == pageId }?.signatures?.find { it.id == placementId } ?: return
         mutableState.update {
-            it.copy(signatureDraft = placement, signaturePageId = pageId, selectedPageId = pageId, tool = null)
+            it.copy(signatureDraft = placement, signaturePageId = pageId,
+                signatureAwaitingPlacement = false, selectedPageId = pageId, tool = null)
         }
         renderPreview()
         uiState.value.document?.id?.let { effectChannel.trySend(DocumentToolsEffect.NavigateSignatureEditor(it)) }
+    }
+
+    /** Troca apenas a imagem da ocorrência ativa, preservando ID, centro e rotação. */
+    private fun replaceSignature(id: String) {
+        if (!canChange()) return
+        val state = uiState.value
+        val workspace = state.workspace ?: return
+        val draft = state.signatureDraft ?: return
+        if (state.signatureAwaitingPlacement) return
+        val signature = state.signatures.firstOrNull { it.id == id } ?: return
+        if (!signature.aspectRatio.isFinite() || signature.aspectRatio <= 0f) return
+        val operationSession = session
+        pausePreviews()
+        mutableState.update { it.copy(isCopyingSignature = true, message = null) }
+        viewModelScope.launch {
+            try {
+                val imageUri = ioMutex.withLock { repository.copySignature(workspace, signature.imageUri) }
+                if (operationSession != session || uiState.value.signatureDraft != draft) return@launch
+                val height = if (draft.stretchToBounds) draft.height
+                    else draft.width * (595f / 842f) / signature.aspectRatio
+                val replacement = resizeSignatureAroundCenter(
+                    draft.copy(imageUri = imageUri, y = draft.y + (draft.height - height) / 2f, height = height),
+                    width = draft.width, height = height,
+                )
+                mutableState.update { it.copy(signatureDraft = replacement) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (operationSession == session && uiState.value.signatureDraft == draft) {
+                    mutableState.update { it.copy(message = DocumentToolsMessage.SIGNATURES_ERROR) }
+                }
+            } finally {
+                if (operationSession == session) {
+                    mutableState.update { it.copy(isCopyingSignature = false) }
+                    if (!uiState.value.isLocked) renderPreview()
+                }
+            }
+        }
+    }
+
+    /** Confirma a edição corrente e sua cópia deslocada como um único passo de histórico. */
+    private fun duplicateSignatureDraft() {
+        if (!canChange()) return
+        val state = uiState.value
+        val draft = state.signatureDraft ?: return
+        val pageId = state.signaturePageId ?: return
+        if (state.signatureAwaitingPlacement || state.workspace?.pages?.none { it.id == pageId } != false) return
+        val offsetX = if (draft.x + draft.width + .06f <= 1f) .06f else -.06f
+        val offsetY = if (draft.y + draft.height + .04f <= 1f) .04f else -.04f
+        val duplicate = transformSignaturePlacement(
+            draft.copy(id = UUID.randomUUID().toString()),
+            x = draft.x + offsetX, y = draft.y + offsetY,
+        )
+        mutableState.update { it.copy(signatureDraft = null, signaturePageId = null, signatureAwaitingPlacement = false) }
+        change { workspace ->
+            workspace.copy(pages = workspace.pages.map { page ->
+                if (page.id != pageId) page else page.copy(
+                    signatures = page.signatures.filterNot { it.id == draft.id } + draft + duplicate
+                )
+            })
+        }
+        renderPreview()
+    }
+
+    private fun deleteSignatureDraft() {
+        if (!canChange()) return
+        val state = uiState.value
+        val draft = state.signatureDraft ?: return
+        val pageId = state.signaturePageId ?: return
+        mutableState.update { it.copy(signatureDraft = null, signaturePageId = null, signatureAwaitingPlacement = false) }
+        change { workspace ->
+            workspace.copy(pages = workspace.pages.map { page ->
+                if (page.id == pageId) page.copy(signatures = page.signatures.filterNot { it.id == draft.id })
+                else page
+            })
+        }
+        renderPreview()
     }
 
     private fun cropSignature(event: DocumentToolsEvent.CropSignature) {
@@ -974,15 +1103,16 @@ class DocumentToolsViewModel(
 
     private fun updateSignature(transform: (PdfSignaturePlacement) -> PdfSignaturePlacement) {
         if (!canChange()) return
-        mutableState.update { it.copy(signatureDraft = it.signatureDraft?.let(transform)) }
+        mutableState.update { it.copy(signatureDraft = it.signatureDraft?.let(transform), signatureAwaitingPlacement = false) }
     }
 
     private fun commitSignature() {
         if (!canChange()) return
         val state = uiState.value
         val draft = state.signatureDraft ?: return
+        if (state.signatureAwaitingPlacement) return
         val pageId = state.signaturePageId ?: return
-        mutableState.update { it.copy(signatureDraft = null, signaturePageId = null) }
+        mutableState.update { it.copy(signatureDraft = null, signaturePageId = null, signatureAwaitingPlacement = false) }
         change { workspace ->
             workspace.copy(pages = workspace.pages.map { page ->
                 if (page.id == pageId) page.copy(signatures = page.signatures.filterNot { it.id == draft.id } + draft) else page
@@ -1058,12 +1188,15 @@ class DocumentToolsViewModel(
         val workspace = state.workspace ?: return
         if (!state.canEdit || state.tool != DocumentTool.LAYOUT) return
         val page = workspace.pages.firstOrNull { it.id == event.pageId } ?: return
+        if (event.layout.contentPosition?.isValid() == false) return
         val layout = if (event.showOriginal) page.layout else page.layout.copy(
             alignment = event.layout.alignment,
             scaleMode = event.layout.scaleMode,
             rotationQuarterTurns = ((event.layout.rotationQuarterTurns % 4) + 4) % 4,
             contentScale = (event.layout.contentScale.takeIf(Float::isFinite) ?: page.layout.contentScale)
                 .coerceIn(0.25f, 2f),
+            contentPosition = event.layout.contentPosition?.takeIf { it.isValid() },
+            edgeToEdge = event.layout.edgeToEdge,
         )
         if (state.layoutPreview.pageId != event.pageId) clearLayoutPreview()
         mutableState.update { it.copy(layoutPreview = it.layoutPreview.copy(pageId = event.pageId)) }
@@ -1107,6 +1240,7 @@ class DocumentToolsViewModel(
         val workspace = state.workspace ?: return
         if (!state.canEdit || state.tool != DocumentTool.FILTERS) return
         val page = workspace.pages.firstOrNull { it.id == event.pageId } ?: return
+        if (event.layout.contentPosition?.isValid() == false) return
         val layout = if (event.showOriginal) page.layout else page.layout.copy(
             imageFilter = event.layout.imageFilter,
             filterIntensity = (event.layout.filterIntensity.takeIf(Float::isFinite) ?: 1f).coerceIn(0f, 1f),
@@ -1262,22 +1396,67 @@ class DocumentToolsViewModel(
         }
     }
 
-    private fun save() {
+    /** A rota ativa define a origem; retornar de uma ferramenta interna não altera o editor. */
+    fun setSaveAdOrigin(documentId: Long, tool: RewardedTool?) {
+        require(tool == null || tool == RewardedTool.SIGNATURE || tool == RewardedTool.FILL_PAGE)
+        mutableState.update { state ->
+            if (state.document?.id == documentId) state.copy(saveAdOrigin = tool) else state
+        }
+    }
+
+    fun pendingRewardedSaveTool(): RewardedTool? {
         val state = uiState.value
-        val workspace = state.workspace ?: return
-        if (!state.canEdit || !state.hasChanges || state.signatureDraft != null) return
+        val tool = state.saveAdOrigin ?: return null
+        val workspace = state.workspace ?: return null
+        val original = baseline ?: return null
+        if (workspace.documentId != state.document?.id || original.documentId != workspace.documentId) return null
+        val originalPages = original.pages.associateBy { it.id }
+        val changed = when (tool) {
+            RewardedTool.SIGNATURE -> workspace.pages.any { page ->
+                page.signatures != originalPages[page.id]?.signatures.orEmpty()
+            }
+            RewardedTool.FILL_PAGE -> {
+                val fillKinds = setOf(PdfOverlayKind.TEXT, PdfOverlayKind.CHECKMARK, PdfOverlayKind.CROSSMARK)
+                workspace.pages.any { page ->
+                    page.overlays.filter { it.kind in fillKinds } !=
+                        originalPages[page.id]?.overlays.orEmpty().filter { it.kind in fillKinds }
+                }
+            }
+            else -> false
+        }
+        return tool.takeIf { changed }
+    }
+
+    fun saveWithAd(adUnavailable: Boolean = false): Boolean = save(adUnavailable)
+
+    private fun finishSavePermit(permit: ToolAdPermit?, success: Boolean) {
+        if (permit == null || savePermit !== permit) return
+        savePermit = null
+        adAccess?.finish(permit, success)
+    }
+
+    private fun save(adUnavailable: Boolean = false): Boolean {
+        val state = uiState.value
+        val workspace = state.workspace ?: return false
+        if (!state.canEdit || !state.hasChanges || state.signatureDraft != null) return false
         if (requiresAuthentication() && !passwords.state.value.isUnlocked) {
             effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
-            return
+            return false
         }
         if (workspace.isProtected && workspace.protectionKeyId == null && passwords.activeKeyId == null) {
             effectChannel.trySend(DocumentToolsEffect.NavigatePasswordSettings)
-            return
+            return false
         }
+        val rewardedTool = pendingRewardedSaveTool()
+        val permit = if (rewardedTool != null && adAccess != null) {
+            adAccess.acquire(rewardedTool, UUID.randomUUID().toString(), adUnavailable) ?: return false
+        } else null
+        savePermit = permit
         pausePreviews()
         mutableState.update { it.copy(isSaving = true, isRendering = false, tool = null, message = null, isComparingOriginal = false) }
         val operationSession = session
-        viewModelScope.launch {
+        val job = viewModelScope.launch {
+            var savedSuccessfully = false
             var refreshSavedPreview = false
             try {
                 val saved = ioMutex.withLock {
@@ -1291,25 +1470,38 @@ class DocumentToolsViewModel(
                         }
                     } else repository.save(workspace)
                 }
+                savedSuccessfully = true
                 if (operationSession != session) return@launch
                 baseline = workspace
                 refreshSavedPreview = true
                 undoHistory.clear()
+                redoHistory.clear()
                 sourceProtectionKeyId = saved.protectionKeyId
                 mutableState.update {
-                    it.copy(document = saved, hasChanges = false, canUndo = false, message = DocumentToolsMessage.SAVED)
+                    it.copy(document = saved, hasChanges = false, canUndo = false, canRedo = false,
+                        message = DocumentToolsMessage.SAVED)
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
                 if (operationSession == session) mutableState.update { it.copy(message = DocumentToolsMessage.SAVE_ERROR) }
             } finally {
+                finishSavePermit(permit, success = savedSuccessfully)
                 if (operationSession == session) {
                     mutableState.update { it.copy(isSaving = false) }
                     if (!uiState.value.isLocked) renderPreview(force = refreshSavedPreview)
                 }
             }
         }
+        saveJob = job
+        job.invokeOnCompletion {
+            if (saveJob === job) {
+                saveJob = null
+                finishSavePermit(permit, success = false)
+                if (operationSession == session) mutableState.update { it.copy(isSaving = false) }
+            }
+        }
+        return true
     }
 
     private fun requestBack() {
@@ -1340,6 +1532,7 @@ class DocumentToolsViewModel(
                 clearToolPreviews()
                 visiblePages.clear()
                 undoHistory.clear()
+                redoHistory.clear()
                 sourceProtectionKeyId = null
                 mutableState.value = DocumentToolsUiState(signatures = uiState.value.signatures,
                     savedFormValues = uiState.value.savedFormValues, canStoreFormValues = formValues != null)
@@ -1353,6 +1546,8 @@ class DocumentToolsViewModel(
     }
 
     override fun onCleared() {
+        saveJob?.cancel()
+        finishSavePermit(savePermit, success = false)
         pagePreviews.clear()
         clearToolPreviews()
         cancelAnalysis(resumePreview = false)

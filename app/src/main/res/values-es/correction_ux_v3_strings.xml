@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">Detectar contorno</string>
+    <string name="correction_v3_detect_again">Detectar de nuevo</string>
+    <string name="correction_v3_manual">Ajustar manualmente</string>
+    <string name="correction_v3_edit_crop">Editar recorte</string>
+    <string name="correction_v3_view_result">Ver resultado</string>
+    <string name="correction_v3_compare">Comparar</string>
+    <string name="correction_v3_show_before">Ver antes</string>
+    <string name="correction_v3_show_after">Ver después</string>
+    <string name="correction_v3_preparing_before">Preparando la página anterior a estos ajustes…</string>
+    <string name="correction_v3_undo">Deshacer ajuste</string>
+    <string name="correction_v3_redo">Rehacer ajuste</string>
+    <string name="correction_v3_discard_all">Descartar ajustes de esta sesión</string>
+    <string name="correction_v3_restore_crop">Restaurar recorte</string>
+    <string name="correction_v3_restore_background">Restaurar contorno</string>
+    <string name="correction_v3_zero_tilt">Poner inclinación a cero</string>
+    <string name="correction_v3_zero_curve">Poner curvatura a cero</string>
+    <string name="correction_v3_convert_warning">Esta corrección necesita convertir la página en imagen. Es posible que el texto original deje de poder seleccionarse.</string>
+    <string name="correction_v3_filter_requires_conversion">El filtro de esta página ya requiere convertirla en imagen.</string>
+    <string name="correction_v3_value_increase">Aumentar %1$s</string>
+    <string name="correction_v3_value_decrease">Disminuir %1$s</string>
+    <string name="correction_v3_value_edit">Editar %1$s con precisión</string>
+    <string name="correction_v3_value_error">Introduce un valor de %1$s a %2$s en pasos de %3$s.</string>
+    <string name="correction_v3_value_done">Usar valor</string>
+    <string name="correction_v3_curve_title">Corregir página curvada</string>
+    <string name="correction_v3_curve_up">Curva hacia arriba</string>
+    <string name="correction_v3_curve_down">Curva hacia abajo</string>
+    <string name="correction_v3_result_updating">Actualizando resultado…</string>
+</resources>

@@ -1,6 +1,9 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,9 +33,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -49,6 +54,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
+import com.joseleandro.scaniqo.ui.ads.ToolAdRewardHint
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
@@ -64,11 +71,14 @@ internal fun DocumentToolsBar(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
     enabled: Boolean,
+    onSave: (() -> Unit)? = null,
+    saveShowsVideo: Boolean = false,
+    saveInProgress: Boolean = false,
 ) {
     // A superfície cobre também os insets; somente os controles respeitam a área segura.
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Column(
             modifier = Modifier.windowInsetsPadding(
@@ -84,7 +94,7 @@ internal fun DocumentToolsBar(
                 }
                 val toolsScroll = rememberLazyListState()
                 val rightToLeft = LocalLayoutDirection.current == LayoutDirection.Rtl
-                val edgeColor = MaterialTheme.colorScheme.surfaceContainer
+                val edgeColor = MaterialTheme.colorScheme.surfaceContainerLow
                 val arrowColor = MaterialTheme.colorScheme.onSurfaceVariant
                 // A indicação é desenhada sobre a faixa, sem interceptar toques ou arrastos.
                 LazyRow(
@@ -111,8 +121,11 @@ internal fun DocumentToolsBar(
                     }
                 }
                 if (state.hasChanges || state.isSaving) {
+                    if (saveShowsVideo) ToolAdRewardHint(
+                        Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                    )
                     Button(
-                        onClick = { onEvent(DocumentToolsEvent.Save) },
+                        onClick = onSave ?: { onEvent(DocumentToolsEvent.Save) },
                         enabled = state.canEdit && enabled,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -121,19 +134,26 @@ internal fun DocumentToolsBar(
                         shape = RoundedCornerShape(16.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
                     ) {
-                        if (state.isSaving) {
+                        if (state.isSaving || saveInProgress) {
                             CircularProgressIndicator(
                                 Modifier.padding(end = 8.dp).size(18.dp),
                                 strokeWidth = 2.dp,
                             )
-                        } else {
+                        } else if (!saveShowsVideo) {
                             Icon(
                                 painterResource(R.drawable.ic_check_24),
                                 contentDescription = null,
                                 modifier = Modifier.padding(end = 8.dp).size(20.dp),
                             )
                         }
-                        Text(stringResource(if (state.isSaving) R.string.tools_saving else R.string.tools_save))
+                        ToolAdActionContent(
+                            isVideo = saveShowsVideo,
+                            label = stringResource(when {
+                                state.isSaving -> R.string.tools_saving
+                                saveShowsVideo -> R.string.tool_ad_watch_save
+                                else -> R.string.tools_save
+                            }),
+                        )
                     }
                 }
             }
@@ -180,6 +200,16 @@ private fun DocumentToolButton(
     onClick: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
+    val selectedColor by animateColorAsState(
+        targetValue = if (selected) colors.primaryContainer else Color.Transparent,
+        animationSpec = tween(220),
+        label = "tool selection color",
+    )
+    val iconScale by animateFloatAsState(
+        targetValue = if (selected) 1.12f else 1f,
+        animationSpec = tween(220),
+        label = "tool selection icon",
+    )
     val contentColor = when {
         !enabled -> colors.onSurface.copy(alpha = .38f)
         selected -> colors.onPrimaryContainer
@@ -193,7 +223,7 @@ private fun DocumentToolButton(
             .heightIn(min = 76.dp)
             .semantics { this.selected = selected },
         shape = RoundedCornerShape(16.dp),
-        color = if (selected) colors.primaryContainer else Color.Transparent,
+        color = selectedColor,
         contentColor = contentColor,
     ) {
         Column(
@@ -220,7 +250,10 @@ private fun DocumentToolButton(
                         },
                     ),
                     contentDescription = null,
-                    modifier = Modifier.size(22.dp),
+                    modifier = Modifier.size(22.dp).graphicsLayer {
+                        scaleX = iconScale
+                        scaleY = iconScale
+                    },
                 )
             }
             Text(
@@ -329,6 +362,20 @@ private fun DocumentToolsBarPreview() {
 @Composable
 private fun DocumentToolsUnsavedPreview() {
     DocumentToolsBarPreviewContent(previewToolState().copy(hasChanges = true))
+}
+
+@Preview(name = "Salvar com vídeo", widthDp = 390, locale = "pt-rBR")
+@Preview(name = "Salvar com vídeo — fonte ampliada", widthDp = 320, fontScale = 1.5f, locale = "pt-rBR")
+@Composable
+private fun DocumentToolsRewardedSavePreview() {
+    ScaniqoTheme {
+        DocumentToolsBar(
+            previewToolState().copy(hasChanges = true),
+            onEvent = {},
+            enabled = true,
+            saveShowsVideo = true,
+        )
+    }
 }
 
 @Preview(name = "Salvando", widthDp = 390)

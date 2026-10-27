@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v4_tool_text">Text</string>
+    <string name="fill_v4_tool_mark">Mark</string>
+    <string name="fill_v4_mark_check">Check</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">Add text</string>
+    <string name="fill_v4_add_mark">Add mark</string>
+    <string name="fill_v4_edit_text">Edit text</string>
+    <string name="fill_v4_edit_mark">Edit mark</string>
+    <string name="fill_v4_size">Size</string>
+    <string name="fill_v4_color">Color</string>
+    <string name="fill_v4_format">Format</string>
+    <string name="fill_v4_bold">Bold</string>
+    <string name="fill_v4_italic">Italic</string>
+    <string name="fill_v4_underline">Underline</string>
+    <string name="fill_v4_duplicate">Duplicate</string>
+    <string name="fill_v4_delete">Delete</string>
+    <string name="fill_v4_collapse">Collapse</string>
+    <string name="fill_v4_more_actions">Actions</string>
+    <string name="fill_v4_stop_inserting">Stop</string>
+    <string name="fill_v4_page_hint_neutral">Tap an element to edit. Choose Text or Mark to add one.</string>
+    <string name="fill_v4_page_hint_insert_text">Tap the page to add text.</string>
+    <string name="fill_v4_page_hint_insert_mark">Tap the page to add a mark.</string>
+    <string name="fill_v4_page_hint_insert_check">Tap the page to add a checkmark.</string>
+    <string name="fill_v4_page_hint_insert_cross">Tap the page to add an X.</string>
+    <string name="fill_v4_page_hint_selected">Drag the element to move it. Use the handle to resize it.</string>
+    <string name="fill_v4_selection_resize">Resize element</string>
+    <string name="fill_v4_updating_page">Updating page…</string>
+</resources>

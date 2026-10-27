@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">检测轮廓</string>
+    <string name="correction_v3_detect_again">重新检测</string>
+    <string name="correction_v3_manual">手动调整</string>
+    <string name="correction_v3_edit_crop">编辑裁剪</string>
+    <string name="correction_v3_view_result">查看结果</string>
+    <string name="correction_v3_compare">比较</string>
+    <string name="correction_v3_show_before">查看调整前</string>
+    <string name="correction_v3_show_after">查看调整后</string>
+    <string name="correction_v3_preparing_before">正在准备调整前的页面…</string>
+    <string name="correction_v3_undo">撤销调整</string>
+    <string name="correction_v3_redo">重做调整</string>
+    <string name="correction_v3_discard_all">放弃本次调整</string>
+    <string name="correction_v3_restore_crop">恢复裁剪</string>
+    <string name="correction_v3_restore_background">恢复轮廓</string>
+    <string name="correction_v3_zero_tilt">将倾斜归零</string>
+    <string name="correction_v3_zero_curve">将弯曲归零</string>
+    <string name="correction_v3_convert_warning">此校正需要将页面转换为图像。原始文字可能无法再选中。</string>
+    <string name="correction_v3_filter_requires_conversion">此页面的滤镜已要求转换为图像。</string>
+    <string name="correction_v3_value_increase">增加%1$s</string>
+    <string name="correction_v3_value_decrease">减少%1$s</string>
+    <string name="correction_v3_value_edit">精确编辑%1$s</string>
+    <string name="correction_v3_value_error">输入%1$s至%2$s之间的数值，步长为%3$s。</string>
+    <string name="correction_v3_value_done">使用数值</string>
+    <string name="correction_v3_curve_title">校正弯曲页面</string>
+    <string name="correction_v3_curve_up">向上弯曲</string>
+    <string name="correction_v3_curve_down">向下弯曲</string>
+    <string name="correction_v3_result_updating">正在更新结果…</string>
+</resources>

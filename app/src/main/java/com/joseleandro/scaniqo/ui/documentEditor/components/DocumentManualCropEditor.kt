@@ -4,15 +4,14 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.calculatePan
-import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.positionChange
 import com.joseleandro.scaniqo.ui.documentEditor.util.resizeManualCropEdge
 import com.joseleandro.scaniqo.ui.documentEditor.util.transformManualCrop
-import kotlin.math.abs
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.absoluteOffset
@@ -60,6 +59,7 @@ internal fun DocumentManualCropEditor(
     modifier: Modifier = Modifier,
     sourceState: DocumentCaptureSourceState = DocumentCaptureSourceState(),
     onRetry: () -> Unit = {},
+    onGestureEnd: () -> Unit = {},
 ) {
     var magnifier by remember(page.id, sourceState.source?.pixels) {
         mutableStateOf<CaptureMagnifierFocus?>(null)
@@ -68,14 +68,20 @@ internal fun DocumentManualCropEditor(
     DocumentSourceSelectionEditor(
         page, corners, enabled, pageNumber, modifier, sourceState, onRetry, magnifier,
     ) { size ->
-        CropSelectionBody(page.id, crop, size, enabled, onChange)
+        CropSelectionBody(page.id, crop, size, enabled, onChange, onGestureEnd)
         repeat(4) { edge ->
-            CropEdge(edge, crop, size, enabled, onChange, sourceState.source?.pixels) { magnifier = it }
+            CropEdge(edge, crop, size, enabled, onChange, sourceState.source?.pixels) {
+                magnifier = it
+                if (it == null) onGestureEnd()
+            }
         }
         corners.forEachIndexed { index, point ->
             CropCorner(
                 index, point, crop, size, enabled, onChange, sourceState.source?.pixels,
-                onMagnifierChange = { magnifier = it },
+                onMagnifierChange = {
+                    magnifier = it
+                    if (it == null) onGestureEnd()
+                },
             )
         }
     }
@@ -88,9 +94,11 @@ private fun CropSelectionBody(
     imageSize: IntSize,
     enabled: Boolean,
     onChange: (PdfCropBounds) -> Unit,
+    onGestureEnd: () -> Unit,
 ) {
     val latestCrop by rememberUpdatedState(crop)
     val latestOnChange by rememberUpdatedState(onChange)
+    val latestOnGestureEnd by rememberUpdatedState(onGestureEnd)
     val density = LocalDensity.current
     val minimumPixels = with(density) { 48.dp.toPx() }
     val guide = MaterialTheme.colorScheme.primary.copy(alpha = .35f)
@@ -101,43 +109,35 @@ private fun CropSelectionBody(
             .pointerInput(pageId, imageSize, enabled) {
                 if (!enabled || imageSize.width <= 0 || imageSize.height <= 0) return@pointerInput
                 awaitEachGesture {
-                    val down = awaitFirstDown()
+                    val down = awaitFirstDown(requireUnconsumed = false)
                     var current = latestCrop
                     val startsInside = down.position.x / imageSize.width in current.left..current.right &&
                         down.position.y / imageSize.height in current.top..current.bottom
-                    var transforming = false
-                    var totalPan = Offset.Zero
-                    var totalZoom = 1f
-                    do {
-                        val event = awaitPointerEvent()
-                        if (event.changes.any { it.isConsumed }) break
-                        val twoFingers = event.changes.count { it.pressed && it.previousPressed } >= 2
-                        if (!transforming && !startsInside && !twoFingers) {
-                            // Um arraste fora da seleção não deve se acumular antes da pinça.
-                            totalPan = Offset.Zero
-                            totalZoom = 1f
-                            continue
-                        }
-                        val pan = event.calculatePan()
-                        val zoom = event.calculateZoom()
-                        totalPan += pan
-                        totalZoom *= zoom
-                        if (!transforming) {
-                            val zoomMotion = abs(1f - totalZoom) * minOf(imageSize.width, imageSize.height) / 2f
-                            transforming = totalPan.getDistance() > viewConfiguration.touchSlop ||
-                                zoomMotion > viewConfiguration.touchSlop
-                        }
-                        if (transforming) {
-                            current = transformManualCrop(
-                                current, totalPan.x / imageSize.width, totalPan.y / imageSize.height, totalZoom,
-                                minimumPixels / imageSize.width, minimumPixels / imageSize.height,
-                            )
-                            latestOnChange(current)
-                            totalPan = Offset.Zero
-                            totalZoom = 1f
-                            event.changes.forEach { it.consume() }
-                        }
-                    } while (event.changes.any { it.pressed })
+                    if (!startsInside) return@awaitEachGesture
+                    var dragging = false
+                    var pendingPan = Offset.Zero
+                    try {
+                        do {
+                            val event = awaitPointerEvent(PointerEventPass.Main)
+                            // O visor recebe os dois dedos no passe inicial. Nunca redimensionar a seleção pela pinça.
+                            if (event.changes.count { it.pressed } > 1 || event.changes.any { it.isConsumed }) break
+                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                            pendingPan += change.positionChange()
+                            if (!dragging && pendingPan.getDistance() > viewConfiguration.touchSlop) dragging = true
+                            if (dragging && pendingPan != Offset.Zero) {
+                                val next = transformManualCrop(
+                                    current, pendingPan.x / imageSize.width, pendingPan.y / imageSize.height, 1f,
+                                    minimumPixels / imageSize.width, minimumPixels / imageSize.height,
+                                )
+                                if (next != current) latestOnChange(next)
+                                current = next
+                                pendingPan = Offset.Zero
+                                change.consume()
+                            }
+                        } while (event.changes.any { it.pressed })
+                    } finally {
+                        latestOnGestureEnd()
+                    }
                 }
             },
     ) {

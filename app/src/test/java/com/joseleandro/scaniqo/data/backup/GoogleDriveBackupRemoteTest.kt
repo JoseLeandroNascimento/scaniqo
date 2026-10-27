@@ -279,6 +279,152 @@ class GoogleDriveBackupRemoteTest {
         assertNoPartialFiles()
     }
 
+    @Test fun deleteValidatesTheSelectedBackupAndMovesOnlyItToDriveTrash() = runTest {
+        val localPdf = temporary.newFile("document.pdf").apply { writeText("original PDF") }
+        val transport = FakeTransport(
+            { request, body ->
+                assertEquals("GET", request.method)
+                assertEquals("/drive/v3/files/backup", URI(request.url).path)
+                assertEquals(mapOf("fields" to "id,mimeType,appProperties,ownedByMe,trashed"), parameters(request.url))
+                assertTrue(body.isEmpty())
+                json(deletableMetadata())
+            },
+            { request, body ->
+                assertEquals("PATCH", request.method)
+                assertEquals("/drive/v3/files/backup", URI(request.url).path)
+                assertEquals(mapOf("fields" to "id,trashed"), parameters(request.url))
+                assertEquals("application/json; charset=UTF-8", request.headers["Content-Type"])
+                assertEquals("""{"trashed":true}""", body.toString(Charsets.UTF_8))
+                json("""{"id":"backup","trashed":true}""")
+            },
+        )
+        remote(transport).delete(TOKEN, entry(100))
+        assertEquals("original PDF", localPdf.readText())
+        assertTrue(transport.requests.all { it.headers["Authorization"] == "Bearer " + TOKEN })
+        assertFalse(transport.requests.any { it.method == "DELETE" })
+        transport.assertComplete()
+    }
+
+    @Test fun deleteAlreadyTrashedBackupSucceedsWithoutAnotherMutation() = runTest {
+        val transport = FakeTransport({ _, _ -> json(deletableMetadata(trashed = true)) })
+        remote(transport).delete(TOKEN, entry(100))
+        assertEquals(listOf("GET"), transport.requests.map { it.method })
+        transport.assertComplete()
+    }
+
+    @Test fun deleteRecognizesLegacyBackupVersionBeforeMovingItToTrash() = runTest {
+        val transport = FakeTransport(
+            { _, _ -> json(deletableMetadata(version = "1")) },
+            { _, _ -> json("""{"id":"backup","trashed":true}""") },
+        )
+        remote(transport).delete(TOKEN, entry(100))
+        assertEquals(listOf("GET", "PATCH"), transport.requests.map { it.method })
+        transport.assertComplete()
+    }
+
+    @Test fun deleteRejectsUnrelatedFilesFoldersAndMalformedMetadataBeforeMutation() = runTest {
+        val valid = deletableMetadata()
+        val invalidMetadata = listOf(
+            valid.replace("scaniqo-backup", "other-app"),
+            valid.replace("scaniqo-backup", "scaniqo-backup-folder"),
+            valid.replace("application/zip", "application/vnd.google-apps.folder"),
+            valid.replace("application/zip", "application/pdf"),
+            valid.replace("\"id\":\"backup\"", "\"id\":\"different-file\""),
+            valid.replace("\"trashed\":false", "\"trashed\":\"false\""),
+            valid.replace("\"ownedByMe\":true", "\"ownedByMe\":false"),
+            valid.replace("\"ownedByMe\":true", "\"ownedByMe\":\"true\""),
+            valid.replace("\"ownedByMe\":true,", ""),
+            valid.replace("\"version\":\"2\"", "\"version\":\"3\""),
+            valid.replace("\"version\":\"2\"", "\"version\":2"),
+            valid.replace(",\"version\":\"2\"", ""),
+            """{"id":"backup","mimeType":"application/zip","trashed":false}""",
+            """{"id":"backup","mimeType":"application/zip","appProperties":{"kind":"scaniqo-backup"}}""",
+        )
+        for (metadata in invalidMetadata) {
+            val transport = FakeTransport({ _, _ -> json(metadata) })
+            expect<DriveBackupException.Remote> { remote(transport).delete(TOKEN, entry(100)) }
+            assertEquals(listOf("GET"), transport.requests.map { it.method })
+            transport.assertComplete()
+        }
+    }
+
+    @Test fun deleteRejectsInvalidTokensAndIdsWithoutSendingRequests() = runTest {
+        val transport = FakeTransport()
+        for (token in listOf("", "  ", "token\r\nX-Injected: value")) {
+            expect<DriveBackupException.Unauthorized> { remote(transport).delete(token, entry(100)) }
+        }
+        for (id in listOf("", "../backup", "backup?alt=media", "backup/other", "á", "a".repeat(257))) {
+            expect<DriveBackupException.Remote> { remote(transport).delete(TOKEN, entry(100).copy(id = id)) }
+        }
+        assertTrue(transport.requests.isEmpty())
+    }
+
+    @Test fun deletePropagatesRejectedRequestsWithoutReportingSuccess() = runTest {
+        for (status in listOf(401, 403, 429, 503)) {
+            val readFailure = FakeTransport({ _, _ -> Reply(status) })
+            expect<DriveBackupException> { remote(readFailure).delete(TOKEN, entry(100)) }
+            assertEquals(listOf("GET"), readFailure.requests.map { it.method })
+            val updateFailure = FakeTransport(
+                { _, _ -> json(deletableMetadata()) },
+                { _, _ -> Reply(status) },
+            )
+            expect<DriveBackupException> { remote(updateFailure).delete(TOKEN, entry(100)) }
+            assertEquals(listOf("GET", "PATCH"), updateFailure.requests.map { it.method })
+            readFailure.assertComplete()
+            updateFailure.assertComplete()
+        }
+    }
+
+    @Test fun deleteDoesNotTreatMissingOrInaccessibleFilesAsConfirmedDeletion() = runTest {
+        val readFailure = FakeTransport({ _, _ -> Reply(404) })
+        val readError = expect<DriveBackupException.Remote> { remote(readFailure).delete(TOKEN, entry(100)) }
+        assertEquals(404, readError.statusCode)
+        assertEquals(listOf("GET"), readFailure.requests.map { it.method })
+        val updateFailure = FakeTransport(
+            { _, _ -> json(deletableMetadata()) },
+            { _, _ -> Reply(404) },
+        )
+        val updateError = expect<DriveBackupException.Remote> { remote(updateFailure).delete(TOKEN, entry(100)) }
+        assertEquals(404, updateError.statusCode)
+        updateFailure.assertComplete()
+    }
+
+    @Test fun deleteRequiresConfirmationThatTheSelectedFileWasTrashed() = runTest {
+        for (response in listOf(
+            """{"id":"backup","trashed":false}""",
+            """{"id":"other","trashed":true}""",
+            """{"id":"backup","trashed":"true"}""",
+            """{"id":"backup"}""",
+        )) {
+            val transport = FakeTransport(
+                { _, _ -> json(deletableMetadata()) },
+                { _, _ -> json(response) },
+            )
+            expect<DriveBackupException.Remote> { remote(transport).delete(TOKEN, entry(100)) }
+            transport.assertComplete()
+        }
+    }
+
+    @Test fun deleteCanBeRetriedWhenTheServerTrashedTheFileButItsResponseWasLost() = runTest {
+        val transport = FakeTransport(
+            { _, _ -> json(deletableMetadata()) },
+            { _, _ -> throw IOException("response lost") },
+            { _, _ -> json(deletableMetadata(trashed = true)) },
+        )
+        val remote = remote(transport)
+        expect<DriveBackupException.Network> { remote.delete(TOKEN, entry(100)) }
+        remote.delete(TOKEN, entry(100))
+        assertEquals(listOf("GET", "PATCH", "GET"), transport.requests.map { it.method })
+        transport.assertComplete()
+    }
+
+    @Test fun cancelledDeleteDoesNotProceedToMutation() = runTest {
+        val transport = FakeTransport({ _, _ -> throw CancellationException("cancel") })
+        expect<CancellationException> { remote(transport).delete(TOKEN, entry(100)) }
+        assertEquals(listOf("GET"), transport.requests.map { it.method })
+        transport.assertComplete()
+    }
+
     @Test fun unauthorizedQuotaAndRemoteErrorsAreTypedWithoutReturningServerSecrets() = runTest {
         val cases = listOf(
             401 to DriveBackupException.Unauthorized::class.java,
@@ -411,6 +557,10 @@ class GoogleDriveBackupRemoteTest {
 
     private fun metadata(id: String, size: Long, time: String = "2024-01-01T00:00:00Z") =
         """{"id":"""" + id + """","name":"backup.zip","modifiedTime":"""" + time + """","size":"""" + size + """"}"""
+
+    private fun deletableMetadata(trashed: Boolean = false, version: String = "2") =
+        """{"id":"backup","mimeType":"application/zip","appProperties":{"kind":"scaniqo-backup","version":"""" +
+            version + """"},"ownedByMe":true,"trashed":""" + trashed + "}"
 
     private fun json(value: String, status: Int = 200) = Reply(status, body = value.toByteArray())
 

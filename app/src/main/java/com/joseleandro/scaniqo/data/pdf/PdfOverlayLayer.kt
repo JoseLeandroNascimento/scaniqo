@@ -3,10 +3,11 @@ package com.joseleandro.scaniqo.data.pdf
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
+import com.joseleandro.scaniqo.core.graphics.androidTypeface
 import com.joseleandro.scaniqo.domain.model.PdfCheckmarkGeometry
+import com.joseleandro.scaniqo.domain.model.PdfCrossmarkGeometry
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
-import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
 import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
@@ -59,6 +60,13 @@ internal object PdfOverlayLayer {
                         )
                         stream.stroke()
                     }
+                    PdfOverlayKind.CROSSMARK -> {
+                        stream.setLineWidth(PdfCrossmarkGeometry.strokeWidth(width, height))
+                        stream.setLineCapStyle(1)
+                        stream.setLineJoinStyle(1)
+                        PdfCrossmarkGeometry.trace(x, top, width, -height, stream::moveTo, stream::lineTo)
+                        stream.stroke()
+                    }
                     PdfOverlayKind.ARROW -> {
                         stream.moveTo(x, top - height * .5f)
                         stream.lineTo(x + width, top - height * .5f)
@@ -92,11 +100,18 @@ internal object PdfOverlayLayer {
         }
     }
 
+    private fun pdfFont(overlay: PdfOverlay): PDType1Font = when {
+        overlay.bold && overlay.italic -> PDType1Font.HELVETICA_BOLD_OBLIQUE
+        overlay.bold -> PDType1Font.HELVETICA_BOLD
+        overlay.italic -> PDType1Font.HELVETICA_OBLIQUE
+        else -> PDType1Font.HELVETICA
+    }
+
     private fun drawText(
         document: PDDocument, stream: PDPageContentStream, overlay: PdfOverlay, content: String,
         x: Float, top: Float, width: Float, height: Float,
     ) {
-        val font = PDType1Font.HELVETICA
+        val font = pdfFont(overlay)
         val normalized = content.replace("\r\n", "\n").replace('\r', '\n')
         val vectorText = try {
             font.encode(normalized.replace("\n", ""))
@@ -108,29 +123,7 @@ internal object PdfOverlayLayer {
             drawShapedText(document, stream, overlay, normalized, x, top, width, height)
             return
         }
-        if (overlay.wrapText || overlay.autoSizeText ||
-            overlay.textHorizontalAlignment != PdfTextHorizontalAlignment.START ||
-            overlay.textVerticalAlignment != PdfTextVerticalAlignment.TOP
-        ) {
-            drawAlignedVectorText(stream, overlay, normalized, x, top, width, height)
-            return
-        }
-        val padding = if (overlay.kind == PdfOverlayKind.STAMP) 6f else 0f
-        val lines = normalized.lines()
-        val maxWidth = lines.maxOfOrNull { font.getStringWidth(it) / 1000f } ?: 0f
-        val size = min(overlay.fontSize, min(
-            (width - padding * 2).coerceAtLeast(1f) / maxWidth.coerceAtLeast(.1f),
-            (height - padding * 2).coerceAtLeast(1f) / (lines.size * 1.2f),
-        )).coerceAtLeast(1f)
-        stream.beginText()
-        stream.setFont(font, size)
-        stream.setLeading(size * 1.2f)
-        stream.newLineAtOffset(x + padding, top - padding - size)
-        lines.forEachIndexed { index, line ->
-            if (index > 0) stream.newLine()
-            stream.showText(line)
-        }
-        stream.endText()
+        drawAlignedVectorText(stream, overlay, normalized, x, top, width, height)
     }
 
     /** Uses the preview's line breaks and placement while retaining searchable Latin text. */
@@ -145,8 +138,9 @@ internal object PdfOverlayLayer {
             text = content, fontSize = overlay.fontSize, color = overlay.color,
             maxWidth = innerWidth, maxHeight = innerHeight,
             wrap = overlay.wrapText, horizontalAlignment = overlay.textHorizontalAlignment,
+            typeface = overlay.androidTypeface(), underlined = overlay.underlined,
         )
-        val font = PDType1Font.HELVETICA
+        val font = pdfFont(overlay)
         val offsetX = layout.horizontalOffset(innerWidth)
         val offsetY = layout.verticalOffset(innerHeight, overlay.textVerticalAlignment)
         stream.beginText()
@@ -164,6 +158,19 @@ internal object PdfOverlayLayer {
             }
         }
         stream.endText()
+        if (overlay.underlined) {
+            stream.setLineWidth((layout.fontSize * .055f).coerceAtLeast(.45f))
+            layout.lines.forEach { line ->
+                if (line.text.isNotBlank()) {
+                    val left = x + padding + offsetX + line.left
+                    val baseline = top - padding - offsetY - line.baseline
+                    val underlineY = baseline - layout.fontSize * .12f
+                    stream.moveTo(left, underlineY)
+                    stream.lineTo(left + line.width, underlineY)
+                    stream.stroke()
+                }
+            }
+        }
     }
 
     private fun drawShapedText(
@@ -192,6 +199,7 @@ internal object PdfOverlayLayer {
                 color = overlay.color or (0xFF shl 24),
                 maxWidth = innerWidth, maxHeight = innerHeight,
                 wrap = overlay.wrapText, horizontalAlignment = overlay.textHorizontalAlignment,
+                typeface = overlay.androidTypeface(), underlined = overlay.underlined,
             )
             val canvas = Canvas(bitmap)
             canvas.scale(bitmap.width / width, bitmap.height / height)

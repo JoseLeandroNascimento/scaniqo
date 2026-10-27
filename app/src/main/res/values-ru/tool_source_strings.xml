@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_source_title">Выберите PDF</string>
+    <string name="tool_source_subtitle">Где находится нужный файл?</string>
+    <string name="tool_source_app_hint">PDF, сохранённые в Scaniqo</string>
+    <string name="tool_source_device_hint">Найти файлы PDF</string>
+    <string name="tool_source_library_empty">Здесь пока нет сохранённых PDF.</string>
+    <string name="tool_source_resume">Вернуться к настройкам</string>
+</resources>

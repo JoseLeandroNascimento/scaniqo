@@ -1,0 +1,5 @@
+<resources>
+    <string name="layout_margin_label">মার্জিন</string>
+    <string name="layout_with_margin">মার্জিনসহ</string>
+    <string name="layout_edge_to_edge">প্রান্ত পর্যন্ত</string>
+</resources>

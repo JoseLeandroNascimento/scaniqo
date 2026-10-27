@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_v2_thumbnails">缩略图</string>
+    <string name="pages_v2_intervals">页码范围</string>
+    <string name="pages_v2_from">从</string>
+    <string name="pages_v2_until">到</string>
+    <string name="pages_v2_add_range">添加范围</string>
+    <string name="pages_v2_update_range">更新范围</string>
+    <string name="pages_v2_edit_list">编辑列表</string>
+    <string name="pages_v2_confirm_selection">确认选择</string>
+    <string name="pages_v2_cancel_edit">取消编辑</string>
+    <string name="pages_v2_order">顺序：%1$s</string>
+    <string name="pages_v2_document_order">使用 PDF 顺序</string>
+    <string name="pages_v2_go_to_page">跳转到页面</string>
+    <string name="pages_v2_range_incomplete">请输入范围的起始和结束页。</string>
+    <string name="pages_v2_range_reversed">起始页不能大于结束页。</string>
+    <string name="pages_v2_range_bounds">请选择 1 到 %1$d 之间的页码。</string>
+    <string name="pages_v2_edit_range">编辑范围 %1$s</string>
+    <string name="pages_v2_remove_range">移除范围 %1$s</string>
+    <string name="pages_v2_drag_mode">拖动</string>
+    <string name="pages_v2_direct_mode">移至指定位置</string>
+    <string name="pages_v2_selected_position">位于第 %1$d 位的页面</string>
+    <string name="pages_v2_final_position">最终位置</string>
+    <string name="pages_v2_start">开头</string>
+    <string name="pages_v2_end">末尾</string>
+    <string name="pages_v2_move_to">移至第 %1$d 位</string>
+    <string name="pages_v2_same_position">已在此位置</string>
+    <string name="pages_v2_numbering">页码</string>
+    <string name="pages_v2_options">第 %1$d 页的选项</string>
+    <string name="pages_v2_moved">页面已移至第 %1$d 位</string>
+    <string name="pages_v2_pending_selection">继续前请确认或取消选择。</string>
+    <string name="pages_v2_jump_hint">第 1 到 %1$d 页</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="other">创建含 %1$d 页的 PDF</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="other">导出 %1$d 页</item>
+    </plurals>
+    <string name="pages_v2_list_hint">例如：5, 2-4, 1。保留输入顺序。</string>
+</resources>

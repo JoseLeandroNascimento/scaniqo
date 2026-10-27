@@ -8,7 +8,6 @@ import com.joseleandro.scaniqo.ui.documentEditor.components.scaledFillMarkAtCorn
 import com.joseleandro.scaniqo.ui.documentEditor.components.scaledFillMarkFromCorner
 import org.junit.Assert.*
 import org.junit.Test
-import kotlin.math.abs
 
 class FillMarkSelectionGeometryTest {
     private val text = PdfOverlay("text", PdfOverlayKind.TEXT, text = "Maria Silva",
@@ -82,32 +81,30 @@ class FillMarkSelectionGeometryTest {
         assertEquals(.4f, result.points.last().y, .00001f)
     }
 
-    @Test fun thinTextKeepsFiveSeparateTouchTargetsWithoutChangingItsBox() {
+    @Test fun thinTextHasOneReachableResizeTargetWithoutChangingItsBox() {
         val thin = text.copy(width = .5f, height = .015f)
         val geometry = fillMarkSelectionGeometry(thin, 0f, 0f, 320f, 450f, 320f, 240f, 48f, 4f, 48f)
-        assertEquals(5, geometry.visibleHandles.size)
-        geometry.handles.forEachIndexed { index, handle ->
-            assertTrue(handle.x in 24f..296f && handle.y in 24f..216f)
-            assertEquals(index, geometry.handleAt(handle))
-            geometry.handles.drop(index + 1).forEach { other ->
-                assertTrue(abs(handle.x - other.x) >= 51.99f || abs(handle.y - other.y) >= 51.99f)
-            }
-        }
+        assertEquals(listOf(2), geometry.visibleHandles)
+        val handle = geometry.handles[2]
+        assertTrue(handle.x in 24f..296f && handle.y in 24f..216f)
+        assertEquals(2, geometry.handleAt(handle))
+        assertNull(geometry.handleAt(geometry.handles[0]))
         assertEquals(.015f, thin.height, .00001f)
     }
 
-    @Test fun partiallyVisibleTextStillHasAnAccessibleMoveHandle() {
+    @Test fun partiallyVisibleTextKeepsResizeTargetInsideViewport() {
         val geometry = fillMarkSelectionGeometry(text, -500f, -100f, 1800f, 2400f,
             320f, 800f, 48f, 4f, 48f)
-        assertTrue(4 in geometry.visibleHandles)
-        assertTrue(geometry.handles[4].x in 24f..296f)
-        assertEquals(4, geometry.handleAt(geometry.handles[4]))
+        assertEquals(listOf(2), geometry.visibleHandles)
+        assertTrue(geometry.handles[2].x in 24f..296f)
+        assertTrue(geometry.handles[2].y in 24f..776f)
+        assertEquals(2, geometry.handleAt(geometry.handles[2]))
     }
 
     @Test fun offscreenTextDoesNotLeaveDetachedHandlesOnThePage() {
         val geometry = fillMarkSelectionGeometry(text, -2000f, -2000f, 600f, 850f,
             320f, 400f, 48f, 4f, 48f)
         assertTrue(geometry.visibleHandles.isEmpty())
-        assertNull(geometry.handleAt(geometry.handles[4]))
+        assertNull(geometry.handleAt(geometry.handles[2]))
     }
 }

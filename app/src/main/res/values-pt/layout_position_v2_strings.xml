@@ -1,0 +1,5 @@
+<resources>
+    <string name="layout_margin_label">Margens</string>
+    <string name="layout_with_margin">Com margem</string>
+    <string name="layout_edge_to_edge">Até a borda</string>
+</resources>

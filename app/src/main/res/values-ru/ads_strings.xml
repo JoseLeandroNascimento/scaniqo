@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ads_label">Реклама</string>
+    <string name="ads_preview_label">Предпросмотр баннера</string>
+    <string name="ads_privacy_options">Конфиденциальность рекламы</string>
+    <string name="ads_privacy_error">Не удалось открыть параметры конфиденциальности. Повторите попытку.</string>
+</resources>

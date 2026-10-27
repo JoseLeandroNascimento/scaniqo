@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_motion_library">Koleksi</string>
+    <string name="merge_motion_device">Perangkat</string>
+    <string name="merge_motion_add">Tambah PDF</string>
+    <string name="merge_motion_done">Selesai</string>
+    <string name="merge_motion_hint">Tambah, atur, gabungkan.</string>
+    <string name="merge_motion_count">%1$d PDF → 1</string>
+    <string name="merge_motion_one">Tambah satu lagi</string>
+    <string name="merge_motion_empty">Pilih PDF Anda</string>
+    <string name="merge_motion_search">Cari dokumen</string>
+    <string name="merge_motion_selected">Dipilih: %1$d</string>
+    <string name="merge_motion_working">Menggabungkan PDF Anda</string>
+    <string name="merge_motion_options">Opsi untuk %1$s</string>
+    <string name="merge_motion_count_description">Gabungkan %1$d PDF menjadi satu</string>
+</resources>

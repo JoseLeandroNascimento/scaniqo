@@ -299,6 +299,206 @@ class PdfUtilityViewModelTest {
         assertEquals(listOf("content://front", "content://back") to true, utility.images.single())
     }
 
+
+    @Test fun preparedCompressionWaitsForMetadataAndCorrelatesSavedResult() = runTest(dispatcher) {
+        val protected = original.copy(protectionKeyId = "key")
+        documents.documents.value = listOf(protected)
+        viewModel.beginOperation("compress")
+        viewModel.prepareCompression(original.id, PdfCompressionLevel.STRONG, "secret", "Cópia compacta")
+        runCurrent()
+
+        assertEquals(listOf(Triple(protected, PdfCompressionLevel.STRONG, "secret")), utility.compressed)
+        assertTrue(documents.created.isEmpty())
+        val prepared = requireNotNull(viewModel.uiState.value.preparedOutput)
+        assertEquals(utility.scan.copy(protectionKeyId = "key"), prepared.scan)
+        assertEquals("Cópia compacta", prepared.suggestedName)
+        assertEquals(protected.tagId, prepared.suggestedTagId)
+        assertTrue(prepared.operationId.startsWith("compress:"))
+        assertEquals(prepared.operationId, viewModel.uiState.value.awaitingSaveOperationId)
+        assertEquals(PdfCompressionSummary(1024, 500, null), viewModel.uiState.value.compressionResult)
+
+        viewModel.confirmPreparedDelivery("other:1")
+        assertEquals(prepared, viewModel.uiState.value.preparedOutput)
+        viewModel.confirmPreparedDelivery(prepared.operationId)
+        assertNull(viewModel.uiState.value.preparedOutput)
+        viewModel.finishGenerated("other:1", 42)
+        assertNull(viewModel.uiState.value.savedDocumentId)
+        viewModel.finishGenerated(prepared.operationId, 42)
+        assertEquals(42L, viewModel.uiState.value.savedDocumentId)
+        assertEquals(PdfCompressionSummary(1024, 500, 42L), viewModel.uiState.value.compressionResult)
+        assertNull(viewModel.uiState.value.awaitingSaveOperationId)
+        assertTrue(documents.created.isEmpty())
+        assertTrue(documents.discarded.isEmpty())
+    }
+
+    @Test fun preparedCompressionWithoutSavingsNeverRequestsMetadata() = runTest(dispatcher) {
+        utility.compressionHasSavings = false
+        viewModel.beginOperation("compress")
+        viewModel.prepareCompression(original.id, PdfCompressionLevel.BALANCED, null, "Sem ganho")
+        runCurrent()
+
+        assertEquals(PdfCompressionSummary(1024, 1024, null), viewModel.uiState.value.compressionResult)
+        assertNull(viewModel.uiState.value.preparedOutput)
+        assertNull(viewModel.uiState.value.awaitingSaveOperationId)
+        assertTrue(documents.created.isEmpty())
+    }
+
+    @Test fun preparedExtractionKeepsPageOrderAndWaitsForMetadata() = runTest(dispatcher) {
+        viewModel.beginOperation("extract")
+        viewModel.prepareExtraction(original.id, "5, 2-3", null, "Páginas escolhidas")
+        runCurrent()
+
+        assertEquals(listOf(4, 1, 2), utility.extracted.single().second)
+        assertEquals(original, utility.extracted.single().first)
+        val prepared = requireNotNull(viewModel.uiState.value.preparedOutput)
+        assertEquals(utility.scan, prepared.scan)
+        assertEquals("Páginas escolhidas", prepared.suggestedName)
+        assertEquals(original.tagId, prepared.suggestedTagId)
+        assertEquals(prepared.operationId, viewModel.uiState.value.awaitingSaveOperationId)
+        assertTrue(documents.created.isEmpty())
+        assertEquals(listOf(original), documents.documents.value)
+        assertTrue(documents.discarded.isEmpty())
+
+        viewModel.confirmPreparedDelivery(prepared.operationId)
+        viewModel.finishGenerated(prepared.operationId, null)
+        assertNull(viewModel.uiState.value.savedDocumentId)
+        assertNull(viewModel.uiState.value.awaitingSaveOperationId)
+        assertNull(viewModel.uiState.value.preparedOutput)
+    }
+
+    @Test fun changingOperationDiscardsOnlyAnUndeliveredPreparedPdf() = runTest(dispatcher) {
+        viewModel.beginOperation("first")
+        viewModel.prepareExtraction(original.id, "1", null, "Primeira saída")
+        runCurrent()
+        assertNotNull(viewModel.uiState.value.preparedOutput)
+
+        viewModel.beginOperation("second")
+        runCurrent()
+        assertEquals(listOf(utility.scan), documents.discarded)
+        assertTrue(documents.created.isEmpty())
+        assertNull(viewModel.uiState.value.preparedOutput)
+        assertNull(viewModel.uiState.value.awaitingSaveOperationId)
+        assertEquals("second", viewModel.uiState.value.operationId)
+    }
+
+    @Test fun deliveredDraftRemainsOwnedByMetadataControllerWhenOperationChanges() = runTest(dispatcher) {
+        viewModel.beginOperation("first")
+        viewModel.prepareExtraction(original.id, "1", null, "Primeira saída")
+        runCurrent()
+        val prepared = requireNotNull(viewModel.uiState.value.preparedOutput)
+        viewModel.confirmPreparedDelivery(prepared.operationId)
+
+        viewModel.beginOperation("second")
+        runCurrent()
+        assertTrue(documents.discarded.isEmpty())
+        assertTrue(documents.created.isEmpty())
+        assertNull(viewModel.uiState.value.preparedOutput)
+        assertEquals("second", viewModel.uiState.value.operationId)
+    }
+
+    @Test fun generatedOperationIdDoesNotRepeatAfterViewModelRecreation() = runTest(dispatcher) {
+        viewModel.beginOperation("same-route")
+        viewModel.prepareExtraction(original.id, "1", null, "Primeira")
+        runCurrent()
+        val first = requireNotNull(viewModel.uiState.value.preparedOutput)
+        viewModel.confirmPreparedDelivery(first.operationId)
+
+        store.clear()
+        runCurrent()
+        val recreated = PdfUtilityViewModel(utility, documents).also {
+            store.put("recreated", it)
+        }
+        recreated.beginOperation("same-route")
+        recreated.prepareExtraction(original.id, "2", null, "Segunda")
+        runCurrent()
+        val second = requireNotNull(recreated.uiState.value.preparedOutput)
+
+        assertTrue(first.operationId.startsWith("same-route:"))
+        assertTrue(second.operationId.startsWith("same-route:"))
+        assertFalse(first.operationId == second.operationId)
+        assertEquals(2, utility.extracted.size)
+        assertTrue(documents.created.isEmpty())
+        assertTrue(documents.discarded.isEmpty())
+    }
+
+    @Test fun deliveredDraftBlocksNewGenerationUntilMatchingSaveResultArrives() = runTest(dispatcher) {
+        viewModel.beginOperation("same-route")
+        viewModel.prepareExtraction(original.id, "1", null, "Primeira")
+        runCurrent()
+        val first = requireNotNull(viewModel.uiState.value.preparedOutput)
+        viewModel.confirmPreparedDelivery(first.operationId)
+
+        viewModel.prepareExtraction(original.id, "2", null, "Segunda")
+        viewModel.prepareCompression(original.id, PdfCompressionLevel.BALANCED, null, "Compacta")
+        runCurrent()
+        assertEquals(1, utility.extracted.size)
+        assertTrue(utility.compressed.isEmpty())
+        assertEquals(first.operationId, viewModel.uiState.value.awaitingSaveOperationId)
+        assertNull(viewModel.uiState.value.preparedOutput)
+        assertFalse(viewModel.uiState.value.busy)
+
+        viewModel.finishGenerated("same-route:unrelated", null)
+        viewModel.prepareCompression(original.id, PdfCompressionLevel.BALANCED, null, "Ainda bloqueada")
+        runCurrent()
+        assertTrue(utility.compressed.isEmpty())
+
+        viewModel.finishGenerated(first.operationId, null)
+        viewModel.prepareCompression(original.id, PdfCompressionLevel.BALANCED, null, "Agora disponível")
+        runCurrent()
+        assertEquals(1, utility.compressed.size)
+        val second = requireNotNull(viewModel.uiState.value.preparedOutput)
+        assertFalse(first.operationId == second.operationId)
+        assertEquals(second.operationId, viewModel.uiState.value.awaitingSaveOperationId)
+        assertTrue(documents.created.isEmpty())
+    }
+
+    @Test fun preparedPdfSurvivesViewModelRecreationUntilMetadataControllerAcceptsIt() = runTest(dispatcher) {
+        val savedStateHandle = androidx.lifecycle.SavedStateHandle()
+        val protected = original.copy(protectionKeyId = "key")
+        documents.documents.value = listOf(protected)
+        val first = PdfUtilityViewModel(utility, documents, savedStateHandle).also {
+            store.put("first", it)
+        }
+        first.beginOperation("same-route")
+        first.prepareExtraction(original.id, "3, 1", "secret", "Páginas escolhidas")
+        runCurrent()
+        val prepared = requireNotNull(first.uiState.value.preparedOutput)
+        assertEquals(listOf(2, 0), utility.extracted.single().second)
+        assertEquals("key", prepared.scan.protectionKeyId)
+        assertEquals(protected.tagId, prepared.suggestedTagId)
+
+        store.clear()
+        runCurrent()
+        val recreated = PdfUtilityViewModel(utility, documents, savedStateHandle).also {
+            store.put("recreated", it)
+        }
+        recreated.beginOperation("same-route")
+        runCurrent()
+        assertEquals(prepared, recreated.uiState.value.preparedOutput)
+        assertEquals(prepared.operationId, recreated.uiState.value.awaitingSaveOperationId)
+        assertEquals(1, utility.extracted.size)
+        assertTrue(documents.created.isEmpty())
+        assertTrue(documents.discarded.isEmpty())
+
+        recreated.prepareExtraction(original.id, "2", "secret", "Não deve processar")
+        runCurrent()
+        assertEquals(1, utility.extracted.size)
+        recreated.confirmPreparedDelivery(prepared.operationId)
+        assertNull(recreated.uiState.value.preparedOutput)
+        assertEquals(prepared.operationId, recreated.uiState.value.awaitingSaveOperationId)
+        assertTrue(documents.created.isEmpty())
+        assertTrue(documents.discarded.isEmpty())
+
+        store.clear()
+        val afterDelivery = PdfUtilityViewModel(utility, documents, savedStateHandle).also {
+            store.put("after-delivery", it)
+        }
+        afterDelivery.beginOperation("same-route")
+        assertNull(afterDelivery.uiState.value.preparedOutput)
+        afterDelivery.restoreAwaitingSave(prepared.operationId)
+        assertEquals(prepared.operationId, afterDelivery.uiState.value.awaitingSaveOperationId)
+    }
+
     private class FakeUtility : PdfUtilityRepository {
         val scan = ScannedDocument("file:///new/document.pdf", 1, 1, 500)
         val extracted = mutableListOf<Pair<DocumentModel, List<Int>>>()

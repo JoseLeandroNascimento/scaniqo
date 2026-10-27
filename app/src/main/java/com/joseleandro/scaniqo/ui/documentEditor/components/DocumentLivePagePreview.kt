@@ -133,6 +133,8 @@ internal fun DocumentLivePagePreview(
         current,
         layout.alignment,
         layout.scaleMode,
+        layout.contentPosition,
+        layout.edgeToEdge,
         layout.rotationQuarterTurns,
         layout.contentScale,
     ) {
@@ -146,7 +148,7 @@ internal fun DocumentLivePagePreview(
             }
         }
     }
-    val clip = remember(layout.scaleMode) { DocumentLivePageGeometry.contentClip(layout) }
+    val clip = remember(layout.scaleMode, layout.edgeToEdge) { DocumentLivePageGeometry.contentClip(layout) }
     val placedSignatures = remember(signatures, signatureAssets.images) {
         signatures.mapNotNull { placement ->
             signatureAssets.images[placement.imageUri]?.let { bitmap ->

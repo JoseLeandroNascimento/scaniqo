@@ -86,6 +86,7 @@ internal fun DocumentPageThumbnail(
     pdfUri: String,
     pageIndex: Int,
     modifier: Modifier = Modifier,
+    onImageBitmapChanged: ((ImageBitmap?) -> Unit)? = null,
 ) {
     DocumentPageImage(
         pdfUri = pdfUri,
@@ -93,6 +94,7 @@ internal fun DocumentPageThumbnail(
         thumbnailUri = null,
         compact = true,
         modifier = modifier,
+        onImageBitmapChanged = onImageBitmapChanged,
     )
 }
 

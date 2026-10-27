@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_actions">Ações da assinatura</string>
+    <string name="signature_replace">Substituir assinatura</string>
+    <string name="signature_duplicate">Duplicar</string>
+    <string name="signature_delete_selected">Excluir assinatura</string>
+    <string name="signature_choose_overlap">Escolha uma assinatura</string>
+    <string name="signature_page_elements">Assinaturas nesta página: %1$d</string>
+</resources>

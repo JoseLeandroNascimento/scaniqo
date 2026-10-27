@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_motion_library">Bibliothèque</string>
+    <string name="merge_motion_device">Appareil</string>
+    <string name="merge_motion_add">Ajouter des PDF</string>
+    <string name="merge_motion_done">Terminé</string>
+    <string name="merge_motion_hint">Ajoutez, organisez, fusionnez.</string>
+    <string name="merge_motion_count">%1$d PDF → 1</string>
+    <string name="merge_motion_one">Encore un PDF</string>
+    <string name="merge_motion_empty">Choisissez vos PDF</string>
+    <string name="merge_motion_search">Rechercher des documents</string>
+    <string name="merge_motion_selected">Sélection : %1$d</string>
+    <string name="merge_motion_working">Fusion de vos PDF</string>
+    <string name="merge_motion_options">Options de %1$s</string>
+    <string name="merge_motion_count_description">Fusionner %1$d PDF en un seul</string>
+</resources>

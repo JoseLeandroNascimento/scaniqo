@@ -2,11 +2,15 @@ package com.joseleandro.scaniqo.ui.documentEditor
 
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.domain.model.PdfPoint
 import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
 import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
 import com.joseleandro.scaniqo.ui.documentEditor.components.FillMarkStyle
 import com.joseleandro.scaniqo.ui.documentEditor.components.alignedFillMark
 import com.joseleandro.scaniqo.ui.documentEditor.components.duplicatedFillMark
+import com.joseleandro.scaniqo.ui.documentEditor.components.nextFillMarkAt
+import com.joseleandro.scaniqo.ui.documentEditor.components.updatedFillMarkRecentColors
+import com.joseleandro.scaniqo.ui.documentEditor.components.withFillMarkKind
 import kotlinx.serialization.json.Json
 import org.junit.Assert.*
 import org.junit.Test
@@ -16,6 +20,7 @@ class FillMarkEditingTest {
         id = "original", kind = PdfOverlayKind.TEXT, text = "Dado particular",
         x = .2f, y = .3f, width = .3f, height = .08f, fontSize = 24f,
         color = 0xFF1565C0.toInt(), opacity = .75f,
+        bold = true, italic = true, underlined = true,
     )
 
     @Test fun rememberedAppearanceSurvivesSerializationWithoutReusingContentOrIdentity() {
@@ -34,6 +39,9 @@ class FillMarkEditingTest {
         assertEquals(text.width, restored.width, .00001f)
         assertEquals(text.height, restored.height, .00001f)
         assertEquals(text.opacity, restored.opacity, .00001f)
+        assertTrue(restored.bold)
+        assertTrue(restored.italic)
+        assertTrue(restored.underlined)
     }
 
     @Test fun oldSavedStyleUsesStartAndTopAlignment() {
@@ -43,6 +51,9 @@ class FillMarkEditingTest {
         assertEquals(PdfTextHorizontalAlignment.START, style.textHorizontalAlignment)
         assertEquals(PdfTextVerticalAlignment.TOP, style.textVerticalAlignment)
         assertTrue(style.isValid())
+        assertFalse(style.bold)
+        assertFalse(style.italic)
+        assertFalse(style.underlined)
     }
 
     @Test fun rememberedAlignmentDoesNotRestoreManualSizingOrPrivateText() {
@@ -104,6 +115,46 @@ class FillMarkEditingTest {
         assertEquals(check.width, copy.width, .00001f)
         assertEquals(check.height, copy.height, .00001f)
         assertNotEquals(check.id, copy.id)
+    }
+
+    @Test fun convertingSelectedCheckAndCrossKeepsIdentityGeometryAndAppearance() {
+        val check = text.copy(
+            kind = PdfOverlayKind.CHECKMARK, text = "", width = .07f, height = .05f,
+        )
+        val cross = check.withFillMarkKind(PdfOverlayKind.CROSSMARK)
+        assertEquals(PdfOverlayKind.CROSSMARK, cross.kind)
+        assertEquals(check.copy(kind = PdfOverlayKind.CROSSMARK), cross)
+        assertEquals(check, cross.withFillMarkKind(PdfOverlayKind.CHECKMARK))
+        assertEquals(check, check.withFillMarkKind(PdfOverlayKind.TEXT))
+    }
+
+    @Test fun consecutiveMarksKeepTheirOwnIdentityAndDoNotChangeEarlierMarks() {
+        val nextStyle = text.copy(
+            id = "template", kind = PdfOverlayKind.CHECKMARK, text = "",
+            width = .06f, height = .04f,
+        )
+        val first = nextStyle.nextFillMarkAt(PdfPoint(.2f, .3f))!!
+        val crossStyle = nextStyle.withFillMarkKind(PdfOverlayKind.CROSSMARK)
+        val second = crossStyle.nextFillMarkAt(PdfPoint(.5f, .6f))!!
+        val third = crossStyle.nextFillMarkAt(PdfPoint(.7f, .8f))!!
+
+        assertEquals(PdfOverlayKind.CHECKMARK, first.kind)
+        assertEquals(PdfOverlayKind.CROSSMARK, second.kind)
+        assertEquals(PdfOverlayKind.CROSSMARK, third.kind)
+        assertEquals(4, setOf(nextStyle.id, first.id, second.id, third.id).size)
+        assertEquals(.2f, first.x, .00001f)
+        assertEquals(.3f, first.y, .00001f)
+        assertEquals(.5f, second.x, .00001f)
+        assertEquals(.6f, second.y, .00001f)
+        assertEquals(nextStyle.color, second.color)
+        assertEquals(nextStyle.opacity, second.opacity, .00001f)
+        assertNull(text.nextFillMarkAt(PdfPoint(.2f, .3f)))
+    }
+
+    @Test fun recentlyUsedColorsStayUniqueAndBounded() {
+        val original = listOf(1, 2, 3, 4, 5)
+        assertEquals(listOf(3, 1, 2, 4, 5), updatedFillMarkRecentColors(original, 3))
+        assertEquals(listOf(6, 1, 2, 3, 4), updatedFillMarkRecentColors(original, 6))
     }
 
     @Test fun draggingNearPageCenterSnapsAndReportsTheGuide() {

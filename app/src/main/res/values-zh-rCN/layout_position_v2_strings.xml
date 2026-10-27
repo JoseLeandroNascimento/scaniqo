@@ -1,0 +1,5 @@
+<resources>
+    <string name="layout_margin_label">边距</string>
+    <string name="layout_with_margin">保留边距</string>
+    <string name="layout_edge_to_edge">延伸至边缘</string>
+</resources>

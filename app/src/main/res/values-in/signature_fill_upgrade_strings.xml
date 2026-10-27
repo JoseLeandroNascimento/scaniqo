@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="overlay_crossmark">Tanda X</string>
+    <string name="fill_mark_bold">Tebal</string>
+    <string name="fill_mark_italic">Miring</string>
+    <string name="fill_mark_underline_text">Garisbawahi teks</string>
+    <string name="fill_mark_confirm_element">Konfirmasi elemen</string>
+    <string name="fill_mark_tap_to_cross">Ketuk PDF untuk menambahkan X.</string>
+    <string name="signature_finish_tool">Selesai</string>
+    <string name="signature_place_hint">Ketuk tempat Anda ingin menandatangani.</string>
+    <string name="signature_place_center">Letakkan di tengah</string>
+</resources>

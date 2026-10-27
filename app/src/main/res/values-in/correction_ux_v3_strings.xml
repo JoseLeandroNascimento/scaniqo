@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">Deteksi kontur</string>
+    <string name="correction_v3_detect_again">Deteksi lagi</string>
+    <string name="correction_v3_manual">Sesuaikan manual</string>
+    <string name="correction_v3_edit_crop">Edit potongan</string>
+    <string name="correction_v3_view_result">Lihat hasil</string>
+    <string name="correction_v3_compare">Bandingkan</string>
+    <string name="correction_v3_show_before">Lihat sebelum</string>
+    <string name="correction_v3_show_after">Lihat sesudah</string>
+    <string name="correction_v3_preparing_before">Menyiapkan halaman sebelum penyesuaian ini…</string>
+    <string name="correction_v3_undo">Urungkan penyesuaian</string>
+    <string name="correction_v3_redo">Ulangi penyesuaian</string>
+    <string name="correction_v3_discard_all">Buang penyesuaian sesi ini</string>
+    <string name="correction_v3_restore_crop">Pulihkan potongan</string>
+    <string name="correction_v3_restore_background">Pulihkan kontur</string>
+    <string name="correction_v3_zero_tilt">Nolkan kemiringan</string>
+    <string name="correction_v3_zero_curve">Nolkan kelengkungan</string>
+    <string name="correction_v3_convert_warning">Koreksi ini perlu mengubah halaman menjadi gambar. Teks asli mungkin tidak dapat dipilih lagi.</string>
+    <string name="correction_v3_filter_requires_conversion">Filter halaman ini sudah memerlukan konversi gambar.</string>
+    <string name="correction_v3_value_increase">Tingkatkan %1$s</string>
+    <string name="correction_v3_value_decrease">Kurangi %1$s</string>
+    <string name="correction_v3_value_edit">Edit %1$s secara tepat</string>
+    <string name="correction_v3_value_error">Masukkan nilai dari %1$s hingga %2$s dengan langkah %3$s.</string>
+    <string name="correction_v3_value_done">Gunakan nilai</string>
+    <string name="correction_v3_curve_title">Perbaiki halaman melengkung</string>
+    <string name="correction_v3_curve_up">Lengkung ke atas</string>
+    <string name="correction_v3_curve_down">Lengkung ke bawah</string>
+    <string name="correction_v3_result_updating">Memperbarui hasil…</string>
+</resources>

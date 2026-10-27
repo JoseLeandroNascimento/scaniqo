@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">Avant</string>
+    <string name="layout_v3_after">Après</string>
+    <string name="layout_v3_compare">Comparer</string>
+    <string name="layout_v3_align">Aligner</string>
+    <string name="layout_v3_align_target">Aligner : %1$s, %2$s</string>
+    <string name="layout_v3_no_both_travel">Aucun espace pour déplacer horizontalement ou verticalement.</string>
+    <string name="layout_v3_no_horizontal_travel">Aucun espace pour déplacer horizontalement.</string>
+    <string name="layout_v3_no_vertical_travel">Aucun espace pour déplacer verticalement.</string>
+    <string name="layout_v3_reduce_size">Réduire la taille</string>
+    <string name="layout_v3_hide_precise">Masquer la position précise</string>
+    <string name="layout_v3_precise">Position précise</string>
+    <string name="layout_v3_nudge">Déplacer vers %1$s</string>
+    <string name="layout_v3_center">Centrer le contenu</string>
+    <string name="layout_v3_custom_size">Personnalisé · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">Les cadrages utilisent une échelle de 100%.</string>
+    <string name="layout_v3_scale">Échelle</string>
+    <string name="layout_v3_decrease_scale" formatted="false">Réduire de 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">Augmenter de 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">Saisissez une valeur entre 25% et 200%.</string>
+    <string name="layout_v3_without_margin">Sans marge</string>
+    <string name="layout_v3_with_margin_description">Tout le contenu dans les marges de la page</string>
+    <string name="layout_v3_without_margin_description">Tout le contenu dans la zone de la page</string>
+    <string name="layout_v3_restore_category">Restaurer ce réglage</string>
+    <string name="layout_v3_more">Autres options</string>
+    <string name="layout_v3_discard_session">Annuler tous les réglages de cette session</string>
+</resources>

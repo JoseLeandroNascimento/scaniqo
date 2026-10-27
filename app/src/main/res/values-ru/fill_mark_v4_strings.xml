@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v4_tool_text">Текст</string>
+    <string name="fill_v4_tool_mark">Отметка</string>
+    <string name="fill_v4_mark_check">Галочка</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">Добавить текст</string>
+    <string name="fill_v4_add_mark">Добавить отметку</string>
+    <string name="fill_v4_edit_text">Изменить текст</string>
+    <string name="fill_v4_edit_mark">Изменить отметку</string>
+    <string name="fill_v4_size">Размер</string>
+    <string name="fill_v4_color">Цвет</string>
+    <string name="fill_v4_format">Формат</string>
+    <string name="fill_v4_bold">Полужирный</string>
+    <string name="fill_v4_italic">Курсив</string>
+    <string name="fill_v4_underline">Подчеркнутый</string>
+    <string name="fill_v4_duplicate">Дублировать</string>
+    <string name="fill_v4_delete">Удалить</string>
+    <string name="fill_v4_collapse">Свернуть</string>
+    <string name="fill_v4_more_actions">Действия</string>
+    <string name="fill_v4_stop_inserting">Остановить</string>
+    <string name="fill_v4_page_hint_neutral">Нажмите на элемент для изменения. Выберите Текст или Отметку, чтобы добавить новый.</string>
+    <string name="fill_v4_page_hint_insert_text">Нажмите на страницу, чтобы добавить текст.</string>
+    <string name="fill_v4_page_hint_insert_mark">Нажмите на страницу, чтобы добавить отметку.</string>
+    <string name="fill_v4_page_hint_insert_check">Нажмите на страницу, чтобы добавить галочку.</string>
+    <string name="fill_v4_page_hint_insert_cross">Нажмите на страницу, чтобы добавить крестик X.</string>
+    <string name="fill_v4_page_hint_selected">Перетащите элемент для перемещения. Используйте маркер, чтобы изменить размер.</string>
+    <string name="fill_v4_selection_resize">Изменить размер элемента</string>
+    <string name="fill_v4_updating_page">Обновление страницы…</string>
+</resources>

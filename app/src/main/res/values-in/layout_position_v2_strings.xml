@@ -1,0 +1,5 @@
+<resources>
+    <string name="layout_margin_label">Margin</string>
+    <string name="layout_with_margin">Dengan margin</string>
+    <string name="layout_edge_to_edge">Hingga tepi</string>
+</resources>

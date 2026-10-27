@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">সীমানা শনাক্ত করুন</string>
+    <string name="correction_v3_detect_again">আবার শনাক্ত করুন</string>
+    <string name="correction_v3_manual">নিজে সমন্বয় করুন</string>
+    <string name="correction_v3_edit_crop">ক্রপ সম্পাদনা করুন</string>
+    <string name="correction_v3_view_result">ফলাফল দেখুন</string>
+    <string name="correction_v3_compare">তুলনা করুন</string>
+    <string name="correction_v3_show_before">আগে দেখুন</string>
+    <string name="correction_v3_show_after">পরে দেখুন</string>
+    <string name="correction_v3_preparing_before">এই পরিবর্তনের আগের পৃষ্ঠা প্রস্তুত হচ্ছে…</string>
+    <string name="correction_v3_undo">সমন্বয় পূর্বাবস্থায় নিন</string>
+    <string name="correction_v3_redo">সমন্বয় আবার করুন</string>
+    <string name="correction_v3_discard_all">এই সেশনের সমন্বয় বাতিল করুন</string>
+    <string name="correction_v3_restore_crop">ক্রপ ফিরিয়ে আনুন</string>
+    <string name="correction_v3_restore_background">সীমানা ফিরিয়ে আনুন</string>
+    <string name="correction_v3_zero_tilt">কাত শূন্য করুন</string>
+    <string name="correction_v3_zero_curve">বাঁক শূন্য করুন</string>
+    <string name="correction_v3_convert_warning">এই সংশোধনের জন্য পৃষ্ঠাকে ছবিতে রূপান্তর করতে হবে। মূল লেখা আর নির্বাচন করা নাও যেতে পারে।</string>
+    <string name="correction_v3_filter_requires_conversion">এই পৃষ্ঠার ফিল্টারের জন্য আগেই ছবিতে রূপান্তর প্রয়োজন।</string>
+    <string name="correction_v3_value_increase">%1$s বাড়ান</string>
+    <string name="correction_v3_value_decrease">%1$s কমান</string>
+    <string name="correction_v3_value_edit">%1$s নির্ভুলভাবে সম্পাদনা করুন</string>
+    <string name="correction_v3_value_error">%1$s থেকে %2$s পর্যন্ত %3$s ধাপে মান লিখুন।</string>
+    <string name="correction_v3_value_done">মান ব্যবহার করুন</string>
+    <string name="correction_v3_curve_title">বাঁকা পৃষ্ঠা ঠিক করুন</string>
+    <string name="correction_v3_curve_up">উপরের দিকে বাঁক</string>
+    <string name="correction_v3_curve_down">নিচের দিকে বাঁক</string>
+    <string name="correction_v3_result_updating">ফলাফল আপডেট হচ্ছে…</string>
+</resources>

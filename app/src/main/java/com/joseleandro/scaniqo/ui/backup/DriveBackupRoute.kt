@@ -31,7 +31,9 @@ fun DriveBackupRoute(
         if (leaveWhenIdle && !state.isBusy) onBack()
     }
     val leave = {
-        if (state.isBusy) confirmLeave = true else onBack()
+        if (state.phase != DriveBackupPhase.DELETING) {
+            if (state.isBusy) confirmLeave = true else onBack()
+        }
     }
     BackHandler(onBack = leave)
     DriveBackupScreen(
@@ -47,6 +49,7 @@ fun DriveBackupRoute(
         onWifiOnlyChange = viewModel::setWifiOnly,
         onChargingOnlyChange = viewModel::setChargingOnly,
         onRetry = viewModel::retry,
+        onDelete = viewModel::deleteHistory,
     )
     if (confirmLeave && state.isBusy) AlertDialog(
         onDismissRequest = { confirmLeave = false },
@@ -63,7 +66,7 @@ fun DriveBackupRoute(
                 dismissText = stringResource(R.string.backup_leave_stay),
                 onDismiss = { confirmLeave = false },
                 confirmEnabled = state.phase != DriveBackupPhase.DISCONNECTING &&
-                    state.phase != DriveBackupPhase.CANCELLING,
+                    state.phase != DriveBackupPhase.CANCELLING && state.phase != DriveBackupPhase.DELETING,
             )
         },
     )

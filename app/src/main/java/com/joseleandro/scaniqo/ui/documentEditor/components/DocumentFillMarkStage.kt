@@ -35,18 +35,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
+import com.joseleandro.scaniqo.core.graphics.androidTypeface
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
@@ -66,16 +69,24 @@ internal fun DocumentFillMarkStage(
     state: DocumentToolsUiState,
     page: PdfPageSpec,
     draft: PdfOverlay?,
-    dirty: Boolean,
     excludedId: String?,
     editingText: Boolean,
     focusRequest: Int,
+    textValue: TextFieldValue,
+    onTextValueChange: (TextFieldValue) -> Unit,
     onUpdate: (PdfOverlay) -> Unit,
     onSelect: (PdfOverlay) -> Unit,
     onInsert: (PdfPoint) -> Unit,
     onStopTyping: () -> Unit,
+    onNavigatePage: (String) -> Unit,
     onEvent: (DocumentToolsEvent) -> Unit,
     modifier: Modifier = Modifier,
+    insertionKind: PdfOverlayKind? = null,
+    onDismissSelection: () -> Unit = {},
+    canUndo: Boolean = false,
+    canRedo: Boolean = false,
+    onUndo: () -> Unit = {},
+    onRedo: () -> Unit = {},
 ) {
     val workspace = state.workspace ?: return
     val viewport = rememberSaveable(workspace.workspaceId, page.id, saver = DocumentSignatureViewportState.Saver) {
@@ -84,12 +95,29 @@ internal fun DocumentFillMarkStage(
     val density = LocalDensity.current
     val preview = state.pagePreviews[page.id]
     val requestMatches = excludedId == null || (state.overlayPreviewPageId == page.id && state.overlayPreviewId == excludedId)
-    val ready = requestMatches && preview?.preview != null && !preview.isRendering && !preview.error
+    val renderedSnapshot = remember(page.id, preview?.preview?.uri) {
+        page.overlays.mapTo(mutableSetOf()) { it.id } to
+            state.overlayPreviewId.takeIf { state.overlayPreviewPageId == page.id }
+    }
+    val renderedOverlayIds = preview?.renderedOverlayIds ?: renderedSnapshot.first
+    val currentOverlayIds = page.overlays.mapTo(mutableSetOf()) { it.id }
+    val hasRemovedRenderedOverlay = preview?.renderedOverlayIds?.any { it !in currentOverlayIds } == true
+    val ready = preview?.preview != null && !preview.error && !hasRemovedRenderedOverlay &&
+        (excludedId == null || if (preview.renderedOverlayIds != null) {
+            excludedId !in renderedOverlayIds
+        } else requestMatches && renderedSnapshot.second == excludedId)
+    val provisionalOverlays = if (ready) page.overlays.filter {
+        it.id !in renderedOverlayIds ||
+            (preview.renderedOverlayIds == null && excludedId == null && it.id == renderedSnapshot.second)
+    } else emptyList()
+    val latestReady by rememberUpdatedState(ready && state.canEdit)
     val latestDraft by rememberUpdatedState(draft)
     val latestEditing by rememberUpdatedState(editingText)
     val latestUpdate by rememberUpdatedState(onUpdate)
     val latestSelect by rememberUpdatedState(onSelect)
     val latestInsert by rememberUpdatedState(onInsert)
+    val latestDismissSelection by rememberUpdatedState(onDismissSelection)
+    val latestInsertionKind by rememberUpdatedState(insertionKind)
     val latestPage by rememberUpdatedState(page)
     var gestureDraft by remember(page.id) { mutableStateOf<PdfOverlay?>(null) }
     var gestureInProgress by remember(page.id) { mutableStateOf(false) }
@@ -98,24 +126,34 @@ internal fun DocumentFillMarkStage(
     Column(modifier) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = {
-                onStopTyping()
-                onEvent(DocumentToolsEvent.SelectPage(workspace.pages[state.selectedPageIndex - 1].id))
-            }, enabled = state.canEdit && !dirty && state.selectedPageIndex > 0) {
+                onNavigatePage(workspace.pages[state.selectedPageIndex - 1].id)
+            }, enabled = state.canEdit && state.selectedPageIndex > 0) {
                 Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.overlay_previous))
             }
-            Text(stringResource(R.string.overlay_page, state.selectedPageIndex + 1, workspace.pages.size),
-                style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(1f))
+            val pageLabel = stringResource(R.string.overlay_page, state.selectedPageIndex + 1, workspace.pages.size)
+            Text(
+                "${state.selectedPageIndex + 1}/${workspace.pages.size}",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.weight(1f).semantics { contentDescription = pageLabel },
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+            )
+            IconButton(onClick = {
+                onNavigatePage(workspace.pages[state.selectedPageIndex + 1].id)
+            }, enabled = state.canEdit && state.selectedPageIndex < workspace.pages.lastIndex) {
+                Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.overlay_next), Modifier.rotate(180f))
+            }
+            IconButton(onClick = onUndo, enabled = state.canEdit && canUndo) {
+                Icon(painterResource(R.drawable.ic_document_undo), stringResource(R.string.viewer_undo_description))
+            }
+            IconButton(onClick = onRedo, enabled = state.canEdit && canRedo) {
+                Icon(painterResource(R.drawable.ic_document_redo), stringResource(R.string.viewer_redo_description))
+            }
             val fitLabel = stringResource(R.string.fill_mark_fit)
             TextButton(onClick = { onStopTyping(); viewport.reset() }, enabled = ready,
                 modifier = Modifier.semantics { contentDescription = fitLabel }) {
                 Text(com.joseleandro.scaniqo.core.localization.localizedPercent(viewport.value.zoom,
                     androidx.compose.ui.platform.LocalConfiguration.current.locales[0]), style = MaterialTheme.typography.labelMedium)
-            }
-            IconButton(onClick = {
-                onStopTyping()
-                onEvent(DocumentToolsEvent.SelectPage(workspace.pages[state.selectedPageIndex + 1].id))
-            }, enabled = state.canEdit && !dirty && state.selectedPageIndex < workspace.pages.lastIndex) {
-                Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.overlay_next), Modifier.rotate(180f))
             }
         }
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth().clipToBounds()
@@ -140,7 +178,7 @@ internal fun DocumentFillMarkStage(
                 val current = latestBounds.page
                 return PdfPoint((point.x - current.left) / current.width, (point.y - current.top) / current.height)
             }
-            LaunchedEffect(focusRequest, editingText, state.canEdit, width, height) {
+            LaunchedEffect(focusRequest, editingText, state.canEdit) {
                 val text = draft
                 if (editingText && state.canEdit && text != null && text.kind in textKinds) {
                     val desiredPixels = with(density) { 18.sp.toPx() }
@@ -152,19 +190,34 @@ internal fun DocumentFillMarkStage(
                     )
                 }
             }
-            val pageDescription = stringResource(R.string.fill_inline_hint)
+            val pageDescription = stringResource(
+                when {
+                    preview?.error == true -> R.string.document_pdf_error
+                    !ready -> R.string.fill_v4_updating_page
+                    displayedDraft != null -> R.string.fill_v4_page_hint_selected
+                    insertionKind == PdfOverlayKind.TEXT -> R.string.fill_v4_page_hint_insert_text
+                    insertionKind == PdfOverlayKind.CHECKMARK -> R.string.fill_v4_page_hint_insert_check
+                    insertionKind == PdfOverlayKind.CROSSMARK -> R.string.fill_v4_page_hint_insert_cross
+                    else -> R.string.fill_v4_page_hint_neutral
+                }
+            )
             Box(
                 Modifier.fillMaxSize().clipToBounds().semantics { contentDescription = pageDescription }
-                    .pointerInput(page.id, ready, state.canEdit, width, height) {
-                        if (!ready || !state.canEdit) return@pointerInput
+                    .pointerInput(page.id, state.canEdit, width, height) {
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                            if (!latestReady) return@awaitEachGesture
                             val start = down.position
                             val initialBounds = latestBounds
                             val initialDraft = latestDraft
                             val startPoint = pagePoint(start)
-                            val handle = latestSelection?.handleAt(PdfPoint(start.x, start.y))
+                            val handleCandidate = latestSelection?.handleAt(PdfPoint(start.x, start.y))
                             val inside = initialDraft?.containsFillMarkPoint(startPoint) == true
+                            val handle = handleCandidate?.takeIf { index ->
+                                !inside || latestSelection?.handles?.get(index)?.let { point ->
+                                    (start - Offset(point.x, point.y)).getDistance() <= with(density) { 14.dp.toPx() }
+                                } == true
+                            }
                             // A borda externa e as alças movimentam; o interior preserva cursor e seleção do texto.
                             val border = !inside && initialDraft?.containsFillMarkPoint(
                                 startPoint, selectionRadius / initialBounds.page.width,
@@ -234,15 +287,22 @@ internal fun DocumentFillMarkStage(
                                     last = current
                                     val released = event.changes.none { it.pressed }
                                     if (released) {
-                                        if (intent.canTap && !delegatesToText && !claimsElement && initialBounds.page.contains(start)) {
+                                        if (intent.canTap && !delegatesToText && !claimsElement) {
                                             val point = pagePoint(start)
-                                            val hit = latestDraft?.takeIf { it.containsFillMarkPoint(point) }
-                                                ?: latestPage.overlays.lastOrNull { it.containsFillMarkPoint(point) }
-                                                ?: latestPage.overlays.lastOrNull {
-                                                    it.containsFillMarkPoint(point, selectionRadius / latestBounds.page.width,
-                                                        selectionRadius / latestBounds.page.height)
-                                                }
-                                            if (hit != null) latestSelect(hit) else latestInsert(point)
+                                            val target = findFillMarkTapTarget(
+                                                selected = latestDraft,
+                                                overlays = latestPage.overlays,
+                                                point = point,
+                                                pageWidth = latestBounds.page.width,
+                                                pageHeight = latestBounds.page.height,
+                                                minimumTargetSize = with(density) { 48.dp.toPx() },
+                                            )
+                                            when {
+                                                target.overlay != null -> latestSelect(target.overlay)
+                                                latestDraft != null -> latestDismissSelection()
+                                                !target.blocksInsertion && initialBounds.page.contains(start) &&
+                                                    latestInsertionKind in repeatableFillMarkKinds -> latestInsert(point)
+                                            }
                                         } else if (intent.canCommitDrag) pending?.let(latestUpdate)
                                     }
                                 } while (event.changes.any { it.pressed })
@@ -272,6 +332,11 @@ internal fun DocumentFillMarkStage(
                                 Modifier.fillMaxSize(), contentKey = "${page.id}:${preview.preview.uri}:${excludedId}",
                             )
                             Canvas(Modifier.fillMaxSize()) {
+                                provisionalOverlays.forEach { overlay ->
+                                    if (overlay.id != displayedDraft?.id) drawOverlayDraft(
+                                        overlay, state.selectedPageIndex + 1, workspace.pages.size,
+                                    )
+                                }
                                 displayedDraft?.let { overlay ->
                                     if (!editingText || overlay.kind !in textKinds) drawOverlayDraft(
                                         overlay, state.selectedPageIndex + 1, workspace.pages.size,
@@ -284,16 +349,26 @@ internal fun DocumentFillMarkStage(
                     TextButton(onClick = { onEvent(DocumentToolsEvent.RetryPagePreview(page.id)) }, enabled = state.canEdit) {
                         Text(stringResource(R.string.document_pdf_retry))
                     }
-                } else CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                } else Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                    Text(
+                        stringResource(R.string.fill_v4_updating_page),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 // O campo mantém a conexão com o teclado enquanto o PDF de fundo é atualizado.
-                // A imagem antiga continua oculta até a prévia sem o elemento selecionado ficar pronta.
                 if (editingText && displayedDraft != null && displayedDraft.kind in textKinds) {
                     val left = bounds.page.left + displayedDraft.x * bounds.page.width
                     val top = bounds.page.top + displayedDraft.y * bounds.page.height
                     val fieldWidth = displayedDraft.width * bounds.page.width
                     val fieldHeight = displayedDraft.height * bounds.page.height
                     InlineFillMarkText(
-                        displayedDraft, focusRequest, bounds.page.width, state.canEdit, onUpdate, onStopTyping,
+                        displayedDraft, focusRequest, bounds.page.width, state.canEdit,
+                        textValue, onTextValueChange, onStopTyping,
                         Modifier.align(androidx.compose.ui.AbsoluteAlignment.TopLeft)
                             .absoluteOffset { IntOffset(left.roundToInt(), top.roundToInt()) }
                             .wrapContentSize(androidx.compose.ui.AbsoluteAlignment.TopLeft, unbounded = true)
@@ -324,8 +399,8 @@ internal fun DocumentFillMarkStage(
                         }
                     }
                 }
-                if (selection != null) DocumentFillMarkSelection(
-                    selection, displayedDraft, enabled = ready && state.canEdit, onUpdate = onUpdate,
+                if (selection != null && !editingText && ready) DocumentFillMarkSelection(
+                    selection, displayedDraft, enabled = state.canEdit, onUpdate = onUpdate,
                 )
             }
         }
@@ -338,7 +413,8 @@ private fun InlineFillMarkText(
     focusRequest: Int,
     pageWidth: Float,
     enabled: Boolean,
-    onUpdate: (PdfOverlay) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     onDone: () -> Unit,
     modifier: Modifier,
     onCursor: (Offset) -> Unit,
@@ -346,25 +422,21 @@ private fun InlineFillMarkText(
     val density = LocalDensity.current
     val focusRequester = remember(draft.id) { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
-    var value by rememberSaveable(draft.id, stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(draft.text, TextRange(draft.text.length)))
-    }
-    LaunchedEffect(draft.text) {
-        if (value.text != draft.text) value = TextFieldValue(draft.text, TextRange(draft.text.length))
-    }
     LaunchedEffect(draft.id, focusRequest, enabled) {
         if (enabled) {
             focusRequester.requestFocus()
             keyboard?.show()
         }
     }
-    val shaped = remember(draft.text, draft.fontSize, draft.width, draft.height, draft.wrapText, draft.textHorizontalAlignment) {
+    val shaped = remember(draft.text, draft.fontSize, draft.width, draft.height, draft.wrapText,
+        draft.textHorizontalAlignment, draft.bold, draft.italic, draft.underlined) {
         ShapedTextLayout.create(
             text = draft.text, fontSize = draft.fontSize, color = draft.color,
             maxWidth = (draft.width * 595f).coerceAtLeast(.001f),
             maxHeight = (draft.height * 842f).coerceAtLeast(.001f),
             wrap = draft.wrapText,
             horizontalAlignment = draft.textHorizontalAlignment,
+            typeface = draft.androidTypeface(), underlined = draft.underlined,
         )
     }
     val fontPixels = shaped.fontSize * pageWidth / 595f
@@ -375,13 +447,7 @@ private fun InlineFillMarkText(
     BasicTextField(
         value = value,
         enabled = enabled,
-        onValueChange = { next ->
-            if (next.text.length <= 2000) {
-                val changed = next.text != value.text
-                value = next
-                if (changed) onUpdate(draft.copy(text = next.text))
-            }
-        },
+        onValueChange = { next -> if (next.text.length <= 2000) onValueChange(next) },
         modifier = modifier.focusRequester(focusRequester).clipToBounds().semantics { contentDescription = description },
         textStyle = TextStyle(
             color = Color(draft.color).copy(alpha = draft.opacity),
@@ -389,6 +455,9 @@ private fun InlineFillMarkText(
             lineHeight = with(density) { linePixels.toSp() },
             platformStyle = PlatformTextStyle(includeFontPadding = true),
             textDirection = TextDirection.ContentOrLtr,
+            fontWeight = if (draft.bold) FontWeight.Bold else FontWeight.Normal,
+            fontStyle = if (draft.italic) FontStyle.Italic else FontStyle.Normal,
+            textDecoration = if (draft.underlined) TextDecoration.Underline else TextDecoration.None,
             textAlign = when (draft.textHorizontalAlignment) {
                 PdfTextHorizontalAlignment.START -> TextAlign.Start
                 PdfTextHorizontalAlignment.CENTER -> TextAlign.Center
@@ -445,7 +514,8 @@ private fun FillTextBoxAlignmentPreview() {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 InlineFillMarkText(
                     draft, focusRequest = 0, pageWidth = with(LocalDensity.current) { 595.dp.toPx() },
-                    enabled = true, onUpdate = {}, onDone = {}, onCursor = {},
+                    enabled = true, value = TextFieldValue(draft.text), onValueChange = {},
+                    onDone = {}, onCursor = {},
                     modifier = Modifier.requiredSize(260.dp, 160.dp)
                         .border(1.dp, MaterialTheme.colorScheme.primary),
                 )

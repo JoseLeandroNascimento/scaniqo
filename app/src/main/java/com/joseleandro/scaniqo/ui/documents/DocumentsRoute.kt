@@ -20,6 +20,7 @@ fun DocumentsRoute(
     onSignDocument: () -> Unit,
     onAllTools: () -> Unit,
     modifier: Modifier = Modifier,
+    adsEnabled: Boolean = true,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val actionsState by actionsViewModel.uiState.collectAsStateWithLifecycle()
@@ -39,5 +40,6 @@ fun DocumentsRoute(
         onSignDocument = onSignDocument,
         onAllTools = onAllTools,
         modifier = modifier,
+        adsEnabled = adsEnabled,
     )
 }

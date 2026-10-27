@@ -651,6 +651,121 @@ class DocumentActionsViewModelTest {
         assertNull(restored.uiState.value.pendingCreation)
     }
 
+
+    @Test
+    fun generatedDraftSavesChosenNameAndTagWithMatchingResult() = runTest(dispatcher) {
+        tagRepository.tags.value = listOf(tag)
+        viewModel
+        runCurrent()
+        val operationId = "utility:extract:1"
+        assertTrue(viewModel.acceptGeneratedDraft(operationId, repository.scan, "Seleção", null))
+        viewModel.onDocumentAction(DocumentActionEvent.NameChanged("  Páginas escolhidas  "))
+        viewModel.onDocumentAction(DocumentActionEvent.TagChanged(tag.id))
+        viewModel.onDocumentAction(DocumentActionEvent.SaveDocument)
+        runCurrent()
+
+        assertEquals(CreateRequest(repository.scan, "Páginas escolhidas", tag.id), repository.created.single())
+        val createdId = repository.documents.value.single().id
+        assertEquals(operationId, viewModel.uiState.value.generatedResult?.operationId)
+        assertEquals(createdId, viewModel.uiState.value.generatedResult?.documentId)
+        assertEquals(tag.id, viewModel.uiState.value.pendingCreation?.tagId)
+        assertNull(viewModel.uiState.value.editor)
+
+        viewModel.acknowledgeGeneratedResult("utility:other:1")
+        assertEquals(operationId, viewModel.uiState.value.generatedResult?.operationId)
+        viewModel.acknowledgeGeneratedResult(operationId)
+        assertNull(viewModel.uiState.value.generatedResult)
+    }
+
+    @Test
+    fun generatedDraftDismissalDiscardsOnlyThatDraftAndReportsMatchingOperation() = runTest(dispatcher) {
+        val operationId = "utility:compress:1"
+        val generated = repository.scan.copy(pdfUri = "file:///documents/compressed.pdf")
+        assertTrue(viewModel.acceptGeneratedDraft(operationId, generated, "Compacto", null))
+        viewModel.onDocumentAction(DocumentActionEvent.DismissEditor)
+        runCurrent()
+
+        assertEquals(listOf(generated), repository.discarded)
+        assertTrue(repository.created.isEmpty())
+        assertNull(viewModel.uiState.value.editor)
+        assertEquals(operationId, viewModel.uiState.value.generatedResult?.operationId)
+        assertNull(viewModel.uiState.value.generatedResult?.documentId)
+        assertTrue(viewModel.acceptGeneratedDraft(operationId, generated, "Entrega repetida", null))
+        assertNull(viewModel.uiState.value.editor)
+    }
+
+    @Test
+    fun duplicateGeneratedDeliveryKeepsMetadataEditsAndRejectsAnotherDraft() = runTest(dispatcher) {
+        tagRepository.tags.value = listOf(tag)
+        viewModel
+        runCurrent()
+        val operationId = "utility:extract:2"
+        val other = repository.scan.copy(pdfUri = "file:///documents/other.pdf")
+        assertTrue(viewModel.acceptGeneratedDraft(operationId, repository.scan, "Sugestão", null))
+        viewModel.onDocumentAction(DocumentActionEvent.NameChanged("Nome ajustado"))
+        viewModel.onDocumentAction(DocumentActionEvent.TagChanged(tag.id))
+
+        assertTrue(viewModel.acceptGeneratedDraft(operationId, repository.scan, "Sugestão antiga", null))
+        assertFalse(viewModel.acceptGeneratedDraft("utility:extract:3", other, "Outra saída", null))
+        assertEquals("Nome ajustado", viewModel.uiState.value.editor?.name)
+        assertEquals(tag.id, viewModel.uiState.value.editor?.tagId)
+        assertEquals(repository.scan, viewModel.uiState.value.editor?.draft)
+        assertTrue(repository.created.isEmpty())
+        assertTrue(repository.discarded.isEmpty())
+    }
+
+    @Test
+    fun generatedDraftSaveFailureRetainsNameTagAndFileForRetry() = runTest(dispatcher) {
+        tagRepository.tags.value = listOf(tag)
+        viewModel
+        runCurrent()
+        val operationId = "utility:compress:2"
+        assertTrue(viewModel.acceptGeneratedDraft(operationId, repository.scan, "Cópia", tag.id))
+        viewModel.onDocumentAction(DocumentActionEvent.NameChanged("Cópia revisada"))
+        repository.writeFailure = IllegalStateException("Sem espaço")
+        viewModel.onDocumentAction(DocumentActionEvent.SaveDocument)
+        runCurrent()
+
+        assertTrue(viewModel.uiState.value.editor?.saveError == true)
+        assertEquals(repository.scan, viewModel.uiState.value.editor?.draft)
+        assertEquals("Cópia revisada", viewModel.uiState.value.editor?.name)
+        assertEquals(tag.id, viewModel.uiState.value.editor?.tagId)
+        assertNull(viewModel.uiState.value.generatedResult)
+        assertTrue(repository.discarded.isEmpty())
+
+        repository.writeFailure = null
+        viewModel.onDocumentAction(DocumentActionEvent.SaveDocument)
+        runCurrent()
+        assertNull(viewModel.uiState.value.editor)
+        assertEquals(2, repository.created.size)
+        assertEquals(tag.id, repository.created.last().tagId)
+        assertEquals(operationId, viewModel.uiState.value.generatedResult?.operationId)
+        assertEquals(repository.documents.value.single().id, viewModel.uiState.value.generatedResult?.documentId)
+    }
+
+    @Test
+    fun generatedDraftRestoresEditableMetadataAndOperationAfterRecreation() = runTest(dispatcher) {
+        tagRepository.tags.value = listOf(tag)
+        viewModel
+        runCurrent()
+        val operationId = "utility:extract:restored"
+        assertTrue(viewModel.acceptGeneratedDraft(operationId, repository.scan, "Sugestão", null))
+        viewModel.onDocumentAction(DocumentActionEvent.NameChanged("Nome escolhido"))
+        viewModel.onDocumentAction(DocumentActionEvent.TagChanged(tag.id))
+
+        val restored = recreateViewModel()
+        runCurrent()
+        assertEquals(operationId, restored.uiState.value.editor?.generatedOperationId)
+        assertEquals(repository.scan, restored.uiState.value.editor?.draft)
+        assertEquals("Nome escolhido", restored.uiState.value.editor?.name)
+        assertEquals(tag.id, restored.uiState.value.editor?.tagId)
+
+        restored.onDocumentAction(DocumentActionEvent.SaveDocument)
+        runCurrent()
+        assertEquals(CreateRequest(repository.scan, "Nome escolhido", tag.id), repository.created.single())
+        assertEquals(operationId, restored.uiState.value.generatedResult?.operationId)
+    }
+
     private fun TestScope.prepareDraft() {
         viewModel.onDocumentAction(DocumentActionEvent.StartScan())
         viewModel.onDocumentAction(DocumentActionEvent.ScanCompleted(listOf("content://page-1")))

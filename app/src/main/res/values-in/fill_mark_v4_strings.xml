@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v4_tool_text">Teks</string>
+    <string name="fill_v4_tool_mark">Tanda</string>
+    <string name="fill_v4_mark_check">Centang</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">Tambah teks</string>
+    <string name="fill_v4_add_mark">Tambah tanda</string>
+    <string name="fill_v4_edit_text">Edit teks</string>
+    <string name="fill_v4_edit_mark">Edit tanda</string>
+    <string name="fill_v4_size">Ukuran</string>
+    <string name="fill_v4_color">Warna</string>
+    <string name="fill_v4_format">Format</string>
+    <string name="fill_v4_bold">Tebal</string>
+    <string name="fill_v4_italic">Miring</string>
+    <string name="fill_v4_underline">Garis bawah</string>
+    <string name="fill_v4_duplicate">Duplikat</string>
+    <string name="fill_v4_delete">Hapus</string>
+    <string name="fill_v4_collapse">Ciutkan</string>
+    <string name="fill_v4_more_actions">Tindakan</string>
+    <string name="fill_v4_stop_inserting">Berhenti</string>
+    <string name="fill_v4_page_hint_neutral">Ketuk elemen untuk mengedit. Pilih Teks atau Tanda untuk menambah elemen.</string>
+    <string name="fill_v4_page_hint_insert_text">Ketuk halaman untuk menambah teks.</string>
+    <string name="fill_v4_page_hint_insert_mark">Ketuk halaman untuk menambah tanda.</string>
+    <string name="fill_v4_page_hint_insert_check">Ketuk halaman untuk menambah tanda centang.</string>
+    <string name="fill_v4_page_hint_insert_cross">Ketuk halaman untuk menambah tanda X.</string>
+    <string name="fill_v4_page_hint_selected">Seret elemen untuk memindahkan. Gunakan pegangan untuk mengubah ukurannya.</string>
+    <string name="fill_v4_selection_resize">Ubah ukuran elemen</string>
+    <string name="fill_v4_updating_page">Memperbarui halaman…</string>
+</resources>

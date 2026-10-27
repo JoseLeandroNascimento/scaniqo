@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="overlay_crossmark">X चिह्न</string>
+    <string name="fill_mark_bold">बोल्ड</string>
+    <string name="fill_mark_italic">इटैलिक</string>
+    <string name="fill_mark_underline_text">टेक्स्ट रेखांकित करें</string>
+    <string name="fill_mark_confirm_element">तत्व की पुष्टि करें</string>
+    <string name="fill_mark_tap_to_cross">X जोड़ने के लिए PDF पर टैप करें।</string>
+    <string name="signature_finish_tool">पूर्ण</string>
+    <string name="signature_place_hint">जहाँ हस्ताक्षर करना चाहते हैं वहाँ टैप करें।</string>
+    <string name="signature_place_center">बीच में रखें</string>
+</resources>

@@ -31,6 +31,7 @@ fun DocumentMergeDestination(
     isActive: Boolean,
     onRetryDocuments: () -> Unit,
     onBack: () -> Unit,
+    onOpenDocument: (Long) -> Unit,
 ) {
     val viewer by viewerViewModel.uiState.collectAsStateWithLifecycle()
     val tools by toolsViewModel.uiState.collectAsStateWithLifecycle()
@@ -59,8 +60,9 @@ fun DocumentMergeDestination(
                 isProtected = document?.isProtected == true || (sameSession && tools.workspace?.isProtected == true),
             )
         },
-        enabled = if (documentId == null) canStart && !quickMerge.isActive
+        enabled = if (documentId == null) canStart && !quickMerge.isActive && quickMerge.savedDocumentId == null
             else sameSession && tools.canEdit,
+        savedDocumentId = if (documentId == null) quickMerge.savedDocumentId else null,
         isActive = isActive,
         canNavigateBack = if (documentId == null) !quickMerge.isActive else !sameSession || !tools.isBusy,
         isLoading = if (documentId == null) documentsState.isLoading else
@@ -79,12 +81,21 @@ fun DocumentMergeDestination(
                 toolsViewModel.onEvent(DocumentToolsEvent.Retry)
             }
         },
-        onBack = onBack,
-        onConfirm = { items ->
+        onBack = {
+            if (documentId == null) mergeViewModel.clearSavedDocument()
+            onBack()
+        },
+        onOpenDocument = { id ->
+            if (documentId == null && id == quickMerge.savedDocumentId) onOpenDocument(id)
+        },
+        onConfirm = { items, adUnavailable ->
             if (isActive) {
                 if (documentId == null) {
-                    if (canStart && mergeViewModel.merge(items)) {
+                    if (canStart) {
                         actionsViewModel.onDocumentAction(DocumentActionEvent.ImportStarted(documentsState.selectedTagId))
+                        if (!actionsViewModel.uiState.value.isPreparingScan || !mergeViewModel.merge(items, adUnavailable)) {
+                            actionsViewModel.onDocumentAction(DocumentActionEvent.ImportCancelled)
+                        }
                     }
                 } else if (toolsViewModel.uiState.value.document?.id == documentId) {
                     toolsViewModel.onEvent(DocumentToolsEvent.MergeOrderedItems(items))

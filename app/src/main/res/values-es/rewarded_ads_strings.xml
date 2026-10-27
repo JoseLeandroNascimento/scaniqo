@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">Desbloquear compresión fuerte</string>
+    <string name="strong_compression_reward_body">Mira un vídeo para desbloquear un uso en este documento.</string>
+    <string name="strong_compression_reward_quality_note">Puede reducir la nitidez y no garantiza un archivo más pequeño.</string>
+    <string name="strong_compression_reward_retry_note">Si hay un error o el PDF no disminuye, reinténtalo sin ver otro vídeo.</string>
+    <string name="strong_compression_watch_action">Ver y desbloquear</string>
+    <string name="strong_compression_loading">Preparando vídeo…</string>
+    <string name="strong_compression_showing">Vídeo en curso…</string>
+    <string name="strong_compression_continue_without_ad">Continuar sin anuncio</string>
+    <string name="strong_compression_use_balanced">Usar equilibrada</string>
+    <string name="strong_compression_close">Cerrar</string>
+    <string name="strong_compression_first_free">Primer uso gratis</string>
+    <string name="strong_compression_available">Uso desbloqueado en este documento</string>
+    <string name="strong_compression_video_hint">Mira un vídeo para desbloquear un uso en este documento.</string>
+    <string name="strong_compression_password_again">Confirma la contraseña del PDF para continuar.</string>
+    <string name="strong_compression_unavailable_note">El vídeo no está disponible. Esta vez puedes continuar sin anuncio.</string>
+    <string name="tool_ad_watch_apply">Ver y aplicar</string>
+    <string name="tool_ad_watch_save">Ver y guardar</string>
+    <string name="tool_ad_watch_export">Ver y exportar</string>
+    <string name="tool_ad_reward_hint">Mira un anuncio para desbloquear esta operación.</string>
+    <string name="tool_ad_first_use_free">Primer uso gratis</string>
+    <string name="tool_ad_unlocked">Operación desbloqueada</string>
+</resources>

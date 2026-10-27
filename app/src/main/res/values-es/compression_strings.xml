@@ -1,0 +1,22 @@
+<resources>
+    <string name="compression_hero_ready">Tu PDF, más ligero</string>
+    <string name="compression_hero_busy">Comprimiendo tu PDF</string>
+    <string name="compression_hero_complete">PDF comprimido</string>
+    <string name="compression_no_gain">Esta vez no se redujo</string>
+    <string name="compression_no_gain_detail">La reducción depende del contenido del archivo.</string>
+    <string name="compression_saved">%1$d%% más pequeño</string>
+    <string name="compression_original_kept">Se conserva el original</string>
+    <string name="compression_from_device">Del dispositivo</string>
+    <string name="compression_from_library">De tu biblioteca</string>
+    <string name="compression_level">Compresión</string>
+    <string name="compression_balanced">Equilibrada</string>
+    <string name="compression_balanced_detail">Mejor calidad de imagen</string>
+    <string name="compression_strong">Compacta</string>
+    <string name="compression_strong_detail">Menor calidad de imagen</string>
+    <string name="compression_rename">Nombre de la copia</string>
+    <string name="compression_action">Comprimir PDF</string>
+    <string name="compression_choose_another">Comprimir otro PDF</string>
+    <string name="compression_size_before">Antes</string>
+    <string name="compression_size_after">Después</string>
+    <string name="compression_saved_small" formatted="false">&lt;1% más pequeño</string>
+</resources>

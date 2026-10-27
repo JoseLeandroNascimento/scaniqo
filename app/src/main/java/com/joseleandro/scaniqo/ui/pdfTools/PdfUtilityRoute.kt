@@ -71,14 +71,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.ui.ads.rememberToolAdAction
 import com.joseleandro.scaniqo.core.image.DocumentImageDecoder
 import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.DocumentModel
+import com.joseleandro.scaniqo.domain.model.PdfCompressionLevel
 import com.joseleandro.scaniqo.domain.model.PdfImageFormat
 import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.domain.repository.AppSettingsRepository
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentSourceStep
+import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
 import com.joseleandro.scaniqo.ui.documentCommon.platform.rememberDocumentScannerLauncher
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -97,6 +102,7 @@ fun PdfUtilityRoute(
     importBusy: Boolean = false,
     importedDocumentId: Long? = null,
     onImportedSelected: () -> Unit = {},
+    actionsViewModel: DocumentActionsViewModel,
     viewModel: PdfUtilityViewModel = koinViewModel(key = tool.name),
     settingsRepository: AppSettingsRepository = koinInject(),
 ) {
@@ -109,19 +115,42 @@ fun PdfUtilityRoute(
     )
     LaunchedEffect(operationId) { viewModel.beginOperation(operationId) }
     var selectedId by rememberSaveable(tool, operationId) { mutableStateOf<Long?>(null) }
+    var stage by rememberSaveable(tool, operationId) { mutableStateOf(0) }
+    val retainedTool = tool in setOf(PdfUtility.EXTRACT_PAGES, PdfUtility.PDF_TO_IMAGES, PdfUtility.COMPRESS_PDF)
+    val actionsState by actionsViewModel.uiState.collectAsStateWithLifecycle()
     var pickingDocument by rememberSaveable(tool, operationId) { mutableStateOf(false) }
     var name by rememberSaveable(tool, operationId) { mutableStateOf("") }
     var pages by rememberSaveable(tool, operationId) { mutableStateOf("") }
+    var pageSelection by rememberSaveable(tool, operationId, stateSaver = PdfUtilityPageSelectionSaver) {
+        mutableStateOf(PdfUtilityPageSelectionState())
+    }
     var receiptPage by rememberSaveable(tool, operationId) { mutableStateOf("1") }
     var images by rememberSaveable(tool, operationId) { mutableStateOf(emptyList<String>()) }
     var imageFormat by rememberSaveable(tool, operationId) { mutableStateOf(defaults.imageFormat) }
     var compression by rememberSaveable(tool, operationId) { mutableStateOf(defaults.compressionLevel) }
-    var targetUri by rememberSaveable(tool, operationId) { mutableStateOf<String?>(null) }
+    var pendingZipSourceId by rememberSaveable(tool, operationId) { mutableStateOf<Long?>(null) }
+    var pendingZipPages by rememberSaveable(tool, operationId) { mutableStateOf("") }
+    var pendingZipFormat by rememberSaveable(tool, operationId) { mutableStateOf(PdfImageFormat.JPEG) }
+    var pendingZipAdUnavailable by rememberSaveable(tool, operationId) { mutableStateOf(false) }
+    var pendingZipPassword by remember { mutableStateOf<String?>(null) }
     var externalPicker by rememberSaveable(tool, operationId) { mutableStateOf(false) }
     var imageSlot by rememberSaveable(tool, operationId) { mutableStateOf(0) }
     var receiptExportToken by rememberSaveable(tool, operationId) { mutableStateOf<Long?>(null) }
     var password by remember(selectedId) { mutableStateOf("") }
     val selected = state.documents.firstOrNull { it.id == selectedId }
+    LaunchedEffect(selected?.id, pages) {
+        if (retainedTool && selected != null && pages.isNotBlank()) {
+            val restored = runCatching { UtilityPageSelection.fromText(pages, selected.pageCount) }.getOrNull()
+            pageSelection = PdfUtilityPageSelectionState(
+                selection = restored ?: pageSelection.selection,
+                mode = UtilityPageSelectionMode.INTERVALS,
+                draft = pages,
+                draftActive = restored == null,
+                advanced = true,
+            )
+            pages = ""
+        }
+    }
     SecureWindow(enabled = selected?.isProtected == true || state.receiptProtected)
     val imageTool = tool == PdfUtility.IMAGES_TO_PDF || tool == PdfUtility.ID_CARD
     val context = LocalContext.current
@@ -136,19 +165,26 @@ fun PdfUtilityRoute(
         lifecycle.addObserver(observer)
         onDispose { lifecycle.removeObserver(observer) }
     }
-    BackHandler(enabled = state.busy || importBusy) {}
+    val toolPasswordAgain = stringResource(R.string.strong_compression_password_again)
     val imageArchiveName = stringResource(R.string.utility_pages) + ".zip"
+    val zipPasswordAgain = stringResource(R.string.utility_zip_password_again)
     val receiptExportName = stringResource(R.string.tag_icon_receipt) + ".csv"
     val documentSuffix = stringResource(if (tool == PdfUtility.COMPRESS_PDF)
         R.string.utility_workspace_compress_title else R.string.utility_extract_title)
     fun selectDocument(document: DocumentModel) {
-        selectedId = document.id
-        pages = ""
-        receiptPage = "1"
-        targetUri = null
-        name = (document.name + " — " + documentSuffix).take(DOCUMENT_NAME_MAX_LENGTH)
-        viewModel.clearReceipt()
-        viewModel.clearCompressionResult()
+        if (selectedId != document.id) {
+            selectedId = document.id
+            pages = ""
+            pageSelection = PdfUtilityPageSelectionState()
+            receiptPage = "1"
+            pendingZipSourceId = null
+            pendingZipPassword = null
+            name = (document.name + " — " + documentSuffix).take(DOCUMENT_NAME_MAX_LENGTH)
+            viewModel.clearReceipt()
+            viewModel.clearGeneratedCompletion()
+            viewModel.clearCompressionResult()
+        }
+        stage = 1
         pickingDocument = false
     }
     LaunchedEffect(importedDocumentId, state.documents) {
@@ -156,6 +192,38 @@ fun PdfUtilityRoute(
         if (document != null) {
             selectDocument(document)
             onImportedSelected()
+        }
+    }
+    LaunchedEffect(selectedId, state.loading, state.documents) {
+        if (!state.loading && selectedId != null && selected == null) {
+            selectedId = null
+            stage = 0
+            viewModel.clearGeneratedCompletion()
+        }
+    }
+    LaunchedEffect(state.preparedOutput?.operationId, actionsState) {
+        state.preparedOutput?.let { output ->
+            if (actionsViewModel.acceptGeneratedDraft(
+                    output.operationId, output.scan, output.suggestedName, output.suggestedTagId,
+                )) viewModel.confirmPreparedDelivery(output.operationId)
+        }
+    }
+    LaunchedEffect(actionsState.editor?.generatedOperationId, state.operationId) {
+        actionsState.editor?.generatedOperationId?.let { token ->
+            if (token.startsWith("$operationId:")) {
+                viewModel.restoreAwaitingSave(token)
+                stage = 1
+            }
+        }
+    }
+    LaunchedEffect(actionsState.generatedResult?.operationId, state.operationId) {
+        actionsState.generatedResult?.let { result ->
+            if (result.operationId.startsWith("$operationId:")) {
+                viewModel.restoreAwaitingSave(result.operationId)
+                viewModel.finishGenerated(result.operationId, result.documentId)
+                actionsViewModel.acknowledgeGeneratedResult(result.operationId)
+                stage = 1
+            }
         }
     }
     LaunchedEffect(state.createdDocumentId) {
@@ -187,7 +255,24 @@ fun PdfUtilityRoute(
     }
     val zipPicker = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { value ->
         externalPicker = false
-        targetUri = value?.toString()
+        val sourceId = pendingZipSourceId
+        val selectedPages = pendingZipPages
+        val selectedFormat = pendingZipFormat
+        val selectedPassword = pendingZipPassword
+        val adUnavailable = pendingZipAdUnavailable
+        pendingZipAdUnavailable = false
+        pendingZipSourceId = null
+        pendingZipPassword = null
+        if (value != null && sourceId != null && sourceId == selectedId) {
+            if (state.documents.firstOrNull { it.id == sourceId }?.isProtected == true &&
+                selectedPassword.isNullOrEmpty()) {
+                viewModel.reportError(zipPasswordAgain)
+            } else {
+                if (!viewModel.exportImages(
+                        sourceId, selectedPages, selectedFormat, value.toString(), selectedPassword, adUnavailable,
+                    )) viewModel.reportError("Não foi possível concluir a ferramenta.")
+            }
+        }
     }
     val csvPicker = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { value ->
         externalPicker = false
@@ -224,40 +309,126 @@ fun PdfUtilityRoute(
             viewModel.reportError("Não foi possível abrir o seletor de arquivos.")
         }
     }
-    val retainedTool = tool in setOf(PdfUtility.EXTRACT_PAGES, PdfUtility.PDF_TO_IMAGES, PdfUtility.COMPRESS_PDF)
-    if (retainedTool) {
+    fun chooseZipDestination() {
+        val source = selected ?: return
+        if (externalPicker || state.busy) return
+        if (pageSelection.draftActive || pageSelection.from.isNotBlank() || pageSelection.until.isNotBlank()) return
+        val selectionText = runCatching { pageSelection.selection.parserValue(source.pageCount) }.getOrNull() ?: return
+        pendingZipSourceId = source.id
+        pendingZipPages = selectionText
+        pendingZipFormat = imageFormat
+        pendingZipPassword = password
+        // The action was already authorized before SAF. A cooldown expiring while choosing
+        // a folder must not introduce another ad requirement or silently leave an empty ZIP.
+        pendingZipAdUnavailable = true
+        launchSaf(onFailure = {
+            pendingZipSourceId = null
+            pendingZipPassword = null
+        }) { zipPicker.launch(imageArchiveName) }
+    }
+    val rewardedTool = when (tool) {
+        PdfUtility.COMPRESS_PDF -> RewardedTool.COMPRESSION
+        PdfUtility.EXTRACT_PAGES -> RewardedTool.EXTRACT_PAGES
+        PdfUtility.PDF_TO_IMAGES -> RewardedTool.PDF_TO_IMAGES
+        else -> null
+    }
+    val toolAdAction = rememberToolAdAction(
+        tool = rewardedTool,
+        contextKey = listOf(operationId, tool, selected, compression, pageSelection, imageFormat),
+        active = retainedTool && stage == 1 && selected != null && !state.busy && !importBusy &&
+            !externalPicker && state.awaitingSaveOperationId == null && state.savedDocumentId == null &&
+            !state.exportCompleted,
+        onApply = { adUnavailable ->
+            // Re-read the current draft and credentials after returning from the SDK activity.
+            val source = selected
+            if (source?.isProtected == true && password.isEmpty()) {
+                viewModel.reportError(toolPasswordAgain)
+            } else if (source != null) {
+                when (tool) {
+                    PdfUtility.COMPRESS_PDF -> viewModel.prepareCompression(
+                        source.id, compression, password, name, adUnavailable,
+                    )
+                    PdfUtility.EXTRACT_PAGES -> {
+                        if (!pageSelection.draftActive && pageSelection.from.isBlank() && pageSelection.until.isBlank()) {
+                            runCatching { pageSelection.selection.parserValue(source.pageCount) }.getOrNull()?.let { value ->
+                                viewModel.prepareExtraction(source.id, value, password, name, adUnavailable)
+                            }
+                        }
+                    }
+                    PdfUtility.PDF_TO_IMAGES -> chooseZipDestination()
+                    else -> Unit
+                }
+            }
+        },
+    )
+    BackHandler(enabled = state.busy || importBusy || toolAdAction.inProgress) {}
+    BackHandler(enabled = retainedTool && !state.busy && !importBusy && !toolAdAction.inProgress &&
+        stage == 1 && state.awaitingSaveOperationId == null && state.savedDocumentId == null) { stage = 0 }
+    if (retainedTool && stage == 0) {
+        Scaffold(topBar = {
+            TopAppBar(
+                title = { Text(stringResource(title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack, enabled = !state.busy && !importBusy && !externalPicker) {
+                        Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.utility_back))
+                    }
+                },
+            )
+        }) { padding ->
+            DocumentSourceStep(
+                toolTitle = stringResource(title),
+                documents = state.documents,
+                isLoading = state.loading,
+                loadError = state.loadError,
+                enabled = !state.busy && !importBusy && !externalPicker,
+                onSelectDocument = ::selectDocument,
+                onPickDevice = onImport,
+                onRetryDocuments = viewModel::retryDocuments,
+                currentDocument = selected,
+                onResume = { if (selected != null) stage = 1 },
+                modifier = Modifier.padding(padding),
+            )
+        }
+    } else if (retainedTool && state.busy) {
+        Scaffold(topBar = {
+            TopAppBar(
+                title = { Text(stringResource(title)) },
+                navigationIcon = {
+                    IconButton(onClick = {}, enabled = false) {
+                        Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.utility_back))
+                    }
+                },
+            )
+        }) { padding ->
+            PdfToolProcessingContent(tool, busy = true, modifier = Modifier.padding(padding))
+        }
+    } else if (retainedTool && state.awaitingSaveOperationId != null) {
+        PdfUtilityPendingSaveContent(tool, selected?.name, state.compressionResult)
+    } else if (retainedTool && (state.savedDocumentId != null || state.exportCompleted)) {
+        PdfUtilityCompletedContent(
+            tool = tool,
+            onBack = { stage = 0; viewModel.clearGeneratedCompletion() },
+            onOpenDocument = state.savedDocumentId?.let { id -> { onOpenDocument(id) } },
+        )
+    } else if (retainedTool) {
         PdfUtilityWorkspace(
             tool = tool,
             state = state,
             document = selected,
-            name = name,
-            pages = pages,
+            pageSelection = pageSelection,
             password = password,
             format = imageFormat,
             compression = compression,
-            destinationReady = targetUri != null,
             externalPicker = externalPicker || importBusy,
-            onBack = onBack,
-            onChooseDocument = { pickingDocument = true },
-            onImport = onImport,
-            onName = { name = it; viewModel.clearCompressionResult() },
-            onPages = { pages = it },
+            onBack = { stage = 0 },
+            onChooseDocument = { stage = 0 },
+            onPageSelection = { pageSelection = it },
             onPassword = { password = it },
             onFormat = { imageFormat = it },
             onCompression = { compression = it; viewModel.clearCompressionResult() },
-            onDestination = { launchSaf { zipPicker.launch(imageArchiveName) } },
-            onAction = {
-                selected?.let { source ->
-                    when (tool) {
-                        PdfUtility.EXTRACT_PAGES -> viewModel.extract(source.id, pages, name, password)
-                        PdfUtility.COMPRESS_PDF -> viewModel.compress(source.id, name, compression, password)
-                        PdfUtility.PDF_TO_IMAGES -> if (targetUri == null) {
-                            launchSaf { zipPicker.launch(imageArchiveName) }
-                        } else viewModel.exportImages(source.id, pages, imageFormat, requireNotNull(targetUri), password)
-                        else -> Unit
-                    }
-                }
-            },
+            onAction = toolAdAction.onClick,
+            showsVideo = toolAdAction.showsVideo,
+            actionInProgress = toolAdAction.inProgress,
             onRetry = viewModel::retryDocuments,
             onOpenDocument = onOpenDocument,
         )
@@ -337,13 +508,10 @@ fun PdfUtilityRoute(
                                     label = { Text(if (format == PdfImageFormat.JPEG) "JPG" else "PNG") }, enabled = !state.busy)
                             }
                         }
-                        if (targetUri != null) Text(stringResource(R.string.utility_destination_ready), style = MaterialTheme.typography.bodySmall)
-                        Button(onClick = {
-                            if (targetUri == null) launchSaf { zipPicker.launch(imageArchiveName) }
-                            else selected?.let { viewModel.exportImages(it.id, pages, imageFormat, requireNotNull(targetUri), password) }
-                        }, enabled = !state.busy && selected != null &&
-                            (targetUri == null || selected.isProtected != true || password.isNotEmpty()), modifier = Modifier.fillMaxWidth()) {
-                            Text(stringResource(if (targetUri == null) R.string.utility_choose_destination else R.string.utility_export_action))
+                        Button(onClick = ::chooseZipDestination,
+                            enabled = !state.busy && selected != null &&
+                                (selected.isProtected != true || password.isNotEmpty()), modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.utility_export_action))
                         }
                     }
                 }

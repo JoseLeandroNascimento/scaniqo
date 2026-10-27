@@ -1,47 +1,56 @@
 package com.joseleandro.scaniqo.ui.toolsHub
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.PdfUtility
-import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.ads.ToolsBannerAd
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentSourceStep
 import com.joseleandro.scaniqo.ui.documentCommon.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
@@ -75,17 +84,48 @@ fun ToolsHubScreen(
     onBack: () -> Unit,
     onImport: () -> Unit,
     onMerge: () -> Unit,
-    onSign: () -> Unit,
+    onSignDocument: (Long) -> Unit,
+    onImportForSign: () -> Unit,
     onUtility: (PdfUtility) -> Unit,
     onEdit: (Long, DocumentTool?) -> Unit,
     onImportForEditor: (DocumentTool?) -> Unit,
     onRetryDocuments: () -> Unit,
     snackbarHost: @Composable () -> Unit = {},
+    banner: @Composable () -> Unit = {},
 ) {
-    var selectedEditor by rememberSaveable { mutableStateOf<CatalogTool?>(null) }
+    var selectedSource by rememberSaveable { mutableStateOf<CatalogTool?>(null) }
+    var isSearching by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     var group by rememberSaveable { mutableStateOf(ToolGroup.ALL) }
+    val gridState = rememberLazyGridState()
     val focus = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
+    val searchFocus = remember { FocusRequester() }
+    var requestSearchFocus by remember { mutableStateOf(false) }
+    var previousFilter by remember { mutableStateOf(query to group) }
+    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    LaunchedEffect(isSearching, requestSearchFocus, selectedSource) {
+        if (isSearching && requestSearchFocus && selectedSource == null) {
+            searchFocus.requestFocus()
+            keyboard?.show()
+            requestSearchFocus = false
+        }
+    }
+    LaunchedEffect(query, group) {
+        val filter = query to group
+        if (previousFilter != filter) {
+            gridState.scrollToItem(0)
+            previousFilter = filter
+        }
+    }
+    fun closeSearch() {
+        focus.clearFocus()
+        keyboard?.hide()
+        query = ""
+        isSearching = false
+        requestSearchFocus = false
+    }
+    val searchLabel = stringResource(R.string.tool_catalog_search)
     val labels = CatalogTool.entries.associateWith { stringResource(it.title) to stringResource(it.hint) }
     val visible = CatalogTool.entries.filter {
         (group == ToolGroup.ALL || group == it.group) &&
@@ -95,90 +135,173 @@ fun ToolsHubScreen(
     fun open(tool: CatalogTool) {
         if (!enabled) return
         focus.clearFocus()
+        keyboard?.hide()
         when (tool) {
             CatalogTool.IMPORT -> onImport()
             CatalogTool.MERGE -> onMerge()
             CatalogTool.EXTRACT -> onUtility(PdfUtility.EXTRACT_PAGES)
             CatalogTool.PDF_IMAGES -> onUtility(PdfUtility.PDF_TO_IMAGES)
             CatalogTool.COMPRESS -> onUtility(PdfUtility.COMPRESS_PDF)
-            CatalogTool.SIGN -> onSign()
-            else -> selectedEditor = tool
+            CatalogTool.EDITOR, CatalogTool.SIGN, CatalogTool.FILL_PAGE -> selectedSource = tool
         }
+    }
+    BackHandler(enabled = (selectedSource != null && enabled) ||
+        (selectedSource == null && isSearching && !imeVisible)) {
+        if (selectedSource != null) selectedSource = null else closeSearch()
     }
     Scaffold(
         snackbarHost = snackbarHost,
+        bottomBar = {
+            if (selectedSource == null && !isSearching && enabled) banner()
+        },
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.tool_catalog_title)) },
-                navigationIcon = { IconButton(onClick = onBack, enabled = enabled) {
-                    Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.tools_hub_back))
-                } },
+                title = {
+                    AnimatedContent(
+                        targetState = selectedSource == null && isSearching,
+                        transitionSpec = { fadeIn(tween(150)) togetherWith fadeOut(tween(90)) },
+                        label = "Tool catalog search",
+                    ) { searching ->
+                        if (searching) {
+                            TextField(
+                                value = query,
+                                onValueChange = { query = it },
+                                modifier = Modifier.fillMaxWidth().focusRequester(searchFocus)
+                                    .semantics { contentDescription = searchLabel },
+                                placeholder = {
+                                    Text(stringResource(R.string.tool_catalog_search),
+                                        maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                                    textDirection = TextDirection.ContentOrLtr,
+                                ),
+                                singleLine = true,
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                ),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(onSearch = {
+                                    focus.clearFocus()
+                                    keyboard?.hide()
+                                }),
+                            )
+                        } else {
+                            Text(stringResource(selectedSource?.title ?: R.string.tool_catalog_title))
+                        }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            when {
+                                selectedSource != null -> selectedSource = null
+                                isSearching -> closeSearch()
+                                else -> onBack()
+                            }
+                        },
+                        enabled = enabled,
+                    ) {
+                        Icon(painterResource(R.drawable.arrow_back_24px),
+                            stringResource(R.string.tools_hub_back))
+                    }
+                },
+                actions = {
+                    if (selectedSource == null) {
+                        if (isSearching) {
+                            if (query.isNotEmpty()) {
+                                IconButton(onClick = {
+                                    query = ""
+                                    searchFocus.requestFocus()
+                                    keyboard?.show()
+                                }) {
+                                    Icon(painterResource(R.drawable.ic_toast_close),
+                                        stringResource(R.string.tool_catalog_clear))
+                                }
+                            }
+                        } else {
+                            IconButton(onClick = {
+                                isSearching = true
+                                requestSearchFocus = true
+                            }, enabled = enabled) {
+                                Icon(painterResource(R.drawable.ic_document_search),
+                                    stringResource(R.string.tool_catalog_search))
+                            }
+                        }
+                    }
+                },
             )
         },
     ) { padding ->
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(if (LocalDensity.current.fontScale > 1.3f) 230.dp else 154.dp),
-            modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text(stringResource(R.string.tool_catalog_heading), Modifier.padding(top = 12.dp).semantics { heading() },
-                        style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
-                    OutlinedTextField(
-                        value = query, onValueChange = { query = it }, modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text(stringResource(R.string.tool_catalog_search), maxLines = 1, overflow = TextOverflow.Ellipsis) }, singleLine = true,
-                        shape = MaterialTheme.shapes.extraLarge,
-                        leadingIcon = { Icon(painterResource(R.drawable.ic_document_search), null) },
-                        trailingIcon = { if (query.isNotEmpty()) IconButton(onClick = { query = "" }) {
-                            Icon(painterResource(R.drawable.ic_toast_close), stringResource(R.string.tool_catalog_clear))
-                        } },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(onSearch = { focus.clearFocus() }),
-                    )
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(ToolGroup.entries, key = { it.name }) { option ->
-                            FilterChip(selected = group == option, onClick = { group = option; focus.clearFocus() },
-                                label = { Text(stringResource(option.label)) })
+        val source = selectedSource
+        if (source != null) {
+            DocumentSourceStep(
+                toolTitle = stringResource(source.title),
+                documents = documents.documents,
+                isLoading = documents.isLoading,
+                loadError = documents.loadError,
+                enabled = enabled,
+                onSelectDocument = { document ->
+                    if (enabled && selectedSource == source) {
+                        when (source) {
+                            CatalogTool.EDITOR -> onEdit(document.id, null)
+                            CatalogTool.FILL_PAGE -> onEdit(document.id, DocumentTool.FORMS)
+                            CatalogTool.SIGN -> onSignDocument(document.id)
+                            else -> Unit
+                        }
+                    }
+                },
+                onPickDevice = {
+                    if (enabled && selectedSource == source) {
+                        when (source) {
+                            CatalogTool.EDITOR -> onImportForEditor(null)
+                            CatalogTool.FILL_PAGE -> onImportForEditor(DocumentTool.FORMS)
+                            CatalogTool.SIGN -> onImportForSign()
+                            else -> Unit
+                        }
+                    }
+                },
+                onRetryDocuments = onRetryDocuments,
+                modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+            )
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(if (LocalDensity.current.fontScale > 1.3f) 230.dp else 154.dp),
+                state = gridState,
+                modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Text(stringResource(R.string.tool_catalog_heading), Modifier.padding(top = 12.dp).semantics { heading() },
+                            style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(ToolGroup.entries, key = { it.name }) { option ->
+                                FilterChip(selected = group == option, onClick = { group = option; focus.clearFocus(); keyboard?.hide() },
+                                    label = { Text(stringResource(option.label)) })
+                            }
                         }
                     }
                 }
-            }
-            if (visible.isEmpty()) item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
-                ScaniqoEmptyState(
-                    title = stringResource(R.string.tool_catalog_empty),
-                    description = stringResource(R.string.tool_catalog_empty_hint),
-                    iconRes = R.drawable.ic_document_search,
-                    actionLabel = stringResource(R.string.tool_catalog_reset),
-                    onAction = { query = ""; group = ToolGroup.ALL },
-                )
-            }
-            items(visible, key = { it.name }) { tool ->
-                ToolTile(tool, labels.getValue(tool).first, labels.getValue(tool).second, enabled) { open(tool) }
+                if (visible.isEmpty()) item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
+                    ScaniqoEmptyState(
+                        title = stringResource(R.string.tool_catalog_empty),
+                        description = stringResource(R.string.tool_catalog_empty_hint),
+                        iconRes = R.drawable.ic_document_search,
+                        actionLabel = stringResource(if (group == ToolGroup.ALL)
+                            R.string.tool_catalog_clear else R.string.tool_catalog_reset),
+                        onAction = { query = ""; if (group != ToolGroup.ALL) group = ToolGroup.ALL },
+                    )
+                }
+                items(visible, key = { it.name }) { tool ->
+                    ToolTile(tool, labels.getValue(tool).first, labels.getValue(tool).second, enabled) { open(tool) }
+                }
             }
         }
-    }
-    selectedEditor?.let { selected ->
-        EditorDocumentPicker(
-            documents = documents,
-            actionTitle = stringResource(R.string.tool_catalog_choose_for, stringResource(selected.title)),
-            enabled = enabled,
-            onDismiss = { selectedEditor = null },
-            onRetry = onRetryDocuments,
-            onImport = {
-                selectedEditor = null
-                onImportForEditor(if (selected == CatalogTool.FILL_PAGE) DocumentTool.FORMS else null)
-            },
-            onSelect = { id ->
-                selectedEditor = null
-                onEdit(id, when (selected) {
-                    CatalogTool.FILL_PAGE -> DocumentTool.FORMS
-                    else -> null
-                })
-            },
-        )
     }
 }
 
@@ -193,79 +316,17 @@ private fun ToolTile(tool: CatalogTool, title: String, hint: String, enabled: Bo
         onClick = onClick, enabled = enabled, interactionSource = interactions,
         modifier = Modifier.fillMaxWidth().graphicsLayer { scaleX = scale; scaleY = scale },
         shape = MaterialTheme.shapes.extraLarge,
-        color = lerp(MaterialTheme.colorScheme.surface, accent, if (dark) .07f else .045f),
-        border = BorderStroke(1.dp, accent.copy(alpha = .16f)),
+        color = if (dark) lerp(MaterialTheme.colorScheme.surface, accent, .07f)
+            else lerp(MaterialTheme.colorScheme.surfaceContainerLow, accent, .045f),
+        border = BorderStroke(1.dp, if (dark) accent.copy(alpha = .16f)
+            else lerp(MaterialTheme.colorScheme.outlineVariant, accent, .2f)),
     ) {
-        Column(Modifier.heightIn(min = 184.dp).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(Modifier.heightIn(min = 148.dp).padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Surface(shape = MaterialTheme.shapes.medium, color = accent.copy(alpha = .13f)) {
-                Icon(painterResource(tool.icon), null, Modifier.padding(12.dp).size(26.dp), tint = accent)
+                Icon(painterResource(tool.icon), null, Modifier.padding(10.dp).size(24.dp), tint = accent)
             }
             Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
             Text(hint, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun EditorDocumentPicker(
-    documents: DocumentsUiState,
-    actionTitle: String,
-    enabled: Boolean,
-    onDismiss: () -> Unit,
-    onRetry: () -> Unit,
-    onImport: () -> Unit,
-    onSelect: (Long) -> Unit,
-) {
-    var query by rememberSaveable { mutableStateOf("") }
-    val visible = documents.documents.filter { it.name.contains(query.trim(), ignoreCase = true) }
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    ) {
-        Column(
-            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(actionTitle, style = MaterialTheme.typography.titleLarge)
-            Text(stringResource(R.string.tools_hub_choose_hint), style = MaterialTheme.typography.bodyMedium)
-            OutlinedButton(onClick = onImport, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
-                Icon(painterResource(R.drawable.ic_document_import), null, Modifier.padding(end = 8.dp).size(20.dp))
-                Text(stringResource(R.string.utility_workspace_import_device))
-            }
-            OutlinedTextField(
-                query, { query = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,
-                label = { Text(stringResource(R.string.tools_hub_search)) },
-            )
-            LazyColumn(Modifier.fillMaxWidth().heightIn(max = 440.dp)) {
-                when {
-                    documents.isLoading -> item { CircularProgressIndicator(Modifier.padding(20.dp)) }
-                    documents.loadError -> item {
-                        Text(stringResource(R.string.documents_error_title))
-                        TextButton(onClick = onRetry) { Text(stringResource(R.string.documents_retry)) }
-                    }
-                    visible.isEmpty() -> item {
-                        Text(stringResource(if (documents.documents.isEmpty()) R.string.tools_hub_empty else R.string.quick_sign_no_results),
-                            modifier = Modifier.padding(vertical = 16.dp))
-                    }
-                    else -> items(visible, key = { it.id }) { document ->
-                        Surface(onClick = { onSelect(document.id) }, enabled = enabled) {
-                            Row(
-                                Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                DocumentThumbnail(document, Modifier.width(40.dp).aspectRatio(1f / 1.4142f).clip(MaterialTheme.shapes.extraSmall))
-                                Column(Modifier.weight(1f)) {
-                                    Text(document.name, maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleSmall)
-                                    Text(pluralStringResource(R.plurals.document_page_count, document.pageCount, document.pageCount),
-                                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
@@ -274,9 +335,56 @@ private fun EditorDocumentPicker(
 @Preview(name = "Ferramentas claro", widthDp = 390, heightDp = 844, locale = "pt-rBR")
 @Preview(name = "Ferramentas escuro", widthDp = 390, heightDp = 844, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Ferramentas fonte ampliada", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 1.5f)
+@Preview(name = "Ferramentas fonte muito ampliada", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 2f)
 @Composable
 private fun ToolsHubPreview() {
     ScaniqoTheme {
-        ToolsHubScreen(DocumentsUiState(isLoading = false), true, {}, {}, {}, {}, {}, { _, _ -> }, {}, {})
+        ToolsHubScreen(
+            documents = DocumentsUiState(isLoading = false),
+            enabled = true,
+            onBack = {},
+            onImport = {},
+            onMerge = {},
+            onSignDocument = {},
+            onImportForSign = {},
+            onUtility = {},
+            onEdit = { _, _ -> },
+            onImportForEditor = {},
+            onRetryDocuments = {},
+            banner = { ToolsBannerAd() },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(name = "Assinar — escolher origem", widthDp = 390, heightDp = 844, locale = "pt-rBR")
+@Preview(name = "Assinar — texto ampliado", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 1.5f)
+@Composable
+private fun ToolsHubSourcePreview() {
+    ScaniqoTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.quick_tools_sign)) },
+                    navigationIcon = {
+                        IconButton(onClick = {}) {
+                            Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.tools_hub_back))
+                        }
+                    },
+                )
+            },
+        ) { padding ->
+            DocumentSourceStep(
+                toolTitle = stringResource(R.string.quick_tools_sign),
+                documents = emptyList(),
+                isLoading = false,
+                loadError = false,
+                enabled = true,
+                onSelectDocument = {},
+                onPickDevice = {},
+                onRetryDocuments = {},
+                modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+            )
+        }
     }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v4_tool_text">Texte</string>
+    <string name="fill_v4_tool_mark">Marque</string>
+    <string name="fill_v4_mark_check">Coche</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">Ajouter du texte</string>
+    <string name="fill_v4_add_mark">Ajouter une marque</string>
+    <string name="fill_v4_edit_text">Modifier le texte</string>
+    <string name="fill_v4_edit_mark">Modifier la marque</string>
+    <string name="fill_v4_size">Taille</string>
+    <string name="fill_v4_color">Couleur</string>
+    <string name="fill_v4_format">Format</string>
+    <string name="fill_v4_bold">Gras</string>
+    <string name="fill_v4_italic">Italique</string>
+    <string name="fill_v4_underline">Souligné</string>
+    <string name="fill_v4_duplicate">Dupliquer</string>
+    <string name="fill_v4_delete">Supprimer</string>
+    <string name="fill_v4_collapse">Réduire</string>
+    <string name="fill_v4_more_actions">Actions</string>
+    <string name="fill_v4_stop_inserting">Arrêter</string>
+    <string name="fill_v4_page_hint_neutral">Touchez un élément pour le modifier. Choisissez Texte ou Marque pour ajouter un élément.</string>
+    <string name="fill_v4_page_hint_insert_text">Touchez la page pour ajouter du texte.</string>
+    <string name="fill_v4_page_hint_insert_mark">Touchez la page pour ajouter une marque.</string>
+    <string name="fill_v4_page_hint_insert_check">Touchez la page pour ajouter une coche.</string>
+    <string name="fill_v4_page_hint_insert_cross">Touchez la page pour ajouter un X.</string>
+    <string name="fill_v4_page_hint_selected">Faites glisser cet élément pour le déplacer. Utilisez la poignée pour le redimensionner.</string>
+    <string name="fill_v4_selection_resize">Redimensionner cet élément</string>
+    <string name="fill_v4_updating_page">Mise à jour de la page…</string>
+</resources>

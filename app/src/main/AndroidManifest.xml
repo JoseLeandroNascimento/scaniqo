@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:localeConfig="@xml/locales_config"
         android:theme="@style/Theme.Scaniqo">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
         <!-- Compartilha somente cópias temporárias, com permissão de leitura por URI. -->
         <provider
             android:name=".core.files.ScaniqoFileProvider"

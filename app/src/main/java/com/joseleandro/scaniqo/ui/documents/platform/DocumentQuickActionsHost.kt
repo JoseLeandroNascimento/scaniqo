@@ -3,10 +3,10 @@ package com.joseleandro.scaniqo.ui.documents.platform
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -17,10 +17,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
 import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -37,6 +42,7 @@ import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentMergeIllustration
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentMerge.DocumentQuickMergeViewModel
 import com.joseleandro.scaniqo.ui.documents.components.DocumentSignaturePicker
@@ -46,7 +52,6 @@ import com.joseleandro.scaniqo.ui.security.PasswordUnlockHandler
 @Composable
 fun DocumentQuickActionsHost(
     showSignaturePicker: Boolean,
-    onMergeCompleted: () -> Unit,
     onDismissSignaturePicker: () -> Unit,
     documents: List<DocumentModel>,
     isLoading: Boolean,
@@ -59,15 +64,31 @@ fun DocumentQuickActionsHost(
     vault: PasswordVault,
 ) {
     val state by mergeViewModel.uiState.collectAsStateWithLifecycle()
+    val actionsState by actionsViewModel.uiState.collectAsStateWithLifecycle()
     val latestState by rememberUpdatedState(state)
-    val onCompleted by rememberUpdatedState(onMergeCompleted)
     val lifecycleOwner = LocalLifecycleOwner.current
     val mergedName = stringResource(R.string.quick_merge_name)
-    LaunchedEffect(state.pending?.pdfUri) {
+    var deliveredOperationId by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(
+        state.pending?.pdfUri,
+        actionsState.isBusy,
+        actionsState.editor == null,
+        actionsState.pendingDeletion == null,
+    ) {
         state.pending?.let { scan ->
-            actionsViewModel.onDocumentAction(DocumentActionEvent.ImportPrepared(scan, mergedName))
-            mergeViewModel.completeDelivery(scan.pdfUri)
-            onCompleted()
+            val operationId = "merge:${scan.pdfUri}"
+            if (actionsViewModel.acceptGeneratedDraft(operationId, scan, mergedName, null)) {
+                deliveredOperationId = operationId
+                mergeViewModel.completeDelivery(scan.pdfUri)
+            }
+        }
+    }
+    LaunchedEffect(actionsState.generatedResult, deliveredOperationId) {
+        val result = actionsState.generatedResult ?: return@LaunchedEffect
+        if (result.operationId == deliveredOperationId) {
+            actionsViewModel.acknowledgeGeneratedResult(result.operationId)
+            deliveredOperationId = null
+            mergeViewModel.finishGenerated(result.operationId, result.documentId)
         }
     }
     LaunchedEffect(mergeViewModel, lifecycleOwner) {
@@ -101,13 +122,20 @@ fun DocumentQuickActionsHost(
         var password by remember(prompt?.uri, prompt?.incorrect) { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = mergeViewModel::cancel,
-            title = { Text(stringResource(R.string.quick_merge_title)) },
+            title = {
+                Text(stringResource(if (state.isWorking) R.string.merge_motion_working else R.string.quick_merge_title))
+            },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     when {
                         state.isWorking -> {
-                            CircularProgressIndicator()
-                            Text(stringResource(R.string.quick_merge_working))
+                            DocumentMergeIllustration(
+                                selectedCount = 2,
+                                isWorking = true,
+                                modifier = Modifier.size(width = 200.dp, height = 110.dp)
+                                    .align(Alignment.CenterHorizontally)
+                                    .semantics { progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate },
+                            )
                         }
                         prompt != null -> {
                             val documentName = if (prompt.name == "PDF selecionado") {

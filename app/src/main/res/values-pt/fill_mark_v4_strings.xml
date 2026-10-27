@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v4_tool_text">Texto</string>
+    <string name="fill_v4_tool_mark">Marcação</string>
+    <string name="fill_v4_mark_check">Check</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">Adicionar texto</string>
+    <string name="fill_v4_add_mark">Adicionar marca</string>
+    <string name="fill_v4_edit_text">Editar texto</string>
+    <string name="fill_v4_edit_mark">Editar marca</string>
+    <string name="fill_v4_size">Tamanho</string>
+    <string name="fill_v4_color">Cor</string>
+    <string name="fill_v4_format">Formato</string>
+    <string name="fill_v4_bold">Negrito</string>
+    <string name="fill_v4_italic">Itálico</string>
+    <string name="fill_v4_underline">Sublinhado</string>
+    <string name="fill_v4_duplicate">Duplicar</string>
+    <string name="fill_v4_delete">Excluir</string>
+    <string name="fill_v4_collapse">Recolher</string>
+    <string name="fill_v4_more_actions">Ações</string>
+    <string name="fill_v4_stop_inserting">Parar</string>
+    <string name="fill_v4_page_hint_neutral">Toque em um elemento para editar. Escolha Texto ou Marcação para adicionar.</string>
+    <string name="fill_v4_page_hint_insert_text">Toque na página para adicionar texto.</string>
+    <string name="fill_v4_page_hint_insert_mark">Toque na página para adicionar uma marca.</string>
+    <string name="fill_v4_page_hint_insert_check">Toque na página para inserir um Check.</string>
+    <string name="fill_v4_page_hint_insert_cross">Toque na página para inserir um X.</string>
+    <string name="fill_v4_page_hint_selected">Arraste o elemento para mover. Use a alça para redimensionar.</string>
+    <string name="fill_v4_selection_resize">Redimensionar elemento</string>
+    <string name="fill_v4_updating_page">Atualizando página…</string>
+</resources>

@@ -16,6 +16,7 @@ sealed interface DocumentActionEvent {
     data class NameChanged(val name: String) : DocumentActionEvent
     data class TagChanged(val tagId: Long?) : DocumentActionEvent
     data object SaveDocument : DocumentActionEvent
+    data class SaveImportedDocument(val pdfUri: String, val adUnavailable: Boolean = false) : DocumentActionEvent
     data object DismissEditor : DocumentActionEvent
     data class RequestDelete(val document: DocumentModel) : DocumentActionEvent
     data object ConfirmDelete : DocumentActionEvent

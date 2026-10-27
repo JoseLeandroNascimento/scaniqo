@@ -45,4 +45,7 @@
     <string name="signature_edit_placed">Edit signature %1$d</string>
     <string name="signature_loading">Preparing page…</string>
     <string name="signature_retry">Try again</string>
+    <string name="signature_finish_tool">Done</string>
+    <string name="signature_place_hint">Tap where you want to sign.</string>
+    <string name="signature_place_center">Place in center</string>
 </resources>

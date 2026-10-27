@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">Couleurs récentes</string>
+    <string name="fill_mark_palette_colors">Couleurs</string>
+    <string name="fill_mark_recent_color">Couleur récente %1$d</string>
+    <string name="fill_mark_manual_size">Taille de police en points (6–72)</string>
+    <string name="fill_mark_apply_size">Appliquer la taille</string>
+    <string name="fill_mark_green">Vert</string>
+    <string name="fill_mark_purple">Violet</string>
+    <string name="fill_mark_gray">Gris</string>
+    <string name="fill_mark_white">Blanc</string>
+    <string name="fill_mark_mark_size">Taille de la marque</string>
+    <string name="fill_mark_mark_smaller">Réduire la marque</string>
+    <string name="fill_mark_mark_larger">Agrandir la marque</string>
+</resources>

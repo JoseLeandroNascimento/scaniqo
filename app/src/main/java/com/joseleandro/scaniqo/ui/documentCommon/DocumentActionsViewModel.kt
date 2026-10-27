@@ -3,6 +3,9 @@ package com.joseleandro.scaniqo.ui.documentCommon
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy
+import com.joseleandro.scaniqo.core.ads.ToolAdPermit
 import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
@@ -15,7 +18,9 @@ import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMetadataUiState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentNameError
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentCreationResult
+import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentGeneratedResult
 import java.util.Date
+import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -35,6 +40,7 @@ class DocumentActionsViewModel(
     private val defaultDocumentName: (Long) -> String = { createdAt ->
         "Document " + java.text.DateFormat.getDateTimeInstance().format(Date(createdAt))
     },
+    private val adAccess: ToolAdAccessPolicy? = null,
 ) : ViewModel() {
     private var pendingDownloadId: Long? = savedStateHandle[PENDING_DOWNLOAD_ID]
     private var pendingDefaultTagId: Long? = savedStateHandle[PENDING_DEFAULT_TAG_ID]
@@ -44,6 +50,9 @@ class DocumentActionsViewModel(
                 DocumentCreationResult(id, savedStateHandle[CREATED_DOCUMENT_TAG_ID])
             },
             isScanning = savedStateHandle[IS_SCANNING] ?: false,
+            generatedResult = savedStateHandle.get<String>(GENERATED_RESULT_OPERATION)?.let { operationId ->
+                DocumentGeneratedResult(operationId, savedStateHandle[GENERATED_RESULT_DOCUMENT_ID])
+            },
             editor = restoreEditor(),
             busyDocumentId = pendingDownloadId,
         ),
@@ -56,6 +65,7 @@ class DocumentActionsViewModel(
 
     private var observationJob: Job? = null
     private var tagsLoaded = false
+    private var importPermit: ToolAdPermit? = null
 
     init {
         observeTags()
@@ -68,6 +78,47 @@ class DocumentActionsViewModel(
     fun acknowledgeCreation(documentId: Long) {
         updateState {
             if (it.pendingCreation?.documentId == documentId) it.copy(pendingCreation = null)
+            else it
+        }
+    }
+
+    /** A transferência é síncrona: depois de true, apenas este ViewModel possui o arquivo temporário. */
+    fun acceptGeneratedDraft(
+        operationId: String,
+        scan: ScannedDocument,
+        suggestedName: String,
+        suggestedTagId: Long?,
+    ): Boolean {
+        require(operationId.isNotBlank())
+        val current = uiState.value
+        if (current.editor?.draft?.pdfUri == scan.pdfUri &&
+            current.editor.generatedOperationId == operationId) return true
+        // Uma reentrega tardia não deve reabrir o formulário após salvar ou descartar.
+        if (current.generatedResult?.operationId == operationId) return true
+        val preparedMerge = operationId.startsWith("merge:") && current.isPreparingScan
+        if (!canStartAction() && !(preparedMerge && current.editor == null &&
+                current.pendingDeletion == null && !current.isDeleting &&
+                current.busyDocumentId == null && !current.isScanning)) return false
+        val defaultTag = if (preparedMerge) pendingDefaultTagId else suggestedTagId
+        if (preparedMerge) pendingDefaultTagId = null
+        updateState {
+            it.copy(
+                isPreparingScan = false,
+                editor = DocumentMetadataUiState(
+                    draft = scan,
+                    generatedOperationId = operationId,
+                    name = suggestedName.take(DOCUMENT_NAME_MAX_LENGTH),
+                    tagId = validTagId(defaultTag),
+                ),
+                message = null,
+            )
+        }
+        return true
+    }
+
+    fun acknowledgeGeneratedResult(operationId: String) {
+        updateState {
+            if (it.generatedResult?.operationId == operationId) it.copy(generatedResult = null)
             else it
         }
     }
@@ -91,6 +142,7 @@ class DocumentActionsViewModel(
                         isPreparingScan = false,
                         editor = DocumentMetadataUiState(
                             draft = event.scan,
+                            requiresImportAd = true,
                             name = event.name.take(DOCUMENT_NAME_MAX_LENGTH),
                             tagId = defaultTagId,
                         ),
@@ -112,6 +164,12 @@ class DocumentActionsViewModel(
                 it.copy(tagId = validTagId(event.tagId), saveError = false)
             }
             DocumentActionEvent.SaveDocument -> saveDocument()
+            is DocumentActionEvent.SaveImportedDocument -> {
+                val editor = uiState.value.editor
+                if (editor?.requiresImportAd == true && editor.draft?.pdfUri == event.pdfUri) {
+                    saveDocument(event.adUnavailable)
+                }
+            }
             DocumentActionEvent.DismissEditor -> dismissEditor()
             is DocumentActionEvent.RequestDelete -> {
                 if (canStartAction()) {
@@ -240,7 +298,7 @@ class DocumentActionsViewModel(
         updateState { state -> state.copy(editor = state.editor?.let(update)) }
     }
 
-    private fun saveDocument() {
+    private fun saveDocument(adUnavailable: Boolean = false) {
         val editor = uiState.value.editor ?: return
         if (isBusy()) return
         // Uma tag só pode ser persistida após validar a seleção com o catálogo disponível.
@@ -258,6 +316,12 @@ class DocumentActionsViewModel(
             return
         }
 
+        val permit = if (editor.requiresImportAd && editor.documentId == null && adAccess != null) {
+            adAccess.acquire(RewardedTool.IMPORT_PDF, UUID.randomUUID().toString(), adUnavailable)
+                ?: return
+        } else null
+        importPermit = permit
+
         // Marca a operação antes de lançar a coroutine para impedir salvamentos duplicados.
         updateState {
             it.copy(
@@ -265,7 +329,10 @@ class DocumentActionsViewModel(
                 message = null,
             )
         }
-        viewModelScope.launch {
+        var started = false
+        val saveJob = viewModelScope.launch {
+            started = true
+            var saved = false
             try {
                 val createdId = if (editor.documentId != null) {
                     repository.update(editor.documentId, name, editor.tagId)
@@ -273,12 +340,16 @@ class DocumentActionsViewModel(
                 } else {
                     repository.create(checkNotNull(editor.draft), name, editor.tagId)
                 }
+                saved = true
                 updateState {
                     it.copy(
                         editor = null,
                         pendingCreation = createdId?.let { id ->
                             DocumentCreationResult(id, editor.tagId)
                         } ?: it.pendingCreation,
+                        generatedResult = if (createdId != null && editor.generatedOperationId != null) {
+                            DocumentGeneratedResult(editor.generatedOperationId, createdId)
+                        } else it.generatedResult,
                         message = if (editor.documentId == null) {
                             DocumentMessage.SAVED
                         } else {
@@ -291,9 +362,19 @@ class DocumentActionsViewModel(
             } catch (_: Exception) {
                 updateState { it.copy(editor = it.editor?.copy(saveError = true)) }
             } finally {
+                finishImportPermit(permit, saved)
                 updateState { it.copy(editor = it.editor?.copy(isSaving = false)) }
             }
         }
+        saveJob.invokeOnCompletion {
+            if (!started) finishImportPermit(permit, success = false)
+        }
+    }
+
+    private fun finishImportPermit(permit: ToolAdPermit?, success: Boolean) {
+        if (permit == null || importPermit !== permit) return
+        importPermit = null
+        adAccess?.finish(permit, success)
     }
 
     private fun dismissEditor() {
@@ -309,7 +390,14 @@ class DocumentActionsViewModel(
         viewModelScope.launch {
             try {
                 repository.discardScan(draft)
-                updateState { it.copy(editor = null) }
+                updateState {
+                    it.copy(
+                        editor = null,
+                        generatedResult = editor.generatedOperationId?.let { operationId ->
+                            DocumentGeneratedResult(operationId, null)
+                        } ?: it.generatedResult,
+                    )
+                }
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {
@@ -417,12 +505,16 @@ class DocumentActionsViewModel(
         savedStateHandle[PENDING_DEFAULT_TAG_ID] = pendingDefaultTagId
         savedStateHandle[CREATED_DOCUMENT_ID] = state.pendingCreation?.documentId
         savedStateHandle[CREATED_DOCUMENT_TAG_ID] = state.pendingCreation?.tagId
+        savedStateHandle[GENERATED_RESULT_OPERATION] = state.generatedResult?.operationId
+        savedStateHandle[GENERATED_RESULT_DOCUMENT_ID] = state.generatedResult?.documentId
         savedStateHandle[IS_SCANNING] = state.isScanning
         savedStateHandle[PENDING_DOWNLOAD_ID] = pendingDownloadId
         savedStateHandle[HAS_EDITOR] = editor != null
         savedStateHandle[EDITOR_ID] = editor?.documentId
         savedStateHandle[EDITOR_NAME] = editor?.name
         savedStateHandle[EDITOR_TAG_ID] = editor?.tagId
+        savedStateHandle[EDITOR_GENERATED_OPERATION_ID] = editor?.generatedOperationId
+        savedStateHandle[EDITOR_REQUIRES_IMPORT_AD] = editor?.requiresImportAd
         savedStateHandle[DRAFT_PDF_URI] = draft?.pdfUri
         savedStateHandle[DRAFT_PAGE_COUNT] = draft?.pageCount
         savedStateHandle[DRAFT_CREATED_AT] = draft?.createdAt
@@ -448,12 +540,15 @@ class DocumentActionsViewModel(
         return DocumentMetadataUiState(
             documentId = id,
             draft = draft,
+            generatedOperationId = savedStateHandle[EDITOR_GENERATED_OPERATION_ID],
+            requiresImportAd = savedStateHandle[EDITOR_REQUIRES_IMPORT_AD] ?: false,
             name = savedStateHandle[EDITOR_NAME] ?: "",
             tagId = savedStateHandle[EDITOR_TAG_ID],
         )
     }
 
     override fun onCleared() {
+        finishImportPermit(importPermit, success = false)
         effectChannel.close()
         super.onCleared()
     }
@@ -462,12 +557,16 @@ class DocumentActionsViewModel(
         const val PENDING_DEFAULT_TAG_ID = "documents.pendingDefaultTagId"
         const val CREATED_DOCUMENT_ID = "documents.createdDocumentId"
         const val CREATED_DOCUMENT_TAG_ID = "documents.createdDocumentTagId"
+        const val GENERATED_RESULT_OPERATION = "documents.generatedResult.operationId"
+        const val GENERATED_RESULT_DOCUMENT_ID = "documents.generatedResult.documentId"
         const val IS_SCANNING = "documents.isScanning"
         const val PENDING_DOWNLOAD_ID = "documents.pendingDownloadId"
         const val HAS_EDITOR = "documents.editor.present"
         const val EDITOR_ID = "documents.editor.id"
         const val EDITOR_NAME = "documents.editor.name"
         const val EDITOR_TAG_ID = "documents.editor.tagId"
+        const val EDITOR_GENERATED_OPERATION_ID = "documents.editor.generatedOperationId"
+        const val EDITOR_REQUIRES_IMPORT_AD = "documents.editor.requiresImportAd"
         const val DRAFT_PDF_URI = "documents.draft.pdfUri"
         const val DRAFT_PAGE_COUNT = "documents.draft.pageCount"
         const val DRAFT_CREATED_AT = "documents.draft.createdAt"

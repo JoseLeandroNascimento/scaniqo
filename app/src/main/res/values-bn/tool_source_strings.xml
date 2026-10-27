@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_source_title">আপনার PDF বেছে নিন</string>
+    <string name="tool_source_subtitle">যে ফাইলটি ব্যবহার করতে চান সেটি কোথায়?</string>
+    <string name="tool_source_app_hint">Scaniqo-তে সংরক্ষিত PDF</string>
+    <string name="tool_source_device_hint">PDF ফাইল খুঁজুন</string>
+    <string name="tool_source_library_empty">এখানে এখনও কোনো PDF সংরক্ষিত নেই।</string>
+    <string name="tool_source_resume">সেটিংসে ফিরুন</string>
+</resources>

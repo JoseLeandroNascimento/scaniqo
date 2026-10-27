@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="overlay_crossmark">ক্রস</string>
+    <string name="fill_mark_bold">গাঢ়</string>
+    <string name="fill_mark_italic">তির্যক</string>
+    <string name="fill_mark_underline_text">লেখার নিচে দাগ</string>
+    <string name="fill_mark_confirm_element">উপাদান নিশ্চিত করুন</string>
+    <string name="fill_mark_tap_to_cross">পিডিএফে ট্যাপ করে X যোগ করুন।</string>
+    <string name="signature_finish_tool">সম্পন্ন</string>
+    <string name="signature_place_hint">যেখানে স্বাক্ষর করতে চান সেখানে ট্যাপ করুন।</string>
+    <string name="signature_place_center">মাঝখানে রাখুন</string>
+</resources>

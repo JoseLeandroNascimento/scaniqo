@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_source_title">Escolha seu PDF</string>
+    <string name="tool_source_subtitle">Onde está o arquivo que você quer usar?</string>
+    <string name="tool_source_app_hint">PDFs salvos no Scaniqo</string>
+    <string name="tool_source_device_hint">Procurar arquivos PDF</string>
+    <string name="tool_source_library_empty">Ainda não há PDFs salvos aqui.</string>
+    <string name="tool_source_resume">Retomar ajustes</string>
+</resources>

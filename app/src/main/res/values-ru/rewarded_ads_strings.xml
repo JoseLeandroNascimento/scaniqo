@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">Открыть сильное сжатие</string>
+    <string name="strong_compression_reward_body">Посмотрите видео, чтобы открыть одно использование для этого документа.</string>
+    <string name="strong_compression_reward_quality_note">Может снизить чёткость и не гарантирует уменьшения файла.</string>
+    <string name="strong_compression_reward_retry_note">При ошибке или если PDF не стал меньше повторите попытку без нового видео.</string>
+    <string name="strong_compression_watch_action">Смотреть и открыть</string>
+    <string name="strong_compression_loading">Подготовка видео…</string>
+    <string name="strong_compression_showing">Видео воспроизводится…</string>
+    <string name="strong_compression_continue_without_ad">Продолжить без рекламы</string>
+    <string name="strong_compression_use_balanced">Использовать сбалансированное</string>
+    <string name="strong_compression_close">Закрыть</string>
+    <string name="strong_compression_first_free">Первое использование бесплатно</string>
+    <string name="strong_compression_available">Использование открыто для документа</string>
+    <string name="strong_compression_video_hint">Посмотрите видео, чтобы открыть одно использование для этого документа.</string>
+    <string name="strong_compression_password_again">Подтвердите пароль PDF, чтобы продолжить.</string>
+    <string name="strong_compression_unavailable_note">Видео недоступно. В этот раз можно продолжить без рекламы.</string>
+    <string name="tool_ad_watch_apply">Смотреть и применить</string>
+    <string name="tool_ad_watch_save">Смотреть и сохранить</string>
+    <string name="tool_ad_watch_export">Смотреть и экспортировать</string>
+    <string name="tool_ad_reward_hint">Посмотрите рекламу, чтобы открыть эту операцию.</string>
+    <string name="tool_ad_first_use_free">Первое использование бесплатно</string>
+    <string name="tool_ad_unlocked">Операция открыта</string>
+</resources>

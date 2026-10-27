@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -43,6 +45,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.core.security.SecureWindow
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentMergeIllustration
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentMergeUiState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
@@ -85,8 +88,15 @@ internal fun DocumentMergeDialogs(state: DocumentToolsUiState, onEvent: (Documen
     } else if (state.merge is DocumentMergeUiState.Merging) {
         AlertDialog(
             onDismissRequest = { onEvent(DocumentToolsEvent.CancelPdfMerge) },
-            icon = { CircularProgressIndicator(Modifier.size(28.dp)) },
-            title = { Text(stringResource(R.string.merge_tools_progress_title)) },
+            icon = {
+                DocumentMergeIllustration(
+                    selectedCount = 2,
+                    isWorking = true,
+                    modifier = Modifier.size(width = 200.dp, height = 110.dp)
+                        .semantics { progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate },
+                )
+            },
+            title = { Text(stringResource(R.string.merge_motion_working)) },
             text = { Text(stringResource(R.string.merge_tools_progress_body)) },
             confirmButton = {
                 TextButton(onClick = { onEvent(DocumentToolsEvent.CancelPdfMerge) }) {
@@ -177,6 +187,17 @@ private fun MergePasswordDialog(
         },
         properties = DialogProperties(securePolicy = SecureFlagPolicy.SecureOn),
     )
+}
+
+@Preview(name = "Mesclando PDFs", widthDp = 390, heightDp = 760)
+@Composable
+private fun DocumentMergeProgressDialogPreview() {
+    ScaniqoTheme {
+        DocumentMergeDialogs(
+            state = DocumentToolsUiState(merge = DocumentMergeUiState.Merging),
+            onEvent = {},
+        )
+    }
 }
 
 @Preview(name = "Senha para mesclar", widthDp = 390, heightDp = 760)

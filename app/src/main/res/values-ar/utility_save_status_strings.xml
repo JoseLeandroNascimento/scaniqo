@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_output_ready_to_save">ملف PDF جاهز للحفظ</string>
+    <string name="utility_output_finish_in_sheet">اختر اسمًا ووسمًا للحفظ</string>
+    <string name="utility_zip_password_again">أدخل كلمة مرور ملف PDF هذا مرة أخرى قبل التصدير.</string>
+</resources>

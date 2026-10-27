@@ -1,0 +1,22 @@
+<resources>
+    <string name="compression_hero_ready">आपका PDF, अब हल्का</string>
+    <string name="compression_hero_busy">PDF कंप्रेस हो रहा है</string>
+    <string name="compression_hero_complete">PDF कंप्रेस हो गया</string>
+    <string name="compression_no_gain">इस बार आकार नहीं घटा</string>
+    <string name="compression_no_gain_detail">आकार में कमी फ़ाइल के कॉन्टेंट पर निर्भर करती है।</string>
+    <string name="compression_saved">%1$d%% छोटा</string>
+    <string name="compression_original_kept">मूल फ़ाइल रखी जाएगी</string>
+    <string name="compression_from_device">डिवाइस से</string>
+    <string name="compression_from_library">आपकी लाइब्रेरी से</string>
+    <string name="compression_level">कंप्रेशन</string>
+    <string name="compression_balanced">संतुलित</string>
+    <string name="compression_balanced_detail">बेहतर इमेज क्वालिटी</string>
+    <string name="compression_strong">कॉम्पैक्ट</string>
+    <string name="compression_strong_detail">कम इमेज क्वालिटी</string>
+    <string name="compression_rename">कॉपी का नाम</string>
+    <string name="compression_action">PDF कंप्रेस करें</string>
+    <string name="compression_choose_another">दूसरा PDF कंप्रेस करें</string>
+    <string name="compression_size_before">पहले</string>
+    <string name="compression_size_after">बाद में</string>
+    <string name="compression_saved_small" formatted="false">1% से कम छोटा</string>
+</resources>

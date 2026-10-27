@@ -241,6 +241,35 @@ class GoogleDriveBackupRemote internal constructor(
         }
     }
 
+    override suspend fun delete(accessToken: String, entry: DriveBackupEntry) = withContext(Dispatchers.IO) {
+        validateToken(accessToken)
+        val id = checkedId(entry.id)
+        // A retenção só move arquivos próprios e reconhecidos, após preservar a versão atual.
+        // 404 também pode significar acesso revogado: não confirma uma exclusão.
+        val metadata = jsonRequest(
+            accessToken, endpoint("files/" + id, "fields" to "id,mimeType,appProperties,ownedByMe,trashed"),
+        )
+        val properties = metadata["appProperties"] as? JsonObject
+        if (metadata["id"] != JsonPrimitive(id) || metadata.string("mimeType") != "application/zip" ||
+            metadata["ownedByMe"] != JsonPrimitive(true) ||
+            properties?.string("kind") != "scaniqo-backup" ||
+            properties["version"] !in listOf(JsonPrimitive("1"), JsonPrimitive("2"))
+        ) throw DriveBackupException.Remote()
+        when (metadata["trashed"]) {
+            JsonPrimitive(true) -> return@withContext
+            JsonPrimitive(false) -> Unit
+            else -> throw DriveBackupException.Remote()
+        }
+
+        val body = buildJsonObject { put("trashed", true) }.toString().toByteArray(Charsets.UTF_8)
+        val result = jsonRequest(
+            accessToken, endpoint("files/" + id, "fields" to "id,trashed"), "PATCH", body,
+        )
+        if (result.string("id") != id || result["trashed"] != JsonPrimitive(true)) {
+            throw DriveBackupException.Remote()
+        }
+    }
+
     private suspend fun ensureFolder(token: String): String = folderMutex.withLock {
         val existing = listFiles(
             token, "trashed = false and mimeType = 'application/vnd.google-apps.folder' and " +

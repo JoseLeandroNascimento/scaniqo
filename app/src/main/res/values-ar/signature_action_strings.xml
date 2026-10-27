@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_actions">إجراءات التوقيع</string>
+    <string name="signature_replace">استبدال التوقيع</string>
+    <string name="signature_duplicate">تكرار</string>
+    <string name="signature_delete_selected">حذف التوقيع</string>
+    <string name="signature_choose_overlap">اختر توقيعًا</string>
+    <string name="signature_page_elements">التوقيعات في هذه الصفحة: %1$d</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">最近使用的颜色</string>
+    <string name="fill_mark_palette_colors">颜色</string>
+    <string name="fill_mark_recent_color">最近使用的颜色 %1$d</string>
+    <string name="fill_mark_manual_size">字体大小（点，6–72）</string>
+    <string name="fill_mark_apply_size">应用大小</string>
+    <string name="fill_mark_green">绿色</string>
+    <string name="fill_mark_purple">紫色</string>
+    <string name="fill_mark_gray">灰色</string>
+    <string name="fill_mark_white">白色</string>
+    <string name="fill_mark_mark_size">标记大小</string>
+    <string name="fill_mark_mark_smaller">缩小标记</string>
+    <string name="fill_mark_mark_larger">放大标记</string>
+</resources>

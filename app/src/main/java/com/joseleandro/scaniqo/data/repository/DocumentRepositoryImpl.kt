@@ -117,8 +117,10 @@ class DocumentRepositoryImpl(
             require(scan.pageCount > 0 && scan.pdfUri.isNotBlank()) {
                 "O documento editado é inválido."
             }
-            require(allowProtectionRemoval || stored.protectionKeyId == null ||
-                scan.protectionKeyId != null) {
+            require(
+                allowProtectionRemoval || stored.protectionKeyId == null ||
+                        scan.protectionKeyId != null
+            ) {
                 "A edição não pode remover a proteção do documento."
             }
             val replacement = stored.copy(

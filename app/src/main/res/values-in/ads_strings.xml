@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ads_label">Iklan</string>
+    <string name="ads_preview_label">Pratinjau banner</string>
+    <string name="ads_privacy_options">Privasi iklan</string>
+    <string name="ads_privacy_error">Tidak dapat membuka opsi privasi. Coba lagi.</string>
+</resources>

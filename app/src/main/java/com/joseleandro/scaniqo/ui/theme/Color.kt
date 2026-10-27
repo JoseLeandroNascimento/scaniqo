@@ -97,15 +97,15 @@ internal object ScaniqoPalette {
      * All colors are neutral and contain
      * no warm beige or brown undertones.
      */
-    val PaperLow = Color(0xFFFAFBFC)
+    val PaperLow = Color(0xFFE9EDF2)
 
-    val PaperContainer = Color(0xFFF4F6F8)
+    val PaperContainer = Color(0xFFE5E9EF)
 
-    val PaperHigh = Color(0xFFEDF0F3)
+    val PaperHigh = Color(0xFFE0E6ED)
 
-    val PaperHighest = Color(0xFFE6EAEE)
+    val PaperHighest = Color(0xFFDCE3EB)
 
-    val PaperDim = Color(0xFFE8EBEF)
+    val PaperDim = Color(0xFFDCE3EB)
 
 
     // ============================================================
@@ -173,13 +173,13 @@ internal object ScaniqoPalette {
      * - Subtle component borders
      */
 
-    val NeutralVariant30 = Color(0xFF535D68)
+    val NeutralVariant30 = Color(0xFF465360)
 
-    val NeutralVariant50 = Color(0xFF89939E)
+    val NeutralVariant50 = Color(0xFF6E7B89)
 
     val NeutralVariant60 = Color(0xFF8D97A3)
 
-    val NeutralVariant80 = Color(0xFFDCE1E6)
+    val NeutralVariant80 = Color(0xFFB2BFCD)
 
-    val NeutralVariant90 = Color(0xFFF1F3F5)
+    val NeutralVariant90 = Color(0xFFDCE3EB)
 }

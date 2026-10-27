@@ -1,18 +1,35 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.spring
+import androidx.compose.material3.Button
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.text.style.TextDirection
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPageJumpDialog
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,11 +46,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -51,7 +65,6 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -89,10 +102,20 @@ internal fun DocumentPagesSheetContent(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
     modifier: Modifier = Modifier,
+    initialMode: PageReorderMode = PageReorderMode.DRAG,
 ) {
     val workspace = state.workspace ?: return
     val pageIds = remember(workspace.pages) { workspace.pages.map { it.id } }
     val listState = rememberLazyListState()
+    var mode by rememberSaveable(workspace.workspaceId) { mutableStateOf(initialMode) }
+    var numberingExpanded by rememberSaveable(workspace.workspaceId) { mutableStateOf(false) }
+    var showPageJump by rememberSaveable(workspace.workspaceId) { mutableStateOf(false) }
+    var pendingMove by remember(workspace.workspaceId) { mutableStateOf<Pair<String, Int>?>(null) }
+    var moveMessage by remember(workspace.workspaceId) { mutableStateOf<Int?>(null) }
+    var moveMessageWorkspace by remember(workspace.workspaceId) { mutableStateOf<PdfWorkspace?>(null) }
+    val currentWorkspace by rememberUpdatedState(workspace)
+    val visibleMoveMessage = moveMessage.takeIf { moveMessageWorkspace == workspace && state.canUndo }
+    val coroutineScope = rememberCoroutineScope()
     var drag by remember(workspace.workspaceId) { mutableStateOf<PageReorderDrag?>(null) }
     val currentEvent by rememberUpdatedState(onEvent)
     val currentCanEdit by rememberUpdatedState(state.canEdit)
@@ -116,6 +139,22 @@ internal fun DocumentPagesSheetContent(
         drag = updated
     }
 
+    LaunchedEffect(pageIds, pendingMove) {
+        pendingMove?.let { (id, target) ->
+            if (pageIds.indexOf(id) == target) {
+                moveMessage = target
+                moveMessageWorkspace = workspace
+                pendingMove = null
+                listState.animateScrollToItem(target + PageListHeader.entries.size)
+            }
+        }
+    }
+    LaunchedEffect(workspace) {
+        if (moveMessageWorkspace != null && moveMessageWorkspace != workspace) {
+            moveMessage = null
+            moveMessageWorkspace = null
+        }
+    }
     LaunchedEffect(pageIds, state.canEdit) {
         if (!state.canEdit || drag?.initialOrder?.let { it != pageIds } == true) updateDrag(null)
     }
@@ -143,7 +182,7 @@ internal fun DocumentPagesSheetContent(
     }
 
     fun startDrag(pageId: String) {
-        if (!currentCanEdit || drag != null || currentPageIds.size < 2) return
+        if (!currentCanEdit || mode != PageReorderMode.DRAG || drag != null || currentPageIds.size < 2) return
         val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == pageId } ?: return
         drag = PageReorderDrag(currentPageIds, pageId, item.offset + item.size / 2f, item.size)
     }
@@ -153,6 +192,7 @@ internal fun DocumentPagesSheetContent(
         val committed = finished.committedOrder()
         if (currentCanEdit && finished.initialOrder == currentPageIds && committed != null) {
             drag = null
+            pendingMove = finished.itemId to committed.indexOf(finished.itemId)
             currentEvent(DocumentToolsEvent.ReorderPages(committed))
         } else {
             updateDrag(null)
@@ -164,9 +204,9 @@ internal fun DocumentPagesSheetContent(
         modifier
             .fillMaxSize()
             .clipToBounds()
-            .pointerInput(workspace.workspaceId, state.canEdit, pageIds.size > 1) {
+            .pointerInput(workspace.workspaceId, state.canEdit, pageIds.size > 1, mode) {
                 // O detector fica no pai estável: reciclar um item não interrompe o gesto.
-                if (state.canEdit && pageIds.size > 1) detectDragGesturesAfterLongPress(
+                if (state.canEdit && pageIds.size > 1 && mode == PageReorderMode.DRAG) detectDragGesturesAfterLongPress(
                     onDragStart = { pointer ->
                         listState.layoutInfo.visibleItemsInfo.firstOrNull { item ->
                             pointer.y >= item.offset && pointer.y < item.offset + item.size
@@ -188,138 +228,124 @@ internal fun DocumentPagesSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .selectableGroup(),
-            contentPadding = PaddingValues(top = 4.dp, bottom = 12.dp),
+            contentPadding = PaddingValues(top = 4.dp, bottom = if (visibleMoveMessage != null) 84.dp else 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             userScrollEnabled = drag == null,
         ) {
-            // Chaves próprias mantêm os cabeçalhos fora dos cálculos de reordenação das páginas.
-            item(key = PageListHeader.NUMBERING, contentType = PageListHeader.NUMBERING) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                ) {
-
-                    ListItem(
-                        modifier = Modifier.height(intrinsicSize = IntrinsicSize.Min),
-                        colors = ListItemDefaults.colors(
-                            containerColor = Color.Transparent
-                        ),
-                        headlineContent = {
-                            Text(
-                                stringResource(R.string.pages_numbering),
-                                style = MaterialTheme.typography.titleSmall,
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                modifier = Modifier.padding(top = 12.dp),
-                                text = stringResource(R.string.pages_numbering_global_hint),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        },
-                        trailingContent = {
-                            Column(
+            item(key = PageListHeader.CONTROLS, contentType = PageListHeader.CONTROLS) {
+                Column(Modifier.fillMaxWidth().animateContentSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+                        PageReorderMode.entries.forEachIndexed { index, option ->
+                            SegmentedButton(
                                 modifier = Modifier.fillMaxHeight(),
-                                verticalArrangement = Arrangement.Center
+                                selected = mode == option,
+                                onClick = { updateDrag(null); mode = option },
+                                enabled = state.canEdit,
+                                shape = SegmentedButtonDefaults.itemShape(index, PageReorderMode.entries.size),
                             ) {
-                                Switch(
-                                    checked = workspace.showPageNumbers,
-                                    onCheckedChange = { onEvent(DocumentToolsEvent.SetNumbering(it)) },
-                                    enabled = controlsEnabled,
-                                )
+                                Text(stringResource(if (option == PageReorderMode.DRAG)
+                                    R.string.pages_v2_drag_mode else R.string.pages_v2_direct_mode))
                             }
                         }
-                    )
-                }
-            }
-            item(key = PageListHeader.MOVE, contentType = PageListHeader.MOVE) {
-                Column(Modifier.padding(bottom = 16.dp)) {
-                    DirectPageMove(
-                        pageIds = pageIds,
-                        selectedPageId = state.selectedPageId,
-                        enabled = controlsEnabled && pageIds.size > 1,
-                        onMove = { id, index -> onEvent(DocumentToolsEvent.MovePageTo(id, index)) },
-                    )
-                }
-            }
-            item(key = PageListHeader.ORDER, contentType = PageListHeader.ORDER) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 56.dp)
-                        .padding(bottom = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            pluralStringResource(
-                                R.plurals.document_page_count,
-                                pageIds.size,
-                                pageIds.size
-                            ),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            stringResource(if (pageIds.size == 1) R.string.pages_one_page else R.string.pages_drag_hint),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    }
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        TextButton(onClick = { numberingExpanded = !numberingExpanded }, enabled = controlsEnabled) {
+                            Text(stringResource(R.string.pages_v2_numbering))
+                        }
+                        Spacer(Modifier.weight(1f))
+                        if (pageIds.size > 12) TextButton(onClick = { showPageJump = true }, enabled = controlsEnabled) {
+                            Text(stringResource(R.string.pages_v2_go_to_page))
+                        }
+                    }
+                    AnimatedVisibility(numberingExpanded) {
+                        Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                            Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Text(stringResource(R.string.pages_numbering), Modifier.weight(1f),
+                                    style = MaterialTheme.typography.bodyMedium)
+                                Switch(checked = workspace.showPageNumbers,
+                                    onCheckedChange = {
+                                        moveMessage = null
+                                        moveMessageWorkspace = null
+                                        onEvent(DocumentToolsEvent.SetNumbering(it))
+                                    },
+                                    enabled = controlsEnabled)
+                            }
+                        }
+                    }
+                    if (mode == PageReorderMode.DIRECT) {
+                        DirectPageMove(
+                            pageIds = pageIds, selectedPageId = state.selectedPageId,
+                            enabled = controlsEnabled && pageIds.size > 1,
+                            thumbnail = {
+                                val selected = state.selectedPageId?.takeIf { it in pageIds } ?: pageIds.first()
+                                DocumentWorkspaceThumbnail(state, selected, onEvent, Modifier.fillMaxSize())
+                            },
+                            onMove = { id, index ->
+                                pendingMove = id to index
+                                onEvent(DocumentToolsEvent.SelectPage(id))
+                                onEvent(DocumentToolsEvent.MovePageTo(id, index))
+                            },
                         )
                     }
-                    // O espaço reservado mantém a altura estável durante o arraste.
-                    if (drag != null) {
-                        IconButton(
-                            onClick = { updateDrag(null) },
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.ic_toast_close),
-                                stringResource(R.string.pages_drag_cancel)
-                            )
+                    Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(pluralStringResource(R.plurals.document_page_count, pageIds.size, pageIds.size),
+                                style = MaterialTheme.typography.titleSmall)
+                            if (mode == PageReorderMode.DRAG) Text(
+                                stringResource(if (pageIds.size == 1) R.string.pages_one_page else R.string.pages_drag_hint),
+                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                    } else {
-                        Spacer(Modifier.size(48.dp))
+                        if (drag != null) IconButton(onClick = { updateDrag(null) }) {
+                            Icon(painterResource(R.drawable.ic_toast_close), stringResource(R.string.pages_drag_cancel))
+                        }
                     }
                 }
             }
             itemsIndexed(order, key = { _, id -> id }) { index, id ->
                 val isDragged = drag?.itemId == id
+                val moveUp = stringResource(R.string.pages_move_up)
+                val moveDown = stringResource(R.string.pages_move_down)
+                val moveTo = stringResource(R.string.pages_v2_direct_mode)
+                val delete = stringResource(R.string.tools_delete_page, index + 1)
+                val actions = if (!controlsEnabled) emptyList() else buildList {
+                    if (index > 0) add(CustomAccessibilityAction(moveUp) {
+                        onEvent(DocumentToolsEvent.MovePageTo(id, index - 1)); true
+                    })
+                    if (index < order.lastIndex) add(CustomAccessibilityAction(moveDown) {
+                        onEvent(DocumentToolsEvent.MovePageTo(id, index + 1)); true
+                    })
+                    add(CustomAccessibilityAction(moveTo) {
+                        mode = PageReorderMode.DIRECT
+                        onEvent(DocumentToolsEvent.SelectPage(id))
+                        coroutineScope.launch { listState.animateScrollToItem(0) }
+                        true
+                    })
+                    if (pageIds.size > 1) add(CustomAccessibilityAction(delete) {
+                        onEvent(DocumentToolsEvent.RequestDeletePage(id)); true
+                    })
+                }
                 PageOrderRow(
                     position = index + 1,
                     selected = id == state.selectedPageId,
-                    thumbnail = {
-                        DocumentWorkspaceThumbnail(
-                            state,
-                            id,
-                            onEvent,
-                            Modifier.fillMaxSize()
-                        )
-                    },
+                    thumbnail = { DocumentWorkspaceThumbnail(state, id, onEvent, Modifier.fillMaxSize()) },
                     enabled = controlsEnabled,
                     canDelete = pageIds.size > 1,
-                    onSelect = { onEvent(DocumentToolsEvent.SelectPage(id)) },
+                    onSelect = {
+                        onEvent(DocumentToolsEvent.SelectPage(id))
+                        if (mode == PageReorderMode.DIRECT) coroutineScope.launch { listState.animateScrollToItem(0) }
+                    },
                     onDelete = { onEvent(DocumentToolsEvent.RequestDeletePage(id)) },
-                    modifier = Modifier.graphicsLayer { alpha = if (isDragged) 0f else 1f },
+                    modifier = Modifier.animateItem(
+                        fadeInSpec = null, fadeOutSpec = null,
+                        placementSpec = spring(dampingRatio = 1f, stiffness = 500f),
+                    ).graphicsLayer { alpha = if (isDragged) 0f else 1f }
+                        .semantics { customActions = actions },
                     dragHandle = {
-                        val moveUp = stringResource(R.string.pages_move_up)
-                        val moveDown = stringResource(R.string.pages_move_down)
-                        val actions = if (!controlsEnabled) emptyList() else buildList {
-                            if (index > 0) add(CustomAccessibilityAction(moveUp) {
-                                onEvent(DocumentToolsEvent.MovePageTo(id, index - 1)); true
-                            })
-                            if (index < order.lastIndex) add(CustomAccessibilityAction(moveDown) {
-                                onEvent(DocumentToolsEvent.MovePageTo(id, index + 1)); true
-                            })
-                        }
-                        PageDragHandle(
-                            position = index + 1,
-                            enabled = state.canEdit && pageIds.size > 1,
-                            accessibilityActions = actions,
-                        )
+                        if (mode == PageReorderMode.DRAG) PageDragHandle(
+                            position = index + 1, enabled = state.canEdit && pageIds.size > 1,
+                            accessibilityActions = emptyList(),
+                        ) else Spacer(Modifier.width(8.dp))
                     },
                 )
             }
@@ -344,6 +370,7 @@ internal fun DocumentPagesSheetContent(
                 modifier = Modifier
                     .offset { IntOffset(0, (moving.centerY - moving.height / 2f).roundToInt()) }
                     .height(with(density) { moving.height.toDp() })
+                    .graphicsLayer { scaleX = 1.02f; scaleY = 1.02f }
                     .clearAndSetSemantics {},
                 floating = true,
                 dragHandle = {
@@ -353,10 +380,37 @@ internal fun DocumentPagesSheetContent(
                 },
             )
         }
+        if (visibleMoveMessage != null && drag == null) Surface(
+            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(8.dp),
+            shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.secondaryContainer,
+            shadowElevation = 4.dp,
+        ) {
+            Row(Modifier.padding(start = 12.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.pages_v2_moved, visibleMoveMessage + 1),
+                    Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+                    style = MaterialTheme.typography.bodySmall)
+                TextButton(onClick = {
+                    val canUndoMove = moveMessageWorkspace == currentWorkspace
+                    moveMessage = null
+                    moveMessageWorkspace = null
+                    if (canUndoMove) onEvent(DocumentToolsEvent.Undo)
+                }, enabled = controlsEnabled && state.canUndo) {
+                    Text(stringResource(R.string.viewer_undo_description))
+                }
+                IconButton(onClick = { moveMessage = null; moveMessageWorkspace = null }) {
+                    Icon(painterResource(R.drawable.ic_toast_close), stringResource(R.string.preview_zoom_close))
+                }
+            }
+        }
     }
+    if (showPageJump) DocumentPageJumpDialog(
+        pageCount = pageIds.size, onDismiss = { showPageJump = false },
+        onPage = { index -> coroutineScope.launch { listState.animateScrollToItem(index + PageListHeader.entries.size) } },
+    )
 }
 
-private enum class PageListHeader { NUMBERING, MOVE, ORDER }
+private enum class PageListHeader { CONTROLS }
+internal enum class PageReorderMode { DRAG, DIRECT }
 
 private fun LazyListState.pageBounds(): List<PageDragBounds> =
     layoutInfo.visibleItemsInfo.mapNotNull { item ->
@@ -368,93 +422,65 @@ private fun DirectPageMove(
     pageIds: List<String>,
     selectedPageId: String?,
     enabled: Boolean,
+    thumbnail: @Composable () -> Unit,
     onMove: (String, Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    var from by rememberSaveable(pageIds, selectedPageId) {
-        mutableStateOf((pageIds.indexOf(selectedPageId).coerceAtLeast(0) + 1).toString())
-    }
-    var to by rememberSaveable(pageIds, selectedPageId) { mutableStateOf("") }
-    val fromIndex = from.toIntOrNull()?.minus(1)
-    val toIndex = to.toIntOrNull()?.minus(1)
-    val fromValid = fromIndex != null && fromIndex in pageIds.indices
-    val toValid = toIndex != null && toIndex in pageIds.indices
-    val canMove = enabled && fromValid && toValid && fromIndex != toIndex
+    val selectedIndex = pageIds.indexOf(selectedPageId).coerceAtLeast(0)
+    val selectedId = pageIds.getOrNull(selectedIndex) ?: return
+    var to by rememberSaveable(selectedId) { mutableStateOf("") }
+    val target = to.map { Character.digit(it, 10) }.joinToString("").toIntOrNull()?.minus(1)
+    val valid = target != null && target in pageIds.indices
+    val samePosition = valid && target == selectedIndex
+    val canMove = enabled && valid && !samePosition
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
     fun move() {
         if (!canMove) return
         keyboard?.hide()
         focus.clearFocus()
-        onMove(pageIds[requireNotNull(fromIndex)], requireNotNull(toIndex))
+        onMove(selectedId, requireNotNull(target))
+        to = ""
     }
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            stringResource(R.string.pages_move_title),
-            style = MaterialTheme.typography.titleMedium
-        )
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            OutlinedTextField(
-                value = from,
-                onValueChange = { value ->
-                    if (value.length <= 3 && value.all(Char::isDigit)) from = value
-                },
-                enabled = enabled,
-                modifier = Modifier
-                    .weight(1f)
-                    .heightIn(min = 56.dp),
-                singleLine = true,
-                label = { Text(stringResource(R.string.pages_move_from)) },
-                isError = from.isNotEmpty() && !fromValid,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
-                ),
-            )
+    Surface(modifier, shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerLow) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Surface(Modifier.width(44.dp).aspectRatio(595f / 842f),
+                    shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.surface) { thumbnail() }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(stringResource(R.string.pages_v2_selected_position, selectedIndex + 1),
+                        style = MaterialTheme.typography.titleSmall)
+                    if (valid && !samePosition) Text("${selectedIndex + 1} → ${requireNotNull(target) + 1}",
+                        style = MaterialTheme.typography.headlineSmall.copy(textDirection = TextDirection.Ltr),
+                        color = MaterialTheme.colorScheme.primary)
+                }
+            }
             OutlinedTextField(
                 value = to,
                 onValueChange = { value ->
-                    if (value.length <= 3 && value.all(Char::isDigit)) to = value
+                    if (value.length <= pageIds.size.toString().length && value.all { Character.digit(it, 10) >= 0 }) to = value
                 },
-                enabled = enabled,
-                modifier = Modifier
-                    .weight(1f)
-                    .heightIn(min = 56.dp),
-                singleLine = true,
-                label = { Text(stringResource(R.string.pages_move_to)) },
-                isError = to.isNotEmpty() && !toValid,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
+                enabled = enabled, modifier = Modifier.fillMaxWidth(), singleLine = true,
+                label = { Text(stringResource(R.string.pages_v2_final_position)) },
+                isError = to.isNotBlank() && !valid,
+                supportingText = {
+                    Text(if (samePosition) stringResource(R.string.pages_v2_same_position)
+                        else stringResource(R.string.pages_v2_range_bounds, pageIds.size))
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { move() }),
             )
-            FilledIconButton(
-                onClick = { move() },
-                enabled = canMove,
-                modifier = Modifier.size(48.dp)
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back_24px),
-                    stringResource(R.string.pages_move_action),
-                    modifier = Modifier.graphicsLayer { rotationZ = 180f },
-                )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(selected = target == 0, onClick = { to = "1" }, enabled = enabled,
+                    label = { Text(stringResource(R.string.pages_v2_start)) })
+                FilterChip(selected = target == pageIds.lastIndex, onClick = { to = pageIds.size.toString() }, enabled = enabled,
+                    label = { Text(stringResource(R.string.pages_v2_end)) })
+            }
+            Button(onClick = ::move, enabled = canMove, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                Text(if (valid) stringResource(R.string.pages_v2_move_to, requireNotNull(target) + 1)
+                    else stringResource(R.string.pages_move_action))
             }
         }
-        val invalidRange = (from.isNotEmpty() && !fromValid) || (to.isNotEmpty() && !toValid)
-        val samePosition = fromValid && toValid && fromIndex == toIndex
-        Text(
-            when {
-                invalidRange -> stringResource(R.string.pages_move_range, pageIds.size)
-                samePosition -> stringResource(R.string.pages_move_same)
-                else -> stringResource(R.string.pages_move_hint)
-            },
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (invalidRange || samePosition) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 
@@ -538,14 +564,20 @@ private fun PageOrderRow(
                     style = MaterialTheme.typography.labelMedium
                 )
             }
-            IconButton(onClick = onDelete, enabled = enabled && canDelete) {
-                Icon(
-                    painterResource(R.drawable.delete_24px),
-                    stringResource(R.string.tools_delete_page, position),
-                    tint = if (enabled && canDelete) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = .38f
-                    ),
-                )
+            var showMenu by remember { mutableStateOf(false) }
+            Box {
+                IconButton(onClick = { showMenu = true }, enabled = enabled) {
+                    Icon(painterResource(R.drawable.more_vert_24px),
+                        stringResource(R.string.pages_v2_options, position))
+                }
+                DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.tools_delete_page, position)) },
+                        leadingIcon = { Icon(painterResource(R.drawable.delete_24px), null) },
+                        enabled = enabled && canDelete,
+                        onClick = { showMenu = false; onDelete() },
+                    )
+                }
             }
         }
     }
@@ -560,7 +592,15 @@ private fun PageOrderRow(
 )
 @Preview(name = "Páginas fonte ampliada", widthDp = 360, heightDp = 800, fontScale = 1.3f)
 @Composable
-private fun DocumentPagesSheetPreview() {
+private fun DocumentPagesSheetPreview() = DocumentPagesPreviewContent(PageReorderMode.DRAG)
+
+@Preview(name = "Mover para posição", widthDp = 390, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Mover compacto", widthDp = 320, heightDp = 740, locale = "pt-rBR", fontScale = 1.5f)
+@Composable
+private fun DocumentPagesDirectPreview() = DocumentPagesPreviewContent(PageReorderMode.DIRECT)
+
+@Composable
+private fun DocumentPagesPreviewContent(mode: PageReorderMode) {
     ScaniqoTheme {
         Surface {
             Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -579,6 +619,7 @@ private fun DocumentPagesSheetPreview() {
                         previewUri = "preview.pdf",
                     ),
                     onEvent = {},
+                    initialMode = mode,
                 )
             }
         }

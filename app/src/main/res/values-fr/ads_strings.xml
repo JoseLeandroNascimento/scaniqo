@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ads_label">Annonce</string>
+    <string name="ads_preview_label">Aperçu de la bannière</string>
+    <string name="ads_privacy_options">Confidentialité des annonces</string>
+    <string name="ads_privacy_error">Impossible d’ouvrir les options de confidentialité. Réessayez.</string>
+</resources>

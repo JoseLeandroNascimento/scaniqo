@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">Antes</string>
+    <string name="layout_v3_after">Depois</string>
+    <string name="layout_v3_compare">Comparar</string>
+    <string name="layout_v3_align">Alinhar</string>
+    <string name="layout_v3_align_target">Alinhar: %1$s, %2$s</string>
+    <string name="layout_v3_no_both_travel">Não há espaço para mover na horizontal nem na vertical.</string>
+    <string name="layout_v3_no_horizontal_travel">Não há espaço para mover na horizontal.</string>
+    <string name="layout_v3_no_vertical_travel">Não há espaço para mover na vertical.</string>
+    <string name="layout_v3_reduce_size">Reduzir tamanho</string>
+    <string name="layout_v3_hide_precise">Ocultar posição precisa</string>
+    <string name="layout_v3_precise">Posição precisa</string>
+    <string name="layout_v3_nudge">Mover para %1$s</string>
+    <string name="layout_v3_center">Centralizar conteúdo</string>
+    <string name="layout_v3_custom_size">Personalizado · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">Os enquadramentos usam escala de 100%.</string>
+    <string name="layout_v3_scale">Escala</string>
+    <string name="layout_v3_decrease_scale" formatted="false">Reduzir escala em 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">Aumentar escala em 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">Digite um valor entre 25% e 200%.</string>
+    <string name="layout_v3_without_margin">Sem margem</string>
+    <string name="layout_v3_with_margin_description">Conteúdo inteiro dentro da margem da página</string>
+    <string name="layout_v3_without_margin_description">Conteúdo inteiro na área disponível da página</string>
+    <string name="layout_v3_restore_category">Restaurar este ajuste</string>
+    <string name="layout_v3_more">Mais opções</string>
+    <string name="layout_v3_discard_session">Descartar todos os ajustes desta sessão</string>
+</resources>

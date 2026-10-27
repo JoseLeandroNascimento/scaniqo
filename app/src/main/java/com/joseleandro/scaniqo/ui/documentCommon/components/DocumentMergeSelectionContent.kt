@@ -1,28 +1,36 @@
 package com.joseleandro.scaniqo.ui.documentCommon.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,21 +40,29 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.DocumentModel
+import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentDragBounds
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentReorderDrag
@@ -57,7 +73,7 @@ import com.joseleandro.scaniqo.ui.documentCommon.util.moveDocumentOrder
 import kotlin.math.roundToInt
 import kotlinx.coroutines.isActive
 
-private enum class MergeSelectionHeader { SEARCH, ORDER, EMPTY, LIBRARY, LIBRARY_EMPTY }
+private enum class MergeSelectionHeader { HERO, SOURCES, ORDER }
 
 /** Seleção e ordem são compartilhadas pela criação de PDFs e pela mesclagem no editor. */
 @Composable
@@ -72,18 +88,19 @@ fun DocumentMergeSelectionContent(
     modifier: Modifier = Modifier,
     onPickFiles: () -> Unit,
     onConfirm: (List<DocumentMergeItem>) -> Unit,
+    actionShowsVideo: Boolean = false,
 ) {
-    var query by rememberSaveable(currentDocumentId) { mutableStateOf("") }
+    var showLibrary by rememberSaveable(currentDocumentId) { mutableStateOf(false) }
+    var sourceMenu by remember { mutableStateOf(false) }
     val available = documents.filter { it.id != currentDocumentId }.distinctBy { it.id }
     val selected = selection.resolve(available)
     val selectedByKey = selected.associateBy { it.key }
     val selectedKeys = selected.map { it.key }
     val selectedIds = selected.mapNotNull { it.documentId }.toSet()
-    val unselected = available.filterNot { it.id in selectedIds }
-    val matches = unselected.filter { it.name.contains(query.trim(), ignoreCase = true) }
     val listState = rememberLazyListState()
     val focus = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
+    val haptics = LocalHapticFeedback.current
     val density = LocalDensity.current
     val edgeSize = with(density) { 56.dp.toPx() }
     val maxScrollSpeed = with(density) { 720.dp.toPx() }
@@ -138,167 +155,269 @@ fun DocumentMergeSelectionContent(
         }
     }
 
-    Column(
-        modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .clipToBounds()
-                .pointerInput(selection, enabled, selectedKeys.size > 1) {
-                    if (enabled && selectedKeys.size > 1) detectDragGesturesAfterLongPress(
-                        onDragStart = { pointer ->
-                            val item = listState.layoutInfo.visibleItemsInfo.firstOrNull {
-                                it.key in latestKeys && pointer.y >= it.offset && pointer.y < it.offset + it.size
-                            }
-                            if (item != null && latestEnabled) {
-                                focus.clearFocus()
-                                keyboard?.hide()
-                                drag = DocumentReorderDrag(
-                                    latestKeys,
-                                    item.key as String,
-                                    item.offset + item.size / 2f,
-                                    item.size,
-                                )
-                            }
-                        },
-                        onDragEnd = { finishDrag() },
-                        onDragCancel = { updateDrag(null) },
-                        onDrag = { change, amount ->
-                            if (drag != null) {
-                                change.consume()
-                                updateDrag(drag?.moveBy(amount.y, listState.mergeBounds(latestKeys)))
-                            }
-                        },
-                    )
-                },
+    LaunchedEffect(enabled) {
+        if (!enabled) {
+            showLibrary = false
+            sourceMenu = false
+        }
+    }
+
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val compactHero = maxHeight < 360.dp
+        Column(
+            Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                userScrollEnabled = drag == null,
+            Box(
+                Modifier.fillMaxWidth().weight(1f).clipToBounds()
+                    .pointerInput(selection, enabled, selectedKeys.size > 1) {
+                        if (enabled && selectedKeys.size > 1) detectDragGesturesAfterLongPress(
+                            onDragStart = { pointer ->
+                                val item = listState.layoutInfo.visibleItemsInfo.firstOrNull {
+                                    it.key in latestKeys && pointer.y >= it.offset && pointer.y < it.offset + it.size
+                                }
+                                if (item != null && latestEnabled) {
+                                    focus.clearFocus()
+                                    keyboard?.hide()
+                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    drag = DocumentReorderDrag(
+                                        latestKeys, item.key as String,
+                                        item.offset + item.size / 2f, item.size,
+                                    )
+                                }
+                            },
+                            onDragEnd = { finishDrag() },
+                            onDragCancel = { updateDrag(null) },
+                            onDrag = { change, amount ->
+                                if (drag != null) {
+                                    change.consume()
+                                    updateDrag(drag?.moveBy(amount.y, listState.mergeBounds(latestKeys)))
+                                }
+                            },
+                        )
+                    },
             ) {
-                if (order.isNotEmpty()) item(key = MergeSelectionHeader.ORDER) {
-                    Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(stringResource(R.string.merge_selection_order_title), style = MaterialTheme.typography.titleMedium)
-                        if (order.size > 1) Text(
-                            stringResource(R.string.merge_selection_drag_hint),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                LazyColumn(
+                    state = listState, modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(bottom = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    userScrollEnabled = drag == null,
+                ) {
+                    item(key = MergeSelectionHeader.HERO) {
+                        MergeSelectionHero(
+                            count = selected.size,
+                            modifier = Modifier.fillMaxWidth().padding(
+                                top = if (compactHero) 0.dp else 8.dp,
+                                bottom = if (compactHero) 4.dp else 16.dp,
+                            ),
+                            compact = compactHero,
                         )
                     }
-                }
-                if (order.isEmpty()) {
-                    item(key = MergeSelectionHeader.EMPTY) {
-                        DocumentMergeEmptySelection(enabled = controlsEnabled, onPickFiles = onPickFiles)
+                    item(key = MergeSelectionHeader.SOURCES) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                stringResource(if (order.isEmpty()) R.string.merge_motion_empty else R.string.merge_selection_order_title),
+                                Modifier.weight(1f), style = MaterialTheme.typography.titleSmall,
+                            )
+                            Box {
+                                TextButton(
+                                    onClick = { sourceMenu = true }, enabled = controlsEnabled,
+                                    modifier = Modifier.heightIn(min = 48.dp),
+                                ) {
+                                    Icon(painterResource(R.drawable.add_24px), null, Modifier.size(18.dp))
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(stringResource(R.string.merge_motion_add))
+                                }
+                                DropdownMenu(expanded = sourceMenu, onDismissRequest = { sourceMenu = false }) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.merge_motion_library)) },
+                                        leadingIcon = { Icon(painterResource(R.drawable.ic_tag_document), null, Modifier.size(20.dp)) },
+                                        enabled = controlsEnabled,
+                                        onClick = { sourceMenu = false; showLibrary = true },
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.merge_motion_device)) },
+                                        leadingIcon = { Icon(painterResource(R.drawable.ic_document_import), null, Modifier.size(20.dp)) },
+                                        enabled = controlsEnabled,
+                                        onClick = { sourceMenu = false; onPickFiles() },
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    if (order.size > 1) item(key = MergeSelectionHeader.ORDER) {
+                        Text(stringResource(R.string.merge_selection_drag_hint),
+                            Modifier.padding(bottom = 4.dp), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    itemsIndexed(order, key = { _, key -> key }) { index, key ->
+                        selectedByKey[key]?.let { item ->
+                            val isDragged = drag?.itemId == key
+                            val motion = Modifier.animateItem(
+                                fadeInSpec = tween(220),
+                                placementSpec = if (drag == null) spring(stiffness = 450f) else null,
+                                fadeOutSpec = tween(150),
+                            )
+                            DocumentMergeSelectionRow(
+                                item = item, index = index, count = order.size,
+                                enabled = controlsEnabled,
+                                onMove = { selection.reorder(moveDocumentOrder(selectedKeys, key, it)) },
+                                onRemove = { selection.remove(key) },
+                                modifier = if (isDragged) {
+                                    motion.graphicsLayer { alpha = 0f }.clearAndSetSemantics {}
+                                } else motion,
+                            )
+                        }
                     }
                 }
-                itemsIndexed(order, key = { _, key -> key }) { index, key ->
-                    selectedByKey[key]?.let { item ->
-                        val isDragged = drag?.itemId == key
+                drag?.let { moving ->
+                    selectedByKey[moving.itemId]?.let { item ->
                         DocumentMergeSelectionRow(
-                            item = item,
-                            index = index,
-                            count = order.size,
-                            enabled = controlsEnabled,
-                            onMove = { selection.reorder(moveDocumentOrder(selectedKeys, key, it)) },
-                            onRemove = { selection.remove(key) },
-                            modifier = if (isDragged) {
-                                Modifier.graphicsLayer { alpha = 0f }.clearAndSetSemantics {}
-                            } else Modifier,
+                            item = item, index = moving.order.indexOf(moving.itemId),
+                            count = moving.order.size, enabled = false, onMove = {}, onRemove = {},
+                            modifier = Modifier
+                                .offset { IntOffset(0, (moving.centerY - moving.height / 2f).roundToInt()) }
+                                .height(with(density) { moving.height.toDp() })
+                                .graphicsLayer {
+                                    shadowElevation = 8.dp.toPx()
+                                    scaleX = 1.015f
+                                    scaleY = 1.015f
+                                }
+                                .clearAndSetSemantics {},
                         )
                     }
                 }
-                item(key = MergeSelectionHeader.LIBRARY) {
-                    Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        HorizontalDivider()
-                        Text(stringResource(R.string.merge_selection_library_title), style = MaterialTheme.typography.titleMedium)
-                    }
-                }
-                item(key = MergeSelectionHeader.SEARCH) {
-                    OutlinedTextField(
-                        value = query,
-                        onValueChange = { query = it },
-                        label = { Text(stringResource(R.string.merge_app_search)) },
-                        singleLine = true,
-                        enabled = controlsEnabled,
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(onSearch = {
+            }
+            Column(
+                Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(
+                    onClick = {
+                        val latest = selection.resolve(available)
+                        if (controlsEnabled && latest.size >= minimumSelection && canConfirm) {
                             focus.clearFocus()
                             keyboard?.hide()
-                        }),
-                    )
-                }
-                if (matches.isEmpty()) {
-                    item(key = MergeSelectionHeader.LIBRARY_EMPTY) {
-                        Text(
-                            stringResource(
-                                when {
-                                    available.isEmpty() -> R.string.merge_selection_library_empty
-                                    unselected.isEmpty() -> R.string.merge_selection_all_added
-                                    else -> R.string.merge_app_no_results
-                                },
-                            ),
-                            Modifier.padding(vertical = 12.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                            onConfirm(latest)
+                        }
+                    },
+                    enabled = controlsEnabled && canConfirm && selected.size >= minimumSelection,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
+                ) {
+                    val showVideo = actionShowsVideo && selected.size >= minimumSelection
+                    if (!showVideo) {
+                        Icon(painterResource(R.drawable.ic_tool_merge), null, Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
                     }
-                }
-                items(matches, key = { "available:" + it.id }) { document ->
-                    DocumentMergeAvailableRow(
-                        document = document,
-                        enabled = controlsEnabled,
-                        onSelect = { selection.toggle(document.toMergeItem()) },
+                    ToolAdActionContent(
+                        isVideo = showVideo,
+                        label = when {
+                            showVideo -> stringResource(R.string.tool_ad_watch_apply)
+                            selected.size < minimumSelection ->
+                                pluralStringResource(R.plurals.merge_selection_minimum, minimumSelection, minimumSelection)
+                            else -> pluralStringResource(R.plurals.merge_app_confirm_count, selected.size, selected.size)
+                        },
                     )
                 }
-            }
-            drag?.let { moving ->
-                selectedByKey[moving.itemId]?.let { item ->
-                    DocumentMergeSelectionRow(
-                        item = item,
-                        index = moving.order.indexOf(moving.itemId),
-                        count = moving.order.size,
-                        enabled = false,
-                        onMove = {},
-                        onRemove = {},
-                        modifier = Modifier
-                            .offset { IntOffset(0, (moving.centerY - moving.height / 2f).roundToInt()) }
-                            .height(with(density) { moving.height.toDp() })
-                            .graphicsLayer { shadowElevation = 8.dp.toPx() }
-                            .clearAndSetSemantics {},
-                    )
-                }
+                if (footerLabel != null) Text(
+                    footerLabel, style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
+                )
             }
         }
-        if (footerLabel != null) Text(
-            footerLabel,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+    }
+    if (showLibrary) {
+        DocumentMergeLibrarySheet(
+            documents = available, selectedIds = selectedIds, enabled = controlsEnabled,
+            onSelect = { selection.toggle(it.toMergeItem()) },
+            onDismiss = { showLibrary = false },
         )
-        Button(
-            onClick = {
-                val latest = selection.resolve(available)
-                if (latest.size >= minimumSelection && canConfirm) {
-                    focus.clearFocus()
-                    keyboard?.hide()
-                    onConfirm(latest)
-                }
-            },
-            enabled = controlsEnabled && canConfirm && selected.size >= minimumSelection,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+    }
+}
+
+@Composable
+private fun MergeSelectionHero(
+    count: Int,
+    modifier: Modifier = Modifier,
+    compact: Boolean = false,
+) {
+    if (compact) {
+        Row(
+            modifier, horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                if (selected.size < minimumSelection) {
-                    pluralStringResource(R.plurals.merge_selection_minimum, minimumSelection, minimumSelection)
-                } else {
-                    pluralStringResource(R.plurals.merge_app_confirm_count, selected.size, selected.size)
-                },
+            DocumentMergeIllustration(
+                selectedCount = count, isWorking = false, modifier = Modifier.size(90.dp, 60.dp),
             )
+            Spacer(Modifier.width(12.dp))
+            MergeSelectionHeroCaption(count = count, compact = true)
+        }
+    } else {
+        Column(
+            modifier, horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            DocumentMergeIllustration(
+                selectedCount = count, isWorking = false, modifier = Modifier.size(230.dp, 132.dp),
+            )
+            MergeSelectionHeroCaption(count = count, compact = false)
+        }
+    }
+}
+
+@Composable
+private fun MergeSelectionHeroCaption(
+    count: Int,
+    compact: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier,
+        horizontalAlignment = if (compact) Alignment.Start else Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(if (compact) 4.dp else 8.dp),
+    ) {
+        Text(
+            stringResource(R.string.merge_selection_empty_title),
+            style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleLarge,
+            textAlign = if (compact) TextAlign.Start else TextAlign.Center,
+        )
+        val announcement = when {
+            count > 1 -> stringResource(R.string.merge_motion_count_description, count)
+            count == 1 -> stringResource(R.string.merge_motion_one)
+            else -> stringResource(R.string.merge_motion_hint)
+        }
+        AnimatedContent(
+            targetState = count,
+            modifier = Modifier.clearAndSetSemantics {
+                contentDescription = announcement
+                liveRegion = LiveRegionMode.Polite
+            },
+            label = "PDFs coming together",
+        ) { selectedCount ->
+            Surface(
+                shape = MaterialTheme.shapes.extraLarge,
+                color = if (selectedCount > 1) MaterialTheme.colorScheme.primaryContainer.copy(alpha = .5f)
+                    else MaterialTheme.colorScheme.surface,
+            ) {
+                Text(
+                    text = when {
+                        selectedCount > 1 -> stringResource(R.string.merge_motion_count, selectedCount)
+                        selectedCount == 1 -> stringResource(R.string.merge_motion_one)
+                        else -> stringResource(R.string.merge_motion_hint)
+                    },
+                    modifier = Modifier.padding(
+                        horizontal = if (compact) 8.dp else 12.dp,
+                        vertical = if (compact) 4.dp else 6.dp,
+                    ),
+                    style = if (compact) MaterialTheme.typography.labelMedium else MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

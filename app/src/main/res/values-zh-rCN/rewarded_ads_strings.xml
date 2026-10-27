@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">解锁强力压缩</string>
+    <string name="strong_compression_reward_body">观看视频，即可为此文档解锁一次使用机会。</string>
+    <string name="strong_compression_reward_quality_note">可能降低清晰度，且不保证文件会变小。</string>
+    <string name="strong_compression_reward_retry_note">如果出错或 PDF 未变小，可重试，无需再看视频。</string>
+    <string name="strong_compression_watch_action">观看并解锁</string>
+    <string name="strong_compression_loading">正在准备视频…</string>
+    <string name="strong_compression_showing">视频播放中…</string>
+    <string name="strong_compression_continue_without_ad">不看广告，继续</string>
+    <string name="strong_compression_use_balanced">使用均衡压缩</string>
+    <string name="strong_compression_close">关闭</string>
+    <string name="strong_compression_first_free">首次免费</string>
+    <string name="strong_compression_available">已为此文档解锁一次使用</string>
+    <string name="strong_compression_video_hint">观看视频，即可为此文档解锁一次使用机会。</string>
+    <string name="strong_compression_password_again">请确认 PDF 密码以继续。</string>
+    <string name="strong_compression_unavailable_note">视频暂不可用。本次可不看广告直接继续。</string>
+    <string name="tool_ad_watch_apply">观看并应用</string>
+    <string name="tool_ad_watch_save">观看并保存</string>
+    <string name="tool_ad_watch_export">观看并导出</string>
+    <string name="tool_ad_reward_hint">观看广告，即可解锁本次操作。</string>
+    <string name="tool_ad_first_use_free">首次免费</string>
+    <string name="tool_ad_unlocked">操作已解锁</string>
+</resources>

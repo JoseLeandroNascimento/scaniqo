@@ -7,6 +7,9 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertArrayEquals
@@ -199,6 +202,61 @@ class DocumentBackupArchiveTest {
             if (name.endsWith(".pdf")) null else name to bytes
         }
         expectFailure { archive.extract(altered, temporary.newFolder()) }
+    }
+
+    @Test fun inspectionValidatesTheManifestWithoutExtractingAnyFiles() = runBlocking {
+        val source = source(mapOf("document.pdf" to "final"))
+        val target = temporary.newFile()
+        val expected = archive.write(target, listOf(source))
+        val filesBefore = temporary.root.walkTopDown().map { it.relativeTo(temporary.root).path }.toList()
+
+        assertEquals(expected, archive.inspect(target))
+
+        assertEquals(filesBefore, temporary.root.walkTopDown().map { it.relativeTo(temporary.root).path }.toList())
+        assertTrue(target.isFile)
+    }
+
+    @Test fun inspectionRejectsInvalidChecksumInsteadOfTrustingManifest() = runBlocking {
+        val altered = rewrite(packed()) { name, bytes ->
+            name to if (name.endsWith(".pdf")) bytes.copyOf().also {
+                it[0] = (it[0].toInt() xor 1).toByte()
+            } else bytes
+        }
+        expectFailure { archive.inspect(altered) }
+        assertTrue(altered.isFile)
+    }
+
+    @Test fun inspectionEnforcesArchiveManifestAndExpandedSizeLimits() = runBlocking {
+        val target = temporary.newFile()
+        archive.write(target, listOf(source(mapOf("document.pdf" to "A".repeat(4_096)))))
+        expectFailure { DocumentBackupArchive(maxArchiveBytes = 16).inspect(target) }
+        expectFailure { DocumentBackupArchive(maxManifestBytes = 4).inspect(target) }
+        expectFailure { DocumentBackupArchive(maxUncompressedBytes = 1_024).inspect(target) }
+        assertTrue(target.isFile)
+    }
+
+    @Test fun inspectionRejectsUndeclaredAndMissingEntries() = runBlocking {
+        val target = packed()
+        val extra = rewrite(target, extra = "../outside.txt" to "escape".toByteArray())
+        val missing = rewrite(target) { name, bytes -> if (name.endsWith(".pdf")) null else name to bytes }
+        expectFailure { archive.inspect(extra) }
+        expectFailure { archive.inspect(missing) }
+        assertFalse(File(temporary.root, "outside.txt").exists())
+    }
+
+    @Test fun inspectionHonorsCancellationAndPreservesTheArchive() = runBlocking {
+        val target = packed()
+        val originalBytes = target.readBytes()
+        var failure: Throwable? = null
+        val job = launch {
+            currentCoroutineContext().cancel()
+            failure = runCatching { archive.inspect(target) }.exceptionOrNull()
+        }
+        job.join()
+
+        assertTrue(job.isCancelled)
+        assertTrue(failure is CancellationException)
+        assertArrayEquals(originalBytes, target.readBytes())
     }
 
     private suspend fun packed(): File = temporary.newFile().also {

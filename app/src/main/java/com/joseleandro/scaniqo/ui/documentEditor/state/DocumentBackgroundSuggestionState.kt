@@ -9,7 +9,7 @@ import com.joseleandro.scaniqo.domain.model.PdfPerspective
 import com.joseleandro.scaniqo.domain.model.isValidBackgroundMask
 import java.util.UUID
 
-internal data class DocumentBackgroundRequest(val id: String, val pageId: String)
+internal data class DocumentBackgroundRequest(val id: String, val pageId: String, val revision: Int = 0)
 internal enum class DocumentBackgroundFeedback { SUGGESTED, NO_EDGES, FAILED }
 
 /** Correlaciona a máscara de fundo ao pedido da página, sem modificar o documento. */
@@ -31,11 +31,11 @@ internal class DocumentBackgroundSuggestionState(
         return if (hasMask) null else begin(pageId)
     }
 
-    fun begin(pageId: String): DocumentBackgroundRequest? {
+    fun begin(pageId: String, revision: Int = 0): DocumentBackgroundRequest? {
         if (pending != null) return null
         attemptedPageIds = attemptedPageIds + pageId
         feedback = null
-        return DocumentBackgroundRequest(newRequestId(), pageId).also { pending = it }
+        return DocumentBackgroundRequest(newRequestId(), pageId, revision).also { pending = it }
     }
 
     fun cancel() {
@@ -47,9 +47,9 @@ internal class DocumentBackgroundSuggestionState(
         feedback = null
     }
 
-    fun consume(state: DocumentToolsUiState, pageId: String): PdfPerspective? {
+    fun consume(state: DocumentToolsUiState, pageId: String, revision: Int = 0): PdfPerspective? {
         val request = pending ?: return null
-        if (state.isLocked || request.pageId != pageId) {
+        if (state.isLocked || request.pageId != pageId || request.revision != revision) {
             cancel()
             return null
         }

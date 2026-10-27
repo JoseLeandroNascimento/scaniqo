@@ -15,6 +15,9 @@ class PdfOverlayTest {
         assertEquals(PdfTextVerticalAlignment.TOP, restored.textVerticalAlignment)
         assertFalse(restored.autoSizeText)
         assertFalse(restored.wrapText)
+        assertFalse(restored.bold)
+        assertFalse(restored.italic)
+        assertFalse(restored.underlined)
     }
 
     @Test fun textAlignmentAndSizingSurviveRecipeSerialization() {
@@ -25,6 +28,15 @@ class PdfOverlayTest {
             autoSizeText = true, wrapText = true,
         )
         assertEquals(original, Json.decodeFromString<PdfOverlay>(Json.encodeToString(original)))
+    }
+
+    @Test fun styledTextAndCrossmarkSurviveRecipeSerialization() {
+        val styled = PdfOverlay("styled", PdfOverlayKind.TEXT, text = "São Paulo",
+            bold = true, italic = true, underlined = true)
+        val cross = PdfOverlay("cross", PdfOverlayKind.CROSSMARK, width = .04f, height = .03f)
+        assertEquals(styled, Json.decodeFromString<PdfOverlay>(Json.encodeToString(styled)))
+        assertEquals(cross, Json.decodeFromString<PdfOverlay>(Json.encodeToString(cross)))
+        assertTrue(cross.isValid())
     }
 
     @Test fun movingDrawingTranslatesEveryPointAndClampsToPage() {

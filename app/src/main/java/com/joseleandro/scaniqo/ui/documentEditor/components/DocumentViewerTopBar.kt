@@ -74,14 +74,23 @@ internal fun DocumentViewerTopBar(
         },
         actions = {
             if (document != null && showDocumentActions) {
-                if (toolsState.canUndo && toolsState.signatureDraft == null) {
+                if (toolsState.signatureDraft == null && (toolsState.canUndo || toolsState.canRedo)) {
                     IconButton(
                         onClick = { onToolsEvent(DocumentToolsEvent.Undo) },
-                        enabled = toolsState.canEdit && !documentBusy,
+                        enabled = toolsState.canEdit && toolsState.canUndo && !documentBusy,
                     ) {
                         Icon(
                             painterResource(R.drawable.ic_document_undo),
                             contentDescription = stringResource(R.string.viewer_undo_description),
+                        )
+                    }
+                    IconButton(
+                        onClick = { onToolsEvent(DocumentToolsEvent.Redo) },
+                        enabled = toolsState.canEdit && toolsState.canRedo && !documentBusy,
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.ic_document_redo),
+                            contentDescription = stringResource(R.string.viewer_redo_description),
                         )
                     }
                 }

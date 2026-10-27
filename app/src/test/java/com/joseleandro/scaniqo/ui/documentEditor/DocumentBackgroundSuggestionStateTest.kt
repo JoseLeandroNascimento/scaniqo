@@ -198,6 +198,16 @@ class DocumentBackgroundSuggestionStateTest {
         assertEquals(DocumentBackgroundFeedback.SUGGESTED, suggestion.feedback)
     }
 
+    @Test
+    fun resultForAnOlderDraftRevisionIsIgnored() {
+        val suggestion = DocumentBackgroundSuggestionState { "request" }
+        suggestion.begin("page", revision = 4)
+
+        assertNull(suggestion.consume(completed("request"), "page", revision = 5))
+        assertNull(suggestion.pending)
+        assertNull(suggestion.feedback)
+    }
+
     private fun completed(
         requestId: String,
         pageId: String = "page",

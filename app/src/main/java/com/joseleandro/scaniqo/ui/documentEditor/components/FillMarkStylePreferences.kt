@@ -25,4 +25,14 @@ internal class FillMarkStylePreferences(context: Context) {
         val style = FillMarkStyle.from(overlay)
         if (style.isValid()) preferences.edit().putString(overlay.kind.name, Json.encodeToString(style)).apply()
     }
+
+    fun recentColors(): List<Int> = runCatching {
+        preferences.getString("recent_colors", null)?.let { Json.decodeFromString<List<Int>>(it) }.orEmpty()
+    }.getOrDefault(emptyList())
+
+    fun rememberColor(color: Int): List<Int> {
+        val updated = updatedFillMarkRecentColors(recentColors(), color)
+        preferences.edit().putString("recent_colors", Json.encodeToString(updated)).apply()
+        return updated
+    }
 }

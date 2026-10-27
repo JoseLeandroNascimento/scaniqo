@@ -1,6 +1,10 @@
 package com.joseleandro.scaniqo.ui.settings
 
 import android.content.res.Configuration
+import androidx.activity.compose.LocalActivity
+import com.joseleandro.scaniqo.core.ads.AdMobManager
+import org.koin.compose.koinInject
+import kotlinx.coroutines.launch
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -50,6 +54,11 @@ fun SettingsRoute(
     onPasswords: () -> Unit = {},
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
+    val ads: AdMobManager = koinInject()
+    val adsState by ads.state.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current
+    val scope = rememberCoroutineScope()
+    val privacyError = stringResource(R.string.ads_privacy_error)
     val preferences by viewModel.settings.collectAsStateWithLifecycle()
     val failed by viewModel.saveError.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
@@ -61,7 +70,17 @@ fun SettingsRoute(
         }
     }
     SettingsScreen(preferences, section, viewModel::change, onBack,
-        onPersonalization, onPdf, onBackup, onPasswords, snackbarHost = { SnackbarHost(snackbar) })
+        onPersonalization, onPdf, onBackup, onPasswords, snackbarHost = { SnackbarHost(snackbar) },
+        showAdsPrivacyOptions = adsState.privacyOptionsRequired,
+        adsPrivacyOptionsEnabled = activity != null && !adsState.privacyFormOpen && !adsState.consentUpdating,
+        onAdsPrivacyOptions = {
+            activity?.let { host ->
+                ads.showPrivacyOptions(host) { success ->
+                    if (!success) scope.launch { snackbar.showSnackbar(privacyError) }
+                }
+            }
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +95,9 @@ internal fun SettingsScreen(
     onBackup: () -> Unit = {},
     onPasswords: () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
+    showAdsPrivacyOptions: Boolean = false,
+    adsPrivacyOptionsEnabled: Boolean = true,
+    onAdsPrivacyOptions: () -> Unit = {},
 ) {
     var restore by rememberSaveable { mutableStateOf(false) }
     var languageSettings by rememberSaveable { mutableStateOf(false) }
@@ -128,6 +150,17 @@ internal fun SettingsScreen(
                             SettingsDivider()
                             SettingsDestination(R.drawable.ic_tool_lock, stringResource(R.string.menu_pdf_password),
                                 stringResource(R.string.settings_password_body), onPasswords)
+                        }
+                    }
+                    if (showAdsPrivacyOptions) item {
+                        TextButton(
+                            onClick = onAdsPrivacyOptions,
+                            enabled = adsPrivacyOptionsEnabled,
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                        ) {
+                            Icon(painterResource(R.drawable.ic_tool_lock), null, Modifier.size(18.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.ads_privacy_options), textAlign = TextAlign.Center)
                         }
                     }
                     item {

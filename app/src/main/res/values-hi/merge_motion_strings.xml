@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_motion_library">लाइब्रेरी</string>
+    <string name="merge_motion_device">डिवाइस</string>
+    <string name="merge_motion_add">PDF जोड़ें</string>
+    <string name="merge_motion_done">हो गया</string>
+    <string name="merge_motion_hint">जोड़ें, क्रम में लगाएँ, मिलाएँ।</string>
+    <string name="merge_motion_count">%1$d PDF → 1</string>
+    <string name="merge_motion_one">एक और PDF जोड़ें</string>
+    <string name="merge_motion_empty">अपने PDF चुनें</string>
+    <string name="merge_motion_search">दस्तावेज़ खोजें</string>
+    <string name="merge_motion_selected">चुने गए: %1$d</string>
+    <string name="merge_motion_working">आपके PDF मिलाए जा रहे हैं</string>
+    <string name="merge_motion_options">%1$s के विकल्प</string>
+    <string name="merge_motion_count_description">%1$d PDF को एक में मिलाएँ</string>
+</resources>

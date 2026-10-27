@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">सीमा पहचानें</string>
+    <string name="correction_v3_detect_again">फिर से पहचानें</string>
+    <string name="correction_v3_manual">हाथ से समायोजित करें</string>
+    <string name="correction_v3_edit_crop">क्रॉप संपादित करें</string>
+    <string name="correction_v3_view_result">परिणाम देखें</string>
+    <string name="correction_v3_compare">तुलना करें</string>
+    <string name="correction_v3_show_before">पहले देखें</string>
+    <string name="correction_v3_show_after">बाद में देखें</string>
+    <string name="correction_v3_preparing_before">इन बदलावों से पहले का पेज तैयार हो रहा है…</string>
+    <string name="correction_v3_undo">समायोजन पूर्ववत करें</string>
+    <string name="correction_v3_redo">समायोजन फिर करें</string>
+    <string name="correction_v3_discard_all">इस सत्र के बदलाव हटाएँ</string>
+    <string name="correction_v3_restore_crop">क्रॉप बहाल करें</string>
+    <string name="correction_v3_restore_background">सीमा बहाल करें</string>
+    <string name="correction_v3_zero_tilt">झुकाव शून्य करें</string>
+    <string name="correction_v3_zero_curve">वक्रता शून्य करें</string>
+    <string name="correction_v3_convert_warning">इस सुधार के लिए पेज को छवि में बदलना होगा। मूल पाठ को चुनना संभव नहीं रह सकता।</string>
+    <string name="correction_v3_filter_requires_conversion">इस पेज के फ़िल्टर के लिए पहले से छवि में बदलाव ज़रूरी है।</string>
+    <string name="correction_v3_value_increase">%1$s बढ़ाएँ</string>
+    <string name="correction_v3_value_decrease">%1$s घटाएँ</string>
+    <string name="correction_v3_value_edit">%1$s को सटीक बदलें</string>
+    <string name="correction_v3_value_error">%1$s से %2$s के बीच %3$s के चरणों में मान डालें।</string>
+    <string name="correction_v3_value_done">मान उपयोग करें</string>
+    <string name="correction_v3_curve_title">मुड़े हुए पेज को सुधारें</string>
+    <string name="correction_v3_curve_up">ऊपर की ओर वक्र</string>
+    <string name="correction_v3_curve_down">नीचे की ओर वक्र</string>
+    <string name="correction_v3_result_updating">परिणाम अपडेट हो रहा है…</string>
+</resources>

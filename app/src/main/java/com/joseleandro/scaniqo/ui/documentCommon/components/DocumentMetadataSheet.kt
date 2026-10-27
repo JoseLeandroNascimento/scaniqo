@@ -47,6 +47,7 @@ import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.TagIcon
 import com.joseleandro.scaniqo.domain.model.TagModel
+import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMetadataUiState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentNameError
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -63,6 +64,7 @@ internal fun DocumentMetadataSheet(
     isLoadingTags: Boolean = false,
     tagsLoadError: Boolean = false,
     onRetryTags: () -> Unit = {},
+    saveShowsVideo: Boolean = false,
 ) {
     val isSaving by rememberUpdatedState(editor.isSaving)
     val sheetState = rememberModalBottomSheetState(
@@ -84,6 +86,7 @@ internal fun DocumentMetadataSheet(
             isLoadingTags = isLoadingTags,
             tagsLoadError = tagsLoadError,
             onRetryTags = onRetryTags,
+            saveShowsVideo = saveShowsVideo,
         )
     }
 }
@@ -99,6 +102,7 @@ private fun DocumentMetadataContent(
     isLoadingTags: Boolean = false,
     tagsLoadError: Boolean = false,
     onRetryTags: () -> Unit = {},
+    saveShowsVideo: Boolean = false,
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
     val canSave = !editor.isSaving && (editor.tagId == null || (!isLoadingTags && !tagsLoadError))
@@ -157,10 +161,9 @@ private fun DocumentMetadataContent(
                     imeAction = ImeAction.Done,
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    if (canSave) {
-                        keyboard?.hide()
-                        onSave()
-                    }
+                    keyboard?.hide()
+                    // O vídeo só começa pelo botão que informa claramente essa ação.
+                    if (canSave && !saveShowsVideo) onSave()
                 }),
                 supportingText = if (nameError != null) {
                     {
@@ -240,6 +243,12 @@ private fun DocumentMetadataContent(
             }
         }
 
+        if (saveShowsVideo) Text(
+            text = stringResource(R.string.tool_ad_reward_hint),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(top = 12.dp),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Button(
             onClick = {
                 keyboard?.hide()
@@ -258,10 +267,12 @@ private fun DocumentMetadataContent(
                 )
                 Spacer(Modifier.width(8.dp))
             }
-            Text(
-                stringResource(
+            ToolAdActionContent(
+                isVideo = saveShowsVideo && !editor.isSaving,
+                label = stringResource(
                     when {
                         editor.isSaving -> R.string.document_saving
+                        saveShowsVideo -> R.string.tool_ad_watch_save
                         editor.documentId == null -> R.string.document_save
                         else -> R.string.document_save_changes
                     },

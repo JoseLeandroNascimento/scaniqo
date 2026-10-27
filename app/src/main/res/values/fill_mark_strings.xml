@@ -63,4 +63,10 @@
     <string name="fill_selection_bottom_right">Resize from bottom right corner</string>
     <string name="fill_selection_bottom_left">Resize from bottom left corner</string>
     <string name="fill_selection_hint">Corners resize the element. The arrow handle moves it.</string>
+    <string name="overlay_crossmark">Cross</string>
+    <string name="fill_mark_bold">Bold</string>
+    <string name="fill_mark_italic">Italic</string>
+    <string name="fill_mark_underline_text">Underline text</string>
+    <string name="fill_mark_confirm_element">Confirm element</string>
+    <string name="fill_mark_tap_to_cross">Tap the PDF to add an X.</string>
 </resources>

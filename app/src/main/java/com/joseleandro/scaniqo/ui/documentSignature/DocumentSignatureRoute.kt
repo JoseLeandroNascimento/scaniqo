@@ -52,8 +52,10 @@ fun DocumentSignatureRoute(
     val sameSession = tools.document?.id == documentId
     SecureWindow(enabled = document?.isProtected == true || (sameSession && tools.workspace?.isProtected == true))
 
-    LaunchedEffect(documentId) { viewerViewModel.load(documentId) }
-    LaunchedEffect(document?.id, document?.pdfUri) { document?.let(toolsViewModel::load) }
+    LaunchedEffect(documentId, isActive) { if (isActive) viewerViewModel.load(documentId) }
+    LaunchedEffect(document?.id, document?.pdfUri, isActive) {
+        if (isActive) document?.let(toolsViewModel::load)
+    }
     val selection = signatures.pendingDocumentSelection
     LaunchedEffect(selection, tools.signatures, tools.canEdit, sameSession, isActive) {
         if (isActive && selection?.documentId == documentId && sameSession && tools.canEdit && tools.signatureDraft == null &&
@@ -99,8 +101,14 @@ fun DocumentSignatureRoute(
             },
             onApply = {
                 val current = toolsViewModel.uiState.value
-                if (active && !leaving && current.document?.id == documentId && current.signatureDraft != null) {
-                    toolsViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+                if (active && !leaving && current.document?.id == documentId && current.signatureDraft != null &&
+                    !current.signatureAwaitingPlacement
+                ) toolsViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+            },
+            onDone = {
+                val current = toolsViewModel.uiState.value
+                if (active && !leaving && current.document?.id == documentId && !current.signatureAwaitingPlacement) {
+                    if (current.signatureDraft != null) toolsViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
                     if (toolsViewModel.uiState.value.signatureDraft == null) leave()
                 }
             },

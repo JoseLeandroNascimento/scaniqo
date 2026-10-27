@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="overlay_crossmark">Croix</string>
+    <string name="fill_mark_bold">Gras</string>
+    <string name="fill_mark_italic">Italique</string>
+    <string name="fill_mark_underline_text">Souligner le texte</string>
+    <string name="fill_mark_confirm_element">Confirmer l’élément</string>
+    <string name="fill_mark_tap_to_cross">Touchez le PDF pour ajouter un X.</string>
+    <string name="signature_finish_tool">Terminé</string>
+    <string name="signature_place_hint">Touchez l’endroit où vous souhaitez signer.</string>
+    <string name="signature_place_center">Placer au centre</string>
+</resources>

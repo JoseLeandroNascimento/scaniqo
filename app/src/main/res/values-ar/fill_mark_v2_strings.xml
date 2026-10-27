@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">الألوان الحديثة</string>
+    <string name="fill_mark_palette_colors">الألوان</string>
+    <string name="fill_mark_recent_color">لون حديث %1$d</string>
+    <string name="fill_mark_manual_size">حجم الخط بالنقاط (6–72)</string>
+    <string name="fill_mark_apply_size">تطبيق الحجم</string>
+    <string name="fill_mark_green">أخضر</string>
+    <string name="fill_mark_purple">أرجواني</string>
+    <string name="fill_mark_gray">رمادي</string>
+    <string name="fill_mark_white">أبيض</string>
+    <string name="fill_mark_mark_size">حجم العلامة</string>
+    <string name="fill_mark_mark_smaller">تصغير العلامة</string>
+    <string name="fill_mark_mark_larger">تكبير العلامة</string>
+</resources>

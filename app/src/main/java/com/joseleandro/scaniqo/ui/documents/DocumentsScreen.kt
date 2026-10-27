@@ -19,7 +19,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -27,6 +33,10 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.ui.ads.DocumentAdPlacementPolicy
+import com.joseleandro.scaniqo.ui.ads.DocumentListRow
+import com.joseleandro.scaniqo.ui.ads.DocumentsNativeAd
+import com.joseleandro.scaniqo.ui.ads.rememberDocumentsNativeAds
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverlays
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
@@ -56,6 +66,7 @@ fun DocumentsScreen(
     onSignDocument: () -> Unit,
     onAllTools: () -> Unit,
     modifier: Modifier = Modifier,
+    adsEnabled: Boolean = false,
 ) {
     val toastState = rememberDocumentToastState(actionsState.message) {
         onDocumentAction(DocumentActionEvent.DismissMessage)
@@ -63,6 +74,26 @@ fun DocumentsScreen(
     val scanBusy = actionsState.isScanning || actionsState.isPreparingScan
     val actionsBusy = actionsState.isBusy
     val visibleDocuments = uiState.visibleDocuments
+    val adPositions = DocumentAdPlacementPolicy.afterDocumentCounts(
+        documentCount = visibleDocuments.size,
+        enabled = adsEnabled,
+        isLoading = uiState.isLoading,
+        hasError = uiState.loadError,
+        hasBlockingAction = actionsBusy || actionsState.editor != null ||
+            actionsState.pendingDeletion != null || actionsState.pendingCreation != null ||
+            actionsState.generatedResult != null,
+    )
+    val nativeAds = rememberDocumentsNativeAds(adPositions.size)
+    val loadedSlots = nativeAds.keys.toSet()
+    val documentRows = remember(visibleDocuments, adPositions, loadedSlots) {
+        DocumentAdPlacementPolicy.rows(
+            documentIds = visibleDocuments.map { it.id },
+            afterDocumentCounts = adPositions,
+            loadedSlots = loadedSlots,
+        )
+    }
+    val density = LocalDensity.current
+    var scanButtonHeight by remember { mutableStateOf(56.dp) }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -93,7 +124,9 @@ fun DocumentsScreen(
                         )
                     )
                 },
-                modifier = Modifier.semantics { if (actionsBusy) disabled() },
+                modifier = Modifier
+                    .onSizeChanged { scanButtonHeight = with(density) { it.height.toDp() } }
+                    .semantics { if (actionsBusy) disabled() },
                 icon = {
                     if (scanBusy) {
                         CircularProgressIndicator(
@@ -125,8 +158,9 @@ fun DocumentsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
-            contentPadding = PaddingValues(top = 8.dp, bottom = 112.dp),
+                .consumeWindowInsets(innerPadding)
+                .padding(bottom = if (nativeAds.isNotEmpty()) scanButtonHeight + 32.dp else 0.dp),
+            contentPadding = PaddingValues(top = 8.dp, bottom = if (nativeAds.isNotEmpty()) 16.dp else 112.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item(key = "quick_tools") {
@@ -192,20 +226,28 @@ fun DocumentsScreen(
                     )
                 }
 
-                else -> items(visibleDocuments, key = { it.id }) { document ->
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        DocumentCard(
-                            document = document,
-                            tag = uiState.tagsById[document.tagId],
-                            isBusy = actionsState.busyDocumentId == document.id,
-                            actionsEnabled = !actionsBusy,
-                            onOpen = { if (!actionsBusy) onOpenDocument(document.id) },
-                            onEvent = onDocumentAction,
-                        )
+                else -> items(documentRows, key = DocumentListRow::key) { row ->
+                    when (row) {
+                        is DocumentListRow.Document -> {
+                            val document = visibleDocuments[row.documentIndex]
+                            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                DocumentCard(
+                                    document = document,
+                                    tag = uiState.tagsById[document.tagId],
+                                    isBusy = actionsState.busyDocumentId == document.id,
+                                    actionsEnabled = !actionsBusy,
+                                    onOpen = { if (!actionsBusy) onOpenDocument(document.id) },
+                                    onEvent = onDocumentAction,
+                                )
+                            }
+                        }
+
+                        is DocumentListRow.NativeAdSlot -> nativeAds[row.slot]?.let { ad ->
+                            DocumentsNativeAd(ad = ad, modifier = Modifier.padding(horizontal = 16.dp))
+                        }
                     }
                 }
             }
         }
     }
-    DocumentActionOverlays(actionsState, onDocumentAction)
 }

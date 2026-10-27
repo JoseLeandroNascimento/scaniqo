@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
@@ -34,16 +35,25 @@ private fun DocumentInlineFillPreview() {
         Surface {
             Column(Modifier.fillMaxSize()) {
                 DocumentFillMarkStage(
-                    state, page, draft, dirty = true,
+                    state, page, draft,
                     excludedId = null, editingText = true, focusRequest = 1,
-                    onUpdate = {}, onSelect = {}, onInsert = {}, onStopTyping = {}, onEvent = {},
+                    textValue = TextFieldValue(draft.text), onTextValueChange = {},
+                    onUpdate = {}, onSelect = {}, onInsert = {}, onStopTyping = {},
+                    onNavigatePage = {}, onEvent = {},
+                    canUndo = true, onUndo = {},
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                 )
                 FillMarkControls(
-                    active = true, mode = PdfOverlayKind.TEXT, textElement = true, editingText = true,
-                    editable = true, canApply = true, onMode = {}, onApply = {}, onCancel = {},
-                    onProperties = {}, onEditText = {}, onMore = {}, onDone = {},
-                    modifier = Modifier.fillMaxWidth(), draft = draft,
+                    active = true, continuousInsertion = false,
+                    mode = PdfOverlayKind.TEXT, editingText = true,
+                    editable = true, draft = draft, panel = FillMarkPanel.NONE,
+                    canUndo = true, canRedo = false, onMode = {}, onPanel = {},
+                    onEditText = {}, onMore = {}, onUndo = {}, onRedo = {},
+                    onUpdate = {}, onSelectColor = {}, recentColors = emptyList(),
+                    numericSizeBuffer = null, onStartNumericSize = {}, onNumericSizeChange = {},
+                    onConfirmNumericSize = {}, onCancelNumericSize = {}, numericSizeError = false,
+                    allPages = false, pageCount = 1, onAllPages = {}, errorText = null,
+                    showHistoryActions = false, modifier = Modifier.fillMaxWidth(),
                 )
             }
         }

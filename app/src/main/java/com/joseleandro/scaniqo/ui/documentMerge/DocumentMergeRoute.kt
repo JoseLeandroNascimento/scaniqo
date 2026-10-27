@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.ui.ads.rememberToolAdAction
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentCommon.state.rememberDocumentMergeSelectionState
@@ -32,6 +34,7 @@ import java.util.UUID
 fun DocumentMergeRoute(
     documents: List<DocumentModel>,
     target: DocumentMergeTarget? = null,
+    savedDocumentId: Long? = null,
     enabled: Boolean = true,
     isActive: Boolean = true,
     canNavigateBack: Boolean = true,
@@ -41,7 +44,8 @@ fun DocumentMergeRoute(
     snackbarHost: @Composable () -> Unit = {},
     onUnlock: (() -> Unit)? = null,
     onBack: () -> Unit,
-    onConfirm: (List<DocumentMergeItem>) -> Unit,
+    onOpenDocument: (Long) -> Unit = {},
+    onConfirm: (List<DocumentMergeItem>, adUnavailable: Boolean) -> Unit,
 ) {
     val operationId = rememberSaveable(target?.documentId) { UUID.randomUUID().toString() }
     val selection = rememberDocumentMergeSelectionState(operationId)
@@ -56,8 +60,17 @@ fun DocumentMergeRoute(
     val canLeave by rememberUpdatedState(canNavigateBack)
     val pickerErrorText = stringResource(R.string.quick_merge_picker_error)
     val interactive = enabled && isActive && !leaving && pendingUris.isEmpty()
+    val action = rememberToolAdAction(
+        tool = RewardedTool.MERGE_PDFS.takeIf { target == null },
+        contextKey = listOf(operationId, target?.documentId, selection.items.toList()),
+        active = interactive && savedDocumentId == null && selection.items.size >= 2,
+        onApply = { adUnavailable ->
+            val resolved = selection.resolve(documents.filter { it.id != target?.documentId })
+            if (active && interactive && resolved.size >= 2) onConfirm(resolved, adUnavailable)
+        },
+    )
     val requestBack = {
-        if (active && canLeave && !leaving) {
+        if (active && canLeave && !leaving && !action.inProgress) {
             leaving = true
             onBack()
         }
@@ -97,8 +110,10 @@ fun DocumentMergeRoute(
         documents = documents,
         selection = selection,
         target = target,
-        enabled = interactive,
-        canNavigateBack = canNavigateBack && !leaving,
+        savedDocumentId = savedDocumentId,
+        enabled = interactive && !action.inProgress,
+        actionShowsVideo = action.showsVideo,
+        canNavigateBack = canNavigateBack && !leaving && !action.inProgress,
         canConfirm = (target == null || target.currentDocument != null) &&
             (!isLoading || selection.items.none { it.documentId != null }),
         isLoading = isLoading || pendingUris.isNotEmpty(),
@@ -108,13 +123,12 @@ fun DocumentMergeRoute(
         snackbarHost = snackbarHost,
         onUnlock = onUnlock,
         onBack = requestBack,
+        onOpenDocument = { id -> if (active && !leaving) onOpenDocument(id) },
         onPickFiles = {
             pickerError = null
             try { picker.launch(arrayOf("application/pdf")) }
             catch (_: Exception) { pickerError = pickerErrorText }
         },
-        onConfirm = { items ->
-            if (active && interactive) onConfirm(items)
-        },
+        onConfirm = { if (active && interactive) action.onClick() },
     )
 }

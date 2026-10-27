@@ -3,6 +3,9 @@ package com.joseleandro.scaniqo.ui.documentMerge
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy
+import com.joseleandro.scaniqo.core.ads.ToolAdPermit
 import com.joseleandro.scaniqo.core.security.PasswordAccess
 import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultRecoveryException
@@ -29,6 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 /** O lote produz um novo rascunho; a confirmação de nome/tag pertence às ações compartilhadas. */
 class DocumentQuickMergeViewModel(
@@ -36,11 +40,16 @@ class DocumentQuickMergeViewModel(
     private val documents: DocumentRepository,
     private val passwords: PasswordAccess,
     private val savedState: SavedStateHandle,
+    private val adAccess: ToolAdAccessPolicy? = null,
 ) : ViewModel() {
     private val restored = restorePending()
-    private val state = MutableStateFlow(DocumentQuickMergeUiState(
-        isActive = restored != null, pending = restored,
-    ))
+    private val state = MutableStateFlow(
+        DocumentQuickMergeUiState(
+            isActive = restored != null,
+            pending = restored,
+            savedDocumentId = savedState["merge.savedDocumentId"],
+        ),
+    )
     val uiState = state.asStateFlow()
     private val cancelledChannel = Channel<Unit>(Channel.UNLIMITED)
     val cancellations = cancelledChannel.receiveAsFlow()
@@ -51,11 +60,17 @@ class DocumentQuickMergeViewModel(
     private var generation = 0L
     private var job: Job? = null
     private val operationMutex = Mutex()
+    private var adPermit: ToolAdPermit? = null
 
-    fun merge(selection: List<DocumentMergeItem>): Boolean {
+    fun merge(selection: List<DocumentMergeItem>, adUnavailable: Boolean = false): Boolean {
         if (state.value.isActive) return false
         val selected = selection.filter { it.uri.isNotBlank() }.distinctBy { it.uri }
-        if (selected.size < 2) return false
+        if (selected.size < 2 || adPermit != null) return false
+        if (adAccess != null) {
+            adPermit = adAccess.acquire(RewardedTool.MERGE_PDFS, UUID.randomUUID().toString(), adUnavailable)
+                ?: return false
+        }
+        clearSavedDocument()
         items = selected
         suppliedPasswords.clear()
         manualPasswordUris.clear()
@@ -103,6 +118,7 @@ class DocumentQuickMergeViewModel(
     /** Só libera a referência depois que DocumentActionsViewModel persistiu o rascunho. */
     fun completeDelivery(uri: String) {
         if (state.value.pending?.pdfUri != uri) return
+        savedState["merge.deliveredOperation"] = "merge:$uri"
         clearPending()
         items = emptyList()
         suppliedPasswords.clear()
@@ -110,7 +126,31 @@ class DocumentQuickMergeViewModel(
         state.value = DocumentQuickMergeUiState()
     }
 
+    /** A recompensa só é consumida quando a folha de nome/tag confirma o cadastro. */
+    fun finishGenerated(operationId: String, documentId: Long?) {
+        if (savedState.get<String>("merge.deliveredOperation") != operationId) return
+        savedState.remove<String>("merge.deliveredOperation")
+        finishPermit(success = documentId != null && documentId > 0L)
+        documentId?.let(::completeSave)
+    }
+
+    /** A mesclagem só termina quando o rascunho foi salvo como documento. */
+    fun completeSave(documentId: Long) {
+        if (documentId <= 0L) return
+        savedState.remove<String>("merge.deliveredOperation")
+        finishPermit(success = true)
+        savedState["merge.savedDocumentId"] = documentId
+        state.update { it.copy(savedDocumentId = documentId) }
+    }
+
+    fun clearSavedDocument() {
+        savedState.remove<Long>("merge.savedDocumentId")
+        state.update { it.copy(savedDocumentId = null) }
+    }
+
     fun cancel() {
+        finishPermit(success = false)
+        savedState.remove<String>("merge.deliveredOperation")
         generation++
         job?.cancel()
         val pending = state.value.pending
@@ -190,6 +230,17 @@ class DocumentQuickMergeViewModel(
                 if (request == generation) state.update { it.copy(isWorking = false) }
             }
         }
+    }
+
+    private fun finishPermit(success: Boolean) {
+        val permit = adPermit ?: return
+        adPermit = null
+        adAccess?.finish(permit, success)
+    }
+
+    override fun onCleared() {
+        finishPermit(success = false)
+        super.onCleared()
     }
 
     private fun persistPending(scan: ScannedDocument) {

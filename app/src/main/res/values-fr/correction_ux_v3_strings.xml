@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">Détecter le contour</string>
+    <string name="correction_v3_detect_again">Détecter à nouveau</string>
+    <string name="correction_v3_manual">Ajuster manuellement</string>
+    <string name="correction_v3_edit_crop">Modifier le recadrage</string>
+    <string name="correction_v3_view_result">Voir le résultat</string>
+    <string name="correction_v3_compare">Comparer</string>
+    <string name="correction_v3_show_before">Voir avant</string>
+    <string name="correction_v3_show_after">Voir après</string>
+    <string name="correction_v3_preparing_before">Préparation de la page avant ces réglages…</string>
+    <string name="correction_v3_undo">Annuler le réglage</string>
+    <string name="correction_v3_redo">Rétablir le réglage</string>
+    <string name="correction_v3_discard_all">Ignorer les réglages de cette session</string>
+    <string name="correction_v3_restore_crop">Restaurer le recadrage</string>
+    <string name="correction_v3_restore_background">Restaurer le contour</string>
+    <string name="correction_v3_zero_tilt">Remettre l’inclinaison à zéro</string>
+    <string name="correction_v3_zero_curve">Remettre la courbure à zéro</string>
+    <string name="correction_v3_convert_warning">Cette correction doit convertir la page en image. Le texte original risque de ne plus être sélectionnable.</string>
+    <string name="correction_v3_filter_requires_conversion">Le filtre de cette page nécessite déjà une conversion en image.</string>
+    <string name="correction_v3_value_increase">Augmenter %1$s</string>
+    <string name="correction_v3_value_decrease">Diminuer %1$s</string>
+    <string name="correction_v3_value_edit">Modifier %1$s avec précision</string>
+    <string name="correction_v3_value_error">Saisissez une valeur de %1$s à %2$s par pas de %3$s.</string>
+    <string name="correction_v3_value_done">Utiliser la valeur</string>
+    <string name="correction_v3_curve_title">Corriger une page courbée</string>
+    <string name="correction_v3_curve_up">Courbure vers le haut</string>
+    <string name="correction_v3_curve_down">Courbure vers le bas</string>
+    <string name="correction_v3_result_updating">Mise à jour du résultat…</string>
+</resources>

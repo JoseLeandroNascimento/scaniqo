@@ -1,0 +1,5 @@
+<resources>
+    <string name="layout_margin_label">Margins</string>
+    <string name="layout_with_margin">With margin</string>
+    <string name="layout_edge_to_edge">To the edge</string>
+</resources>

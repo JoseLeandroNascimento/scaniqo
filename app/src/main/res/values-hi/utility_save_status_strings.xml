@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_output_ready_to_save">PDF सहेजने के लिए तैयार है</string>
+    <string name="utility_output_finish_in_sheet">सहेजने के लिए नाम और टैग चुनें</string>
+    <string name="utility_zip_password_again">निर्यात करने से पहले इस PDF का पासवर्ड फिर से दर्ज करें।</string>
+</resources>

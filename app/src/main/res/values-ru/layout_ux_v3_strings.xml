@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">До</string>
+    <string name="layout_v3_after">После</string>
+    <string name="layout_v3_compare">Сравнить</string>
+    <string name="layout_v3_align">Выровнять</string>
+    <string name="layout_v3_align_target">Выровнять: %1$s, %2$s</string>
+    <string name="layout_v3_no_both_travel">Нет места для перемещения по горизонтали и вертикали.</string>
+    <string name="layout_v3_no_horizontal_travel">Нет места для перемещения по горизонтали.</string>
+    <string name="layout_v3_no_vertical_travel">Нет места для перемещения по вертикали.</string>
+    <string name="layout_v3_reduce_size">Уменьшить размер</string>
+    <string name="layout_v3_hide_precise">Скрыть точную позицию</string>
+    <string name="layout_v3_precise">Точная позиция</string>
+    <string name="layout_v3_nudge">Сдвинуть к %1$s</string>
+    <string name="layout_v3_center">Центрировать содержимое</string>
+    <string name="layout_v3_custom_size">Пользовательский · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">Варианты кадрирования используют масштаб 100%.</string>
+    <string name="layout_v3_scale">Масштаб</string>
+    <string name="layout_v3_decrease_scale" formatted="false">Уменьшить масштаб на 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">Увеличить масштаб на 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">Введите значение от 25% до 200%.</string>
+    <string name="layout_v3_without_margin">Без полей</string>
+    <string name="layout_v3_with_margin_description">Всё содержимое внутри полей страницы</string>
+    <string name="layout_v3_without_margin_description">Всё содержимое в области страницы</string>
+    <string name="layout_v3_restore_category">Восстановить этот параметр</string>
+    <string name="layout_v3_more">Дополнительные параметры</string>
+    <string name="layout_v3_discard_session">Отменить все изменения этого сеанса</string>
+</resources>

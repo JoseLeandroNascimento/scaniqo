@@ -6,6 +6,10 @@ import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Origem explícita para distinguir ferramentas avulsas do editor de PDF. */
+@Serializable
+enum class DocumentToolOrigin { SIGNATURE, FILL_PAGE }
+
 @Serializable
 sealed interface AppRoute : NavKey {
     @Serializable
@@ -38,6 +42,8 @@ sealed interface AppRoute : NavKey {
         val documentId: Long,
         /** Página inicial solicitada pela busca, começando em 1. */
         val initialPageNumber: Int? = null,
+        /** Ausente em documentos abertos no editor, inclusive ferramentas internas. */
+        val toolOrigin: DocumentToolOrigin? = null,
     ) : AppRoute
 
     @Serializable

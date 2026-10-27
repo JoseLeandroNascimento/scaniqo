@@ -3,7 +3,7 @@ package com.joseleandro.scaniqo.domain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class PdfOverlayKind { TEXT, CHECKMARK, HIGHLIGHT, UNDERLINE, ARROW, DRAWING, STAMP, WATERMARK, HEADER, FOOTER, PAGE_NUMBER }
+enum class PdfOverlayKind { TEXT, CHECKMARK, HIGHLIGHT, UNDERLINE, ARROW, DRAWING, STAMP, WATERMARK, HEADER, FOOTER, PAGE_NUMBER, CROSSMARK }
 
 @Serializable
 enum class PdfTextHorizontalAlignment { START, CENTER, END }
@@ -29,6 +29,9 @@ data class PdfOverlay(
     val textVerticalAlignment: PdfTextVerticalAlignment = PdfTextVerticalAlignment.TOP,
     val autoSizeText: Boolean = false,
     val wrapText: Boolean = false,
+    val bold: Boolean = false,
+    val italic: Boolean = false,
+    val underlined: Boolean = false,
 ) {
     fun movedTo(newX: Float, newY: Float): PdfOverlay {
         val left = newX.coerceIn(0f, 1f - width)

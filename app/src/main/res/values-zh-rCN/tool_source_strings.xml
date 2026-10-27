@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_source_title">选择 PDF</string>
+    <string name="tool_source_subtitle">要使用的文件在哪里？</string>
+    <string name="tool_source_app_hint">Scaniqo 中保存的 PDF</string>
+    <string name="tool_source_device_hint">浏览 PDF 文件</string>
+    <string name="tool_source_library_empty">这里还没有保存的 PDF。</string>
+    <string name="tool_source_resume">继续调整</string>
+</resources>

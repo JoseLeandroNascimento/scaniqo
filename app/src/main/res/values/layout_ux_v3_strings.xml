@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">Before</string>
+    <string name="layout_v3_after">After</string>
+    <string name="layout_v3_compare">Compare</string>
+    <string name="layout_v3_align">Align</string>
+    <string name="layout_v3_align_target">Align: %1$s, %2$s</string>
+    <string name="layout_v3_no_both_travel">There is no room to move horizontally or vertically.</string>
+    <string name="layout_v3_no_horizontal_travel">There is no room to move horizontally.</string>
+    <string name="layout_v3_no_vertical_travel">There is no room to move vertically.</string>
+    <string name="layout_v3_reduce_size">Reduce size</string>
+    <string name="layout_v3_hide_precise">Hide precise position</string>
+    <string name="layout_v3_precise">Precise position</string>
+    <string name="layout_v3_nudge">Move toward %1$s</string>
+    <string name="layout_v3_center">Center content</string>
+    <string name="layout_v3_custom_size">Custom · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">Framing presets use 100% scale.</string>
+    <string name="layout_v3_scale">Scale</string>
+    <string name="layout_v3_decrease_scale" formatted="false">Decrease scale by 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">Increase scale by 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">Enter a value from 25% to 200%.</string>
+    <string name="layout_v3_without_margin">Without margin</string>
+    <string name="layout_v3_with_margin_description">All content inside the page margin</string>
+    <string name="layout_v3_without_margin_description">All content within the page area</string>
+    <string name="layout_v3_restore_category">Restore this adjustment</string>
+    <string name="layout_v3_more">More options</string>
+    <string name="layout_v3_discard_session">Discard all changes in this session</string>
+</resources>

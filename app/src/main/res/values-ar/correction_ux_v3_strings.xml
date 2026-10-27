@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">اكتشاف حدود الصفحة</string>
+    <string name="correction_v3_detect_again">إعادة الاكتشاف</string>
+    <string name="correction_v3_manual">ضبط يدويًا</string>
+    <string name="correction_v3_edit_crop">تعديل الاقتصاص</string>
+    <string name="correction_v3_view_result">عرض النتيجة</string>
+    <string name="correction_v3_compare">مقارنة</string>
+    <string name="correction_v3_show_before">عرض قبل</string>
+    <string name="correction_v3_show_after">عرض بعد</string>
+    <string name="correction_v3_preparing_before">جارٍ إعداد الصفحة قبل هذه التعديلات…</string>
+    <string name="correction_v3_undo">تراجع عن التعديل</string>
+    <string name="correction_v3_redo">إعادة التعديل</string>
+    <string name="correction_v3_discard_all">تجاهل تعديلات هذه الجلسة</string>
+    <string name="correction_v3_restore_crop">استعادة الاقتصاص</string>
+    <string name="correction_v3_restore_background">استعادة الحدود</string>
+    <string name="correction_v3_zero_tilt">تصفير الميل</string>
+    <string name="correction_v3_zero_curve">تصفير الانحناء</string>
+    <string name="correction_v3_convert_warning">يتطلب هذا التصحيح تحويل الصفحة إلى صورة. قد لا يبقى النص الأصلي قابلاً للتحديد.</string>
+    <string name="correction_v3_filter_requires_conversion">يتطلب مرشح هذه الصفحة التحويل إلى صورة بالفعل.</string>
+    <string name="correction_v3_value_increase">زيادة %1$s</string>
+    <string name="correction_v3_value_decrease">تقليل %1$s</string>
+    <string name="correction_v3_value_edit">تعديل %1$s بدقة</string>
+    <string name="correction_v3_value_error">أدخل قيمة من %1$s إلى %2$s بخطوات %3$s.</string>
+    <string name="correction_v3_value_done">استخدام القيمة</string>
+    <string name="correction_v3_curve_title">تصحيح الصفحة المنحنية</string>
+    <string name="correction_v3_curve_up">انحناء لأعلى</string>
+    <string name="correction_v3_curve_down">انحناء لأسفل</string>
+    <string name="correction_v3_result_updating">جارٍ تحديث النتيجة…</string>
+</resources>

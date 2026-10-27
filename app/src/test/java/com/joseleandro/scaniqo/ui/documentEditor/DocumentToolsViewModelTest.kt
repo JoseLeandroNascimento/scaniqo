@@ -1,6 +1,10 @@
 package com.joseleandro.scaniqo.ui.documentEditor
 
 import androidx.lifecycle.ViewModelStore
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.core.ads.ToolAdAccess
+import com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy
+import com.joseleandro.scaniqo.core.ads.ToolAdPermit
 import com.joseleandro.scaniqo.core.security.PasswordAccess
 import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultState
@@ -31,6 +35,7 @@ import com.joseleandro.scaniqo.domain.repository.SignatureRepository
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentEditor.effect.DocumentToolsEffect
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
+import com.joseleandro.scaniqo.ui.documentEditor.components.withFillMarkKind
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentMergeUiState
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentToolsMessage
@@ -64,6 +69,10 @@ class DocumentToolsViewModelTest {
     private val repository = FakePdfEditorRepository()
     private val signatures = FakeSignatureRepository()
     private val passwords = FakePasswords()
+    private val adPolicy = FakeToolAdPolicy()
+    private val adViewModel by lazy {
+        DocumentToolsViewModel(repository, signatures, passwords, adAccess = adPolicy).also { store.put("ad-tools", it) }
+    }
     private val document = DocumentModel(
         id = 7, name = "Contrato", pdfUri = "file:///saved.pdf", pageCount = 3,
         createdAt = 1L, sizeBytes = 300L,
@@ -186,6 +195,48 @@ class DocumentToolsViewModelTest {
         assertEquals(original, viewModel.uiState.value.workspace)
         assertFalse(viewModel.uiState.value.hasChanges)
         assertTrue(repository.saves.isEmpty())
+    }
+
+    @Test fun convertingSelectedCheckToCrossPreservesPlacementAndUndoHistory() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val check = PdfOverlay(
+            id = "mark", kind = PdfOverlayKind.CHECKMARK,
+            x = .7f, y = .8f, width = .05f, height = .04f,
+            color = 0xFF1565C0.toInt(), opacity = .5f,
+        )
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(check, setOf("page-1")))
+        val cross = check.withFillMarkKind(PdfOverlayKind.CROSSMARK)
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(cross, setOf("page-1")))
+        assertEquals(listOf(cross), viewModel.uiState.value.workspace!!.pages.first().overlays)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        assertEquals(listOf(check), viewModel.uiState.value.workspace!!.pages.first().overlays)
+        viewModel.onEvent(DocumentToolsEvent.Redo)
+        assertEquals(listOf(cross), viewModel.uiState.value.workspace!!.pages.first().overlays)
+    }
+
+    @Test fun redoRestoresWorkspaceAndNewEditClearsRedoBranch() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        val first = PdfOverlay("field", PdfOverlayKind.TEXT, text = "Nome")
+        val second = first.copy(text = "Nome completo", bold = true)
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(first, setOf("page-1")))
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(second, setOf("page-1")))
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        assertEquals(first, viewModel.uiState.value.workspace!!.pages.first().overlays.single())
+        assertTrue(viewModel.uiState.value.canRedo)
+        viewModel.onEvent(DocumentToolsEvent.Redo)
+        assertEquals(second, viewModel.uiState.value.workspace!!.pages.first().overlays.single())
+        assertFalse(viewModel.uiState.value.canRedo)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        viewModel.onEvent(DocumentToolsEvent.SelectPage("page-2"))
+        assertTrue(viewModel.uiState.value.canRedo)
+        val third = PdfOverlay("other", PdfOverlayKind.CROSSMARK, width = .04f, height = .03f)
+        viewModel.onEvent(DocumentToolsEvent.PutOverlay(third, setOf("page-2")))
+        assertFalse(viewModel.uiState.value.canRedo)
+        val updated = viewModel.uiState.value.workspace
+        viewModel.onEvent(DocumentToolsEvent.Redo)
+        assertEquals(updated, viewModel.uiState.value.workspace)
     }
 
     @Test fun watermarkTargetsAndInvalidOverlayDoNotAffectExistingLayouts() = runTest(dispatcher) {
@@ -663,6 +714,96 @@ class DocumentToolsViewModelTest {
         assertTrue(viewModel.uiState.value.hasChanges)
     }
 
+    @Test fun selectedSignatureWaitsForTapAndClampsPlacementToPageEdges() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Minha assinatura", "file:///signature.png", 3f))
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.signatureAwaitingPlacement)
+        val initial = viewModel.uiState.value.signatureDraft!!
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        assertTrue(viewModel.uiState.value.workspace!!.pages.first().signatures.isEmpty())
+        viewModel.onEvent(DocumentToolsEvent.PlaceSignature(0f, 0f))
+        val placed = viewModel.uiState.value.signatureDraft!!
+        assertFalse(viewModel.uiState.value.signatureAwaitingPlacement)
+        assertEquals(0f, placed.x, .0001f)
+        assertEquals(0f, placed.y, .0001f)
+        assertEquals(initial.id, placed.id)
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        assertEquals(placed, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+        viewModel.onEvent(DocumentToolsEvent.EditSignature("page-1", placed.id))
+        assertFalse(viewModel.uiState.value.signatureAwaitingPlacement)
+    }
+
+    @Test fun replacingSignatureKeepsPlacementIdAndCanBeCancelledOrUndone() = runTest(dispatcher) {
+        val first = SignatureModel("first", "First", "file:///first.png", 3f)
+        val second = SignatureModel("second", "Second", "file:///second.png", 1.5f)
+        signatures.values.value = listOf(first, second)
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature(first.id))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.PlaceSignature(.5f, .5f))
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        val original = viewModel.uiState.value.workspace!!.pages.first().signatures.single()
+
+        viewModel.onEvent(DocumentToolsEvent.EditSignature("page-1", original.id))
+        viewModel.onEvent(DocumentToolsEvent.ReplaceSignature(second.id))
+        advanceUntilIdle()
+        val replacement = viewModel.uiState.value.signatureDraft!!
+        assertEquals(original.id, replacement.id)
+        assertEquals(original.rotationDegrees, replacement.rotationDegrees)
+        assertEquals(original.x + original.width / 2f, replacement.x + replacement.width / 2f, .0001f)
+        assertEquals(original.y + original.height / 2f, replacement.y + replacement.height / 2f, .0001f)
+        assertEquals(1.5f, replacement.width * 595f / (replacement.height * 842f), .0001f)
+        assertEquals(second.imageUri, repository.copiedSignatureSources.last())
+        assertEquals(original, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+        viewModel.onEvent(DocumentToolsEvent.CancelSignature)
+        assertEquals(original, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+
+        viewModel.onEvent(DocumentToolsEvent.EditSignature("page-1", original.id))
+        viewModel.onEvent(DocumentToolsEvent.ReplaceSignature(second.id))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        assertEquals(replacement, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+        assertEquals(listOf(first, second), signatures.values.value)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        assertEquals(original, viewModel.uiState.value.workspace!!.pages.first().signatures.single())
+    }
+
+    @Test fun duplicateAndDeleteSelectedSignatureUseUndoableIds() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("first", "First", "file:///first.png", 3f))
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.InsertSignature("first"))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.PlaceSignature(.5f, .5f))
+        viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        val original = viewModel.uiState.value.workspace!!.pages.first().signatures.single()
+
+        viewModel.onEvent(DocumentToolsEvent.EditSignature("page-1", original.id))
+        viewModel.onEvent(DocumentToolsEvent.MoveSignature(original.x + .03f, original.y))
+        viewModel.onEvent(DocumentToolsEvent.DuplicateSignatureDraft)
+        val copies = viewModel.uiState.value.workspace!!.pages.first().signatures
+        assertEquals(2, copies.size)
+        assertEquals(original.id, copies[0].id)
+        assertTrue(copies[0].x > original.x)
+        assertTrue(copies[1].id != copies[0].id)
+        assertTrue(copies[1].x != copies[0].x || copies[1].y != copies[0].y)
+        assertNull(viewModel.uiState.value.signatureDraft)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        assertEquals(listOf(original), viewModel.uiState.value.workspace!!.pages.first().signatures)
+        viewModel.onEvent(DocumentToolsEvent.Redo)
+        assertEquals(copies, viewModel.uiState.value.workspace!!.pages.first().signatures)
+
+        viewModel.onEvent(DocumentToolsEvent.EditSignature("page-1", copies[1].id))
+        viewModel.onEvent(DocumentToolsEvent.DeleteSignatureDraft)
+        assertEquals(listOf(copies[0]), viewModel.uiState.value.workspace!!.pages.first().signatures)
+        viewModel.onEvent(DocumentToolsEvent.Undo)
+        assertEquals(copies, viewModel.uiState.value.workspace!!.pages.first().signatures)
+    }
+
     @Test fun signatureDraftPreservesAspectRatioAndIsNotBakedTwice() = runTest(dispatcher) {
         signatures.values.value = listOf(SignatureModel("signature", "Minha assinatura", "file:///signature.png", 3f))
         viewModel.load(document)
@@ -734,6 +875,7 @@ class DocumentToolsViewModelTest {
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
         advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.PlaceSignature(.5f, .62f))
         viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
         advanceUntilIdle()
         val placement = viewModel.uiState.value.workspace!!.pages.first().signatures.single()
@@ -1752,6 +1894,7 @@ class DocumentToolsViewModelTest {
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
         advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.PlaceSignature(.5f, .62f))
         viewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
         advanceUntilIdle()
         val original = viewModel.uiState.value.workspace!!
@@ -1913,6 +2056,381 @@ class DocumentToolsViewModelTest {
         assertEquals(original, viewModel.uiState.value.workspace)
     }
 
+    @Test fun fillEditsRemainFreeUntilFinalSaveAndLegacySaveCannotBypassGate() = runTest(dispatcher) {
+        adPolicy.available[RewardedTool.FILL_PAGE] = ToolAdAccess.AD_REQUIRED
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        assertTrue(adPolicy.acquisitions.isEmpty())
+        assertEquals(RewardedTool.FILL_PAGE, adViewModel.pendingRewardedSaveTool())
+
+        adViewModel.onEvent(DocumentToolsEvent.Save)
+        advanceUntilIdle()
+
+        assertTrue(repository.saves.isEmpty())
+        assertTrue(adViewModel.uiState.value.hasChanges)
+        assertTrue(adPolicy.finishes.isEmpty())
+    }
+
+    @Test fun signaturePlacementIsNotChargedAndMixedSaveUsesOnlyItsStandaloneOrigin() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Assinatura", "file:///signature.png", 3f))
+        adPolicy.grantReward(RewardedTool.SIGNATURE, "signature-video")
+        loadStandalone(tool = RewardedTool.SIGNATURE)
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("mark", PdfOverlayKind.CHECKMARK), setOf("page-1"),
+        ))
+        adViewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        assertFalse(adViewModel.saveWithAd())
+        assertTrue(adPolicy.acquisitions.isEmpty())
+        adViewModel.onEvent(DocumentToolsEvent.PlaceSignature(.5f, .5f))
+        adViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        advanceUntilIdle()
+        assertTrue(adPolicy.acquisitions.isEmpty())
+        assertEquals(RewardedTool.SIGNATURE, adViewModel.pendingRewardedSaveTool())
+
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+
+        assertEquals(listOf(RewardedTool.SIGNATURE), adPolicy.acquisitions.map { it.first })
+        assertEquals(listOf(true), adPolicy.finishes.map { it.second })
+        assertEquals(ToolAdAccess.AD_REQUIRED, adPolicy.access(RewardedTool.FILL_PAGE))
+        assertNull(adViewModel.pendingRewardedSaveTool())
+    }
+
+    @Test fun editorRewardIsConsumedOnlyAfterWritingDocumentAndDoubleTapIsIgnored() = runTest(dispatcher) {
+        adPolicy.available[RewardedTool.FILL_PAGE] = ToolAdAccess.REWARDED
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        val gate = CompletableDeferred<Unit>()
+        repository.saveGate = gate
+
+        assertTrue(adViewModel.saveWithAd())
+        assertFalse(adViewModel.saveWithAd())
+        runCurrent()
+
+        assertEquals(1, adPolicy.acquisitions.size)
+        assertTrue(adPolicy.finishes.isEmpty())
+        assertEquals(ToolAdAccess.REWARDED, adPolicy.access(RewardedTool.FILL_PAGE))
+        gate.complete(Unit)
+        advanceUntilIdle()
+        assertEquals(listOf(true), adPolicy.finishes.map { it.second })
+        assertFalse(adViewModel.uiState.value.hasChanges)
+        assertNull(adPolicy.reserved)
+    }
+
+    @Test fun failedEditorSaveKeepsDraftAndRewardForRetry() = runTest(dispatcher) {
+        adPolicy.available[RewardedTool.FILL_PAGE] = ToolAdAccess.REWARDED
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("cross", PdfOverlayKind.CROSSMARK), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        val draft = adViewModel.uiState.value.workspace
+        repository.failSave = true
+
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+
+        assertEquals(listOf(false), adPolicy.finishes.map { it.second })
+        assertEquals(ToolAdAccess.REWARDED, adPolicy.access(RewardedTool.FILL_PAGE))
+        assertEquals(draft, adViewModel.uiState.value.workspace)
+        assertEquals(DocumentToolsMessage.SAVE_ERROR, adViewModel.uiState.value.message)
+        repository.failSave = false
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+        assertEquals(listOf(false, true), adPolicy.finishes.map { it.second })
+    }
+
+    @Test fun clearingStandaloneBeforeSaveCoroutineStartsPreservesReward() = runTest(dispatcher) {
+        adPolicy.grantReward(RewardedTool.FILL_PAGE, "fill-video")
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+
+        assertTrue(adViewModel.saveWithAd())
+        store.clear()
+        runCurrent()
+
+        assertEquals(listOf(false), adPolicy.finishes.map { it.second })
+        assertEquals(ToolAdAccess.REWARDED, adPolicy.access(RewardedTool.FILL_PAGE))
+        assertTrue(repository.saves.isEmpty())
+        assertNull(adPolicy.reserved)
+    }
+
+    @Test fun clearingEditorDuringPendingWritePreservesReward() = runTest(dispatcher) {
+        adPolicy.available[RewardedTool.FILL_PAGE] = ToolAdAccess.REWARDED
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        repository.saveGate = CompletableDeferred()
+        assertTrue(adViewModel.saveWithAd())
+        runCurrent()
+
+        store.clear()
+        runCurrent()
+
+        assertEquals(listOf(false), adPolicy.finishes.map { it.second })
+        assertEquals(ToolAdAccess.REWARDED, adPolicy.access(RewardedTool.FILL_PAGE))
+        assertNull(adPolicy.reserved)
+        assertTrue(repository.saves.isEmpty())
+    }
+
+    @Test fun unavailableVideoSavesEditorResultWithoutCreatingAnEarnedCredit() = runTest(dispatcher) {
+        adPolicy.available[RewardedTool.FILL_PAGE] = ToolAdAccess.AD_REQUIRED
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+
+        assertTrue(adViewModel.saveWithAd(adUnavailable = true))
+        advanceUntilIdle()
+
+        assertEquals(listOf(RewardedTool.FILL_PAGE to true), adPolicy.acquisitions)
+        assertEquals(1, repository.saves.size)
+        assertEquals(ToolAdAccess.AD_REQUIRED, adPolicy.access(RewardedTool.FILL_PAGE))
+    }
+
+    @Test fun reenteringThroughEditorClearsStandaloneOriginAndKeepsAllEditingFree() = runTest(dispatcher) {
+        adPolicy.grantReward(RewardedTool.FILL_PAGE, "fill-video")
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+        assertEquals(1, adPolicy.acquisitions.size)
+        adViewModel.load(document)
+        adViewModel.setSaveAdOrigin(document.id, null)
+
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("watermark", PdfOverlayKind.WATERMARK, text = "Cópia"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        assertNull(adViewModel.pendingRewardedSaveTool())
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.RemoveOverlay("text", setOf("page-1")))
+        advanceUntilIdle()
+        assertNull(adViewModel.pendingRewardedSaveTool())
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+        assertEquals(1, adPolicy.acquisitions.size)
+        assertEquals(3, repository.saves.size)
+    }
+
+    @Test fun undoingFillChangesRemovesGateAndRedoRestoresIt() = runTest(dispatcher) {
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        assertEquals(RewardedTool.FILL_PAGE, adViewModel.pendingRewardedSaveTool())
+
+        adViewModel.onEvent(DocumentToolsEvent.Undo)
+        advanceUntilIdle()
+        assertNull(adViewModel.pendingRewardedSaveTool())
+        assertFalse(adViewModel.saveWithAd())
+        adViewModel.onEvent(DocumentToolsEvent.Redo)
+        advanceUntilIdle()
+        assertEquals(RewardedTool.FILL_PAGE, adViewModel.pendingRewardedSaveTool())
+        assertTrue(adPolicy.acquisitions.isEmpty())
+    }
+
+    @Test fun lockedProtectedEditorAfterVideoDoesNotSaveOrLoseDraftAndCredit() = runTest(dispatcher) {
+        passwords.unlock()
+        adPolicy.available[RewardedTool.FILL_PAGE] = ToolAdAccess.REWARDED
+        loadStandalone(document.copy(protectionKeyId = "key-1"))
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Privado"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        val draft = adViewModel.uiState.value.workspace
+        passwords.lock()
+        adViewModel.onEvent(DocumentToolsEvent.Backgrounded)
+        advanceUntilIdle()
+
+        assertFalse(adViewModel.saveWithAd())
+        assertEquals(draft, adViewModel.uiState.value.workspace)
+        assertTrue(adPolicy.acquisitions.isEmpty())
+        assertTrue(repository.saves.isEmpty())
+        assertEquals(ToolAdAccess.REWARDED, adPolicy.access(RewardedTool.FILL_PAGE))
+
+        passwords.unlock()
+        adViewModel.onEvent(DocumentToolsEvent.AuthenticationSucceeded)
+        advanceUntilIdle()
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+        assertEquals(listOf(true), adPolicy.finishes.map { it.second })
+        assertEquals("secret", repository.lastSavePassword)
+    }
+
+    @Test fun editorSignatureAndFillAreAlwaysFreeEvenWithoutVideoCredit() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Assinatura", "file:///signature.png", 3f))
+        adViewModel.load(document)
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        adViewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PlaceSignature(.5f, .5f))
+        adViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+        advanceUntilIdle()
+
+        assertNull(adViewModel.pendingRewardedSaveTool())
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+
+        assertEquals(1, repository.saves.size)
+        assertTrue(adPolicy.acquisitions.isEmpty())
+        assertTrue(adPolicy.finishes.isEmpty())
+        assertEquals(ToolAdAccess.AD_REQUIRED, adPolicy.access(RewardedTool.SIGNATURE))
+        assertEquals(ToolAdAccess.AD_REQUIRED, adPolicy.access(RewardedTool.FILL_PAGE))
+    }
+
+    @Test fun everySuccessfulStandaloneFillNeedsANewVideoCredit() = runTest(dispatcher) {
+        loadStandalone()
+        advanceUntilIdle()
+        for (attempt in 1..3) {
+            adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+                PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome $attempt"), setOf("page-1"),
+            ))
+            advanceUntilIdle()
+            assertEquals(RewardedTool.FILL_PAGE, adViewModel.pendingRewardedSaveTool())
+            assertFalse(adViewModel.saveWithAd())
+            assertEquals(attempt - 1, repository.saves.size)
+
+            adPolicy.grantReward(RewardedTool.FILL_PAGE, "fill-video-$attempt")
+            assertTrue(adViewModel.saveWithAd())
+            advanceUntilIdle()
+
+            assertEquals(attempt, repository.saves.size)
+            assertEquals(ToolAdAccess.AD_REQUIRED, adPolicy.access(RewardedTool.FILL_PAGE))
+        }
+        assertEquals(listOf(true, true, true), adPolicy.finishes.map { it.second })
+    }
+
+    @Test fun everySuccessfulStandaloneSignatureNeedsANewVideoCredit() = runTest(dispatcher) {
+        signatures.values.value = listOf(SignatureModel("signature", "Assinatura", "file:///signature.png", 3f))
+        loadStandalone(tool = RewardedTool.SIGNATURE)
+        advanceUntilIdle()
+        for (attempt in 1..3) {
+            adViewModel.onEvent(DocumentToolsEvent.InsertSignature("signature"))
+            advanceUntilIdle()
+            adViewModel.onEvent(DocumentToolsEvent.PlaceSignature(.2f * attempt, .5f))
+            adViewModel.onEvent(DocumentToolsEvent.ConfirmSignature)
+            advanceUntilIdle()
+            assertEquals(RewardedTool.SIGNATURE, adViewModel.pendingRewardedSaveTool())
+            assertFalse(adViewModel.saveWithAd())
+            assertEquals(attempt - 1, repository.saves.size)
+
+            adPolicy.grantReward(RewardedTool.SIGNATURE, "signature-video-$attempt")
+            assertTrue(adViewModel.saveWithAd())
+            advanceUntilIdle()
+
+            assertEquals(attempt, repository.saves.size)
+            assertEquals(ToolAdAccess.AD_REQUIRED, adPolicy.access(RewardedTool.SIGNATURE))
+        }
+        assertEquals(listOf(true, true, true), adPolicy.finishes.map { it.second })
+    }
+
+    @Test fun standaloneOriginCannotLeakToAnotherDocumentOrBeChangedByItsOldRoute() = runTest(dispatcher) {
+        loadStandalone(tool = RewardedTool.SIGNATURE)
+        advanceUntilIdle()
+        val next = document.copy(id = 8)
+        adViewModel.load(next)
+        advanceUntilIdle()
+
+        adViewModel.setSaveAdOrigin(document.id, RewardedTool.SIGNATURE)
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Outro documento"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+
+        assertNull(adViewModel.uiState.value.saveAdOrigin)
+        assertNull(adViewModel.pendingRewardedSaveTool())
+        assertTrue(adViewModel.saveWithAd())
+        advanceUntilIdle()
+        assertEquals(8L, repository.saves.single().documentId)
+        assertTrue(adPolicy.acquisitions.isEmpty())
+    }
+
+    @Test fun returningFromInternalToolKeepsTheStandaloneOriginAndUnsavedRecipe() = runTest(dispatcher) {
+        loadStandalone()
+        advanceUntilIdle()
+        adViewModel.onEvent(DocumentToolsEvent.PutOverlay(
+            PdfOverlay("text", PdfOverlayKind.TEXT, text = "Nome"), setOf("page-1"),
+        ))
+        advanceUntilIdle()
+        val draft = adViewModel.uiState.value.workspace
+
+        adViewModel.load(document)
+        adViewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(DocumentTool.PAGES))
+        adViewModel.onEvent(DocumentToolsEvent.DismissTool)
+        advanceUntilIdle()
+
+        assertEquals(draft, adViewModel.uiState.value.workspace)
+        assertEquals(RewardedTool.FILL_PAGE, adViewModel.pendingRewardedSaveTool())
+        assertFalse(adViewModel.saveWithAd())
+        assertTrue(repository.saves.isEmpty())
+    }
+
+    private fun loadStandalone(source: DocumentModel = document, tool: RewardedTool = RewardedTool.FILL_PAGE) {
+        adViewModel.load(source)
+        adViewModel.setSaveAdOrigin(source.id, tool)
+    }
+
+    private class FakeToolAdPolicy : ToolAdAccessPolicy {
+        val available = mutableMapOf<RewardedTool, ToolAdAccess>()
+        val acquisitions = mutableListOf<Pair<RewardedTool, Boolean>>()
+        val finishes = mutableListOf<Pair<ToolAdPermit, Boolean>>()
+        var reserved: ToolAdPermit? = null
+
+        override fun access(tool: RewardedTool) = available[tool] ?: ToolAdAccess.AD_REQUIRED
+
+        override fun acquire(tool: RewardedTool, operationId: String, adUnavailable: Boolean): ToolAdPermit? {
+            acquisitions += tool to adUnavailable
+            if (reserved != null || (access(tool) == ToolAdAccess.AD_REQUIRED && !adUnavailable)) return null
+            return ToolAdPermit(tool, operationId, access(tool)).also { reserved = it }
+        }
+
+        override fun finish(permit: ToolAdPermit, success: Boolean) {
+            finishes += permit to success
+            if (reserved !== permit) return
+            reserved = null
+            if (success && permit.origin == ToolAdAccess.REWARDED) {
+                available[permit.tool] = ToolAdAccess.AD_REQUIRED
+            }
+        }
+
+        override fun recordAdShown(adId: String) = Unit
+        override fun grantReward(tool: RewardedTool, adId: String) {
+            available[tool] = ToolAdAccess.REWARDED
+        }
+    }
+
     private class FakePasswords : PasswordAccess {
         override val state = MutableStateFlow(PasswordVaultState(isConfigured = true))
         override val activeKeyId = "key-1"
@@ -1956,6 +2474,7 @@ class DocumentToolsViewModelTest {
         var discards = 0
         var clearedPreviews = 0
         var failSave = false
+        var saveGate: CompletableDeferred<Unit>? = null
         var failPreview = false
         var lastOpenPassword: String? = null
         var lastSavePassword: String? = null
@@ -1966,6 +2485,7 @@ class DocumentToolsViewModelTest {
         var redactionKey: String? = null
         val saves = mutableListOf<PdfWorkspace>()
         val previews = mutableListOf<PdfWorkspace>()
+        val copiedSignatureSources = mutableListOf<String>()
         private lateinit var document: DocumentModel
 
         override suspend fun open(document: DocumentModel, password: String?): PdfWorkspace {
@@ -2003,8 +2523,10 @@ class DocumentToolsViewModelTest {
                 }
             })
         }
-        override suspend fun copySignature(workspace: PdfWorkspace, imageUri: String): String =
-            "file:///workspace/copied-signature.png"
+        override suspend fun copySignature(workspace: PdfWorkspace, imageUri: String): String {
+            copiedSignatureSources += imageUri
+            return "file:///workspace/copied-signature.png"
+        }
         override suspend fun cropSignature(workspace: PdfWorkspace, imageUri: String, crop: PdfSignatureCrop): PdfSignatureImage {
             lastCropImageUri = imageUri
             lastCrop = crop
@@ -2018,6 +2540,7 @@ class DocumentToolsViewModelTest {
         }
         override suspend fun clearPreview(workspace: PdfWorkspace) { clearedPreviews++ }
         override suspend fun save(workspace: PdfWorkspace, password: String?, protectionKeyId: String?, removeProtection: Boolean): DocumentModel {
+            saveGate?.await()
             if (failSave) error("Storage unavailable")
             saves += workspace
             lastSavePassword = password

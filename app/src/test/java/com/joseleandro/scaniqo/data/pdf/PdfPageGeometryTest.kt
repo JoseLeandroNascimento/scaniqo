@@ -3,6 +3,7 @@ package com.joseleandro.scaniqo.data.pdf
 import com.joseleandro.scaniqo.domain.model.PageAlignment
 import com.joseleandro.scaniqo.domain.model.PageScaleMode
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -127,6 +128,92 @@ class PdfPageGeometryTest {
     fun `escala nao finita e rejeitada antes de modificar o documento`() {
         PdfPageGeometry.placement(
             0f, 0f, 100f, 100f, 0, PdfPageLayout(contentScale = Float.NaN)
+        )
+    }
+
+    @Test
+    fun `receita antiga sem posicao conserva alinhamento e margem`() {
+        val layout = Json.decodeFromString<PdfPageLayout>("{\"alignment\":\"TOP\",\"contentScale\":0.75}")
+        assertEquals(null, layout.contentPosition)
+        assertEquals(false, layout.edgeToEdge)
+        val transform = PdfPageGeometry.placement(0f, 0f, 595f, 842f, 0, layout)
+        assertEquals(810f, transform.y(0f, 842f), .01f)
+    }
+
+    @Test
+    fun `posicao livre alcanca topo e esquerda simultaneamente sem margem`() {
+        val layout = PdfPageLayout(
+            contentScale = .75f,
+            contentPosition = com.joseleandro.scaniqo.domain.model.PdfContentPosition(0f, 0f),
+            edgeToEdge = true,
+        )
+        val transform = PdfPageGeometry.placement(0f, 0f, 595f, 842f, 0, layout)
+        assertEquals(0f, transform.x(0f, 842f), .001f)
+        assertEquals(842f, transform.y(0f, 842f), .001f)
+        assertEquals(446.25f, transform.x(595f, 0f), .001f)
+        assertEquals(210.5f, transform.y(595f, 0f), .001f)
+    }
+
+    @Test
+    fun `nove ancoras incluem quatro cantos com margem exata`() {
+        for (horizontal in listOf(0f, .5f, 1f)) {
+            for (vertical in listOf(0f, .5f, 1f)) {
+                val layout = PdfPageLayout(
+                    contentScale = .5f,
+                    contentPosition = com.joseleandro.scaniqo.domain.model.PdfContentPosition(horizontal, vertical),
+                )
+                val transform = PdfPageGeometry.placement(0f, 0f, 595f, 842f, 0, layout)
+                val width = transform.a * 595f
+                val height = transform.d * 842f
+                val left = 32f + (531f - width) * horizontal
+                val bottom = 32f + (778f - height) * (1f - vertical)
+                assertEquals(left, transform.x(0f, 0f), .01f)
+                assertEquals(bottom, transform.y(0f, 0f), .01f)
+            }
+        }
+    }
+
+    @Test
+    fun `posicao livre escolhe parte visivel ao ampliar sem mudar escala`() {
+        val right = PdfPageGeometry.placement(
+            0f, 0f, 595f, 842f, 0,
+            PdfPageLayout(
+                contentScale = 1.5f,
+                edgeToEdge = true,
+                contentPosition = com.joseleandro.scaniqo.domain.model.PdfContentPosition(1f, 1f),
+            )
+        )
+        assertEquals(595f, right.x(595f, 0f), .01f)
+        assertEquals(0f, right.y(0f, 0f), .01f)
+        assertEquals(1.5f, right.a, .001f)
+    }
+
+    @Test
+    fun `rotacao e CropBox deslocado preservam canto escolhido`() {
+        val transform = PdfPageGeometry.placement(
+            10f, 20f, 100f, 200f, 90,
+            PdfPageLayout(
+                contentScale = .5f,
+                edgeToEdge = true,
+                contentPosition = com.joseleandro.scaniqo.domain.model.PdfContentPosition(0f, 0f),
+            ),
+            200f, 100f,
+        )
+        val xs = listOf(transform.x(10f, 20f), transform.x(110f, 20f),
+            transform.x(10f, 220f), transform.x(110f, 220f))
+        val ys = listOf(transform.y(10f, 20f), transform.y(110f, 20f),
+            transform.y(10f, 220f), transform.y(110f, 220f))
+        assertEquals(0f, xs.min(), .01f)
+        assertEquals(100f, ys.max(), .01f)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `posicao fora da folha e rejeitada`() {
+        PdfPageGeometry.placement(
+            0f, 0f, 595f, 842f, 0,
+            PdfPageLayout(
+                contentPosition = com.joseleandro.scaniqo.domain.model.PdfContentPosition(Float.NaN, 0f)
+            ),
         )
     }
 

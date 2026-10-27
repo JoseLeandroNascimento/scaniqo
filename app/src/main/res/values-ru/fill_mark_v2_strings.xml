@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">Недавние цвета</string>
+    <string name="fill_mark_palette_colors">Цвета</string>
+    <string name="fill_mark_recent_color">Недавний цвет %1$d</string>
+    <string name="fill_mark_manual_size">Размер шрифта в пунктах (6–72)</string>
+    <string name="fill_mark_apply_size">Применить размер</string>
+    <string name="fill_mark_green">Зелёный</string>
+    <string name="fill_mark_purple">Фиолетовый</string>
+    <string name="fill_mark_gray">Серый</string>
+    <string name="fill_mark_white">Белый</string>
+    <string name="fill_mark_mark_size">Размер отметки</string>
+    <string name="fill_mark_mark_smaller">Уменьшить отметку</string>
+    <string name="fill_mark_mark_larger">Увеличить отметку</string>
+</resources>

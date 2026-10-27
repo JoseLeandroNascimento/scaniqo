@@ -10,6 +10,7 @@ data class BackupSettings(
     val frequency: BackupFrequency = BackupFrequency.DAILY,
     val wifiOnly: Boolean = true,
     val chargingOnly: Boolean = false,
+    val lastBackupId: String? = null,
     val lastBackupAt: Long? = null,
     val lastBackupBytes: Long = 0,
     val lastBackupDocumentCount: Int = 0,
@@ -17,3 +18,8 @@ data class BackupSettings(
     val needsAuthorization: Boolean = false,
     val lastAutomaticProblem: BackupAutomaticProblem? = null,
 )
+
+internal fun BackupSettings.matchesCurrentBackup(current: DriveBackupEntry?, fingerprint: String): Boolean =
+    current != null && current.id == lastBackupId &&
+        current.modifiedTimeMillis == lastBackupAt && current.sizeBytes == lastBackupBytes &&
+        fingerprint == lastSnapshotFingerprint

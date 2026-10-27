@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_output_ready_to_save">PDF সংরক্ষণের জন্য প্রস্তুত</string>
+    <string name="utility_output_finish_in_sheet">সংরক্ষণ করতে নাম ও ট্যাগ বেছে নিন</string>
+    <string name="utility_zip_password_again">রপ্তানির আগে এই PDF-এর পাসওয়ার্ড আবার লিখুন।</string>
+</resources>

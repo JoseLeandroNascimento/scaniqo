@@ -47,8 +47,10 @@ fun DocumentEditorToolRoute(
     val toast = rememberAppToastState()
     SecureWindow(enabled = document?.isProtected == true || (sameSession && state.workspace?.isProtected == true))
 
-    LaunchedEffect(documentId) { viewerViewModel.load(documentId) }
-    LaunchedEffect(document?.id, document?.pdfUri) { document?.let(toolsViewModel::load) }
+    LaunchedEffect(documentId, isActive) { if (isActive) viewerViewModel.load(documentId) }
+    LaunchedEffect(document?.id, document?.pdfUri, isActive) {
+        if (isActive) document?.let(toolsViewModel::load)
+    }
     LaunchedEffect(isActive, sameSession, state.canEdit, state.tool, leaving, applied) {
         if (isActive && sameSession && state.canEdit && !leaving && !applied && state.tool != tool) {
             toolsViewModel.onEvent(DocumentToolsEvent.ActivateEditorTool(tool))
@@ -98,6 +100,7 @@ fun DocumentEditorToolRoute(
         onEvent = onEvent,
         onDraftChanged = { if (isActive && !leaving && !applied) draftChanged = it },
         onBack = requestBack,
+        onFinish = leave,
         onRetry = {
             viewerViewModel.retry()
             toolsViewModel.onEvent(DocumentToolsEvent.Retry)

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">Buka kompresi kuat</string>
+    <string name="strong_compression_reward_body">Tonton video untuk membuka satu penggunaan pada dokumen ini.</string>
+    <string name="strong_compression_reward_quality_note">Dapat mengurangi ketajaman dan tidak menjamin file lebih kecil.</string>
+    <string name="strong_compression_reward_retry_note">Jika terjadi kesalahan atau PDF tidak mengecil, coba lagi tanpa video lain.</string>
+    <string name="strong_compression_watch_action">Tonton dan buka</string>
+    <string name="strong_compression_loading">Menyiapkan video…</string>
+    <string name="strong_compression_showing">Video sedang diputar…</string>
+    <string name="strong_compression_continue_without_ad">Lanjutkan tanpa iklan</string>
+    <string name="strong_compression_use_balanced">Gunakan seimbang</string>
+    <string name="strong_compression_close">Tutup</string>
+    <string name="strong_compression_first_free">Penggunaan pertama gratis</string>
+    <string name="strong_compression_available">Penggunaan dibuka untuk dokumen ini</string>
+    <string name="strong_compression_video_hint">Tonton video untuk membuka satu penggunaan pada dokumen ini.</string>
+    <string name="strong_compression_password_again">Konfirmasi kata sandi PDF untuk melanjutkan.</string>
+    <string name="strong_compression_unavailable_note">Video tidak tersedia. Kali ini Anda dapat melanjutkan tanpa iklan.</string>
+    <string name="tool_ad_watch_apply">Tonton dan terapkan</string>
+    <string name="tool_ad_watch_save">Tonton dan simpan</string>
+    <string name="tool_ad_watch_export">Tonton dan ekspor</string>
+    <string name="tool_ad_reward_hint">Tonton iklan untuk membuka operasi ini.</string>
+    <string name="tool_ad_first_use_free">Penggunaan pertama gratis</string>
+    <string name="tool_ad_unlocked">Operasi dibuka</string>
+</resources>

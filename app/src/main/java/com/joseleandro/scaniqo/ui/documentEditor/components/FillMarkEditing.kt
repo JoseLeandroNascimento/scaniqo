@@ -2,13 +2,28 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
+import com.joseleandro.scaniqo.domain.model.PdfPoint
 import com.joseleandro.scaniqo.domain.model.PdfTextHorizontalAlignment
 import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
 import kotlinx.serialization.Serializable
 import java.util.UUID
 import kotlin.math.abs
 
-internal val repeatableFillMarkKinds = setOf(PdfOverlayKind.TEXT, PdfOverlayKind.CHECKMARK)
+internal val repeatableFillMarkKinds = setOf(PdfOverlayKind.TEXT, PdfOverlayKind.CHECKMARK, PdfOverlayKind.CROSSMARK)
+internal val binaryFillMarkKinds = setOf(PdfOverlayKind.CHECKMARK, PdfOverlayKind.CROSSMARK)
+
+internal fun updatedFillMarkRecentColors(current: List<Int>, color: Int): List<Int> =
+    (listOf(color) + current.filterNot { it == color }).take(5)
+
+/** Converte somente marcas selecionadas; identidade, tamanho, posição e aparência permanecem intactos. */
+internal fun PdfOverlay.withFillMarkKind(kind: PdfOverlayKind): PdfOverlay =
+    if (this.kind in binaryFillMarkKinds && kind in binaryFillMarkKinds) copy(kind = kind) else this
+
+internal fun PdfOverlay.nextFillMarkAt(point: PdfPoint): PdfOverlay? =
+    takeIf { it.kind in binaryFillMarkKinds }
+        ?.copy(id = UUID.randomUUID().toString())
+        ?.placedFillMarkAt(point)
+        ?.takeIf(PdfOverlay::isValid)
 
 /** Apenas aparência: textos, identidade, posição e escopo nunca são lembrados. */
 @Serializable
@@ -20,6 +35,9 @@ internal data class FillMarkStyle(
     val opacity: Float,
     val textHorizontalAlignment: PdfTextHorizontalAlignment = PdfTextHorizontalAlignment.START,
     val textVerticalAlignment: PdfTextVerticalAlignment = PdfTextVerticalAlignment.TOP,
+    val bold: Boolean = false,
+    val italic: Boolean = false,
+    val underlined: Boolean = false,
 ) {
     fun isValid(): Boolean = fontSize.isFinite() && fontSize in 6f..72f &&
         width.isFinite() && width > 0f && width <= 1f &&
@@ -29,12 +47,14 @@ internal data class FillMarkStyle(
     fun applyTo(overlay: PdfOverlay): PdfOverlay = if (!isValid()) overlay else overlay.copy(
         color = color, fontSize = fontSize, width = width, height = height, opacity = opacity,
         textHorizontalAlignment = textHorizontalAlignment, textVerticalAlignment = textVerticalAlignment,
+        bold = bold, italic = italic, underlined = underlined,
     ).movedTo(overlay.x, overlay.y)
 
     companion object {
         fun from(overlay: PdfOverlay) = FillMarkStyle(
             overlay.color, overlay.fontSize, overlay.width, overlay.height, overlay.opacity,
             overlay.textHorizontalAlignment, overlay.textVerticalAlignment,
+            overlay.bold, overlay.italic, overlay.underlined,
         )
     }
 }

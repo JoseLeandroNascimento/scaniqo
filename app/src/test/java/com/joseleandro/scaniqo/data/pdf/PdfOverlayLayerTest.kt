@@ -31,6 +31,26 @@ class PdfOverlayLayerTest {
         }
     }
 
+    @Test fun boldItalicTextRemainsSearchableAndCrossmarkIsDrawnWithoutAGlyph() {
+        PDDocument().use { document ->
+            val page = PDPage()
+            document.addPage(page)
+            PDPageContentStream(document, page).use { stream ->
+                PdfOverlayLayer.draw(document, stream, listOf(
+                    PdfOverlay("styled", PdfOverlayKind.TEXT, text = "Nome", bold = true,
+                        italic = true, underlined = true),
+                    PdfOverlay("cross", PdfOverlayKind.CROSSMARK, x = .1f, y = .2f,
+                        width = .04f, height = .03f),
+                ), 1, 1)
+            }
+            val text = PDFTextStripper().getText(document)
+            assertTrue(text.contains("Nome"))
+            assertTrue(!text.contains("X"))
+            assertTrue(page.resources.fontNames.any { page.resources.getFont(it).name == "Helvetica-BoldOblique" })
+            assertTrue(page.resources.xObjectNames.none())
+        }
+    }
+
     @Test fun highlightDoesNotRemoveSourceTextAndIsDistinctFromRedaction() {
         PDDocument().use { document ->
             val page = PDPage()

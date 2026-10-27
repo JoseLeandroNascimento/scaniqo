@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">فتح الضغط القوي</string>
+    <string name="strong_compression_reward_body">شاهد فيديو لفتح استخدام واحد لهذا المستند.</string>
+    <string name="strong_compression_reward_quality_note">قد تقل حدة الصورة، ولا نضمن الحصول على ملف أصغر.</string>
+    <string name="strong_compression_reward_retry_note">إذا حدث خطأ أو لم يصغر ملف PDF، فأعد المحاولة دون فيديو آخر.</string>
+    <string name="strong_compression_watch_action">شاهد وافتح</string>
+    <string name="strong_compression_loading">جارٍ تجهيز الفيديو…</string>
+    <string name="strong_compression_showing">الفيديو قيد التشغيل…</string>
+    <string name="strong_compression_continue_without_ad">المتابعة دون إعلان</string>
+    <string name="strong_compression_use_balanced">استخدام الضغط المتوازن</string>
+    <string name="strong_compression_close">إغلاق</string>
+    <string name="strong_compression_first_free">الاستخدام الأول مجانًا</string>
+    <string name="strong_compression_available">تم فتح استخدام لهذا المستند</string>
+    <string name="strong_compression_video_hint">شاهد فيديو لفتح استخدام واحد لهذا المستند.</string>
+    <string name="strong_compression_password_again">أكد كلمة مرور PDF للمتابعة.</string>
+    <string name="strong_compression_unavailable_note">الفيديو غير متاح. يمكنك المتابعة دون إعلان هذه المرة.</string>
+    <string name="tool_ad_watch_apply">شاهد وطبّق</string>
+    <string name="tool_ad_watch_save">شاهد واحفظ</string>
+    <string name="tool_ad_watch_export">شاهد وصدّر</string>
+    <string name="tool_ad_reward_hint">شاهد إعلانًا لفتح هذه العملية.</string>
+    <string name="tool_ad_first_use_free">الاستخدام الأول مجانًا</string>
+    <string name="tool_ad_unlocked">تم فتح العملية</string>
+</resources>

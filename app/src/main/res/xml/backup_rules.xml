@@ -6,6 +6,9 @@
    See https://developer.android.com/about/versions/12/backup-restore
 -->
 <full-backup-content>
+    <exclude domain="sharedpref" path="ad_free_reward.xml" />
+    <exclude domain="sharedpref" path="strong_compression_access.xml" />
+    <exclude domain="sharedpref" path="tool_ad_access.xml" />
     <!--
    <include domain="sharedpref" path="."/>
    <exclude domain="sharedpref" path="device.xml"/>

@@ -22,5 +22,8 @@ interface DriveBackupRemote {
         onProgress: (transferredBytes: Long, totalBytes: Long) -> Unit = { _, _ -> },
     )
 
+    /** Move um backup antigo verificado para a lixeira do Drive, após preservar a versão atual e o histórico. */
+    suspend fun delete(accessToken: String, entry: DriveBackupEntry)
+
     suspend fun accountEmail(accessToken: String): String?
 }

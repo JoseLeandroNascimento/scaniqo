@@ -23,8 +23,13 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +71,7 @@ internal fun DocumentEditorToolScreen(
     onDraftChanged: (Boolean) -> Unit,
     onBack: () -> Unit,
     onRetry: () -> Unit,
+    onFinish: () -> Unit = onBack,
     snackbarHost: @Composable () -> Unit = {},
     hasLocalDraft: Boolean = false,
 ) {
@@ -74,6 +80,10 @@ internal fun DocumentEditorToolScreen(
     val drafts = rememberSaveableStateHolder()
     val interactive = if (enabled) state else state.copy(isLoading = true)
     val canBack = enabled && (!state.isBusy || state.isLoading)
+    var primaryAction by remember(documentId, tool) { mutableStateOf<(() -> Unit)?>(null) }
+    val registerPrimaryAction = remember(documentId, tool) {
+        { action: (() -> Unit)? -> primaryAction = action }
+    }
     val keyboard = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
@@ -94,7 +104,7 @@ internal fun DocumentEditorToolScreen(
                     }
                 },
                 actions = {
-                    if (tool in setOf(DocumentTool.PAGES, DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK) && sameSession) {
+                    if (tool in setOf(DocumentTool.PAGES, DocumentTool.ANNOTATIONS) && sameSession) {
                         val undoLabel = stringResource(R.string.viewer_undo_description)
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
@@ -107,6 +117,29 @@ internal fun DocumentEditorToolScreen(
                             ) {
                                 Icon(painterResource(R.drawable.ic_document_undo), undoLabel)
                             }
+                        }
+                        val redoLabel = stringResource(R.string.viewer_redo_description)
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+                            tooltip = { PlainTooltip { Text(redoLabel) } },
+                            state = rememberTooltipState(),
+                        ) {
+                            IconButton(
+                                onClick = { onEvent(DocumentToolsEvent.Redo) },
+                                enabled = enabled && state.canEdit && state.canRedo && !hasLocalDraft,
+                            ) {
+                                Icon(painterResource(R.drawable.ic_document_redo), redoLabel)
+                            }
+                        }
+                    }
+                    if (tool in setOf(DocumentTool.FORMS, DocumentTool.WATERMARK,
+                            DocumentTool.LAYOUT, DocumentTool.CORRECTIONS) && sameSession) {
+                        TextButton(
+                            onClick = { primaryAction?.invoke() },
+                            enabled = enabled && state.canEdit && primaryAction != null,
+                        ) {
+                            Text(stringResource(if (tool == DocumentTool.LAYOUT || tool == DocumentTool.CORRECTIONS)
+                                R.string.tools_apply_compact else R.string.editor_tool_done))
                         }
                     }
                 },
@@ -141,9 +174,11 @@ internal fun DocumentEditorToolScreen(
                     when (tool) {
                         DocumentTool.LAYOUT -> DocumentLayoutSheetContent(
                             interactive, onEvent, Modifier.fillMaxSize(), onDraftChanged,
+                            registerPrimaryAction = registerPrimaryAction,
                         )
                         DocumentTool.CORRECTIONS -> DocumentCorrectionsSheetContent(
                             interactive, onEvent, Modifier.fillMaxSize(), onDraftChanged,
+                            registerPrimaryAction = registerPrimaryAction,
                         )
                         DocumentTool.PAGES -> Column(
                             Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -154,7 +189,8 @@ internal fun DocumentEditorToolScreen(
                             }
                         }
                         DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION ->
-                            DocumentOverlayEditor(interactive, tool, onEvent, onDraftChanged, onBack)
+                            DocumentOverlayEditor(interactive, tool, onEvent, onDraftChanged, onBack,
+                                registerPrimaryAction = registerPrimaryAction, onFinish = onFinish)
                         else -> Unit
                     }
                 }

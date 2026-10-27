@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v4_tool_text">نص</string>
+    <string name="fill_v4_tool_mark">علامة</string>
+    <string name="fill_v4_mark_check">علامة صح</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">إضافة نص</string>
+    <string name="fill_v4_add_mark">إضافة علامة</string>
+    <string name="fill_v4_edit_text">تعديل النص</string>
+    <string name="fill_v4_edit_mark">تعديل العلامة</string>
+    <string name="fill_v4_size">الحجم</string>
+    <string name="fill_v4_color">اللون</string>
+    <string name="fill_v4_format">التنسيق</string>
+    <string name="fill_v4_bold">عريض</string>
+    <string name="fill_v4_italic">مائل</string>
+    <string name="fill_v4_underline">تسطير</string>
+    <string name="fill_v4_duplicate">تكرار</string>
+    <string name="fill_v4_delete">حذف</string>
+    <string name="fill_v4_collapse">طي</string>
+    <string name="fill_v4_more_actions">الإجراءات</string>
+    <string name="fill_v4_stop_inserting">إيقاف</string>
+    <string name="fill_v4_page_hint_neutral">اضغط على عنصر لتعديله. اختر نص أو علامة لإضافة عنصر.</string>
+    <string name="fill_v4_page_hint_insert_text">اضغط على الصفحة لإضافة نص.</string>
+    <string name="fill_v4_page_hint_insert_mark">اضغط على الصفحة لإضافة علامة.</string>
+    <string name="fill_v4_page_hint_insert_check">اضغط على الصفحة لإضافة علامة صح.</string>
+    <string name="fill_v4_page_hint_insert_cross">اضغط على الصفحة لإضافة علامة X.</string>
+    <string name="fill_v4_page_hint_selected">اسحب العنصر لنقله. استخدم المقبض لتغيير حجمه.</string>
+    <string name="fill_v4_selection_resize">تغيير حجم العنصر</string>
+    <string name="fill_v4_updating_page">جار تحديث الصفحة…</string>
+</resources>

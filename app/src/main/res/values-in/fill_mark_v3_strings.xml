@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v3_add_to_page">Tambahkan ke halaman</string>
+    <string name="fill_v3_writing">Menulis di halaman</string>
+    <string name="fill_v3_text_selected">Teks dipilih</string>
+    <string name="fill_v3_mark_selected">Tanda dipilih</string>
+    <string name="fill_v3_text">Teks</string>
+    <string name="fill_v3_tap_page">Ketuk halaman untuk menambahkan</string>
+    <string name="fill_v3_tap_again">Ketuk halaman untuk menambahkan tanda</string>
+    <string name="fill_v3_hide_keyboard">Sembunyikan keyboard</string>
+    <string name="fill_v3_edit_text">Edit teks</string>
+    <string name="fill_v3_size">Ukuran</string>
+    <string name="fill_v3_size_value">%1$s pt</string>
+    <string name="fill_v3_mark_size_short">Tanda</string>
+    <string name="fill_v3_color">Warna</string>
+    <string name="fill_v3_format">Format</string>
+    <string name="fill_v3_regular">Normal</string>
+    <string name="fill_v3_points">Poin</string>
+    <string name="fill_v3_size_error">Masukkan nilai antara 6 dan 72 pt.</string>
+    <string name="fill_v3_drag_corner">Anda juga dapat menyeret sudut di halaman.</string>
+    <string name="fill_v3_opacity">Intensitas · %1$d%%</string>
+    <string name="fill_v3_weight">Ketebalan</string>
+    <string name="fill_v3_text_box">Kotak teks</string>
+    <string name="fill_v3_text_box_hint">Atur bagaimana teks pas di dalam kotak.</string>
+    <string name="fill_v3_wrap">Bungkus baris</string>
+    <string name="fill_v3_precise_position">Posisi tepat</string>
+    <string name="fill_v3_position_hint">Geser sedikit demi sedikit atau seret elemen di halaman.</string>
+    <string name="fill_v3_repeat_pages">Ulangi di halaman</string>
+    <string name="fill_v3_page_count">Tujuan: %1$d halaman</string>
+    <string name="fill_v3_revert_element">Batalkan edit elemen</string>
+    <string name="fill_v3_empty_existing">Ketik teks atau gunakan Hapus.</string>
+    <string name="fill_v3_invalid_element">Periksa elemen ini sebelum melanjutkan.</string>
+    <string name="fill_v3_tap_next_mark">Ketuk untuk menambahkan tanda lain</string>
+</resources>

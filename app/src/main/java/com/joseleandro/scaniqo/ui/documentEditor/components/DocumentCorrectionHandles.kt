@@ -1,5 +1,7 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -9,6 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +39,12 @@ internal fun CorrectionHandlesOverlay(
     enabled: Boolean,
     curvature: Boolean,
     onChange: (Float) -> Unit,
+    onGestureEnd: () -> Unit = {},
 ) {
+    val latestOnGestureEnd by rememberUpdatedState(onGestureEnd)
+    var dragging by remember { mutableStateOf(false) }
+    val guideAlpha by animateFloatAsState(if (dragging) .72f else .38f,
+        animationSpec = tween(160), label = "correction guide")
     val latestValue by rememberUpdatedState(value)
     val latestOnChange by rememberUpdatedState(onChange)
     val guide = MaterialTheme.colorScheme.primary
@@ -44,13 +54,17 @@ internal fun CorrectionHandlesOverlay(
     val increase = stringResource(if (curvature) R.string.gesture_curve_decrease else R.string.gesture_angle_increase)
     val decrease = stringResource(if (curvature) R.string.gesture_curve_increase else R.string.gesture_angle_decrease)
     val range = if (curvature) -1f..1f else -15f..15f
-    val step = if (curvature) .05f else 1f
+    val step = if (curvature) .01f else .1f
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val paperSize = with(LocalDensity.current) { IntSize(maxWidth.roundToPx(), maxHeight.roundToPx()) }
         Canvas(Modifier.fillMaxSize().pointerInput(curvature, paperSize, enabled) {
             if (!enabled) return@pointerInput
             var gestureValue = latestValue
-            detectDragGestures(onDragStart = { gestureValue = latestValue }) { change, amount ->
+            detectDragGestures(
+                onDragStart = { gestureValue = latestValue; dragging = true },
+                onDragEnd = { dragging = false; latestOnGestureEnd() },
+                onDragCancel = { dragging = false; latestOnGestureEnd() },
+            ) { change, amount ->
                 change.consume()
                 gestureValue = documentCorrectionHandleValue(gestureValue, amount, paperSize, curvature)
                 latestOnChange(gestureValue)
@@ -63,13 +77,13 @@ internal fun CorrectionHandlesOverlay(
                     moveTo(0f, middle)
                     quadraticTo(size.width / 2f, middle - value * size.height * .7f, size.width, middle)
                 }
-                drawPath(curve, guide.copy(alpha = .45f), style = Stroke(1.dp.toPx()))
+                drawPath(curve, guide.copy(alpha = guideAlpha), style = Stroke(1.dp.toPx()))
             } else {
                 // A referência horizontal e a linha inclinada tornam o ajuste visível antes do novo bitmap.
                 val center = Offset(size.width / 2f, size.height / 2f)
                 drawLine(guide.copy(alpha = .18f), Offset(0f, center.y), Offset(size.width, center.y), 1.dp.toPx())
                 rotate(value, center) {
-                    drawLine(guide.copy(alpha = .45f), Offset(size.width * .1f, center.y), Offset(size.width * .9f, center.y), 1.dp.toPx())
+                    drawLine(guide.copy(alpha = guideAlpha), Offset(size.width * .1f, center.y), Offset(size.width * .9f, center.y), 1.dp.toPx())
                 }
             }
         }
@@ -90,15 +104,27 @@ internal fun CorrectionHandlesOverlay(
                     .pointerInput(curvature, paperSize, enabled) {
                         if (!enabled) return@pointerInput
                         var gestureValue = latestValue
-                        detectDragGestures(onDragStart = { gestureValue = latestValue }) { change, amount ->
+                        detectDragGestures(
+                            onDragStart = { gestureValue = latestValue; dragging = true },
+                            onDragEnd = { dragging = false; latestOnGestureEnd() },
+                            onDragCancel = { dragging = false; latestOnGestureEnd() },
+                        ) { change, amount ->
                             change.consume()
                             gestureValue = documentCorrectionHandleValue(gestureValue, amount, paperSize, curvature)
                             latestOnChange(gestureValue)
                         }
                     },
                 actions = listOf(
-                    CustomAccessibilityAction(decrease) { latestOnChange((latestValue - step).coerceIn(range)); true },
-                    CustomAccessibilityAction(increase) { latestOnChange((latestValue + step).coerceIn(range)); true },
+                    CustomAccessibilityAction(decrease) {
+                        latestOnChange((latestValue - step).coerceIn(range))
+                        latestOnGestureEnd()
+                        true
+                    },
+                    CustomAccessibilityAction(increase) {
+                        latestOnChange((latestValue + step).coerceIn(range))
+                        latestOnGestureEnd()
+                        true
+                    },
                 ),
             )
         }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tool_source_title">Pilih PDF Anda</string>
+    <string name="tool_source_subtitle">Di mana berkas yang ingin digunakan?</string>
+    <string name="tool_source_app_hint">PDF yang tersimpan di Scaniqo</string>
+    <string name="tool_source_device_hint">Telusuri berkas PDF</string>
+    <string name="tool_source_library_empty">Belum ada PDF yang tersimpan di sini.</string>
+    <string name="tool_source_resume">Lanjutkan pengaturan</string>
+</resources>

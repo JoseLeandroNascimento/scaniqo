@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_v2_thumbnails">Thumbnails</string>
+    <string name="pages_v2_intervals">Ranges</string>
+    <string name="pages_v2_from">From</string>
+    <string name="pages_v2_until">To</string>
+    <string name="pages_v2_add_range">Add range</string>
+    <string name="pages_v2_update_range">Update range</string>
+    <string name="pages_v2_edit_list">Edit list</string>
+    <string name="pages_v2_confirm_selection">Confirm selection</string>
+    <string name="pages_v2_cancel_edit">Cancel editing</string>
+    <string name="pages_v2_order">Order: %1$s</string>
+    <string name="pages_v2_document_order">Use PDF order</string>
+    <string name="pages_v2_go_to_page">Go to page</string>
+    <string name="pages_v2_range_incomplete">Enter both ends of the range.</string>
+    <string name="pages_v2_range_reversed">The start must be before or equal to the end.</string>
+    <string name="pages_v2_range_bounds">Choose pages between 1 and %1$d.</string>
+    <string name="pages_v2_edit_range">Edit range %1$s</string>
+    <string name="pages_v2_remove_range">Remove range %1$s</string>
+    <string name="pages_v2_drag_mode">Drag</string>
+    <string name="pages_v2_direct_mode">Move to position</string>
+    <string name="pages_v2_selected_position">Page at position %1$d</string>
+    <string name="pages_v2_final_position">Final position</string>
+    <string name="pages_v2_start">Start</string>
+    <string name="pages_v2_end">End</string>
+    <string name="pages_v2_move_to">Move to %1$d</string>
+    <string name="pages_v2_same_position">Already at this position</string>
+    <string name="pages_v2_numbering">Page numbering</string>
+    <string name="pages_v2_options">Options for page %1$d</string>
+    <string name="pages_v2_moved">Page moved to %1$d</string>
+    <string name="pages_v2_pending_selection">Confirm or cancel the selection before continuing.</string>
+    <string name="pages_v2_jump_hint">Page from 1 to %1$d</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">Create PDF with %1$d page</item>
+        <item quantity="other">Create PDF with %1$d pages</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">Export %1$d page</item>
+        <item quantity="other">Export %1$d pages</item>
+    </plurals>
+    <string name="pages_v2_list_hint">For example: 5, 2-4, 1. Keeps the entered order.</string>
+</resources>

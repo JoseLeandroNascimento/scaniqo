@@ -1,5 +1,6 @@
 package com.joseleandro.scaniqo.ui.documentEditor.state
 
+import com.joseleandro.scaniqo.core.ads.RewardedTool
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.domain.model.PdfQualityReport
@@ -12,6 +13,8 @@ import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentToolsMessage
 
 data class DocumentToolsUiState(
     val document: DocumentModel? = null,
+    /** Aplicada apenas pela rota ativa e vinculada ao documento desta sessão. */
+    val saveAdOrigin: RewardedTool? = null,
     val workspace: PdfWorkspace? = null,
     val signatures: List<SignatureModel> = emptyList(),
     val selectedPageId: String? = null,
@@ -46,11 +49,13 @@ data class DocumentToolsUiState(
     val isComparingOriginal: Boolean = false,
     val displayedComparisonPageId: String? = null,
     val canUndo: Boolean = false,
+    val canRedo: Boolean = false,
     val tool: DocumentTool? = null,
     val pendingDeletePageId: String? = null,
     val confirmDiscard: Boolean = false,
     val signatureDraft: PdfSignaturePlacement? = null,
     val signaturePageId: String? = null,
+    val signatureAwaitingPlacement: Boolean = false,
     val savedFormValues: List<SavedFormValue> = emptyList(),
     val canStoreFormValues: Boolean = false,
     val isUpdatingFormValues: Boolean = false,

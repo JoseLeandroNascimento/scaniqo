@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">Cores recentes</string>
+    <string name="fill_mark_palette_colors">Cores</string>
+    <string name="fill_mark_recent_color">Cor recente %1$d</string>
+    <string name="fill_mark_manual_size">Tamanho da fonte em pontos (6–72)</string>
+    <string name="fill_mark_apply_size">Aplicar tamanho</string>
+    <string name="fill_mark_green">Verde</string>
+    <string name="fill_mark_purple">Roxo</string>
+    <string name="fill_mark_gray">Cinza</string>
+    <string name="fill_mark_white">Branco</string>
+    <string name="fill_mark_mark_size">Tamanho da marca</string>
+    <string name="fill_mark_mark_smaller">Diminuir marca</string>
+    <string name="fill_mark_mark_larger">Aumentar marca</string>
+</resources>

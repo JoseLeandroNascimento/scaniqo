@@ -40,6 +40,7 @@ class AndroidBackupSettingsRepositoryTest {
             frequency = BackupFrequency.WEEKLY,
             wifiOnly = false,
             chargingOnly = true,
+            lastBackupId = "latest-drive-file",
             lastBackupAt = 1_000L,
             lastBackupBytes = 4_096L,
             lastBackupDocumentCount = 4,
@@ -57,12 +58,14 @@ class AndroidBackupSettingsRepositoryTest {
     @Test fun disconnectCanClearAccountAndPreviousSnapshot() = runTest {
         val repository = AndroidBackupSettingsRepository(context)
         repository.update {
-            it.copy(accountEmail = "owner@example.com", automaticEnabled = true, lastSnapshotFingerprint = "old")
+            it.copy(accountEmail = "owner@example.com", automaticEnabled = true,
+                lastBackupId = "old-file", lastSnapshotFingerprint = "old")
         }
         repository.update { BackupSettings(frequency = it.frequency, wifiOnly = it.wifiOnly) }
         assertEquals(BackupSettings(), AndroidBackupSettingsRepository(context).settings.value)
         assertFalse(preferences.contains("account_email"))
         assertFalse(preferences.contains("last_snapshot_fingerprint"))
+        assertFalse(preferences.contains("last_backup_id"))
     }
 
     @Test fun corruptTypesAndUnknownEnumsFallBackIndependently() {
@@ -72,12 +75,26 @@ class AndroidBackupSettingsRepositoryTest {
             .putString("frequency", "MONTHLY")
             .putInt("wifi_only", 5)
             .putString("charging_only", "bad")
+            .putInt("last_backup_id", 42)
             .putLong("last_backup_at", -1)
             .putLong("last_backup_bytes", -3)
             .putInt("last_backup_document_count", -7)
             .putString("last_automatic_problem", "UNKNOWN")
             .commit())
         assertEquals(BackupSettings(), AndroidBackupSettingsRepository(context).settings.value)
+    }
+
+    @Test fun oldPreferencesKeepSnapshotButHaveNoAssumedRemoteIdentity() {
+        check(preferences.edit()
+            .putString("account_email", "owner@example.com")
+            .putString("last_snapshot_fingerprint", "legacy-snapshot")
+            .putLong("last_backup_at", 100L)
+            .commit())
+
+        val settings = AndroidBackupSettingsRepository(context).settings.value
+        assertEquals("legacy-snapshot", settings.lastSnapshotFingerprint)
+        assertEquals(100L, settings.lastBackupAt)
+        assertNull(settings.lastBackupId)
     }
 
     @Test fun concurrentWorkerAndUiUpdatesPreserveBothChanges() = runTest {

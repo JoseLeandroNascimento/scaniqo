@@ -63,4 +63,10 @@
     <string name="fill_selection_bottom_right">Ajustar tamanho pelo canto inferior direito</string>
     <string name="fill_selection_bottom_left">Ajustar tamanho pelo canto inferior esquerdo</string>
     <string name="fill_selection_hint">Cantos ajustam o tamanho. A alça com setas move o elemento.</string>
+    <string name="overlay_crossmark">X</string>
+    <string name="fill_mark_bold">Negrito</string>
+    <string name="fill_mark_italic">Itálico</string>
+    <string name="fill_mark_underline_text">Sublinhar texto</string>
+    <string name="fill_mark_confirm_element">Confirmar elemento</string>
+    <string name="fill_mark_tap_to_cross">Toque no PDF para adicionar um X.</string>
 </resources>

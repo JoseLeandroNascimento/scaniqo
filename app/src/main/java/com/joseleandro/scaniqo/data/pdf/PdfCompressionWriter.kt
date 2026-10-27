@@ -28,6 +28,7 @@ internal object PdfCompressionWriter {
             PdfCompressionLevel.STRONG -> PdfExportQuality.SMALL
         }
         PdfImageOptimizer.optimize(source, quality)
+        PdfStreamOptimizer.optimize(source)
         currentCoroutineContext().ensureActive()
         if (password != null) PdfProtection.apply(source, password)
         val context = currentCoroutineContext()

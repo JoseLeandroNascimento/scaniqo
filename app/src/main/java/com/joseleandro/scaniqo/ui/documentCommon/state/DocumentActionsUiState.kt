@@ -9,6 +9,7 @@ data class DocumentActionsUiState(
     val isLoadingTags: Boolean = true,
     val tagsLoadError: Boolean = false,
     val pendingCreation: DocumentCreationResult? = null,
+    val generatedResult: DocumentGeneratedResult? = null,
     val editor: DocumentMetadataUiState? = null,
     val pendingDeletion: DocumentModel? = null,
     val isDeleting: Boolean = false,

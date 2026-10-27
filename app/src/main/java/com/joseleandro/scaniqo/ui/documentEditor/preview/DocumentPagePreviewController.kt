@@ -62,6 +62,7 @@ internal class DocumentPagePreviewController(
                 states[pageId] = DocumentPagePreviewState(
                     preview = preview,
                     showingOriginal = requestedOriginal[pageId] ?: showingOriginal,
+                    renderedOverlayIds = content.page.overlays.mapTo(mutableSetOf()) { it.id },
                 )
                 publish()
             } catch (cancelled: CancellationException) {

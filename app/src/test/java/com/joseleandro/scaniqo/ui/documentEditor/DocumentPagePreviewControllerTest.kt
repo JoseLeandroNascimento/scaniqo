@@ -2,6 +2,8 @@ package com.joseleandro.scaniqo.ui.documentEditor
 
 import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfImageFilter
+import com.joseleandro.scaniqo.domain.model.PdfOverlay
+import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
@@ -58,6 +60,38 @@ class DocumentPagePreviewControllerTest {
         advanceUntilIdle()
         assertEquals(1, calls)
         assertFalse(states.getValue("page-1").isRendering)
+    }
+
+    @Test fun overlayIdsStayTiedToTheDisplayedPreviewDuringAnotherRender() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        var calls = 0
+        var states = emptyMap<String, DocumentPagePreviewState>()
+        val controller = DocumentPagePreviewController(this,
+            { _, _ ->
+                calls++
+                if (calls == 2) gate.await()
+                PdfPagePreview("file:///render-$calls.pdf")
+            },
+            { states = it },
+        )
+        val original = workspace().copy(pages = workspace().pages.map { page ->
+            if (page.id == "page-1") page.copy(overlays = listOf(PdfOverlay("a", PdfOverlayKind.CHECKMARK))) else page
+        })
+        controller.request(original, "page-1")
+        advanceUntilIdle()
+        assertEquals(setOf("a"), states.getValue("page-1").renderedOverlayIds)
+
+        val next = original.copy(pages = original.pages.map { page ->
+            if (page.id == "page-1") page.copy(overlays = page.overlays + PdfOverlay("b", PdfOverlayKind.CROSSMARK)) else page
+        })
+        controller.request(next, "page-1")
+        runCurrent()
+        assertTrue(states.getValue("page-1").isRendering)
+        assertEquals(setOf("a"), states.getValue("page-1").renderedOverlayIds)
+        gate.complete(Unit)
+        advanceUntilIdle()
+        assertEquals(setOf("a", "b"), states.getValue("page-1").renderedOverlayIds)
+        assertEquals("file:///render-2.pdf", states.getValue("page-1").preview!!.uri)
     }
 
     @Test fun updatingOnePageLeavesOtherCachedPreviewUntouched() = runTest {

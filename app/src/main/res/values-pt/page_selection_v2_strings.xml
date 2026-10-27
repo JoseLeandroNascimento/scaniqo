@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_v2_thumbnails">Miniaturas</string>
+    <string name="pages_v2_intervals">Intervalos</string>
+    <string name="pages_v2_from">De</string>
+    <string name="pages_v2_until">Até</string>
+    <string name="pages_v2_add_range">Adicionar intervalo</string>
+    <string name="pages_v2_update_range">Atualizar intervalo</string>
+    <string name="pages_v2_edit_list">Editar lista</string>
+    <string name="pages_v2_confirm_selection">Confirmar seleção</string>
+    <string name="pages_v2_cancel_edit">Cancelar edição</string>
+    <string name="pages_v2_order">Ordem: %1$s</string>
+    <string name="pages_v2_document_order">Usar ordem do PDF</string>
+    <string name="pages_v2_go_to_page">Ir à página</string>
+    <string name="pages_v2_range_incomplete">Preencha o início e o fim do intervalo.</string>
+    <string name="pages_v2_range_reversed">O início deve ser menor ou igual ao fim.</string>
+    <string name="pages_v2_range_bounds">Escolha páginas entre 1 e %1$d.</string>
+    <string name="pages_v2_edit_range">Editar intervalo %1$s</string>
+    <string name="pages_v2_remove_range">Remover intervalo %1$s</string>
+    <string name="pages_v2_drag_mode">Arrastar</string>
+    <string name="pages_v2_direct_mode">Mover para posição</string>
+    <string name="pages_v2_selected_position">Página na posição %1$d</string>
+    <string name="pages_v2_final_position">Posição final</string>
+    <string name="pages_v2_start">Início</string>
+    <string name="pages_v2_end">Fim</string>
+    <string name="pages_v2_move_to">Mover para %1$d</string>
+    <string name="pages_v2_same_position">Já está nesta posição</string>
+    <string name="pages_v2_numbering">Numeração</string>
+    <string name="pages_v2_options">Opções da página %1$d</string>
+    <string name="pages_v2_moved">Página movida para %1$d</string>
+    <string name="pages_v2_pending_selection">Confirme ou cancele a seleção antes de continuar.</string>
+    <string name="pages_v2_jump_hint">Página de 1 a %1$d</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">Criar PDF com %1$d página</item>
+        <item quantity="many">Criar PDF com %1$d páginas</item>
+        <item quantity="other">Criar PDF com %1$d páginas</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">Exportar %1$d página</item>
+        <item quantity="many">Exportar %1$d páginas</item>
+        <item quantity="other">Exportar %1$d páginas</item>
+    </plurals>
+    <string name="pages_v2_list_hint">Ex.: 5, 2-4, 1. Mantém a ordem informada.</string>
+</resources>

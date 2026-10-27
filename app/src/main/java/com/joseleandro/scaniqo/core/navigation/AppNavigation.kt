@@ -1,5 +1,6 @@
 package com.joseleandro.scaniqo.core.navigation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
@@ -14,10 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.joseleandro.scaniqo.core.ads.RewardedTool
 import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
+import com.joseleandro.scaniqo.ui.ads.ToolsBannerAd
+import com.joseleandro.scaniqo.ui.ads.EditorBannerAd
 import com.joseleandro.scaniqo.ui.toolsHub.ToolsHubScreen
 import com.joseleandro.scaniqo.ui.pdfTools.PdfUtilityRoute
 import com.joseleandro.scaniqo.ui.documentCertificates.DocumentCertificatesRoute
@@ -134,7 +138,9 @@ fun AppNavigation(
                     }
                     utilityImportedTool = utility
                     utilityImportedDocumentId = id
-                    viewModel.navigateTo(AppRoute.PdfUtilityTool(utility))
+                    if (viewModel.backStack.lastOrNull() != AppRoute.PdfUtilityTool(utility)) {
+                        viewModel.navigateTo(AppRoute.PdfUtilityTool(utility))
+                    }
                 }
                 else -> {
                     val destinationRoute = when (destination) {
@@ -143,7 +149,12 @@ fun AppNavigation(
                         else -> AppRoute.DocumentViewer(id)
                     }
                     if (viewModel.backStack.lastOrNull() != destinationRoute) {
-                        viewModel.navigateTo(AppRoute.DocumentViewer(id))
+                        val origin = when (destination) {
+                            PdfImportDestination.SIGN -> DocumentToolOrigin.SIGNATURE
+                            PdfImportDestination.FILL_PAGE -> DocumentToolOrigin.FILL_PAGE
+                            else -> null
+                        }
+                        viewModel.navigateTo(AppRoute.DocumentViewer(id, toolOrigin = origin))
                         if (destinationRoute !is AppRoute.DocumentViewer) viewModel.navigateTo(destinationRoute)
                     }
                 }
@@ -152,9 +163,6 @@ fun AppNavigation(
     )
     DocumentQuickActionsHost(
         showSignaturePicker = showSignaturePicker && libraryActionsVisible,
-        onMergeCompleted = {
-            if (viewModel.backStack.lastOrNull() == AppRoute.DocumentMerge()) viewModel.goBack()
-        },
         onDismissSignaturePicker = { showSignaturePicker = false },
         documents = documentsState.documents,
         isLoading = documentsState.isLoading,
@@ -162,7 +170,7 @@ fun AppNavigation(
         onRetry = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
         onImport = { importForTool(PdfImportDestination.SIGN) },
         onSign = { documentId ->
-            viewModel.navigateTo(AppRoute.DocumentViewer(documentId))
+            viewModel.navigateTo(AppRoute.DocumentViewer(documentId, toolOrigin = DocumentToolOrigin.SIGNATURE))
             viewModel.navigateTo(AppRoute.DocumentSignature(documentId))
         },
         actionsViewModel = actionsViewModel,
@@ -181,6 +189,7 @@ fun AppNavigation(
             )
         },
     ) {
+        Box(Modifier.fillMaxSize()) {
         NavDisplay(
             backStack = viewModel.backStack,
             modifier = Modifier.fillMaxSize(),
@@ -200,6 +209,9 @@ fun AppNavigation(
                         onMergePdfs = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.DocumentMerge()) },
                         onSignDocument = { if (canStartDocumentAction) showSignaturePicker = true },
                         onOpenDocument = { viewModel.navigateTo(AppRoute.DocumentViewer(it)) },
+                        adsEnabled = currentRoute == AppRoute.Documents && canStartDocumentAction &&
+                            !showSignaturePicker && drawerState.currentValue == DrawerValue.Closed &&
+                            drawerState.targetValue == DrawerValue.Closed,
                     )
                 }
                 entry<AppRoute.Tools> {
@@ -212,11 +224,18 @@ fun AppNavigation(
                         onBack = viewModel::goBack,
                         onImport = importPdf,
                         onMerge = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.DocumentMerge()) },
-                        onSign = { if (canStartDocumentAction) showSignaturePicker = true },
+                        onSignDocument = { id ->
+                            if (canStartDocumentAction) {
+                                viewModel.navigateTo(AppRoute.DocumentViewer(id, toolOrigin = DocumentToolOrigin.SIGNATURE))
+                                viewModel.navigateTo(AppRoute.DocumentSignature(id))
+                            }
+                        },
+                        onImportForSign = { importForTool(PdfImportDestination.SIGN) },
                         onUtility = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.PdfUtilityTool(it)) },
                         onEdit = { id, tool ->
                             if (canStartDocumentAction) {
-                                viewModel.navigateTo(AppRoute.DocumentViewer(id))
+                                viewModel.navigateTo(AppRoute.DocumentViewer(id, toolOrigin =
+                                    DocumentToolOrigin.FILL_PAGE.takeIf { tool == DocumentTool.FORMS }))
                                 if (tool != null) viewModel.navigateTo(AppRoute.DocumentEditorTool(id, tool))
                             }
                         },
@@ -224,8 +243,13 @@ fun AppNavigation(
                             PdfImportDestination.FILL_PAGE else PdfImportDestination.EDITOR) },
                         onRetryDocuments = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
                         snackbarHost = { AppToastHost(toast) },
+                        banner = {
+                            if (currentRoute == AppRoute.Tools && !showSignaturePicker &&
+                                drawerState.currentValue == DrawerValue.Closed &&
+                                drawerState.targetValue == DrawerValue.Closed
+                            ) ToolsBannerAd()
+                        },
                     )
-                    DocumentActionOverlays(actionsState, actionsViewModel::onDocumentAction)
                 }
                 entry<AppRoute.PdfUtilityTool> { route ->
                     PdfUtilityRoute(
@@ -240,15 +264,13 @@ fun AppNavigation(
                             }
                         },
                         importBusy = importState.isActive,
+                        actionsViewModel = actionsViewModel,
                         importedDocumentId = utilityImportedDocumentId.takeIf { utilityImportedTool == route.tool },
                         onImportedSelected = {
                             utilityImportedDocumentId = null
                             utilityImportedTool = null
                         },
-                        onOpenDocument = { id ->
-                            documentsViewModel.onEvent(DocumentsEvent.DocumentCreated(id, null))
-                            viewModel.navigateTo(AppRoute.DocumentViewer(id))
-                        },
+                        onOpenDocument = { id -> viewModel.navigateTo(AppRoute.DocumentViewer(id)) },
                     )
                 }
                 entry<AppRoute.DocumentCertificates> { DocumentCertificatesRoute(onBack = viewModel::goBack) }
@@ -264,10 +286,21 @@ fun AppNavigation(
                     DocumentViewerRoute(
                         documentId = route.documentId,
                         initialPageNumber = route.initialPageNumber,
+                        isActive = currentRoute == route,
+                        saveAdOrigin = when (route.toolOrigin) {
+                            DocumentToolOrigin.SIGNATURE -> RewardedTool.SIGNATURE
+                            DocumentToolOrigin.FILL_PAGE -> RewardedTool.FILL_PAGE
+                            null -> null
+                        },
                         viewModel = viewerViewModel,
                         actionsViewModel = actionsViewModel,
                         toolsViewModel = toolsViewModel,
                         onNavigationBack = viewModel::goBack,
+                        banner = {
+                            if (currentRoute == route && drawerState.currentValue == DrawerValue.Closed &&
+                                drawerState.targetValue == DrawerValue.Closed
+                            ) EditorBannerAd()
+                        },
                     )
                 }
                 entry<AppRoute.DocumentSignature> { route ->
@@ -290,7 +323,7 @@ fun AppNavigation(
                         mergeViewModel = mergeViewModel,
                         isActive = currentRoute == route,
                         onRetryDocuments = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
-
+                        onOpenDocument = { id -> viewModel.navigateTo(AppRoute.DocumentViewer(id)) },
                         onBack = viewModel::goBack,
                     )
                 }
@@ -326,5 +359,7 @@ fun AppNavigation(
                 entry<AppRoute.DriveBackup> { DriveBackupRoute(onBack = viewModel::goBack) }
             },
         )
+        DocumentActionOverlays(actionsState, actionsViewModel::onDocumentAction)
+        }
     }
 }

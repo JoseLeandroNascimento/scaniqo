@@ -73,6 +73,7 @@ class PersonalizedThemesTest {
             ).forEach { (role, surface) ->
                 assertReadable("$name/onSurface/$role", scheme.onSurface, surface)
                 assertReadable("$name/onSurfaceVariant/$role", scheme.onSurfaceVariant, surface)
+                assertReadable("$name/primary/$role", scheme.primary, surface)
             }
         }
     }
@@ -92,7 +93,7 @@ class PersonalizedThemesTest {
     }
 
     private fun forEachScheme(assertion: (String, ColorScheme) -> Unit) {
-        for (theme in themes) for (dark in listOf(false, true)) {
+        for (theme in AppColorTheme.entries) for (dark in listOf(false, true)) {
             assertion("${theme.name}/${if (dark) "dark" else "light"}", personalizedColorScheme(theme, dark))
         }
     }

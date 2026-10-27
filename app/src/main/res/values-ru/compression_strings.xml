@@ -1,0 +1,22 @@
+<resources>
+    <string name="compression_hero_ready">Ваш PDF станет легче</string>
+    <string name="compression_hero_busy">Сжатие PDF</string>
+    <string name="compression_hero_complete">PDF сжат</string>
+    <string name="compression_no_gain">Размер не уменьшился</string>
+    <string name="compression_no_gain_detail">Степень сжатия зависит от содержимого файла.</string>
+    <string name="compression_saved">На %1$d%% меньше</string>
+    <string name="compression_original_kept">Оригинал сохранится</string>
+    <string name="compression_from_device">С устройства</string>
+    <string name="compression_from_library">Из вашей библиотеки</string>
+    <string name="compression_level">Сжатие</string>
+    <string name="compression_balanced">Баланс</string>
+    <string name="compression_balanced_detail">Выше качество изображений</string>
+    <string name="compression_strong">Компактно</string>
+    <string name="compression_strong_detail">Ниже качество изображений</string>
+    <string name="compression_rename">Имя копии</string>
+    <string name="compression_action">Сжать PDF</string>
+    <string name="compression_choose_another">Сжать другой PDF</string>
+    <string name="compression_size_before">До</string>
+    <string name="compression_size_after">После</string>
+    <string name="compression_saved_small" formatted="false">Меньше чем на 1%</string>
+</resources>

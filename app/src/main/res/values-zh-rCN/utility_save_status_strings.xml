@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utility_output_ready_to_save">PDF 已准备好保存</string>
+    <string name="utility_output_finish_in_sheet">选择名称和标签以保存</string>
+    <string name="utility_zip_password_again">导出前请再次输入此 PDF 的密码。</string>
+</resources>

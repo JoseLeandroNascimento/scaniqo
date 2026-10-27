@@ -7,6 +7,10 @@ import kotlin.math.abs
 
 /** Valida também receitas restauradas, que não passaram pelos limites dos controles da tela. */
 internal fun PdfPageLayout.validateImageProcessing() {
+    require(contentPosition?.isValid() != false) { "A posição do conteúdo é inválida." }
+    require(contentScale.isFinite() && contentScale in .25f..2f) {
+        "O tamanho do conteúdo deve ficar entre 25% e 200%."
+    }
     require(filterIntensity.isFinite() && filterIntensity in 0f..1f) {
         "A intensidade do filtro deve ficar entre 0% e 100%."
     }

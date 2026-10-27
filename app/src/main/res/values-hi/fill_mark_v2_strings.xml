@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">हाल के रंग</string>
+    <string name="fill_mark_palette_colors">रंग</string>
+    <string name="fill_mark_recent_color">हाल का रंग %1$d</string>
+    <string name="fill_mark_manual_size">फ़ॉन्ट आकार पॉइंट में (6–72)</string>
+    <string name="fill_mark_apply_size">आकार लागू करें</string>
+    <string name="fill_mark_green">हरा</string>
+    <string name="fill_mark_purple">बैंगनी</string>
+    <string name="fill_mark_gray">धूसर</string>
+    <string name="fill_mark_white">सफ़ेद</string>
+    <string name="fill_mark_mark_size">निशान का आकार</string>
+    <string name="fill_mark_mark_smaller">निशान छोटा करें</string>
+    <string name="fill_mark_mark_larger">निशान बड़ा करें</string>
+</resources>

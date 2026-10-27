@@ -29,6 +29,7 @@ class AutomaticBackupRunner(
     private val authorization: BackupAuthorizationProvider,
     private val fingerprint: BackupSnapshotFingerprint,
     private val gate: BackupOperationGate,
+    private val archives: BackupArchiveStore,
     private val now: () -> Long = System::currentTimeMillis,
 ) {
     suspend fun run(
@@ -43,10 +44,14 @@ class AutomaticBackupRunner(
         gate.automaticRunning.value = true
         var archive: File? = null
         var issuedToken: String? = null
+        var foregroundStarted = false
+        suspend fun startForeground() {
+            if (!foregroundStarted) {
+                onBackupStarting()
+                foregroundStarted = true
+            }
+        }
         try {
-            val snapshot = fingerprint.current() ?: return@withLock AutomaticBackupOutcome.COMPLETED
-            if (snapshot == saved.lastSnapshotFingerprint) return@withLock AutomaticBackupOutcome.COMPLETED
-
             val token = try {
                 withTimeout(60_000L) { authorization.accessToken(email) }
             } catch (_: TimeoutCancellationException) {
@@ -59,30 +64,46 @@ class AutomaticBackupRunner(
             }
             if (!isStillEnabled(email)) return@withLock AutomaticBackupOutcome.COMPLETED
 
-            onBackupStarting()
+            val currentBackup = archives.synchronize(token, email)
+            if (!isStillEnabled(email)) return@withLock AutomaticBackupOutcome.COMPLETED
+            val snapshot = fingerprint.current() ?: return@withLock AutomaticBackupOutcome.COMPLETED
+            if (currentBackup != null && matchesBackupSnapshot(
+                    snapshot, currentBackup, saved, fingerprint, backups, remote, token, ::startForeground,
+                )) {
+                settings.update { current ->
+                    if (current.accountEmail.equals(email, ignoreCase = true)) current.copy(
+                        lastBackupId = currentBackup.id,
+                        lastBackupAt = currentBackup.modifiedTimeMillis,
+                        lastBackupBytes = currentBackup.sizeBytes,
+                        lastSnapshotFingerprint = snapshot,
+                        lastAutomaticProblem = null,
+                    ) else current
+                }
+                return@withLock AutomaticBackupOutcome.COMPLETED
+            }
+
+            startForeground()
             val prepared = backups.createBackup()
             archive = prepared.file
             if (snapshot != fingerprint.current()) return@withLock retryOrFinish(runAttemptCount)
             currentCoroutineContext().ensureActive()
             if (!isStillEnabled(email)) return@withLock AutomaticBackupOutcome.COMPLETED
-            val size = prepared.file.length()
-            remote.upload(token, prepared.file, backupName(now()))
-            // O Drive já confirmou a cópia. Desligar o automático agora não deve perder esse resultado
-            // nem provocar outra cópia idêntica ao reativar; preservamos a preferência atual.
-            withContext(NonCancellable) {
-                settings.update { current ->
-                    if (current.accountEmail.equals(email, ignoreCase = true)) {
-                        current.copy(
-                            lastBackupAt = now(),
-                            lastBackupBytes = size,
+            archives.upload(
+                token, email, prepared.file, backupName(now()), prepared.documentCount,
+                onUploaded = { uploaded ->
+                    settings.update { current ->
+                        if (current.accountEmail.equals(email, ignoreCase = true)) current.copy(
+                            lastBackupId = uploaded.id,
+                            lastBackupAt = uploaded.modifiedTimeMillis,
+                            lastBackupBytes = uploaded.sizeBytes,
                             lastBackupDocumentCount = prepared.documentCount,
                             lastSnapshotFingerprint = snapshot,
                             needsAuthorization = false,
                             lastAutomaticProblem = null,
-                        )
-                    } else current
-                }
-            }
+                        ) else current
+                    }
+                },
+            )
             AutomaticBackupOutcome.COMPLETED
         } catch (cancelled: CancellationException) {
             throw cancelled

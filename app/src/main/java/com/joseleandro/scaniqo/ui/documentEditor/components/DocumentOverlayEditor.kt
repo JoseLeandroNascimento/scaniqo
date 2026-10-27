@@ -34,8 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
+import com.joseleandro.scaniqo.core.graphics.androidTypeface
 import com.joseleandro.scaniqo.ui.components.DialogActions
 import com.joseleandro.scaniqo.domain.model.PdfCheckmarkGeometry
+import com.joseleandro.scaniqo.domain.model.PdfCrossmarkGeometry
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import com.joseleandro.scaniqo.domain.model.PdfPoint
@@ -57,9 +59,12 @@ internal fun DocumentOverlayEditor(
     onEvent: (DocumentToolsEvent) -> Unit,
     onDraftChanged: (Boolean) -> Unit,
     onBack: () -> Unit,
+    registerPrimaryAction: (((() -> Unit)?) -> Unit) = {},
+    onFinish: () -> Unit = onBack,
 ) {
     if (tool == DocumentTool.FORMS || tool == DocumentTool.WATERMARK) {
-        DocumentFillMarkEditor(state, tool, onEvent, onDraftChanged, onBack)
+        DocumentFillMarkEditor(state, tool, onEvent, onDraftChanged, onBack,
+            registerPrimaryAction = registerPrimaryAction, onFinish = onFinish)
         return
     }
     val workspace = state.workspace ?: return
@@ -386,6 +391,15 @@ internal fun DrawScope.drawOverlayDraft(overlay: PdfOverlay, pageNumber: Int, co
                 ),
             )
         }
+        PdfOverlayKind.CROSSMARK -> {
+            val path = Path().apply {
+                PdfCrossmarkGeometry.trace(x, y, width, height, ::moveTo, ::lineTo)
+            }
+            drawPath(path, color, style = Stroke(
+                width = PdfCrossmarkGeometry.strokeWidth(width, height),
+                cap = StrokeCap.Round, join = StrokeJoin.Round,
+            ))
+        }
         PdfOverlayKind.ARROW -> {
             drawLine(color, Offset(x, y + height * .5f), Offset(x + width, y + height * .5f), 2f)
             drawLine(color, Offset(x + width, y + height * .5f), Offset(x + width * .8f, y + height * .15f), 2f)
@@ -405,6 +419,7 @@ internal fun DrawScope.drawOverlayDraft(overlay: PdfOverlay, pageNumber: Int, co
                 color = (overlay.color and 0x00FFFFFF) or ((overlay.opacity * 255).toInt() shl 24),
                 maxWidth = innerWidth, maxHeight = innerHeight,
                 wrap = overlay.wrapText, horizontalAlignment = overlay.textHorizontalAlignment,
+                typeface = overlay.androidTypeface(), underlined = overlay.underlined,
             )
             drawIntoCanvas { canvas ->
                 val native = canvas.nativeCanvas
@@ -433,8 +448,8 @@ internal fun newOverlay(kind: PdfOverlayKind): PdfOverlay = PdfOverlay(
     text = when (kind) { PdfOverlayKind.PAGE_NUMBER -> "{pagina} / {total}"; else -> "" },
     x = if (kind == PdfOverlayKind.WATERMARK) .2f else .1f,
     y = when (kind) { PdfOverlayKind.HEADER -> .03f; PdfOverlayKind.FOOTER, PdfOverlayKind.PAGE_NUMBER -> .92f; PdfOverlayKind.WATERMARK -> .45f; else -> .2f },
-    width = if (kind == PdfOverlayKind.CHECKMARK) .04f else .6f,
-    height = if (kind == PdfOverlayKind.CHECKMARK) .03f else .06f,
+    width = if (kind == PdfOverlayKind.CHECKMARK || kind == PdfOverlayKind.CROSSMARK) .04f else .6f,
+    height = if (kind == PdfOverlayKind.CHECKMARK || kind == PdfOverlayKind.CROSSMARK) .03f else .06f,
     opacity = when (kind) { PdfOverlayKind.HIGHLIGHT -> .35f; PdfOverlayKind.WATERMARK -> .25f; else -> 1f },
     color = if (kind == PdfOverlayKind.HIGHLIGHT) 0xFFFFCA28.toInt() else 0xFF202124.toInt(),
 )
@@ -442,6 +457,7 @@ internal fun newOverlay(kind: PdfOverlayKind): PdfOverlay = PdfOverlay(
 internal fun PdfOverlayKind.label(): Int = when (this) {
     PdfOverlayKind.TEXT -> R.string.overlay_text
     PdfOverlayKind.CHECKMARK -> R.string.overlay_checkmark
+    PdfOverlayKind.CROSSMARK -> R.string.overlay_crossmark
     PdfOverlayKind.HIGHLIGHT -> R.string.overlay_highlight
     PdfOverlayKind.UNDERLINE -> R.string.overlay_underline
     PdfOverlayKind.ARROW -> R.string.overlay_arrow

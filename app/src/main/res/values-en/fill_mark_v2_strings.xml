@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_mark_recent_colors">Recent colors</string>
+    <string name="fill_mark_palette_colors">Colors</string>
+    <string name="fill_mark_recent_color">Recent color %1$d</string>
+    <string name="fill_mark_manual_size">Font size in points (6–72)</string>
+    <string name="fill_mark_apply_size">Apply size</string>
+    <string name="fill_mark_green">Green</string>
+    <string name="fill_mark_purple">Purple</string>
+    <string name="fill_mark_gray">Gray</string>
+    <string name="fill_mark_white">White</string>
+    <string name="fill_mark_mark_size">Mark size</string>
+    <string name="fill_mark_mark_smaller">Make mark smaller</string>
+    <string name="fill_mark_mark_larger">Make mark larger</string>
+</resources>

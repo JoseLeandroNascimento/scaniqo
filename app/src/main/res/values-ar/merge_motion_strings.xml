@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="merge_motion_library">المكتبة</string>
+    <string name="merge_motion_device">الجهاز</string>
+    <string name="merge_motion_add">إضافة ملفات PDF</string>
+    <string name="merge_motion_done">تم</string>
+    <string name="merge_motion_hint">أضف، رتّب، ادمج.</string>
+    <string name="merge_motion_count">%1$d ملفات PDF ← 1</string>
+    <string name="merge_motion_one">تبقّى ملف واحد</string>
+    <string name="merge_motion_empty">اختر ملفات PDF</string>
+    <string name="merge_motion_search">البحث في المستندات</string>
+    <string name="merge_motion_selected">المحدد: %1$d</string>
+    <string name="merge_motion_working">دمج ملفات PDF</string>
+    <string name="merge_motion_options">خيارات %1$s</string>
+    <string name="merge_motion_count_description">دمج %1$d ملفات PDF في ملف واحد</string>
+</resources>

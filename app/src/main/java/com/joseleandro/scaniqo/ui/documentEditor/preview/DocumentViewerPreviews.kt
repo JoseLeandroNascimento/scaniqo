@@ -12,6 +12,7 @@ import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.domain.model.TagModel
+import com.joseleandro.scaniqo.ui.ads.EditorBannerAd
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentActionsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerScreen
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
@@ -145,6 +146,7 @@ private fun DocumentViewerPreviewContent(
                 ),
             ),
             onToolsEvent = {},
+            banner = { EditorBannerAd() },
         )
     }
 }

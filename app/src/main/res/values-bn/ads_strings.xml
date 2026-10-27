@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ads_label">বিজ্ঞাপন</string>
+    <string name="ads_preview_label">ব্যানারের প্রিভিউ</string>
+    <string name="ads_privacy_options">বিজ্ঞাপনের গোপনীয়তা</string>
+    <string name="ads_privacy_error">গোপনীয়তার বিকল্পগুলি খোলা যায়নি। আবার চেষ্টা করুন।</string>
+</resources>

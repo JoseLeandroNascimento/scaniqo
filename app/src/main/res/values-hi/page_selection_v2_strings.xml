@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_v2_thumbnails">थंबनेल</string>
+    <string name="pages_v2_intervals">पृष्ठ सीमा</string>
+    <string name="pages_v2_from">से</string>
+    <string name="pages_v2_until">तक</string>
+    <string name="pages_v2_add_range">सीमा जोड़ें</string>
+    <string name="pages_v2_update_range">सीमा अपडेट करें</string>
+    <string name="pages_v2_edit_list">सूची बदलें</string>
+    <string name="pages_v2_confirm_selection">चयन की पुष्टि करें</string>
+    <string name="pages_v2_cancel_edit">बदलाव रद्द करें</string>
+    <string name="pages_v2_order">क्रम: %1$s</string>
+    <string name="pages_v2_document_order">PDF का क्रम रखें</string>
+    <string name="pages_v2_go_to_page">पृष्ठ पर जाएँ</string>
+    <string name="pages_v2_range_incomplete">सीमा की शुरुआत और अंत भरें।</string>
+    <string name="pages_v2_range_reversed">शुरुआत अंत से पहले या उसके बराबर होनी चाहिए।</string>
+    <string name="pages_v2_range_bounds">1 से %1$d के बीच पृष्ठ चुनें।</string>
+    <string name="pages_v2_edit_range">सीमा %1$s बदलें</string>
+    <string name="pages_v2_remove_range">सीमा %1$s हटाएँ</string>
+    <string name="pages_v2_drag_mode">खींचें</string>
+    <string name="pages_v2_direct_mode">स्थान पर ले जाएँ</string>
+    <string name="pages_v2_selected_position">स्थान %1$d पर पृष्ठ</string>
+    <string name="pages_v2_final_position">अंतिम स्थान</string>
+    <string name="pages_v2_start">शुरुआत</string>
+    <string name="pages_v2_end">अंत</string>
+    <string name="pages_v2_move_to">%1$d पर ले जाएँ</string>
+    <string name="pages_v2_same_position">पहले से इस स्थान पर है</string>
+    <string name="pages_v2_numbering">पृष्ठ संख्या</string>
+    <string name="pages_v2_options">पृष्ठ %1$d के विकल्प</string>
+    <string name="pages_v2_moved">पृष्ठ %1$d पर ले जाया गया</string>
+    <string name="pages_v2_pending_selection">आगे बढ़ने से पहले चयन की पुष्टि करें या रद्द करें।</string>
+    <string name="pages_v2_jump_hint">1 से %1$d तक पृष्ठ</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">%1$d पृष्ठ का PDF बनाएँ</item>
+        <item quantity="other">%1$d पृष्ठों का PDF बनाएँ</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">%1$d पृष्ठ निर्यात करें</item>
+        <item quantity="other">%1$d पृष्ठ निर्यात करें</item>
+    </plurals>
+    <string name="pages_v2_list_hint">उदाहरण: 5, 2-4, 1. लिखा गया क्रम बना रहता है।</string>
+</resources>

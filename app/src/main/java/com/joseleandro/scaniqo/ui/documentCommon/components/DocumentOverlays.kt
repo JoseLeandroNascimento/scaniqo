@@ -21,6 +21,7 @@ internal fun DocumentOverlays(
     onDismissEditor: () -> Unit,
     onConfirmDelete: () -> Unit,
     onDismissDelete: () -> Unit,
+    saveShowsVideo: Boolean = false,
 ) {
     editor?.let {
         DocumentMetadataSheet(
@@ -33,6 +34,7 @@ internal fun DocumentOverlays(
             onTagChange = onTagChange,
             onSave = onSave,
             onDismiss = onDismissEditor,
+            saveShowsVideo = saveShowsVideo,
         )
     }
     pendingDeletion?.let { document ->

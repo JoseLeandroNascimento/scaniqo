@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="correction_v3_detect">Detect outline</string>
+    <string name="correction_v3_detect_again">Detect again</string>
+    <string name="correction_v3_manual">Adjust manually</string>
+    <string name="correction_v3_edit_crop">Edit crop</string>
+    <string name="correction_v3_view_result">View result</string>
+    <string name="correction_v3_compare">Compare</string>
+    <string name="correction_v3_show_before">Show before</string>
+    <string name="correction_v3_show_after">Show after</string>
+    <string name="correction_v3_preparing_before">Preparing the page before these edits…</string>
+    <string name="correction_v3_undo">Undo adjustment</string>
+    <string name="correction_v3_redo">Redo adjustment</string>
+    <string name="correction_v3_discard_all">Discard session adjustments</string>
+    <string name="correction_v3_restore_crop">Restore crop</string>
+    <string name="correction_v3_restore_background">Restore outline</string>
+    <string name="correction_v3_zero_tilt">Zero tilt</string>
+    <string name="correction_v3_zero_curve">Zero curvature</string>
+    <string name="correction_v3_convert_warning">This correction needs to convert the page to an image. Original text may no longer be selectable.</string>
+    <string name="correction_v3_filter_requires_conversion">This page’s filter already requires image conversion.</string>
+    <string name="correction_v3_value_increase">Increase %1$s</string>
+    <string name="correction_v3_value_decrease">Decrease %1$s</string>
+    <string name="correction_v3_value_edit">Edit %1$s precisely</string>
+    <string name="correction_v3_value_error">Enter a value from %1$s to %2$s in steps of %3$s.</string>
+    <string name="correction_v3_value_done">Use value</string>
+    <string name="correction_v3_curve_title">Correct a curved page</string>
+    <string name="correction_v3_curve_up">Curve upward</string>
+    <string name="correction_v3_curve_down">Curve downward</string>
+    <string name="correction_v3_result_updating">Updating result…</string>
+</resources>

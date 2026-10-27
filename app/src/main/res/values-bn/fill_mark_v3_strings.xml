@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fill_v3_add_to_page">পৃষ্ঠায় যোগ করুন</string>
+    <string name="fill_v3_writing">পৃষ্ঠায় লেখা হচ্ছে</string>
+    <string name="fill_v3_text_selected">লেখা নির্বাচিত</string>
+    <string name="fill_v3_mark_selected">চিহ্ন নির্বাচিত</string>
+    <string name="fill_v3_text">লেখা</string>
+    <string name="fill_v3_tap_page">যোগ করতে পৃষ্ঠায় ট্যাপ করুন</string>
+    <string name="fill_v3_tap_again">চিহ্ন যোগ করতে পৃষ্ঠায় ট্যাপ করুন</string>
+    <string name="fill_v3_hide_keyboard">কীবোর্ড লুকান</string>
+    <string name="fill_v3_edit_text">লেখা সম্পাদনা করুন</string>
+    <string name="fill_v3_size">আকার</string>
+    <string name="fill_v3_size_value">%1$s pt</string>
+    <string name="fill_v3_mark_size_short">চিহ্ন</string>
+    <string name="fill_v3_color">রং</string>
+    <string name="fill_v3_format">বিন্যাস</string>
+    <string name="fill_v3_regular">সাধারণ</string>
+    <string name="fill_v3_points">পয়েন্ট</string>
+    <string name="fill_v3_size_error">৬ থেকে ৭২ pt-এর মধ্যে মান দিন।</string>
+    <string name="fill_v3_drag_corner">পৃষ্ঠায় কোণ টেনেও বদলাতে পারেন।</string>
+    <string name="fill_v3_opacity">তীব্রতা · %1$d%%</string>
+    <string name="fill_v3_weight">ওজন</string>
+    <string name="fill_v3_text_box">লেখার বাক্স</string>
+    <string name="fill_v3_text_box_hint">বাক্সে লেখা কীভাবে বসবে তা ঠিক করুন।</string>
+    <string name="fill_v3_wrap">লাইন ভাঙুন</string>
+    <string name="fill_v3_precise_position">নির্দিষ্ট অবস্থান</string>
+    <string name="fill_v3_position_hint">অল্প করে সরান বা পৃষ্ঠায় উপাদান টানুন।</string>
+    <string name="fill_v3_repeat_pages">পৃষ্ঠাগুলিতে পুনরাবৃত্তি</string>
+    <string name="fill_v3_page_count">লক্ষ্য: %1$d পৃষ্ঠা</string>
+    <string name="fill_v3_revert_element">উপাদানের সম্পাদনা ফিরিয়ে নিন</string>
+    <string name="fill_v3_empty_existing">লিখুন অথবা মুছুন ব্যবহার করুন।</string>
+    <string name="fill_v3_invalid_element">এগোনোর আগে উপাদানটি পরীক্ষা করুন।</string>
+    <string name="fill_v3_tap_next_mark">আরেকটি চিহ্ন যোগ করতে ট্যাপ করুন</string>
+</resources>

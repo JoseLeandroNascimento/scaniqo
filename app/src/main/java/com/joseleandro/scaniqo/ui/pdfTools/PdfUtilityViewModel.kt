@@ -1,7 +1,11 @@
 package com.joseleandro.scaniqo.ui.pdfTools
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy
+import com.joseleandro.scaniqo.core.ads.ToolAdPermit
 import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfCompressionLevel
@@ -22,6 +26,14 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
+
+data class PdfPreparedOutput(
+    val scan: ScannedDocument,
+    val operationId: String,
+    val suggestedName: String,
+    val suggestedTagId: Long?,
+)
 
 data class PdfCompressionSummary(
     val originalBytes: Long,
@@ -39,15 +51,37 @@ data class PdfUtilityUiState(
     val message: String? = null,
     val createdDocumentId: Long? = null,
     val compressionResult: PdfCompressionSummary? = null,
+    val preparedOutput: PdfPreparedOutput? = null,
+    val awaitingSaveOperationId: String? = null,
+    val savedDocumentId: Long? = null,
+    val exportCompleted: Boolean = false,
     val receipt: ReceiptDraft? = null,
     val receiptProtected: Boolean = false,
 )
 
+private const val ROUTE_ID = "pdf_utility_route_id"
+private const val PREPARED_OPERATION_ID = "pdf_utility_prepared_operation_id"
+private const val PREPARED_URI = "pdf_utility_prepared_uri"
+private const val PREPARED_PAGE_COUNT = "pdf_utility_prepared_page_count"
+private const val PREPARED_CREATED_AT = "pdf_utility_prepared_created_at"
+private const val PREPARED_SIZE_BYTES = "pdf_utility_prepared_size_bytes"
+private const val PREPARED_THUMBNAIL = "pdf_utility_prepared_thumbnail"
+private const val PREPARED_PROTECTION = "pdf_utility_prepared_protection"
+private const val PREPARED_NAME = "pdf_utility_prepared_name"
+private const val PREPARED_TAG = "pdf_utility_prepared_tag"
+
 class PdfUtilityViewModel(
     private val repository: PdfUtilityRepository,
     private val documents: DocumentRepository,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    private val adAccess: ToolAdAccessPolicy? = null,
 ) : ViewModel() {
-    private val state = MutableStateFlow(PdfUtilityUiState())
+    private val restoredOutput = restorePreparedOutput()
+    private val state = MutableStateFlow(PdfUtilityUiState(
+        operationId = savedStateHandle[ROUTE_ID],
+        preparedOutput = restoredOutput,
+        awaitingSaveOperationId = restoredOutput?.operationId,
+    ))
     val uiState = state.asStateFlow()
     private var operation: Job? = null
     private var operationGeneration = 0L
@@ -56,15 +90,75 @@ class PdfUtilityViewModel(
     private var preparedReceiptExport: Pair<Long, ReceiptDraft>? = null
 
     private var observation: Job? = null
+    private var toolPermit: ToolAdPermit? = null
+
+    private fun finishToolPermit(permit: ToolAdPermit?, success: Boolean) {
+        if (permit == null || toolPermit !== permit) return
+        toolPermit = null
+        adAccess?.finish(permit, success)
+    }
+
+    override fun onCleared() {
+        finishToolPermit(toolPermit, success = false)
+        super.onCleared()
+    }
 
     init { retryDocuments() }
+
+    private fun restorePreparedOutput(): PdfPreparedOutput? {
+        val operationId = savedStateHandle.get<String>(PREPARED_OPERATION_ID) ?: return null
+        val uri = savedStateHandle.get<String>(PREPARED_URI) ?: return null
+        val pageCount = savedStateHandle.get<Int>(PREPARED_PAGE_COUNT) ?: return null
+        val createdAt = savedStateHandle.get<Long>(PREPARED_CREATED_AT) ?: return null
+        val sizeBytes = savedStateHandle.get<Long>(PREPARED_SIZE_BYTES) ?: return null
+        val name = savedStateHandle.get<String>(PREPARED_NAME) ?: return null
+        if (pageCount <= 0 || uri.isBlank()) return null
+        return PdfPreparedOutput(
+            scan = ScannedDocument(
+                pdfUri = uri,
+                pageCount = pageCount,
+                createdAt = createdAt,
+                sizeBytes = sizeBytes,
+                thumbnailUri = savedStateHandle[PREPARED_THUMBNAIL],
+                protectionKeyId = savedStateHandle[PREPARED_PROTECTION],
+            ),
+            operationId = operationId,
+            suggestedName = name,
+            suggestedTagId = savedStateHandle[PREPARED_TAG],
+        )
+    }
+
+    private fun savePreparedState(output: PdfPreparedOutput) {
+        savedStateHandle[PREPARED_OPERATION_ID] = output.operationId
+        savedStateHandle[PREPARED_URI] = output.scan.pdfUri
+        savedStateHandle[PREPARED_PAGE_COUNT] = output.scan.pageCount
+        savedStateHandle[PREPARED_CREATED_AT] = output.scan.createdAt
+        savedStateHandle[PREPARED_SIZE_BYTES] = output.scan.sizeBytes
+        savedStateHandle[PREPARED_THUMBNAIL] = output.scan.thumbnailUri
+        savedStateHandle[PREPARED_PROTECTION] = output.scan.protectionKeyId
+        savedStateHandle[PREPARED_NAME] = output.suggestedName
+        savedStateHandle[PREPARED_TAG] = output.suggestedTagId
+    }
+
+    private fun clearPreparedState() {
+        listOf(PREPARED_OPERATION_ID, PREPARED_URI, PREPARED_PAGE_COUNT, PREPARED_CREATED_AT,
+            PREPARED_SIZE_BYTES, PREPARED_THUMBNAIL, PREPARED_PROTECTION, PREPARED_NAME,
+            PREPARED_TAG).forEach { savedStateHandle.remove<Any>(it) }
+    }
 
     /** Nova entrada limpa o rascunho; rotação e retorno do seletor conservam a mesma operação. */
     fun beginOperation(id: String) {
         if (state.value.operationId == id) return
         operationGeneration++
         operation?.cancel()
+        finishToolPermit(toolPermit, success = false)
+        // Um temporário não entregue ainda pertence a esta ferramenta.
+        state.value.preparedOutput?.let { output ->
+            viewModelScope.launch { withContext(NonCancellable) { runCatching { documents.discardScan(output.scan) } } }
+        }
         operation = null
+        clearPreparedState()
+        savedStateHandle[ROUTE_ID] = id
         sensitiveReceipt = false
         preparedReceiptExport = null
         receiptExportSequence++
@@ -83,15 +177,149 @@ class PdfUtilityViewModel(
         }
     }
 
-    fun compress(id: Long, name: String, level: PdfCompressionLevel, password: String?) = runOperation { request ->
-        val document = document(id)
-        validateName(name)
-        state.update { it.copy(compressionResult = null) }
-        val result = repository.compress(document, level, password)
-        val scan = result.scan
-        val id = if (scan == null) null else commitPrepared(scan, name, document.tagId)
-        if (request == operationGeneration) state.update {
-            it.copy(compressionResult = PdfCompressionSummary(result.originalBytes, result.resultBytes, id))
+    fun compress(id: Long, name: String, level: PdfCompressionLevel, password: String?): Boolean {
+        if (state.value.busy || state.value.awaitingSaveOperationId != null) return false
+        val permit = if (adAccess != null) {
+            adAccess.acquire(RewardedTool.COMPRESSION, UUID.randomUUID().toString()) ?: return false
+        } else null
+        toolPermit = permit
+        runOperation { request ->
+            var saved = false
+            try {
+                val document = document(id)
+                validateName(name)
+                state.update { it.copy(compressionResult = null) }
+                val result = repository.compress(document, level, password)
+                val scan = result.scan
+                val outputId = if (scan == null) null else commitPrepared(scan, name, document.tagId)
+                saved = outputId != null
+                if (request == operationGeneration) state.update {
+                    it.copy(compressionResult = PdfCompressionSummary(result.originalBytes, result.resultBytes, outputId))
+                }
+            } finally {
+                finishToolPermit(permit, success = saved)
+            }
+        }
+        return true
+    }
+
+    /** Gera a saída sem cadastrá-la; nome e tag são confirmados no formulário comum. */
+    fun prepareCompression(
+        id: Long,
+        level: PdfCompressionLevel,
+        password: String?,
+        suggestedName: String,
+        adUnavailable: Boolean = false,
+    ): Boolean {
+        if (state.value.busy || state.value.awaitingSaveOperationId != null) return false
+        val permit = if (adAccess != null) {
+            adAccess.acquire(RewardedTool.COMPRESSION, UUID.randomUUID().toString(), adUnavailable) ?: return false
+        } else null
+        toolPermit = permit
+        runOperation { request ->
+            var awaitingSave = false
+            try {
+                val document = document(id)
+                state.update { it.copy(compressionResult = null, savedDocumentId = null) }
+                val result = repository.compress(document, level, password)
+                val scan = result.scan
+                if (scan != null) {
+                    prepareGenerated(scan, document.tagId, suggestedName, request)
+                    awaitingSave = request == operationGeneration && state.value.awaitingSaveOperationId != null
+                }
+                if (request == operationGeneration) state.update {
+                    it.copy(compressionResult = PdfCompressionSummary(result.originalBytes, result.resultBytes, null))
+                }
+            } finally {
+                // A failed/no-gain attempt never spends the earned use.
+                if (!awaitingSave) finishToolPermit(permit, success = false)
+            }
+        }
+        return true
+    }
+
+    fun prepareExtraction(
+        id: Long, pages: String, password: String?, suggestedName: String,
+        adUnavailable: Boolean = false,
+    ): Boolean {
+        if (state.value.busy || state.value.awaitingSaveOperationId != null) return false
+        val permit = adAccess?.acquire(
+            RewardedTool.EXTRACT_PAGES, UUID.randomUUID().toString(), adUnavailable,
+        )
+        if (adAccess != null && permit == null) return false
+        toolPermit = permit
+        runOperation { request ->
+            var awaitingSave = false
+            try {
+                val document = document(id)
+                val scan = repository.extractPages(
+                    document, PdfPageSelection.parse(pages, document.pageCount), password,
+                )
+                prepareGenerated(scan, document.tagId, suggestedName, request)
+                awaitingSave = request == operationGeneration && state.value.awaitingSaveOperationId != null
+            } finally {
+                if (!awaitingSave) finishToolPermit(permit, success = false)
+            }
+        }
+        return true
+    }
+
+    /** Chamar somente depois que o controlador comum aceitou o rascunho. */
+    fun confirmPreparedDelivery(operationId: String) {
+        if (state.value.preparedOutput?.operationId != operationId) return
+        state.update { it.copy(preparedOutput = null) }
+        clearPreparedState()
+    }
+
+    /** Reassocia o formulário compartilhado após recriação do ViewModel da ferramenta. */
+    fun restoreAwaitingSave(operationId: String) {
+        val routeId = state.value.operationId ?: return
+        if (operationId.startsWith("$routeId:") && state.value.awaitingSaveOperationId == null) {
+            state.update { it.copy(awaitingSaveOperationId = operationId) }
+        }
+    }
+
+    /** Resultado salvo ou descartado, correlacionado com a tentativa que criou o PDF. */
+    fun finishGenerated(operationId: String, documentId: Long?) {
+        if (state.value.awaitingSaveOperationId != operationId) return
+        finishToolPermit(toolPermit, success = documentId != null)
+        clearPreparedState()
+        state.update {
+            it.copy(
+                awaitingSaveOperationId = null,
+                preparedOutput = null,
+                savedDocumentId = documentId,
+                compressionResult = it.compressionResult?.copy(documentId = documentId)
+                    ?.takeIf { _ -> documentId != null },
+            )
+        }
+    }
+
+    private suspend fun prepareGenerated(
+        scan: ScannedDocument, tagId: Long?, suggestedName: String, request: Long,
+    ) {
+        var accepted = false
+        try {
+            currentCoroutineContext().ensureActive()
+            if (request != operationGeneration) return
+            val operationId = "${state.value.operationId ?: "utility"}:${UUID.randomUUID()}"
+            val output = PdfPreparedOutput(
+                scan, operationId, suggestedName.take(DOCUMENT_NAME_MAX_LENGTH), tagId,
+            )
+            savePreparedState(output)
+            state.update {
+                it.copy(
+                    preparedOutput = output,
+                    awaitingSaveOperationId = operationId,
+                    savedDocumentId = null,
+                )
+            }
+            accepted = true
+        } finally {
+            if (!accepted) withContext(NonCancellable) {
+                if (request == operationGeneration) clearPreparedState()
+                runCatching { documents.discardScan(scan) }
+            }
         }
     }
 
@@ -99,12 +327,31 @@ class PdfUtilityViewModel(
         if (!state.value.busy) state.update { it.copy(compressionResult = null, error = null) }
     }
 
-    fun extract(id: Long, pages: String, name: String, password: String?) = runOperation { request ->
-        val document = document(id)
-        validateName(name)
-        create(name, document.tagId, request) {
-            repository.extractPages(document, PdfPageSelection.parse(pages, document.pageCount), password)
+    fun clearGeneratedCompletion() {
+        if (!state.value.busy && state.value.awaitingSaveOperationId == null) state.update {
+            it.copy(savedDocumentId = null, compressionResult = null, exportCompleted = false, error = null, message = null)
         }
+    }
+
+    fun extract(id: Long, pages: String, name: String, password: String?): Boolean {
+        if (state.value.busy || state.value.awaitingSaveOperationId != null) return false
+        val permit = adAccess?.acquire(RewardedTool.EXTRACT_PAGES, UUID.randomUUID().toString())
+        if (adAccess != null && permit == null) return false
+        toolPermit = permit
+        runOperation { request ->
+            var saved = false
+            try {
+                val document = document(id)
+                validateName(name)
+                create(name, document.tagId, request) {
+                    repository.extractPages(document, PdfPageSelection.parse(pages, document.pageCount), password)
+                }
+                saved = true
+            } finally {
+                finishToolPermit(permit, success = saved)
+            }
+        }
+        return true
     }
 
     fun createFromImages(uris: List<String>, name: String, idCard: Boolean) = runOperation { request ->
@@ -112,10 +359,33 @@ class PdfUtilityViewModel(
         create(name, null, request) { repository.imagesToPdf(uris, idCard) }
     }
 
-    fun exportImages(id: Long, pages: String, format: PdfImageFormat, target: String, password: String?) = runOperation { request ->
-        val document = document(id)
-        repository.exportImages(document, PdfPageSelection.parse(pages, document.pageCount), format, target, password)
-        if (request == operationGeneration) state.update { it.copy(message = "Imagens exportadas em um arquivo ZIP.") }
+    fun exportImages(
+        id: Long, pages: String, format: PdfImageFormat, target: String, password: String?,
+        adUnavailable: Boolean = false,
+    ): Boolean {
+        if (state.value.busy || state.value.awaitingSaveOperationId != null) return false
+        val permit = adAccess?.acquire(
+            RewardedTool.PDF_TO_IMAGES, UUID.randomUUID().toString(), adUnavailable,
+        )
+        if (adAccess != null && permit == null) return false
+        toolPermit = permit
+        runOperation { request ->
+            var exported = false
+            try {
+                val document = document(id)
+                repository.exportImages(
+                    document, PdfPageSelection.parse(pages, document.pageCount), format, target, password,
+                )
+                currentCoroutineContext().ensureActive()
+                exported = request == operationGeneration
+                if (exported) state.update {
+                    it.copy(message = "Imagens exportadas em um arquivo ZIP.", exportCompleted = true)
+                }
+            } finally {
+                finishToolPermit(permit, success = exported)
+            }
+        }
+        return true
     }
 
     fun readReceipt(id: Long, pageText: String, password: String?) = runOperation { request ->
@@ -186,10 +456,13 @@ class PdfUtilityViewModel(
     }
 
     private fun runOperation(block: suspend (Long) -> Unit) {
-        if (state.value.busy) return
+        if (state.value.busy || state.value.awaitingSaveOperationId != null) return
         val request = operationGeneration
         state.update { it.copy(busy = true, error = null, message = null) }
-        operation = viewModelScope.launch {
+        var started = false
+        val permitAtStart = toolPermit
+        val job = viewModelScope.launch {
+            started = true
             try { block(request) }
             catch (cancelled: CancellationException) { throw cancelled }
             catch (failure: Exception) {
@@ -198,6 +471,14 @@ class PdfUtilityViewModel(
                 }
             } finally {
                 if (request == operationGeneration) state.update { it.copy(busy = false) }
+            }
+        }
+        operation = job
+        job.invokeOnCompletion {
+            // Cancellation before dispatch never enters the coroutine's try/finally.
+            if (!started && request == operationGeneration && operation === job) {
+                finishToolPermit(permitAtStart, success = false)
+                state.update { it.copy(busy = false) }
             }
         }
     }

@@ -2,6 +2,8 @@ package com.joseleandro.scaniqo.ui.documentMerge
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
+import com.joseleandro.scaniqo.core.ads.RewardedTool
+import com.joseleandro.scaniqo.ui.documentCommon.FakeDocumentToolAdPolicy
 import com.joseleandro.scaniqo.core.security.PasswordAccess
 import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultState
@@ -272,9 +274,31 @@ class DocumentQuickMergeViewModelTest {
         restored.completeDelivery(editor.result.pdfUri)
         assertFalse(restored.uiState.value.isActive)
         assertNull(restored.uiState.value.pending)
-        assertTrue(restoredState.keys().isEmpty())
+        assertEquals("merge:${editor.result.pdfUri}", restoredState.get<String>("merge.deliveredOperation"))
         assertTrue(documents.discarded.isEmpty())
         assertEquals(1, editor.requests.size)
+    }
+
+    @Test
+    fun savedDocumentRemainsVisibleAfterRecreationUntilLeavingTheResult() = runTest(dispatcher) {
+        viewModel.merge(selection)
+        runCurrent()
+        viewModel.completeDelivery(editor.result.pdfUri)
+        viewModel.completeSave(42L)
+
+        assertEquals(42L, viewModel.uiState.value.savedDocumentId)
+        assertEquals(42L, savedState.get<Long>("merge.savedDocumentId"))
+        val restoredState = SavedStateHandle(savedState.keys().associateWith { savedState.get<Any?>(it) })
+        store.clear()
+        runCurrent()
+        val restored = DocumentQuickMergeViewModel(editor, documents, passwords, restoredState)
+            .also { store.put("restored", it) }
+
+        assertEquals(42L, restored.uiState.value.savedDocumentId)
+        assertFalse(restored.uiState.value.isActive)
+        restored.clearSavedDocument()
+        assertNull(restored.uiState.value.savedDocumentId)
+        assertTrue(restoredState.keys().isEmpty())
     }
 
     @Test
@@ -288,6 +312,106 @@ class DocumentQuickMergeViewModelTest {
         assertTrue(documents.deleted.isEmpty())
         assertNull(viewModel.uiState.value.pending)
         assertTrue(savedState.keys().isEmpty())
+    }
+
+    @Test
+    fun firstAndNextMergeBothRequireTheirOwnVideo() = runTest(dispatcher) {
+        val policy = FakeDocumentToolAdPolicy()
+        val gated = DocumentQuickMergeViewModel(editor, documents, passwords, savedState, policy)
+            .also { store.put("gated", it) }
+        assertFalse(gated.merge(selection))
+        assertTrue(editor.requests.isEmpty())
+
+        policy.grantReward(RewardedTool.MERGE_PDFS, "video-1")
+        assertTrue(gated.merge(selection))
+        runCurrent()
+        assertTrue(policy.finishes.isEmpty())
+        gated.completeDelivery(editor.result.pdfUri)
+        assertTrue(policy.finishes.isEmpty())
+        gated.finishGenerated("merge:${editor.result.pdfUri}", 42)
+        assertEquals(listOf(RewardedTool.MERGE_PDFS to true), policy.finishes)
+        assertFalse(gated.merge(selection))
+        assertEquals(1, editor.requests.size)
+    }
+
+    @Test
+    fun cancelledMetadataKeepsMergeCreditAndUnrelatedCompletionCannotConsumeIt() = runTest(dispatcher) {
+        val policy = FakeDocumentToolAdPolicy()
+        policy.grantReward(RewardedTool.MERGE_PDFS, "video")
+        val gated = DocumentQuickMergeViewModel(editor, documents, passwords, savedState, policy)
+            .also { store.put("gated", it) }
+        assertTrue(gated.merge(selection))
+        runCurrent()
+        gated.completeDelivery(editor.result.pdfUri)
+        gated.finishGenerated("merge:unrelated", 42)
+        assertTrue(policy.finishes.isEmpty())
+        gated.finishGenerated("merge:${editor.result.pdfUri}", null)
+        assertEquals(listOf(RewardedTool.MERGE_PDFS to false), policy.finishes)
+        assertTrue(RewardedTool.MERGE_PDFS in policy.rewards)
+        assertTrue(gated.merge(selection))
+    }
+
+    @Test
+    fun unavailableVideoAllowsOneMergeAndDoesNotCreateCredit() = runTest(dispatcher) {
+        val policy = FakeDocumentToolAdPolicy()
+        val gated = DocumentQuickMergeViewModel(editor, documents, passwords, savedState, policy)
+            .also { store.put("gated", it) }
+        assertTrue(gated.merge(selection, adUnavailable = true))
+        runCurrent()
+        gated.completeDelivery(editor.result.pdfUri)
+        gated.finishGenerated("merge:${editor.result.pdfUri}", 42)
+        assertTrue(policy.rewards.isEmpty())
+        assertFalse(gated.merge(selection))
+    }
+
+    @Test
+    fun invalidSelectionNeverReservesAndDuplicateTapDoesNotMergeTwice() = runTest(dispatcher) {
+        val policy = FakeDocumentToolAdPolicy()
+        policy.grantReward(RewardedTool.MERGE_PDFS, "video")
+        val gated = DocumentQuickMergeViewModel(editor, documents, passwords, savedState, policy)
+            .also { store.put("gated", it) }
+        assertFalse(gated.merge(listOf(first)))
+        assertTrue(policy.acquisitions.isEmpty())
+        assertTrue(gated.merge(selection))
+        assertFalse(gated.merge(selection))
+        runCurrent()
+        assertEquals(1, editor.requests.size)
+        assertEquals(1, policy.acquisitions.size)
+    }
+
+    @Test
+    fun failingMergeCanRetryWithinSameOperationWithoutAnotherVideo() = runTest(dispatcher) {
+        val policy = FakeDocumentToolAdPolicy()
+        policy.grantReward(RewardedTool.MERGE_PDFS, "video")
+        val gated = DocumentQuickMergeViewModel(editor, documents, passwords, savedState, policy)
+            .also { store.put("gated", it) }
+        editor.merge = { error("Read failure") }
+        assertTrue(gated.merge(selection))
+        runCurrent()
+        assertTrue(policy.finishes.isEmpty())
+        editor.merge = { editor.result }
+        gated.retry()
+        runCurrent()
+        assertEquals(editor.result, gated.uiState.value.pending)
+        assertEquals(1, policy.acquisitions.size)
+        gated.cancel()
+        runCurrent()
+        assertEquals(listOf(RewardedTool.MERGE_PDFS to false), policy.finishes)
+        assertTrue(RewardedTool.MERGE_PDFS in policy.rewards)
+    }
+
+    @Test
+    fun clearingBeforeWorkStartsReturnsMergeCredit() = runTest(dispatcher) {
+        val policy = FakeDocumentToolAdPolicy()
+        policy.grantReward(RewardedTool.MERGE_PDFS, "video")
+        val gated = DocumentQuickMergeViewModel(editor, documents, passwords, savedState, policy)
+            .also { store.put("gated", it) }
+        assertTrue(gated.merge(selection))
+        store.clear()
+        runCurrent()
+        assertEquals(listOf(RewardedTool.MERGE_PDFS to false), policy.finishes)
+        assertTrue(editor.requests.isEmpty())
+        assertNull(policy.reservation)
     }
 
     private class FakePasswords : PasswordAccess {

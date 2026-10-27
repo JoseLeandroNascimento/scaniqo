@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signature_actions">签名操作</string>
+    <string name="signature_replace">替换签名</string>
+    <string name="signature_duplicate">复制</string>
+    <string name="signature_delete_selected">删除签名</string>
+    <string name="signature_choose_overlap">选择签名</string>
+    <string name="signature_page_elements">此页签名数：%1$d</string>
+</resources>

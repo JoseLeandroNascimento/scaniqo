@@ -1,6 +1,7 @@
 package com.joseleandro.scaniqo.ui.documentEditor.components
 
 import com.joseleandro.scaniqo.core.graphics.ShapedTextLayout
+import com.joseleandro.scaniqo.core.graphics.androidTypeface
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 
 /**
@@ -16,6 +17,7 @@ internal fun PdfOverlay.fittedFillMarkText(): PdfOverlay {
         text = text, fontSize = fontSize, color = color,
         maxWidth = availableWidth, maxHeight = availableHeight,
         wrap = true, horizontalAlignment = textHorizontalAlignment,
+        typeface = androidTypeface(), underlined = underlined,
     )
     // A blank field still leaves a visible caret and a usable selection box.
     val pointWidth = maxOf(layout.naturalWidth, fontSize * .75f).coerceAtMost(availableWidth)

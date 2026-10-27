@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strong_compression_reward_title">अधिक संपीड़न अनलॉक करें</string>
+    <string name="strong_compression_reward_body">इस दस्तावेज़ के लिए एक उपयोग अनलॉक करने हेतु वीडियो देखें।</string>
+    <string name="strong_compression_reward_quality_note">स्पष्टता कम हो सकती है और फ़ाइल छोटी होने की गारंटी नहीं है।</string>
+    <string name="strong_compression_reward_retry_note">त्रुटि होने या PDF छोटा न होने पर दूसरा वीडियो देखे बिना फिर कोशिश करें।</string>
+    <string name="strong_compression_watch_action">देखें और अनलॉक करें</string>
+    <string name="strong_compression_loading">वीडियो तैयार हो रहा है…</string>
+    <string name="strong_compression_showing">वीडियो चल रहा है…</string>
+    <string name="strong_compression_continue_without_ad">विज्ञापन के बिना जारी रखें</string>
+    <string name="strong_compression_use_balanced">संतुलित मोड इस्तेमाल करें</string>
+    <string name="strong_compression_close">बंद करें</string>
+    <string name="strong_compression_first_free">पहला उपयोग मुफ़्त</string>
+    <string name="strong_compression_available">इस दस्तावेज़ के लिए उपयोग अनलॉक है</string>
+    <string name="strong_compression_video_hint">इस दस्तावेज़ के लिए एक उपयोग अनलॉक करने हेतु वीडियो देखें।</string>
+    <string name="strong_compression_password_again">जारी रखने के लिए PDF के पासवर्ड की पुष्टि करें।</string>
+    <string name="strong_compression_unavailable_note">वीडियो उपलब्ध नहीं है। इस बार आप विज्ञापन के बिना जारी रख सकते हैं।</string>
+    <string name="tool_ad_watch_apply">देखें और लागू करें</string>
+    <string name="tool_ad_watch_save">देखें और सहेजें</string>
+    <string name="tool_ad_watch_export">देखें और निर्यात करें</string>
+    <string name="tool_ad_reward_hint">यह कार्रवाई अनलॉक करने के लिए विज्ञापन देखें।</string>
+    <string name="tool_ad_first_use_free">पहला उपयोग मुफ़्त</string>
+    <string name="tool_ad_unlocked">कार्रवाई अनलॉक है</string>
+</resources>

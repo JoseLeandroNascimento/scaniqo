@@ -102,6 +102,7 @@ internal class ShapedTextLayout private constructor(
             maxWidth: Float,
             maxHeight: Float,
             typeface: Typeface = Typeface.DEFAULT,
+            underlined: Boolean = false,
             wrap: Boolean = false,
             horizontalAlignment: PdfTextHorizontalAlignment = PdfTextHorizontalAlignment.START,
         ): ShapedTextLayout {
@@ -112,6 +113,7 @@ internal class ShapedTextLayout private constructor(
             val paint = TextPaint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
                 this.color = color
                 this.typeface = typeface
+                isUnderlineText = underlined
                 textSize = fontSize * METRIC_SCALE
             }
             // All callers shape in PDF points; preview density cannot change line breaks.

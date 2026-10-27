@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="overlay_crossmark">叉号</string>
+    <string name="fill_mark_bold">粗体</string>
+    <string name="fill_mark_italic">斜体</string>
+    <string name="fill_mark_underline_text">文本下划线</string>
+    <string name="fill_mark_confirm_element">确认元素</string>
+    <string name="fill_mark_tap_to_cross">点按 PDF 以添加 X。</string>
+    <string name="signature_finish_tool">完成</string>
+    <string name="signature_place_hint">点按要签名的位置。</string>
+    <string name="signature_place_center">放在中央</string>
+</resources>

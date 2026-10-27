@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_v2_thumbnails">Pratinjau</string>
+    <string name="pages_v2_intervals">Rentang</string>
+    <string name="pages_v2_from">Dari</string>
+    <string name="pages_v2_until">Sampai</string>
+    <string name="pages_v2_add_range">Tambah rentang</string>
+    <string name="pages_v2_update_range">Perbarui rentang</string>
+    <string name="pages_v2_edit_list">Edit daftar</string>
+    <string name="pages_v2_confirm_selection">Konfirmasi pilihan</string>
+    <string name="pages_v2_cancel_edit">Batalkan edit</string>
+    <string name="pages_v2_order">Urutan: %1$s</string>
+    <string name="pages_v2_document_order">Gunakan urutan PDF</string>
+    <string name="pages_v2_go_to_page">Buka halaman</string>
+    <string name="pages_v2_range_incomplete">Isi awal dan akhir rentang.</string>
+    <string name="pages_v2_range_reversed">Awal harus lebih kecil atau sama dengan akhir.</string>
+    <string name="pages_v2_range_bounds">Pilih halaman antara 1 dan %1$d.</string>
+    <string name="pages_v2_edit_range">Edit rentang %1$s</string>
+    <string name="pages_v2_remove_range">Hapus rentang %1$s</string>
+    <string name="pages_v2_drag_mode">Seret</string>
+    <string name="pages_v2_direct_mode">Pindah ke posisi</string>
+    <string name="pages_v2_selected_position">Halaman di posisi %1$d</string>
+    <string name="pages_v2_final_position">Posisi akhir</string>
+    <string name="pages_v2_start">Awal</string>
+    <string name="pages_v2_end">Akhir</string>
+    <string name="pages_v2_move_to">Pindah ke %1$d</string>
+    <string name="pages_v2_same_position">Sudah di posisi ini</string>
+    <string name="pages_v2_numbering">Nomor halaman</string>
+    <string name="pages_v2_options">Opsi halaman %1$d</string>
+    <string name="pages_v2_moved">Halaman dipindah ke %1$d</string>
+    <string name="pages_v2_pending_selection">Konfirmasi atau batalkan pilihan sebelum melanjutkan.</string>
+    <string name="pages_v2_jump_hint">Halaman 1 sampai %1$d</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="other">Buat PDF berisi %1$d halaman</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="other">Ekspor %1$d halaman</item>
+    </plurals>
+    <string name="pages_v2_list_hint">Contoh: 5, 2-4, 1. Urutan yang dimasukkan dipertahankan.</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">पहले</string>
+    <string name="layout_v3_after">बाद में</string>
+    <string name="layout_v3_compare">तुलना करें</string>
+    <string name="layout_v3_align">संरेखित करें</string>
+    <string name="layout_v3_align_target">संरेखित करें: %1$s, %2$s</string>
+    <string name="layout_v3_no_both_travel">क्षैतिज या ऊर्ध्वाधर दिशा में ले जाने की जगह नहीं है।</string>
+    <string name="layout_v3_no_horizontal_travel">क्षैतिज दिशा में ले जाने की जगह नहीं है।</string>
+    <string name="layout_v3_no_vertical_travel">ऊर्ध्वाधर दिशा में ले जाने की जगह नहीं है।</string>
+    <string name="layout_v3_reduce_size">आकार घटाएं</string>
+    <string name="layout_v3_hide_precise">सटीक स्थिति छिपाएं</string>
+    <string name="layout_v3_precise">सटीक स्थिति</string>
+    <string name="layout_v3_nudge">%1$s की ओर ले जाएं</string>
+    <string name="layout_v3_center">सामग्री बीच में रखें</string>
+    <string name="layout_v3_custom_size">कस्टम · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">फ्रेमिंग विकल्प 100% स्केल का उपयोग करते हैं।</string>
+    <string name="layout_v3_scale">स्केल</string>
+    <string name="layout_v3_decrease_scale" formatted="false">स्केल 1% घटाएं</string>
+    <string name="layout_v3_increase_scale" formatted="false">स्केल 1% बढ़ाएं</string>
+    <string name="layout_v3_scale_error" formatted="false">25% से 200% के बीच मान दर्ज करें।</string>
+    <string name="layout_v3_without_margin">बिना मार्जिन</string>
+    <string name="layout_v3_with_margin_description">पेज के मार्जिन के अंदर पूरी सामग्री</string>
+    <string name="layout_v3_without_margin_description">पेज के उपलब्ध क्षेत्र में पूरी सामग्री</string>
+    <string name="layout_v3_restore_category">यह समायोजन रीसेट करें</string>
+    <string name="layout_v3_more">और विकल्प</string>
+    <string name="layout_v3_discard_session">इस सत्र के सभी बदलाव हटाएं</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">Sebelum</string>
+    <string name="layout_v3_after">Sesudah</string>
+    <string name="layout_v3_compare">Bandingkan</string>
+    <string name="layout_v3_align">Ratakan</string>
+    <string name="layout_v3_align_target">Ratakan: %1$s, %2$s</string>
+    <string name="layout_v3_no_both_travel">Tidak ada ruang untuk menggeser secara horizontal maupun vertikal.</string>
+    <string name="layout_v3_no_horizontal_travel">Tidak ada ruang untuk menggeser secara horizontal.</string>
+    <string name="layout_v3_no_vertical_travel">Tidak ada ruang untuk menggeser secara vertikal.</string>
+    <string name="layout_v3_reduce_size">Perkecil ukuran</string>
+    <string name="layout_v3_hide_precise">Sembunyikan posisi presisi</string>
+    <string name="layout_v3_precise">Posisi presisi</string>
+    <string name="layout_v3_nudge">Geser ke %1$s</string>
+    <string name="layout_v3_center">Pusatkan konten</string>
+    <string name="layout_v3_custom_size">Kustom · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">Preset bingkai menggunakan skala 100%.</string>
+    <string name="layout_v3_scale">Skala</string>
+    <string name="layout_v3_decrease_scale" formatted="false">Kurangi skala 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">Tambah skala 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">Masukkan nilai antara 25% dan 200%.</string>
+    <string name="layout_v3_without_margin">Tanpa margin</string>
+    <string name="layout_v3_with_margin_description">Seluruh konten di dalam margin halaman</string>
+    <string name="layout_v3_without_margin_description">Seluruh konten di area halaman</string>
+    <string name="layout_v3_restore_category">Pulihkan penyesuaian ini</string>
+    <string name="layout_v3_more">Opsi lainnya</string>
+    <string name="layout_v3_discard_session">Buang semua perubahan sesi ini</string>
+</resources>

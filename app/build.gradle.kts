@@ -6,6 +6,19 @@ plugins {
     alias(libs.plugins.androidx.room)
 }
 
+fun productionAdUnit(propertyName: String): String {
+    val unitId = providers.gradleProperty(propertyName).orElse("").get().trim()
+    require(unitId.isEmpty() || Regex("ca-app-pub-[0-9]{16}/[0-9]{10}").matches(unitId)) {
+        "$propertyName must be an AdMob ad unit ID containing /, not an app ID containing ~."
+    }
+    return unitId
+}
+
+val productionBannerUnitId = productionAdUnit("scaniqo.admob.bannerUnitId")
+val productionEditorBannerUnitId = productionAdUnit("scaniqo.admob.editorBannerUnitId")
+val productionDocumentsNativeUnitId = productionAdUnit("scaniqo.admob.documentsNativeUnitId")
+val productionToolsRewardedUnitId = productionAdUnit("scaniqo.admob.toolsRewardedUnitId")
+
 android {
     namespace = "com.joseleandro.scaniqo"
     compileSdk {
@@ -18,11 +31,23 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+        resValue("string", "admob_app_id", "ca-app-pub-7067924995647630~4025082822")
+        resValue("string", "admob_banner_unit_id", productionBannerUnitId)
+        resValue("string", "admob_editor_banner_unit_id", productionEditorBannerUnitId)
+        resValue("string", "admob_documents_native_unit_id", productionDocumentsNativeUnitId)
+        resValue("string", "admob_tools_rewarded_unit_id", productionToolsRewardedUnitId)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            resValue("string", "admob_app_id", "ca-app-pub-3940256099942544~3347511713")
+            resValue("string", "admob_banner_unit_id", "ca-app-pub-3940256099942544/9214589741")
+            resValue("string", "admob_editor_banner_unit_id", "ca-app-pub-3940256099942544/6300978111")
+            resValue("string", "admob_documents_native_unit_id", "ca-app-pub-3940256099942544/2247696110")
+            resValue("string", "admob_tools_rewarded_unit_id", "ca-app-pub-3940256099942544/5224354917")
+        }
         release {
             optimization {
                 enable = true
@@ -36,6 +61,7 @@ android {
     }
     buildFeatures {
         compose = true
+        resValues = true
     }
     androidResources {
         localeFilters += listOf("en", "pt", "es", "fr", "hi", "in", "bn", "zh-rCN", "ar", "ru")
@@ -112,6 +138,8 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.google.auth)
+    implementation(libs.google.mobile.ads)
+    implementation(libs.google.ump)
     implementation(libs.androidx.work.runtime)
     implementation(libs.mlkit.document.scanner)
     implementation(libs.mlkit.text.recognition)

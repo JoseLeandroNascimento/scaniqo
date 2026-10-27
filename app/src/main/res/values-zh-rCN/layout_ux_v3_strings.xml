@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="layout_v3_before">之前</string>
+    <string name="layout_v3_after">之后</string>
+    <string name="layout_v3_compare">比较</string>
+    <string name="layout_v3_align">对齐</string>
+    <string name="layout_v3_align_target">对齐：%1$s，%2$s</string>
+    <string name="layout_v3_no_both_travel">水平和垂直方向均没有移动空间。</string>
+    <string name="layout_v3_no_horizontal_travel">水平方向没有移动空间。</string>
+    <string name="layout_v3_no_vertical_travel">垂直方向没有移动空间。</string>
+    <string name="layout_v3_reduce_size">缩小尺寸</string>
+    <string name="layout_v3_hide_precise">隐藏精确位置</string>
+    <string name="layout_v3_precise">精确位置</string>
+    <string name="layout_v3_nudge">向%1$s移动</string>
+    <string name="layout_v3_center">内容居中</string>
+    <string name="layout_v3_custom_size">自定义 · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">取景预设使用 100% 缩放。</string>
+    <string name="layout_v3_scale">缩放</string>
+    <string name="layout_v3_decrease_scale" formatted="false">缩小 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">放大 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">请输入 25% 至 200% 之间的数值。</string>
+    <string name="layout_v3_without_margin">无边距</string>
+    <string name="layout_v3_with_margin_description">全部内容位于页面边距内</string>
+    <string name="layout_v3_without_margin_description">全部内容位于页面可用区域内</string>
+    <string name="layout_v3_restore_category">恢复此项调整</string>
+    <string name="layout_v3_more">更多选项</string>
+    <string name="layout_v3_discard_session">放弃本次会话中的所有调整</string>
+</resources>

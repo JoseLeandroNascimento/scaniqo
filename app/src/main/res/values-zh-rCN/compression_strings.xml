@@ -1,0 +1,22 @@
+<resources>
+    <string name="compression_hero_ready">让 PDF 更轻巧</string>
+    <string name="compression_hero_busy">正在压缩 PDF</string>
+    <string name="compression_hero_complete">PDF 已压缩</string>
+    <string name="compression_no_gain">此次未能缩小</string>
+    <string name="compression_no_gain_detail">缩小程度取决于文件内容。</string>
+    <string name="compression_saved">缩小了 %1$d%%</string>
+    <string name="compression_original_kept">保留原文件</string>
+    <string name="compression_from_device">从设备选择</string>
+    <string name="compression_from_library">从文档库选择</string>
+    <string name="compression_level">压缩级别</string>
+    <string name="compression_balanced">均衡</string>
+    <string name="compression_balanced_detail">图像质量更高</string>
+    <string name="compression_strong">紧凑</string>
+    <string name="compression_strong_detail">图像质量更低</string>
+    <string name="compression_rename">副本名称</string>
+    <string name="compression_action">压缩 PDF</string>
+    <string name="compression_choose_another">压缩其他 PDF</string>
+    <string name="compression_size_before">压缩前</string>
+    <string name="compression_size_after">压缩后</string>
+    <string name="compression_saved_small" formatted="false">缩小了不到 1%</string>
+</resources>
