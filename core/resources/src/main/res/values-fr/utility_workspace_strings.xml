@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_source">Document</string>
+    <string name="utility_workspace_importing">Importation du document…</string>
+    <string name="utility_workspace_pages">Choisissez les pages</string>
+    <string name="utility_workspace_range">Saisir une plage</string>
+    <string name="utility_workspace_order">Touchez les pages pour les sélectionner. La plage permet de définir l’ordre.</string>
+    <string name="utility_workspace_output">Résultat</string>
+    <string name="utility_workspace_jpg_hint">Fichiers légers à partager</string>
+    <string name="utility_workspace_png_hint">Plus de détails, fichiers plus volumineux</string>
+    <string name="utility_workspace_copy_hint">Une nouvelle copie sera créée. Votre document d’origine sera conservé.</string>
+    <string name="utility_workspace_change_destination">Changer d’emplacement</string>
+    <string name="utility_workspace_compress_level">Niveau de compression</string>
+    <string name="utility_workspace_balanced">Équilibrée</string>
+    <string name="utility_workspace_balanced_hint">Bonne lisibilité avec une réduction modérée.</string>
+    <string name="utility_workspace_strong">Réduction accrue</string>
+    <string name="utility_workspace_strong_hint">Fichier plus léger. Vérifiez les petits caractères et les images.</string>
+    <string name="utility_workspace_compress_action">Compresser et créer une copie</string>
+    <string name="utility_workspace_original_size">Original</string>
+    <string name="utility_workspace_result_size">Compressé</string>
+    <string name="utility_workspace_compress_complete">Votre PDF est plus léger</string>
+    <string name="utility_workspace_compress_no_gain">Ce PDF est déjà compact</string>
+    <string name="utility_workspace_compress_no_gain_hint">Aucune copie n’a été créée, car la taille n’a pas diminué.</string>
+    <string name="utility_workspace_compress_note">La réduction dépend des images du fichier. Les PDF contenant du texte ou des images déjà optimisées peuvent garder la même taille.</string>
+    <string name="utility_workspace_saved">%1$d%% plus léger</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — compressé</string>
+</resources>

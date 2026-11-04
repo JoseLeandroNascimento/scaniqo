@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="strong_compression_reward_quality_note">May reduce sharpness and does not guarantee a smaller file.</string>
+    <string name="strong_compression_password_again">Confirm the PDF password to continue.</string>
+    <string name="tool_ad_watch_export">Watch and export</string>
+</resources>

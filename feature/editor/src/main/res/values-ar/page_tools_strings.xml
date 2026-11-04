@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_scan">مسح</string>
+    <string name="pages_numbering">ترقيم جميع الصفحات</string>
+    <string name="pages_move_action">نقل الصفحة</string>
+    <string name="pages_drag_hint">اضغط مطولًا واسحب الصفحة لترتيبها.</string>
+    <string name="pages_drag_handle">إعادة ترتيب الصفحة %1$d</string>
+    <string name="pages_drag_cancel">إلغاء النقل</string>
+    <string name="pages_page">الصفحة %1$d</string>
+    <string name="pages_selected">محددة</string>
+    <string name="pages_move_up">نقل لأعلى</string>
+    <string name="pages_move_down">نقل لأسفل</string>
+    <string name="pages_one_page">أضف صفحات لتغيير الترتيب.</string>
+</resources>

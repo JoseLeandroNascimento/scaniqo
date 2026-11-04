@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="interactive_scope_current">所选页面</string>
+    <string name="interactive_scope_all_summary">全部（%1$d）</string>
+    <string name="interactive_scope_description">应用范围：%1$s。更改页面</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quick_sign_choose">Dokumen mana yang ingin Anda tanda tangani?</string>
+    <string name="quick_sign_description">Pilih PDF untuk memosisikan, memutar, dan menyesuaikan tanda tangan.</string>
+    <string name="quick_sign_empty">Impor atau pindai dokumen untuk memulai.</string>
+    <string name="quick_sign_search">Cari dokumen</string>
+    <string name="quick_sign_no_results">Tidak ada dokumen ditemukan.</string>
+</resources>

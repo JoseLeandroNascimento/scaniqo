@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow">Remove shadows</string>
+    <string name="quality_filter_light">Even lighting</string>
+    <string name="quality_filter_white">White paper</string>
+    <string name="quality_filter_adaptive">Sharp text</string>
+    <string name="quality_filter_noise">Reduce noise</string>
+    <string name="quality_filter_sharp">Enhance details</string>
+    <string name="quality_filter_bleed">Reduce bleed-through</string>
+    <string name="quality_native_title">Apply to pages with text or vectors</string>
+    <string name="quality_native_body">By default, these pages keep their original content. When enabled, the page becomes an image; OCR can recreate searchable text.</string>
+    <string name="quality_native_active">Pages with text or vectors will also be converted to images when the correction is applied.</string>
+    <string name="quality_export_tab">Export</string>
+    <string name="quality_review_tab">Review</string>
+    <string name="quality_export_title">PDF quality</string>
+    <string name="quality_export_high">High quality</string>
+    <string name="quality_export_high_body">Prioritizes image fidelity.</string>
+    <string name="quality_export_balanced">Balanced</string>
+    <string name="quality_export_balanced_body">Reduces image size while keeping good readability.</string>
+    <string name="quality_export_small">Smaller file</string>
+    <string name="quality_export_small_body">Stronger compression. Review small text and details before sharing.</string>
+    <string name="quality_export_hint">Compression is applied when saving. Final size depends on the original file; preserved text and vectors stay sharp when zoomed in.</string>
+    <string name="quality_ocr_title">Searchable text</string>
+    <string name="quality_ocr_body">Recognizes printed text in captures when saving, including Portuguese. Processing happens on the device and preserves the document’s appearance.</string>
+    <string name="quality_ocr_hint">OCR can make mistakes and takes longer with long documents. Pages with preserved native text are not recognized again.</string>
+    <string name="quality_export_apply">Apply options</string>
+    <string name="quality_auto_title">Auto enhancement</string>
+    <string name="quality_auto_body">Combines image adjustments and uses reliable tilts found during analysis. The result can be compared and undone.</string>
+    <string name="quality_auto_apply">Improve this page</string>
+    <string name="quality_auto_apply_all">Improve all</string>
+    <string name="quality_analysis_title">Review quality</string>
+    <string name="quality_analysis_body">Checks for blank or duplicate pages, blur, low resolution, and possibly cropped content. Alerts are suggestions: no pages are deleted automatically.</string>
+    <string name="quality_analysis_run">Analyze document</string>
+    <string name="quality_analysis_again">Analyze again</string>
+    <string name="quality_analysis_running">Analyzing pages…</string>
+    <string name="quality_analysis_cancel">Cancel analysis</string>
+    <string name="quality_analysis_error">Could not complete the analysis. Try again.</string>
+    <string name="quality_analysis_clear">No alerts found. We still recommend checking the document before sharing.</string>
+    <string name="quality_analysis_count">%1$d of %2$d pages to review</string>
+    <plurals name="quality_analysis_native">
+        <item quantity="one">%1$d page contains native text or vectors in the source.</item>
+        <item quantity="other">%1$d pages contain native text or vectors in the source.</item>
+    </plurals>
+    <string name="quality_analysis_page">Page %1$d</string>
+    <string name="quality_analysis_blank">Possibly blank</string>
+    <string name="quality_analysis_duplicate">Possible duplicate of page %1$d</string>
+    <string name="quality_analysis_blurry">Possibly blurry</string>
+    <string name="quality_analysis_resolution">Low resolution</string>
+    <string name="quality_analysis_clipped">Content near the edge</string>
+    <string name="quality_analysis_angle">Suggested tilt: %1$.1f°</string>
+    <string name="quality_analysis_review">View page</string>
+    <string name="quality_analysis_delete">Delete page %1$d</string>
+</resources>

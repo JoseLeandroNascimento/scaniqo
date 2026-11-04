@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_subtitle">Pilih tanda tangan untuk halaman ini.</string>
+    <string name="signature_library">Tanda tangan saya</string>
+    <string name="signature_use">Gunakan tanda tangan %1$s</string>
+    <string name="signature_gesture_hint">Seret untuk memosisikan. Sesuaikan melalui sudut dan putar dengan pegangan atas.</string>
+    <string name="signature_adjust_rotate">Putar</string>
+    <string name="signature_size_hint">Seret sudut untuk menyesuaikan lebar dan tinggi. Gunakan dua jari untuk mempertahankan proporsi.</string>
+    <string name="signature_rotate_hint">Seret pegangan di atas tanda tangan atau sesuaikan sudut dengan bilah.</string>
+    <string name="signature_rotation">Rotasi: %1$d°</string>
+    <string name="signature_crop_hint">Sesuaikan tepi agar hanya tanda tangan yang tersisa. Gambar di pustaka tetap dipertahankan.</string>
+    <string name="signature_apply">Terapkan dan lanjutkan</string>
+    <string name="signature_saved_hint">Tanda tangan akan diterapkan dalam pengeditan ini. Simpan PDF di editor.</string>
+    <string name="signature_cancel">Batal</string>
+    <string name="signature_already_placed">Tanda tangan di halaman ini</string>
+    <string name="signature_loading">Menyiapkan halaman…</string>
+</resources>

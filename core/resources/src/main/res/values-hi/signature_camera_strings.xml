@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_title">हस्ताक्षर स्कैन करें</string>
+    <string name="signature_camera_guidance">हस्ताक्षर को फ़्रेम के अंदर रखें। केवल इसी क्षेत्र का इस्तेमाल होगा और पृष्ठभूमि अपने आप हट जाएगी।</string>
+    <string name="signature_camera_capture">हस्ताक्षर की फ़ोटो लें</string>
+</resources>

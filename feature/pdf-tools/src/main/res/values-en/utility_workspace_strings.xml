@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_choose_hint">Choose a PDF from the library or import a file from your device.</string>
+    <string name="utility_workspace_import_device">Import from device</string>
+    <string name="utility_workspace_search">Search document</string>
+    <string name="utility_workspace_no_match">No documents found.</string>
+    <string name="utility_workspace_selection">%1$d of %2$d selected</string>
+    <string name="utility_workspace_select_all">All</string>
+    <string name="utility_workspace_clear">Clear</string>
+    <string name="utility_workspace_page">Page %1$d</string>
+    <string name="utility_workspace_locked_pages">For privacy, thumbnails of this PDF are hidden. Select by page number.</string>
+    <string name="utility_workspace_empty_selection">Select at least one page.</string>
+    <string name="utility_workspace_format">Image format</string>
+    <string name="utility_workspace_zip_hint">Each page becomes an image. All images are bundled in a ZIP file.</string>
+    <string name="utility_workspace_busy">Preparing the file…</string>
+    <string name="utility_workspace_compress_title">Compress PDF</string>
+    <string name="utility_workspace_compress_hint">Reduce PDF image sizes and keep searchable text.</string>
+    <string name="utility_workspace_open_result">Open compressed PDF</string>
+    <string name="utility_workspace_inspect_page">Zoom in on page %1$d</string>
+    <string name="utility_workspace_select_page">Select this page</string>
+    <string name="utility_workspace_deselect_page">Remove from selection</string>
+</resources>

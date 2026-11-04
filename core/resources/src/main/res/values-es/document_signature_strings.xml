@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_subtitle">Elige una firma para esta página.</string>
+    <string name="signature_library">Mis firmas</string>
+    <string name="signature_use">Usar firma %1$s</string>
+    <string name="signature_gesture_hint">Arrastra para posicionar. Ajusta desde las esquinas y gira con el control superior.</string>
+    <string name="signature_adjust_rotate">Girar</string>
+    <string name="signature_size_hint">Arrastra las esquinas para ajustar ancho y alto. Usa dos dedos para mantener la proporción.</string>
+    <string name="signature_rotate_hint">Arrastra el control sobre la firma o ajusta el ángulo con la barra.</string>
+    <string name="signature_rotation">Rotación: %1$d°</string>
+    <string name="signature_crop_hint">Ajusta los bordes para conservar solo la firma. Se mantendrá la imagen de la biblioteca.</string>
+    <string name="signature_apply">Aplicar y continuar</string>
+    <string name="signature_saved_hint">La firma se aplicará a esta edición. Guarda el PDF en el editor.</string>
+    <string name="signature_cancel">Cancelar</string>
+    <string name="signature_already_placed">Firmas en esta página</string>
+    <string name="signature_loading">Preparando página…</string>
+</resources>

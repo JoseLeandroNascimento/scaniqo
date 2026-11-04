@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">स्क्रीन में फिट करें</string>
+    <string name="fill_mark_font_smaller">टेक्स्ट का आकार घटाएँ</string>
+    <string name="fill_mark_font_larger">टेक्स्ट का आकार बढ़ाएँ</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">इस पृष्ठ पर</string>
+    <string name="fill_mark_every_page">सभी पृष्ठ</string>
+    <string name="fill_mark_remove">मिटाएँ</string>
+    <string name="fill_mark_apply">लागू करें</string>
+    <string name="fill_mark_no_values">बार-बार भरने वाले टेक्स्ट सहेजें, ताकि यहाँ फिर इस्तेमाल कर सकें।</string>
+    <string name="fill_mark_move_left">तत्व बाएँ ले जाएँ</string>
+    <string name="fill_mark_move_right">तत्व दाएँ ले जाएँ</string>
+    <string name="fill_mark_move_up">तत्व ऊपर ले जाएँ</string>
+    <string name="fill_mark_move_down">तत्व नीचे ले जाएँ</string>
+    <string name="fill_inline_edit_text">पृष्ठ का टेक्स्ट संपादित करें</string>
+    <string name="fill_selection_grow">तत्व बड़ा करें</string>
+    <string name="fill_selection_shrink">तत्व छोटा करें</string>
+    <string name="fill_selection_top_left">ऊपरी बाएँ कोने से आकार बदलें</string>
+    <string name="fill_selection_top_right">ऊपरी दाएँ कोने से आकार बदलें</string>
+    <string name="fill_selection_bottom_right">निचले दाएँ कोने से आकार बदलें</string>
+    <string name="fill_selection_bottom_left">निचले बाएँ कोने से आकार बदलें</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quick_sign_choose">Quel document souhaitez-vous signer ?</string>
+    <string name="quick_sign_description">Choisissez un PDF pour positionner, faire pivoter et ajuster votre signature.</string>
+    <string name="quick_sign_empty">Importez ou numérisez un document pour commencer.</string>
+    <string name="quick_sign_search">Rechercher un document</string>
+    <string name="quick_sign_no_results">Aucun document trouvé.</string>
+</resources>

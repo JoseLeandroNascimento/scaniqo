@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="strong_compression_reward_title">Débloquer la compression forte</string>
+    <string name="strong_compression_reward_body">Regardez une vidéo pour débloquer une utilisation sur ce document.</string>
+    <string name="strong_compression_reward_retry_note">En cas d’erreur ou si le PDF ne diminue pas, réessayez sans autre vidéo.</string>
+    <string name="strong_compression_watch_action">Regarder et débloquer</string>
+    <string name="strong_compression_loading">Préparation de la vidéo…</string>
+    <string name="strong_compression_showing">Vidéo en cours…</string>
+    <string name="strong_compression_continue_without_ad">Continuer sans publicité</string>
+    <string name="strong_compression_use_balanced">Utiliser le mode équilibré</string>
+    <string name="strong_compression_close">Fermer</string>
+    <string name="strong_compression_first_free">Première utilisation gratuite</string>
+    <string name="strong_compression_available">Utilisation débloquée pour ce document</string>
+    <string name="strong_compression_video_hint">Regardez une vidéo pour débloquer une utilisation sur ce document.</string>
+    <string name="strong_compression_unavailable_note">La vidéo est indisponible. Vous pouvez continuer sans publicité cette fois.</string>
+    <string name="tool_ad_watch_apply">Regarder et appliquer</string>
+    <string name="tool_ad_watch_save">Regarder et enregistrer</string>
+    <string name="tool_ad_reward_hint">Regardez une publicité pour débloquer cette opération.</string>
+    <string name="tool_ad_first_use_free">Première utilisation gratuite</string>
+    <string name="tool_ad_unlocked">Opération débloquée</string>
+</resources>

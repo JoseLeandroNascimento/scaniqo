@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_permission_reason">اسمح بالوصول إلى الكاميرا لتصوير توقيعك. ستُستخدم الصورة لإنشاء التوقيع فقط.</string>
+    <string name="signature_camera_permission_settings">الوصول إلى الكاميرا معطّل. فعّل إذن الكاميرا في إعدادات التطبيق لتصوير توقيعك.</string>
+    <string name="signature_camera_open_settings">فتح الإعدادات</string>
+    <string name="signature_camera_allow">السماح بالكاميرا</string>
+    <string name="signature_camera_cancel">إلغاء</string>
+    <string name="signature_camera_capturing">جارٍ التصوير…</string>
+    <string name="signature_camera_starting">جارٍ فتح الكاميرا…</string>
+    <string name="signature_camera_unavailable">تعذّر فتح الكاميرا. تحقق من توفرها وحاول مرة أخرى.</string>
+    <string name="signature_camera_missing">لا توجد كاميرا متاحة على هذا الجهاز. ارجع لاستيراد صورة.</string>
+    <string name="signature_camera_capture_failed">تعذّر تصوير توقيعك. حاول مرة أخرى.</string>
+    <string name="signature_camera_retry">إعادة المحاولة</string>
+    <string name="signature_camera_frame_changed">تغيّر الإطار أثناء التصوير. أبقِ الجهاز في الموضع نفسه وأعد التصوير.</string>
+</resources>

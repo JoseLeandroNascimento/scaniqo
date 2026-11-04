@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_title">Pangkas tanda tangan</string>
+    <string name="signature_crop_left">Tepi kiri</string>
+    <string name="signature_crop_top">Tepi atas</string>
+    <string name="signature_crop_right">Tepi kanan</string>
+    <string name="signature_crop_bottom">Tepi bawah</string>
+    <string name="signature_crop_reset">Gambar utuh</string>
+    <string name="signature_crop_apply">Terapkan pemangkasan</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_pages">पृष्ठ</string>
+    <string name="utility_pages_hint">सभी, या जैसे: 1, 3-5। दिया हुआ क्रम रखा जाता है।</string>
+    <string name="utility_choose_destination">कहाँ सहेजना है, चुनें</string>
+    <string name="utility_destination_ready">जगह चुनी गई। निर्यात करने के लिए पुष्टि करें।</string>
+    <string name="utility_receipt_merchant">दुकान</string>
+    <string name="utility_receipt_date">तारीख</string>
+    <string name="utility_receipt_total">कुल</string>
+    <string name="utility_receipt_items">मद — हर पंक्ति में एक</string>
+    <string name="utility_close">बंद करें</string>
+</resources>

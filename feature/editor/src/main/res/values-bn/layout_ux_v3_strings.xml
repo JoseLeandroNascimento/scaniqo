@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_v3_no_both_travel">সরাতে আকার কমান।</string>
+    <string name="layout_v3_no_horizontal_travel">অনুভূমিকভাবে সরাতে আকার কমান।</string>
+    <string name="layout_v3_no_vertical_travel">উল্লম্বভাবে সরাতে আকার কমান।</string>
+    <string name="layout_v3_reduce_size">কমান</string>
+    <string name="layout_v3_scale">স্কেল</string>
+    <string name="layout_v3_decrease_scale" formatted="false">স্কেল 1% কমান</string>
+    <string name="layout_v3_increase_scale" formatted="false">স্কেল 1% বাড়ান</string>
+    <string name="layout_v3_scale_error" formatted="false">25% থেকে 200% এর মধ্যে মান লিখুন।</string>
+    <string name="layout_v3_without_margin">মার্জিন ছাড়া</string>
+    <string name="layout_v3_with_margin_description">পাতার মার্জিনের ভেতরে সব বিষয়বস্তু</string>
+    <string name="layout_v3_without_margin_description">পাতার উপলব্ধ স্থানে সব বিষয়বস্তু</string>
+    <string name="layout_v3_restore_category">পুনরুদ্ধার</string>
+    <string name="layout_v3_more">আরও বিকল্প</string>
+    <string name="layout_v3_discard_session">পরিবর্তন বাতিল করুন</string>
+</resources>

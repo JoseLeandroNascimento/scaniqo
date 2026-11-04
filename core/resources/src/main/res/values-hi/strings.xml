@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="navigation_documents">दस्तावेज़ों पर वापस जाएँ</string>
+    <string name="navigation_tags">टैग पर जाएँ</string>
+    <string name="documents_screen_title">स्कैन किए गए दस्तावेज़</string>
+    <string name="tags_screen_title">फ़ाइल टैग</string>
+    <string name="icone_da_tag">टैग आइकन</string>
+    <string name="icone_more">और विकल्प</string>
+    <string name="editar">संपादित करें</string>
+    <string name="icone_de_editar">संपादित करें</string>
+    <string name="icone_de_excluir">मिटाएँ</string>
+    <string name="icone_de_adicionar">जोड़ें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="tags_loading">आपके टैग लोड हो रहे हैं…</string>
+    <string name="tags_load_error_title">टैग लोड नहीं हो सके</string>
+</resources>

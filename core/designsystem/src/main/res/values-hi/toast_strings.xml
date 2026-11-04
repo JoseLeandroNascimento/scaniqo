@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="toast_success_title">हो गया</string>
+    <string name="toast_error_title">कुछ गड़बड़ हुई</string>
+    <string name="toast_info_title">जानकारी</string>
+    <string name="toast_dismiss">संदेश बंद करें</string>
+</resources>

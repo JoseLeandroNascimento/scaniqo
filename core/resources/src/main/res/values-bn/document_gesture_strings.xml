@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_straighten_handle">হেলানো ভাব ঠিক করতে হাতল ডানে-বামে টানুন।</string>
+    <string name="gesture_curvature_handle">বক্রতা ঠিক করতে হাতল উপরে বা নিচে টানুন।</string>
+    <string name="gesture_angle_increase">ডানে 1 ডিগ্রি ঘোরান</string>
+    <string name="gesture_angle_decrease">বামে 1 ডিগ্রি ঘোরান</string>
+    <string name="gesture_curve_increase">নিচের দিকে বাঁকান</string>
+    <string name="gesture_curve_decrease">উপরের দিকে বাঁকান</string>
+    <string name="gesture_drag_handle">হাতল টানুন</string>
+</resources>

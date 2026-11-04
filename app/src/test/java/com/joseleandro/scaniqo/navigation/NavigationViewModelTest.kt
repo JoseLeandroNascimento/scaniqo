@@ -263,7 +263,7 @@ class NavigationViewModelTest {
         val id = Long.MAX_VALUE - 3
         viewModel.navigateTo(AppRoute.DocumentViewer(id))
         val serializer = NavBackStackSerializer(AppRoute.serializer())
-        for (tool in listOf(DocumentTool.LAYOUT, DocumentTool.CORRECTIONS, DocumentTool.PAGES,
+        for (tool in listOf(DocumentTool.LAYOUT, DocumentTool.PAGES,
             DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION)) {
             val route = AppRoute.DocumentEditorTool(id, tool)
             viewModel.navigateTo(route)

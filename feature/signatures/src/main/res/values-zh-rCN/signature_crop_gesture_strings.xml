@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_drag_hint">拖动边缘或四角，通过中心移动选区。</string>
+    <string name="signature_crop_selection">裁剪区域</string>
+    <string name="signature_crop_selection_size">宽度 %1$d%%，高度 %2$d%%</string>
+    <string name="signature_crop_inward">向内移动</string>
+    <string name="signature_crop_outward">向外移动</string>
+    <string name="signature_crop_move_left">向左移动选区</string>
+    <string name="signature_crop_move_right">向右移动选区</string>
+    <string name="signature_crop_move_up">向上移动选区</string>
+    <string name="signature_crop_move_down">向下移动选区</string>
+</resources>

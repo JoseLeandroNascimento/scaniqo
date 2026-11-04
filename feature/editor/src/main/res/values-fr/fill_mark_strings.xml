@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">Ajuster à l’écran</string>
+    <string name="fill_mark_font_smaller">Réduire la taille du texte</string>
+    <string name="fill_mark_font_larger">Agrandir la taille du texte</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">Sur cette page</string>
+    <string name="fill_mark_every_page">Toutes les pages</string>
+    <string name="fill_mark_remove">Supprimer</string>
+    <string name="fill_mark_apply">Appliquer</string>
+    <string name="fill_mark_no_values">Enregistrez les textes que vous saisissez souvent pour les réutiliser ici.</string>
+    <string name="fill_mark_move_left">Déplacer l’élément vers la gauche</string>
+    <string name="fill_mark_move_right">Déplacer l’élément vers la droite</string>
+    <string name="fill_mark_move_up">Déplacer l’élément vers le haut</string>
+    <string name="fill_mark_move_down">Déplacer l’élément vers le bas</string>
+    <string name="fill_inline_edit_text">Modifier le texte sur la page</string>
+    <string name="fill_selection_grow">Agrandir l’élément</string>
+    <string name="fill_selection_shrink">Réduire l’élément</string>
+    <string name="fill_selection_top_left">Redimensionner par le coin supérieur gauche</string>
+    <string name="fill_selection_top_right">Redimensionner par le coin supérieur droit</string>
+    <string name="fill_selection_bottom_right">Redimensionner par le coin inférieur droit</string>
+    <string name="fill_selection_bottom_left">Redimensionner par le coin inférieur gauche</string>
+</resources>

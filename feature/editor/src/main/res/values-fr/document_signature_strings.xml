@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_title">Signer le PDF</string>
+    <string name="signature_new">Créer une signature</string>
+    <string name="signature_library_empty">Créez votre signature en dessinant, en saisissant du texte ou en choisissant une image.</string>
+    <string name="signature_page">Page %1$d sur %2$d</string>
+    <string name="signature_previous_page">Page précédente</string>
+    <string name="signature_next_page">Page suivante</string>
+    <string name="signature_size_value">Largeur : %1$d%% de la page</string>
+    <string name="signature_rotate_left">Tourner de 15 degrés vers la gauche</string>
+    <string name="signature_rotate_right">Tourner de 15 degrés vers la droite</string>
+    <string name="signature_rotate_reset">Redresser</string>
+    <string name="signature_rotate_handle">Faire pivoter la signature</string>
+    <string name="signature_resize_handle">Ajuster la taille de la signature</string>
+    <string name="signature_grow">Agrandir la signature</string>
+    <string name="signature_shrink">Réduire la signature</string>
+    <string name="signature_crop">Rogner</string>
+    <string name="signature_cancel_title">Abandonner le placement ?</string>
+    <string name="signature_cancel_body">Cette signature n’a pas encore été appliquée. Les autres modifications du document seront conservées.</string>
+    <string name="signature_cancel_confirm">Abandonner la signature</string>
+    <string name="signature_keep_editing">Continuer à ajuster</string>
+    <string name="signature_back">Retour à l’éditeur</string>
+    <string name="signature_edit_placed">Modifier la signature %1$d</string>
+    <string name="signature_retry">Réessayer</string>
+</resources>

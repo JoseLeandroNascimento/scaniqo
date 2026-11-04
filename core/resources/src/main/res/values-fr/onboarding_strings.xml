@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="onboarding_guide">Votre guide rapide</string>
+    <string name="onboarding_swipe">Balayez pour découvrir à votre rythme.</string>
+    <string name="onboarding_scan_category">NUMÉRISEZ</string>
+    <string name="onboarding_scan_hint">Dans Documents, touchez Numériser un document.</string>
+    <string name="onboarding_tags_category">ORGANISEZ</string>
+    <string name="onboarding_tags_hint">Ouvrez Étiquettes dans le menu pour modifier les noms, couleurs et icônes.</string>
+    <string name="onboarding_edit_category">MODIFIEZ</string>
+    <string name="onboarding_edit_hint">Utilisez les raccourcis de Documents ou ouvrez Tous les outils.</string>
+    <string name="onboarding_share_category">CONSERVEZ ET PARTAGEZ</string>
+    <string name="onboarding_share_hint">Ouvrez Paramètres → Sauvegarde Google Drive. La connexion est facultative.</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_device">Dari perangkat</string>
+    <string name="merge_source_app">Dari aplikasi</string>
+    <string name="merge_app_title">Dokumen aplikasi</string>
+    <string name="merge_app_search">Cari berdasarkan nama</string>
+    <string name="merge_app_no_results">Tidak ada dokumen ditemukan untuk pencarian ini.</string>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="other">Gabungkan %1$d PDF</item>
+    </plurals>
+</resources>

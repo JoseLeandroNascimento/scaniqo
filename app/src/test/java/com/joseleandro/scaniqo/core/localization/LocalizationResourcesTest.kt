@@ -7,7 +7,9 @@ import org.junit.Test
 import org.w3c.dom.Element
 
 class LocalizationResourcesTest {
-    private val resources = File("src/main/res")
+    private val resources = requireNotNull(System.getProperty("scaniqo.resourceDirectories")) {
+        "Run through Gradle to include all module resource catalogs"
+    }.split(File.pathSeparator).map(::File)
     private val directories = listOf("values-pt", "values-en", "values-es", "values-fr",
         "values-hi", "values-in", "values-bn", "values-zh-rCN", "values-ar", "values-ru")
     private val placeholders = Regex("%(?:[0-9]+\\$)?[-#+ 0,(]*[0-9]*(?:\\.[0-9]+)?[a-zA-Z]|\\{(?:pagina|total)\\}")
@@ -19,7 +21,8 @@ class LocalizationResourcesTest {
         val factory = DocumentBuilderFactory.newInstance().apply {
             setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
         }
-        requireNotNull(File(resources, directory).listFiles()).filter { it.extension == "xml" }.forEach { file ->
+        resources.flatMap { root -> File(root, directory).listFiles().orEmpty().toList() }
+            .filter { it.extension == "xml" }.forEach { file ->
             val children = factory.newDocumentBuilder().parse(file).documentElement.childNodes
             for (i in 0 until children.length) {
                 val element = children.item(i) as? Element ?: continue
@@ -91,7 +94,8 @@ class LocalizationResourcesTest {
 
     @Test fun pickerAndSystemSettingsExposeTheSameTenRegions() {
         val entries = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-            .parse(File(resources, "xml/locales_config.xml")).getElementsByTagName("locale")
+            .parse(resources.map { File(it, "xml/locales_config.xml") }.single(File::exists))
+            .getElementsByTagName("locale")
         val tags = (0 until entries.length).map { (entries.item(it) as Element).getAttribute("android:name") }
         assertEquals(10, tags.size)
         assertEquals(tags.toSet(), AppLanguages.supported.map { it.tag }.toSet())

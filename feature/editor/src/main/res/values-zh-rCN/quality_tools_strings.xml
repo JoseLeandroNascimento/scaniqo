@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow">去除阴影</string>
+    <string name="quality_filter_light">均匀光照</string>
+    <string name="quality_filter_white">纸张增白</string>
+    <string name="quality_filter_adaptive">清晰文字</string>
+    <string name="quality_filter_noise">降噪</string>
+    <string name="quality_filter_sharp">增强细节</string>
+    <string name="quality_filter_bleed">减弱背面透印</string>
+    <string name="quality_native_title">应用于含文字或矢量图形的页面</string>
+    <string name="quality_native_body">默认保留这些页面的原始内容。启用后，页面会转换为图像；OCR 可重新生成可搜索文字。</string>
+    <string name="quality_native_active">应用校正时，含文字或矢量图形的页面也会转换为图像。</string>
+    <string name="quality_export_tab">导出</string>
+    <string name="quality_review_tab">检查</string>
+    <string name="quality_export_title">PDF 质量</string>
+    <string name="quality_export_high">高质量</string>
+    <string name="quality_export_high_body">优先保留图像细节。</string>
+    <string name="quality_export_balanced">均衡</string>
+    <string name="quality_export_balanced_body">减小图像体积，保持良好可读性。</string>
+    <string name="quality_export_small">较小文件</string>
+    <string name="quality_export_small_body">更强的压缩。分享前请检查小字和细节。</string>
+    <string name="quality_export_hint">保存时应用压缩。最终大小取决于原文件；保留的文字和矢量图形在放大时仍清晰。</string>
+    <string name="quality_ocr_title">可搜索文本</string>
+    <string name="quality_ocr_body">保存时识别图像中使用拉丁字母的印刷文字，包括葡萄牙语。处理在设备上进行，文档外观保持不变。</string>
+    <string name="quality_ocr_hint">OCR 可能出错，长文档耗时更久。保留原生文字的页面不会再次识别。</string>
+    <string name="quality_export_apply">应用选项</string>
+    <string name="quality_auto_title">自动优化</string>
+    <string name="quality_auto_body">结合图像调整与分析中可靠识别的倾斜角度。可比较结果并撤销。</string>
+    <string name="quality_auto_apply">优化此页</string>
+    <string name="quality_auto_apply_all">优化全部</string>
+    <string name="quality_analysis_title">检查质量</string>
+    <string name="quality_analysis_body">检查空白页、重复页、模糊、低分辨率和可能被裁剪的内容。提示仅供参考，不会自动删除页面。</string>
+    <string name="quality_analysis_run">分析文档</string>
+    <string name="quality_analysis_again">重新分析</string>
+    <string name="quality_analysis_running">正在分析页面…</string>
+    <string name="quality_analysis_cancel">取消分析</string>
+    <string name="quality_analysis_error">无法完成分析，请重试。</string>
+    <string name="quality_analysis_clear">未发现问题，仍建议分享前检查文档。</string>
+    <string name="quality_analysis_count">%2$d 页中有 %1$d 页需要检查</string>
+    <plurals name="quality_analysis_native">
+        <item quantity="other">%1$d 页包含原生文字或矢量图形。</item>
+    </plurals>
+    <string name="quality_analysis_page">第 %1$d 页</string>
+    <string name="quality_analysis_blank">可能为空白页</string>
+    <string name="quality_analysis_duplicate">可能与第 %1$d 页重复</string>
+    <string name="quality_analysis_blurry">可能模糊</string>
+    <string name="quality_analysis_resolution">分辨率较低</string>
+    <string name="quality_analysis_clipped">内容靠近边缘</string>
+    <string name="quality_analysis_angle">建议角度：%1$.1f°</string>
+    <string name="quality_analysis_review">查看页面</string>
+    <string name="quality_analysis_delete">删除第 %1$d 页</string>
+</resources>

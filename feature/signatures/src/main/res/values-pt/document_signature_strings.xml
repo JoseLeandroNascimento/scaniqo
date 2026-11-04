@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_title">Recortar assinatura</string>
+    <string name="signature_crop_left">Borda esquerda</string>
+    <string name="signature_crop_top">Borda superior</string>
+    <string name="signature_crop_right">Borda direita</string>
+    <string name="signature_crop_bottom">Borda inferior</string>
+    <string name="signature_crop_reset">Imagem inteira</string>
+    <string name="signature_crop_apply">Aplicar recorte</string>
+</resources>

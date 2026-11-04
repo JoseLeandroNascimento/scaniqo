@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_scan">Сканировать</string>
+    <string name="pages_numbering">Нумеровать все страницы</string>
+    <string name="pages_move_action">Переместить страницу</string>
+    <string name="pages_drag_hint">Удерживайте и перетащите страницу для изменения порядка.</string>
+    <string name="pages_drag_handle">Изменить порядок страницы %1$d</string>
+    <string name="pages_drag_cancel">Отменить перемещение</string>
+    <string name="pages_page">Страница %1$d</string>
+    <string name="pages_selected">Выбрана</string>
+    <string name="pages_move_up">Вверх</string>
+    <string name="pages_move_down">Вниз</string>
+    <string name="pages_one_page">Добавьте страницы, чтобы изменить порядок.</string>
+</resources>

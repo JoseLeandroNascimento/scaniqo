@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_scan">扫描</string>
+    <string name="pages_numbering">为所有页面添加页码</string>
+    <string name="pages_move_action">移动页面</string>
+    <string name="pages_drag_hint">长按并拖动页面以调整顺序。</string>
+    <string name="pages_drag_handle">调整第 %1$d 页的顺序</string>
+    <string name="pages_drag_cancel">取消移动</string>
+    <string name="pages_page">第 %1$d 页</string>
+    <string name="pages_selected">已选择</string>
+    <string name="pages_move_up">上移</string>
+    <string name="pages_move_down">下移</string>
+    <string name="pages_one_page">添加更多页面即可调整顺序。</string>
+</resources>

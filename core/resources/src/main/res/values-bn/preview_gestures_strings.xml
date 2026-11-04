@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="preview_zoom_close">বড় দৃশ্য বন্ধ করুন</string>
+    <string name="preview_controls_show">সমন্বয়</string>
+    <string name="preview_controls_hide">সমন্বয় লুকান</string>
+    <string name="preview_gestures_hint">বড় করতে ও ঘুরে দেখতে দুই আঙুল ব্যবহার করুন।</string>
+</resources>

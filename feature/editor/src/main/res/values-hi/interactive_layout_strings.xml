@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_interactive_position">स्थिति</string>
+    <string name="layout_interactive_rotate">घुमाएँ</string>
+    <string name="layout_interactive_drag">संरेखित करने के लिए खींचें</string>
+    <string name="layout_interactive_rotate_left">90 डिग्री बाएँ घुमाएँ</string>
+    <string name="layout_interactive_rotate_right">90 डिग्री दाएँ घुमाएँ</string>
+</resources>

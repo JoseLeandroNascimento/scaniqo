@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_title">Google Drive में बैकअप</string>
+    <string name="backup_heading">आपके PDF सुरक्षित हैं</string>
+    <string name="backup_connected">खाता कनेक्ट है</string>
+    <string name="backup_count">इस डिवाइस में %1$d PDF</string>
+    <string name="backup_folder">फ़ोल्डर: Scaniqo backups</string>
+    <string name="backup_not_connected">कोई खाता कनेक्ट नहीं है</string>
+    <string name="backup_scope_title">केवल सहेजे गए PDF</string>
+    <string name="backup_local_summary">बैकअप के लिए तैयार: %1$d PDF · %2$s</string>
+    <string name="backup_automatic_enable">अपने-आप बैकअप लें</string>
+    <string name="backup_automatic_body">समय-समय पर आपका बैकअप अपडेट करता है।</string>
+    <string name="backup_wifi_body">मोबाइल डेटा के शुल्क से बचने के लिए बिना मीटर वाले कनेक्शन का इंतज़ार करता है।</string>
+    <string name="backup_charging_body">डिवाइस के बिजली से जुड़ने का इंतज़ार करता है।</string>
+    <string name="backup_automatic_authorize">अपने-आप बैकअप के लिए फिर अनुमति चाहिए। फिर शुरू करने के लिए Google Drive दोबारा कनेक्ट करें।</string>
+    <string name="backup_empty_title">अभी कोई रिकॉर्ड नहीं</string>
+    <string name="backup_history_unloaded_body">Drive में मौजूदा बैकअप जाँचने के लिए रीफ़्रेश करें।</string>
+    <string name="backup_current">मौजूदा बैकअप</string>
+    <string name="backup_current_unavailable">Drive में कोई बैकअप उपलब्ध नहीं है।</string>
+</resources>

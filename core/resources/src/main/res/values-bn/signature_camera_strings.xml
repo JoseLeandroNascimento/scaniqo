@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_title">স্বাক্ষর স্ক্যান করুন</string>
+    <string name="signature_camera_guidance">স্বাক্ষরটি ফ্রেমের মধ্যে রাখুন। শুধু এই অংশ ব্যবহার করা হবে এবং পটভূমি স্বয়ংক্রিয়ভাবে সরানো হবে।</string>
+    <string name="signature_camera_capture">স্বাক্ষরের ছবি তুলুন</string>
+</resources>

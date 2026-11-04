@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="viewer_tool_quality">गुणवत्ता</string>
+    <string name="viewer_preview_stale">अपडेट नहीं हो सका। पिछला प्रीव्यू रखा गया है।</string>
+    <string name="viewer_preparing_tools">टूल तैयार हो रहे हैं…</string>
+    <string name="viewer_undo_description">आखिरी बदलाव पूर्ववत करें</string>
+</resources>

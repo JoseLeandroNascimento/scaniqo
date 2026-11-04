@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_no_tag">बिना टैग</string>
+    <string name="document_create_title">दस्तावेज़ सहेजें</string>
+    <string name="document_editor_title">दस्तावेज़ संपादित करें</string>
+    <string name="document_name_label">दस्तावेज़ का नाम</string>
+    <string name="document_name_placeholder">जैसे: किरायानामा</string>
+    <string name="document_name_required">दस्तावेज़ का नाम दर्ज करें।</string>
+    <string name="document_name_too_long">अधिकतम %1$d वर्ण इस्तेमाल करें।</string>
+    <string name="document_tag_label">टैग</string>
+    <string name="document_optional">वैकल्पिक</string>
+    <string name="document_no_tags_available">टैग प्रबंधन में टैग बनाकर बाद में जोड़ सकते हैं।</string>
+    <string name="document_save">दस्तावेज़ सहेजें</string>
+    <string name="document_save_changes">बदलाव सहेजें</string>
+    <string name="document_saving">सहेजा जा रहा है…</string>
+    <string name="document_save_error">सहेजा नहीं जा सका। आपकी जानकारी सुरक्षित है। फिर से कोशिश करें।</string>
+    <string name="document_delete_title">ट्रैश में भेजें?</string>
+    <string name="document_delete_body">“%1$s” दस्तावेज़ लाइब्रेरी से हट जाएगा। मेन्यू में ट्रैश से उसे वापस ला सकते हैं।</string>
+    <string name="document_delete_error">ट्रैश में नहीं भेजा जा सका। फिर से कोशिश करें।</string>
+    <string name="document_deleting">भेजा जा रहा है…</string>
+    <string name="document_updated">दस्तावेज़ अपडेट किया गया</string>
+    <string name="document_deleted">दस्तावेज़ ट्रैश में भेजा गया</string>
+    <string name="document_downloaded">PDF चुनी हुई जगह पर सहेजा गया</string>
+    <string name="document_scan_error">स्कैनर नहीं खुल सका। फिर से कोशिश करें।</string>
+    <string name="document_prepare_error">स्कैन किया हुआ दस्तावेज़ तैयार नहीं हो सका। फिर से स्कैन करें।</string>
+    <string name="document_export_error">PDF डाउनलोड नहीं हो सका। फिर से कोशिश करें।</string>
+    <string name="document_share_error">PDF शेयर नहीं हो सका। फिर से कोशिश करें।</string>
+</resources>

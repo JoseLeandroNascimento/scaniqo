@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_label">PDF चुनें</string>
+    <string name="merge_app_description">पृष्ठ उसी क्रम में जुड़ेंगे जिस क्रम में आप PDF चुनेंगे।</string>
+    <string name="merge_app_empty">ऐप में और कोई PDF नहीं है। फ़ाइलें चुनने के लिए “डिवाइस से” इस्तेमाल करें।</string>
+    <string name="merge_app_selection_order">मिलाने में स्थान %1$d</string>
+    <string name="merge_app_protected">पासवर्ड से सुरक्षित PDF</string>
+    <string name="merge_app_result_protected">संपादित हो रहे दस्तावेज़ की सुरक्षा परिणाम में बनी रहेगी।</string>
+    <string name="merge_app_result_unprotected">संपादित हो रहे दस्तावेज़ में पासवर्ड नहीं है। सुरक्षित PDF के पृष्ठ भी परिणाम में बिना पासवर्ड होंगे।</string>
+</resources>

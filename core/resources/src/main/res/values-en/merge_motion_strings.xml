@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_motion_hint">Add, arrange, merge.</string>
+    <string name="merge_motion_count">%1$d PDFs → 1</string>
+    <string name="merge_motion_empty">Choose your PDFs</string>
+    <string name="merge_motion_working">Bringing your PDFs together</string>
+    <string name="merge_motion_options">Options for %1$s</string>
+</resources>

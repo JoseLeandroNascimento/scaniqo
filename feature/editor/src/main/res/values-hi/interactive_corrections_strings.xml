@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_scope_current">यह पृष्ठ</string>
+    <string name="document_scope_select">चुनें</string>
+    <string name="document_scope_all">सभी</string>
+    <string name="document_scope_title">किन पृष्ठों पर लागू करें?</string>
+    <string name="document_scope_hint">एक ही समायोजन केवल चुने पृष्ठों पर लागू होगा।</string>
+    <string name="document_scope_select_all">सभी चुनें</string>
+    <string name="document_scope_clear">साफ़ करें</string>
+    <string name="document_scope_confirm">चयन इस्तेमाल करें</string>
+    <string name="document_scope_cancel">रद्द करें</string>
+    <string name="document_scope_page">पृष्ठ %1$d</string>
+    <string name="document_scope_selected_count">चुनें (%1$d)</string>
+    <string name="document_scope_empty">कम से कम एक पृष्ठ चुनें।</string>
+    <plurals name="document_scope_count">
+        <item quantity="one">%1$d पृष्ठ चुना गया</item>
+        <item quantity="other">%1$d पृष्ठ चुने गए</item>
+    </plurals>
+    <string name="corrections_preview_previous">पिछले पृष्ठ का प्रीव्यू</string>
+    <string name="corrections_preview_next">अगले पृष्ठ का प्रीव्यू</string>
+    <string name="corrections_preview_pages">देखने के लिए पृष्ठ चुनें</string>
+    <string name="corrections_preview_error">प्रीव्यू अपडेट नहीं हो सका।</string>
+    <string name="corrections_preview_retry">फिर से कोशिश करें</string>
+</resources>

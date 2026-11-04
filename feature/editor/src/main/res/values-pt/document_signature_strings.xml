@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_title">Assinar PDF</string>
+    <string name="signature_new">Criar assinatura</string>
+    <string name="signature_library_empty">Crie sua assinatura desenhando, digitando ou escolhendo uma imagem.</string>
+    <string name="signature_page">Página %1$d de %2$d</string>
+    <string name="signature_previous_page">Página anterior</string>
+    <string name="signature_next_page">Próxima página</string>
+    <string name="signature_size_value">Largura: %1$d%% da página</string>
+    <string name="signature_rotate_left">Girar 15 graus à esquerda</string>
+    <string name="signature_rotate_right">Girar 15 graus à direita</string>
+    <string name="signature_rotate_reset">Endireitar</string>
+    <string name="signature_rotate_handle">Girar assinatura</string>
+    <string name="signature_resize_handle">Ajustar tamanho da assinatura</string>
+    <string name="signature_grow">Aumentar assinatura</string>
+    <string name="signature_shrink">Diminuir assinatura</string>
+    <string name="signature_crop">Recortar</string>
+    <string name="signature_cancel_title">Descartar posicionamento?</string>
+    <string name="signature_cancel_body">Esta assinatura ainda não foi aplicada. As demais alterações no documento serão mantidas.</string>
+    <string name="signature_cancel_confirm">Descartar assinatura</string>
+    <string name="signature_keep_editing">Continuar ajustando</string>
+    <string name="signature_back">Voltar ao editor</string>
+    <string name="signature_edit_placed">Editar assinatura %1$d</string>
+    <string name="signature_retry">Tentar novamente</string>
+    <string name="signature_finish_tool">Concluir</string>
+    <string name="signature_place_hint">Toque onde deseja assinar.</string>
+    <string name="signature_place_center">Inserir no centro</string>
+</resources>

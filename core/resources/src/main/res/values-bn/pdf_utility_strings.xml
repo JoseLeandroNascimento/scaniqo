@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_pages">পৃষ্ঠা</string>
+    <string name="utility_pages_hint">সব, অথবা যেমন: 1, 3-5। দেওয়া ক্রম রাখা হয়।</string>
+    <string name="utility_choose_destination">সংরক্ষণের স্থান বেছে নিন</string>
+    <string name="utility_destination_ready">গন্তব্য বেছে নেওয়া হয়েছে। রপ্তানি নিশ্চিত করুন।</string>
+    <string name="utility_receipt_merchant">প্রতিষ্ঠান</string>
+    <string name="utility_receipt_date">তারিখ</string>
+    <string name="utility_receipt_total">মোট</string>
+    <string name="utility_receipt_items">আইটেম — প্রতি লাইনে একটি</string>
+    <string name="utility_close">বন্ধ করুন</string>
+</resources>

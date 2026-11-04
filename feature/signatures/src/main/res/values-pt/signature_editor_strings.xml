@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_tab_import">Importar</string>
+    <string name="signature_tab_scan">Escanear</string>
+    <string name="runtime_signature_edit">Editar assinatura</string>
+    <string name="runtime_signature_draw_hint">Desenhe sua assinatura na área abaixo.</string>
+    <string name="runtime_signature_preview">Prévia</string>
+    <string name="runtime_signature_font">Fonte</string>
+    <string name="runtime_font_pen">Caneta</string>
+    <string name="runtime_font_script">Caligrafia</string>
+    <string name="runtime_font_brush">Pincel</string>
+</resources>

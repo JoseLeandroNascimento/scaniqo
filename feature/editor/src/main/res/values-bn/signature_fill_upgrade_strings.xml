@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="overlay_crossmark">ক্রস</string>
+    <string name="signature_finish_tool">সম্পন্ন</string>
+    <string name="signature_place_hint">যেখানে স্বাক্ষর করতে চান সেখানে ট্যাপ করুন।</string>
+    <string name="signature_place_center">মাঝখানে রাখুন</string>
+</resources>

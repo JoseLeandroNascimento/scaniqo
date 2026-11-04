@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="runtime_signatures_empty">Votre bibliothèque est vide. Créez votre première signature.</string>
+    <string name="runtime_signature_rename">Renommer la signature</string>
+    <string name="runtime_name">Nom</string>
+    <string name="runtime_image">Image</string>
+    <string name="runtime_image_choose">Choisir une image</string>
+    <string name="runtime_image_change">Changer d’image</string>
+    <string name="runtime_remove_white">Supprimer le fond blanc à l’enregistrement</string>
+    <string name="runtime_signature_image_hint">Les PNG transparents conservent leur transparence. Images de 10 Mo maximum.</string>
+    <string name="runtime_saving">Enregistrement…</string>
+    <string name="runtime_default_document">Document %1$s</string>
+    <string name="runtime_operation_failed">Impossible de terminer l’opération. Réessayez.</string>
+    <string name="runtime_signature_saved">Signature enregistrée.</string>
+    <string name="runtime_signature_deleted">Signature supprimée.</string>
+    <string name="runtime_signature_renamed">Signature renommée.</string>
+</resources>

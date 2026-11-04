@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="localization_summary">भाषा, स्थानीय फ़ॉर्मैट और पढ़ने की दिशा</string>
+    <string name="localization_restart_hint">भाषा लागू करने के लिए वर्तमान स्क्रीन फिर खुलेगी।</string>
+</resources>

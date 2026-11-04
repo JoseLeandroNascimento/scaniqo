@@ -1,5 +1,7 @@
 package com.joseleandro.scaniqo
 
+import com.joseleandro.scaniqo.R
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
@@ -27,6 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.domain.model.AppThemeMode
 import com.joseleandro.scaniqo.domain.repository.AppSettingsRepository
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import com.joseleandro.scaniqo.ui.onboarding.OnboardingRoute
+import com.joseleandro.scaniqo.ui.onboarding.OnboardingViewModel
 
 class MainActivity : AppCompatActivity() {
     private var launchContentReady by mutableStateOf(false)
@@ -43,8 +48,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             val ads: AdMobManager = koinInject()
-            LaunchedEffect(launchContentReady) {
-                if (launchContentReady) ads.gatherConsent(this@MainActivity)
+            val onboarding: OnboardingViewModel = koinViewModel()
+            val onboardingCompleted by onboarding.completed.collectAsStateWithLifecycle()
+            LaunchedEffect(launchContentReady, onboardingCompleted) {
+                if (launchContentReady && onboardingCompleted) ads.gatherConsent(this@MainActivity)
             }
             val repository: AppSettingsRepository = koinInject()
             val preferences by repository.settings.collectAsStateWithLifecycle()
@@ -61,10 +68,18 @@ class MainActivity : AppCompatActivity() {
             }
             ScaniqoTheme(darkTheme = dark, colorTheme = preferences.colorTheme) {
                 if (launchContentReady) {
-                    AppNavigation()
+                    if (onboardingCompleted) {
+                        AppNavigation()
+                    } else {
+                        OnboardingRoute(viewModel = onboarding)
+                    }
                 } else {
                     // Draw a first frame for the native splash handoff without mounting auth handlers.
-                    Box(Modifier.fillMaxSize().background(colorResource(R.color.scaniqo_brand_background)))
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(colorResource(R.color.scaniqo_brand_background))
+                    )
                 }
             }
         }

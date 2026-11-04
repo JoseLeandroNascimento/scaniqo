@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_straighten_handle">Seret pegangan ke samping untuk menyesuaikan kemiringan.</string>
+    <string name="gesture_curvature_handle">Seret pegangan ke atas atau bawah untuk memperbaiki kelengkungan.</string>
+    <string name="gesture_angle_increase">Putar 1 derajat ke kanan</string>
+    <string name="gesture_angle_decrease">Putar 1 derajat ke kiri</string>
+    <string name="gesture_curve_increase">Lengkungkan ke bawah</string>
+    <string name="gesture_curve_decrease">Lengkungkan ke atas</string>
+    <string name="gesture_drag_handle">Seret pegangan</string>
+</resources>

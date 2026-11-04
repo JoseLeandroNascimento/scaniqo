@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_interactive_position">Posición</string>
+    <string name="layout_interactive_rotate">Girar</string>
+    <string name="layout_interactive_drag">Arrastra para alinear</string>
+    <string name="layout_interactive_rotate_left">Girar 90 grados a la izquierda</string>
+    <string name="layout_interactive_rotate_right">Girar 90 grados a la derecha</string>
+</resources>

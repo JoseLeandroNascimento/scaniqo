@@ -37,7 +37,6 @@ import com.joseleandro.scaniqo.ui.documentEditor.platform.DocumentToolsHandler
 import com.joseleandro.scaniqo.ui.documentMerge.DocumentQuickMergeViewModel
 import com.joseleandro.scaniqo.ui.documentMerge.DocumentMergeDestination
 import com.joseleandro.scaniqo.ui.documentSignature.DocumentSignatureRoute
-import com.joseleandro.scaniqo.ui.documents.platform.DocumentQuickActionsHost
 import com.joseleandro.scaniqo.ui.documentSearch.DocumentSearchRoute
 import com.joseleandro.scaniqo.ui.documents.DocumentsRoute
 import com.joseleandro.scaniqo.ui.documents.DocumentsViewModel
@@ -49,7 +48,6 @@ import com.joseleandro.scaniqo.ui.documents.event.DocumentsEvent
 import com.joseleandro.scaniqo.ui.documents.platform.PdfImportHandler
 import com.joseleandro.scaniqo.ui.backup.DriveBackupRoute
 import com.joseleandro.scaniqo.ui.security.PasswordSettingsScreen
-import com.joseleandro.scaniqo.ui.settings.SettingsRoute
 import com.joseleandro.scaniqo.ui.settings.SettingsSection
 import com.joseleandro.scaniqo.ui.signatures.SignaturesScreen
 import com.joseleandro.scaniqo.ui.tags.TagsRoute
@@ -341,7 +339,7 @@ fun AppNavigation(
                 entry<AppRoute.Tags> { TagsRoute(onNavigationBack = viewModel::goBack) }
                 entry<AppRoute.Signatures> { SignaturesScreen(onBack = viewModel::goBack) }
                 entry<AppRoute.Settings> {
-                    SettingsRoute(
+                    SettingsDestination(
                         section = SettingsSection.HOME, onBack = viewModel::goBack,
                         onPersonalization = { viewModel.navigateTo(AppRoute.Personalization) },
                         onPdf = { viewModel.navigateTo(AppRoute.PdfPreferences) },
@@ -350,10 +348,10 @@ fun AppNavigation(
                     )
                 }
                 entry<AppRoute.Personalization> {
-                    SettingsRoute(section = SettingsSection.PERSONALIZATION, onBack = viewModel::goBack)
+                    SettingsDestination(section = SettingsSection.PERSONALIZATION, onBack = viewModel::goBack)
                 }
                 entry<AppRoute.PdfPreferences> {
-                    SettingsRoute(section = SettingsSection.PDF, onBack = viewModel::goBack)
+                    SettingsDestination(section = SettingsSection.PDF, onBack = viewModel::goBack)
                 }
                 entry<AppRoute.PasswordSettings> { PasswordSettingsScreen(onBack = viewModel::goBack) }
                 entry<AppRoute.DriveBackup> { DriveBackupRoute(onBack = viewModel::goBack) }

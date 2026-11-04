@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_drag_hint">Перетаскивайте края или углы. Перемещайте область за центр.</string>
+    <string name="signature_crop_selection">Область обрезки</string>
+    <string name="signature_crop_selection_size">Ширина %1$d%%, высота %2$d%%</string>
+    <string name="signature_crop_inward">Сдвинуть внутрь</string>
+    <string name="signature_crop_outward">Сдвинуть наружу</string>
+    <string name="signature_crop_move_left">Переместить область влево</string>
+    <string name="signature_crop_move_right">Переместить область вправо</string>
+    <string name="signature_crop_move_up">Переместить область вверх</string>
+    <string name="signature_crop_move_down">Переместить область вниз</string>
+</resources>

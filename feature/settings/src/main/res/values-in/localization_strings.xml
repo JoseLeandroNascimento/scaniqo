@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="localization_title">Bahasa dan wilayah</string>
+    <string name="localization_system">Ikuti sistem</string>
+    <string name="localization_system_description">Menggunakan bahasa pilihan perangkat. Jika tidak tersedia, bahasa Inggris digunakan.</string>
+    <string name="localization_language">Bahasa aplikasi</string>
+    <string name="localization_regional_formats">Format wilayah</string>
+    <string name="localization_formats_description">Tanggal, waktu, dan angka mengikuti bahasa dan wilayah yang dipilih. Zona waktu tetap mengikuti perangkat.</string>
+    <string name="localization_date_example">Tanggal dan waktu: %1$s</string>
+    <string name="localization_number_example">Angka: %1$s</string>
+    <string name="localization_direction_description">Arah antarmuka mengikuti bahasa. Konten dan posisi pada halaman dokumen tetap dipertahankan.</string>
+    <string name="localization_apply">Terapkan bahasa</string>
+    <string name="localization_cancel">Batal</string>
+    <string name="localization_flag_description">Bendera menunjukkan varian wilayah, yang juga dapat digunakan di negara lain.</string>
+</resources>

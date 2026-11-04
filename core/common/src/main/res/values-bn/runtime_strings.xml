@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="runtime_signatures_empty">আপনার লাইব্রেরি খালি। প্রথম স্বাক্ষর তৈরি করুন।</string>
+    <string name="runtime_signature_rename">স্বাক্ষরের নাম বদলান</string>
+    <string name="runtime_name">নাম</string>
+    <string name="runtime_image">ছবি</string>
+    <string name="runtime_image_choose">ছবি বেছে নিন</string>
+    <string name="runtime_image_change">ছবি বদলান</string>
+    <string name="runtime_remove_white">সংরক্ষণের সময় সাদা পটভূমি সরান</string>
+    <string name="runtime_signature_image_hint">স্বচ্ছ PNG-এর স্বচ্ছতা থাকে। সর্বোচ্চ 10 MB-এর ছবি।</string>
+    <string name="runtime_saving">সংরক্ষণ হচ্ছে…</string>
+    <string name="runtime_default_document">নথি %1$s</string>
+    <string name="runtime_operation_failed">কাজ সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="runtime_signature_saved">স্বাক্ষর সংরক্ষিত হয়েছে।</string>
+    <string name="runtime_signature_deleted">স্বাক্ষর মুছে ফেলা হয়েছে।</string>
+    <string name="runtime_signature_renamed">স্বাক্ষরের নাম বদলেছে।</string>
+</resources>

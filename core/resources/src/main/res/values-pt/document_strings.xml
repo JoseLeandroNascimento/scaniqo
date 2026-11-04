@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_title">Documentos</string>
+    <string name="documents_manage_tags">Gerenciar tags</string>
+    <string name="documents_scanning">Abrindo scanner…</string>
+    <string name="documents_preparing">Preparando documento…</string>
+    <string name="documents_error_title">Não foi possível carregar os documentos</string>
+    <string name="documents_error_body">Tente novamente para acessar seus arquivos.</string>
+    <string name="documents_retry">Tentar novamente</string>
+    <string name="document_actions">Opções de %1$s</string>
+    <string name="document_download">Baixar</string>
+    <string name="document_share">Compartilhar</string>
+    <string name="document_delete">Mover para a lixeira</string>
+    <string name="document_cancel">Cancelar</string>
+    <string name="document_pdf_size">PDF · %1$s</string>
+    <plurals name="document_page_count">
+        <item quantity="one">%d página</item>
+        <item quantity="many">%d páginas</item>
+        <item quantity="other">%d páginas</item>
+    </plurals>
+    <string name="document_viewer_title">Visualizar documento</string>
+    <string name="document_back">Voltar</string>
+    <string name="document_editor_description">Escolha um nome e uma tag para encontrar seu PDF depois.</string>
+    <string name="document_name_counter">%1$d/%2$d</string>
+    <string name="document_tag_optional">Opcional. Escolha uma tag para organizar o documento.</string>
+    <string name="document_saved">Documento salvo</string>
+</resources>

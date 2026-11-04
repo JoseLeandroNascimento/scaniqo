@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_text_alignment">Teks dalam kotak</string>
+    <string name="fill_text_align_action">Ratakan teks</string>
+    <string name="fill_text_horizontal">Horizontal</string>
+    <string name="fill_text_vertical">Vertikal</string>
+    <string name="fill_text_start">Awal</string>
+    <string name="fill_text_center">Tengah</string>
+    <string name="fill_text_end">Akhir</string>
+    <string name="fill_text_top">Atas</string>
+    <string name="fill_text_middle">Tengah</string>
+    <string name="fill_text_bottom">Bawah</string>
+    <string name="fill_text_auto_box">Sesuaikan kotak dengan teks</string>
+</resources>

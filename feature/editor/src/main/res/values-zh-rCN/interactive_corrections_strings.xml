@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_scope_current">此页面</string>
+    <string name="document_scope_select">选择</string>
+    <string name="document_scope_all">全部</string>
+    <string name="document_scope_title">应用到哪些页面？</string>
+    <string name="document_scope_hint">同样的调整仅应用于勾选的页面。</string>
+    <string name="document_scope_select_all">全选</string>
+    <string name="document_scope_clear">清空</string>
+    <string name="document_scope_confirm">使用所选项</string>
+    <string name="document_scope_cancel">取消</string>
+    <string name="document_scope_page">第 %1$d 页</string>
+    <string name="document_scope_selected_count">选择（%1$d）</string>
+    <string name="document_scope_empty">请至少选择一页。</string>
+    <plurals name="document_scope_count">
+        <item quantity="other">已选择 %1$d 页</item>
+    </plurals>
+    <string name="corrections_preview_previous">预览上一页</string>
+    <string name="corrections_preview_next">预览下一页</string>
+    <string name="corrections_preview_pages">选择要查看的页面</string>
+    <string name="corrections_preview_error">无法更新预览。</string>
+    <string name="corrections_preview_retry">重试</string>
+</resources>

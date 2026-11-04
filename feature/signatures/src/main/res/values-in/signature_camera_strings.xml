@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_permission_reason">Izinkan akses kamera untuk memfoto tanda tangan. Foto hanya akan digunakan untuk membuat tanda tangan.</string>
+    <string name="signature_camera_permission_settings">Akses kamera dinonaktifkan. Aktifkan izin kamera di setelan aplikasi untuk memfoto tanda tangan.</string>
+    <string name="signature_camera_open_settings">Buka setelan</string>
+    <string name="signature_camera_allow">Izinkan kamera</string>
+    <string name="signature_camera_cancel">Batal</string>
+    <string name="signature_camera_capturing">Mengambil foto…</string>
+    <string name="signature_camera_starting">Membuka kamera…</string>
+    <string name="signature_camera_unavailable">Tidak dapat membuka kamera. Pastikan kamera tersedia, lalu coba lagi.</string>
+    <string name="signature_camera_missing">Perangkat ini tidak memiliki kamera yang tersedia. Kembali untuk mengimpor gambar.</string>
+    <string name="signature_camera_capture_failed">Tidak dapat memfoto tanda tangan. Coba lagi.</string>
+    <string name="signature_camera_retry">Coba lagi</string>
+    <string name="signature_camera_frame_changed">Bingkai berubah saat pengambilan foto. Pertahankan posisi perangkat dan ambil foto lagi.</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_bold">গাঢ়</string>
+    <string name="fill_mark_italic">তির্যক</string>
+    <string name="fill_mark_underline_text">লেখার নিচে দাগ</string>
+    <string name="fill_mark_confirm_element">উপাদান নিশ্চিত করুন</string>
+    <string name="fill_mark_tap_to_cross">পিডিএফে ট্যাপ করে X যোগ করুন।</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_position_hint">Faites glisser la signature pour la déplacer.</string>
+    <string name="signature_scale_hint">Ajustez la taille en conservant les proportions.</string>
+    <string name="signature_rotation_hint">Faites glisser autour du cercle pour pivoter.</string>
+</resources>

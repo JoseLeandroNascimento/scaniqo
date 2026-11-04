@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="onboarding_guide">دليلك السريع</string>
+    <string name="onboarding_swipe">اسحب للاستكشاف بالوتيرة التي تناسبك.</string>
+    <string name="onboarding_scan_category">امسح ضوئيًا</string>
+    <string name="onboarding_scan_hint">في شاشة المستندات، اضغط على مسح مستند.</string>
+    <string name="onboarding_tags_category">نظّم</string>
+    <string name="onboarding_tags_hint">افتح الوسوم من القائمة لتعديل الأسماء والألوان والأيقونات.</string>
+    <string name="onboarding_edit_category">عدّل</string>
+    <string name="onboarding_edit_hint">استخدم اختصارات المستندات أو افتح جميع الأدوات.</string>
+    <string name="onboarding_share_category">احفظ وشارك</string>
+    <string name="onboarding_share_hint">افتح الإعدادات ← النسخ الاحتياطي في Google Drive. الربط اختياري.</string>
+</resources>

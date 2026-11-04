@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_device">ডিভাইস থেকে</string>
+    <string name="merge_source_app">অ্যাপ থেকে</string>
+    <string name="merge_app_title">অ্যাপের নথি</string>
+    <string name="merge_app_search">নাম দিয়ে খুঁজুন</string>
+    <string name="merge_app_no_results">এই অনুসন্ধানে কোনো নথি পাওয়া যায়নি।</string>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">%1$dটি PDF একত্র করুন</item>
+        <item quantity="other">%1$dটি PDF একত্র করুন</item>
+    </plurals>
+</resources>

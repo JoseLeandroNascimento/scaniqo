@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_editor_empty">أنشئ توقيعًا قبل الحفظ.</string>
+    <string name="signature_image_quality_retry">تعذّر فصل التوقيع عن الورق. قرّب القص أو حسّن الإضاءة أو أعد التصوير مع ضبط التركيز.</string>
+    <string name="runtime_signature_updated">تم تحديث التوقيع.</string>
+</resources>

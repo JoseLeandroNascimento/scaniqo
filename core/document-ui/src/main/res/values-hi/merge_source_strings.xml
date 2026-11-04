@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_device">डिवाइस से</string>
+    <string name="merge_source_app">ऐप से</string>
+    <string name="merge_app_title">ऐप के दस्तावेज़</string>
+    <string name="merge_app_search">नाम से खोजें</string>
+    <string name="merge_app_no_results">इस खोज में कोई दस्तावेज़ नहीं मिला।</string>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">%1$d PDF मिलाएँ</item>
+        <item quantity="other">%1$d PDF मिलाएँ</item>
+    </plurals>
+</resources>

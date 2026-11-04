@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_pages">الصفحات</string>
+    <string name="utility_pages_hint">الكل، أو مثلًا: 1, 3-5. يُحفظ الترتيب الذي تدخله.</string>
+    <string name="utility_choose_destination">اختيار مكان الحفظ</string>
+    <string name="utility_destination_ready">تم اختيار الوجهة. أكد للتصدير.</string>
+    <string name="utility_receipt_merchant">المتجر</string>
+    <string name="utility_receipt_date">التاريخ</string>
+    <string name="utility_receipt_total">الإجمالي</string>
+    <string name="utility_receipt_items">البنود — بند في كل سطر</string>
+    <string name="utility_close">إغلاق</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_motion_library">Biblioteca</string>
+    <string name="merge_motion_device">Dispositivo</string>
+    <string name="merge_motion_add">Adicionar PDFs</string>
+    <string name="merge_motion_done">Pronto</string>
+    <string name="merge_motion_one">Falta mais um</string>
+    <string name="merge_motion_search">Buscar documentos</string>
+    <string name="merge_motion_selected">Selecionados: %1$d</string>
+    <string name="merge_motion_count_description">Juntar %1$d PDFs em um</string>
+</resources>

@@ -1,3 +1,8 @@
+# R8 9.6.0-alpha06 can relocate a Kotlin text facade subclass outside the
+# package of its package-private superclass, crashing WorkManager at startup.
+# Preserve only the package names; shrinking, optimization and class renaming remain enabled.
+-keeppackagenames kotlin.text.**
+
 # Add project specific R8 rules here.
 # AGP will combine all keep rule files in src/main/keepRules to pass to R8
 #

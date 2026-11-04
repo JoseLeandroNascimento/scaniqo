@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_drag_hint">किनारों या कोनों को खींचें। चयन को बीच से खिसकाएँ।</string>
+    <string name="signature_crop_selection">क्रॉप क्षेत्र</string>
+    <string name="signature_crop_selection_size">चौड़ाई %1$d%%, ऊँचाई %2$d%%</string>
+    <string name="signature_crop_inward">अंदर की ओर खिसकाएँ</string>
+    <string name="signature_crop_outward">बाहर की ओर खिसकाएँ</string>
+    <string name="signature_crop_move_left">चयन को बाईं ओर खिसकाएँ</string>
+    <string name="signature_crop_move_right">चयन को दाईं ओर खिसकाएँ</string>
+    <string name="signature_crop_move_up">चयन को ऊपर खिसकाएँ</string>
+    <string name="signature_crop_move_down">चयन को नीचे खिसकाएँ</string>
+</resources>

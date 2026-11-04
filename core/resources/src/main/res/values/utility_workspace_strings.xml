@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_source">Document</string>
+    <string name="utility_workspace_importing">Importing document…</string>
+    <string name="utility_workspace_pages">Choose pages</string>
+    <string name="utility_workspace_range">Enter range</string>
+    <string name="utility_workspace_order">Tap pages to select them. A range lets you specify the order.</string>
+    <string name="utility_workspace_output">Result</string>
+    <string name="utility_workspace_jpg_hint">Small files for sharing</string>
+    <string name="utility_workspace_png_hint">More detail, larger files</string>
+    <string name="utility_workspace_copy_hint">A new copy will be created. Your original document will be kept.</string>
+    <string name="utility_workspace_change_destination">Change location</string>
+    <string name="utility_workspace_compress_level">Compression level</string>
+    <string name="utility_workspace_balanced">Balanced</string>
+    <string name="utility_workspace_balanced_hint">Good readability with moderate reduction.</string>
+    <string name="utility_workspace_strong">Greater reduction</string>
+    <string name="utility_workspace_strong_hint">Smaller file. Check small text and images.</string>
+    <string name="utility_workspace_compress_action">Compress and create copy</string>
+    <string name="utility_workspace_original_size">Original</string>
+    <string name="utility_workspace_result_size">Compressed</string>
+    <string name="utility_workspace_compress_complete">Your PDF is smaller</string>
+    <string name="utility_workspace_compress_no_gain">This PDF is already compact</string>
+    <string name="utility_workspace_compress_no_gain_hint">No copy was created because the file size did not decrease.</string>
+    <string name="utility_workspace_compress_note">Reduction depends on the file’s images. PDFs with text or already optimized images may keep the same size.</string>
+    <string name="utility_workspace_saved">%1$d%% smaller</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — compressed</string>
+</resources>

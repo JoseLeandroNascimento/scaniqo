@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_title">Google Drive backup</string>
+    <string name="backup_heading">Your PDFs, safely backed up</string>
+    <string name="backup_connected">Account connected</string>
+    <string name="backup_count">%1$d PDFs on this device</string>
+    <string name="backup_folder">Folder: Scaniqo backups</string>
+    <string name="backup_not_connected">No account connected</string>
+    <string name="backup_scope_title">Saved PDFs only</string>
+    <string name="backup_local_summary">Ready to back up: %1$d PDFs · %2$s</string>
+    <string name="backup_automatic_enable">Back up automatically</string>
+    <string name="backup_automatic_body">Update your backup periodically.</string>
+    <string name="backup_wifi_body">Wait for an unmetered connection to avoid mobile data charges.</string>
+    <string name="backup_charging_body">Wait until the device is connected to power.</string>
+    <string name="backup_automatic_authorize">Automatic backup needs your permission again. Reconnect Google Drive to resume it.</string>
+    <string name="backup_empty_title">No history yet</string>
+    <string name="backup_history_unloaded_body">Refresh to check the current backup in Drive.</string>
+    <string name="backup_current">Current backup</string>
+    <string name="backup_current_unavailable">No backup available in Drive.</string>
+</resources>

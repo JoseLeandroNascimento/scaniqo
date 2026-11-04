@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="runtime_signature_delete_body">“%1$s” লাইব্রেরি থেকে সরবে। সংরক্ষিত নথিতে প্রয়োগ করা স্বাক্ষর থাকবে।</string>
+    <string name="runtime_signatures_empty_title">কোনো স্বাক্ষর সংরক্ষিত নেই</string>
+</resources>

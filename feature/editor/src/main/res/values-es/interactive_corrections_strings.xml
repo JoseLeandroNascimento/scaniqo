@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_scope_current">Esta página</string>
+    <string name="document_scope_select">Elegir</string>
+    <string name="document_scope_all">Todas</string>
+    <string name="document_scope_title">¿A qué páginas aplicar?</string>
+    <string name="document_scope_hint">El mismo ajuste se aplicará solo a las páginas marcadas.</string>
+    <string name="document_scope_select_all">Marcar todas</string>
+    <string name="document_scope_clear">Limpiar</string>
+    <string name="document_scope_confirm">Usar selección</string>
+    <string name="document_scope_cancel">Cancelar</string>
+    <string name="document_scope_page">Página %1$d</string>
+    <string name="document_scope_selected_count">Elegir (%1$d)</string>
+    <string name="document_scope_empty">Selecciona al menos una página.</string>
+    <plurals name="document_scope_count">
+        <item quantity="one">%1$d página seleccionada</item>
+        <item quantity="many">%1$d páginas seleccionadas</item>
+        <item quantity="other">%1$d páginas seleccionadas</item>
+    </plurals>
+    <string name="corrections_preview_previous">Vista previa de la página anterior</string>
+    <string name="corrections_preview_next">Vista previa de la página siguiente</string>
+    <string name="corrections_preview_pages">Elegir página para visualizar</string>
+    <string name="corrections_preview_error">No se pudo actualizar la vista previa.</string>
+    <string name="corrections_preview_retry">Reintentar</string>
+</resources>

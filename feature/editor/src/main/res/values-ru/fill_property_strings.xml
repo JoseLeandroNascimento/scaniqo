@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_property_actions">Действия с элементом</string>
+    <string name="fill_property_type">Тип отметки</string>
+    <string name="fill_property_style">Стиль текста</string>
+    <string name="fill_property_transform">Переместить и повернуть</string>
+    <string name="fill_property_revert">Отменить изменения</string>
+    <string name="fill_property_opacity">Непрозрачность</string>
+</resources>

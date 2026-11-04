@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_thumbnails">Miniaturas</string>
+    <string name="pages_v2_intervals">Intervalos</string>
+    <string name="pages_v2_from">Desde</string>
+    <string name="pages_v2_until">Hasta</string>
+    <string name="pages_v2_add_range">Añadir intervalo</string>
+    <string name="pages_v2_update_range">Actualizar intervalo</string>
+    <string name="pages_v2_edit_list">Editar lista</string>
+    <string name="pages_v2_confirm_selection">Confirmar selección</string>
+    <string name="pages_v2_cancel_edit">Cancelar edición</string>
+    <string name="pages_v2_order">Orden: %1$s</string>
+    <string name="pages_v2_document_order">Usar orden del PDF</string>
+    <string name="pages_v2_range_incomplete">Completa el inicio y el final del intervalo.</string>
+    <string name="pages_v2_range_reversed">El inicio debe ser menor o igual al final.</string>
+    <string name="pages_v2_edit_range">Editar intervalo %1$s</string>
+    <string name="pages_v2_remove_range">Quitar intervalo %1$s</string>
+    <string name="pages_v2_pending_selection">Confirma o cancela la selección para continuar.</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">Crear PDF con %1$d página</item>
+        <item quantity="many">Crear PDF con %1$d páginas</item>
+        <item quantity="other">Crear PDF con %1$d páginas</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">Exportar %1$d página</item>
+        <item quantity="many">Exportar %1$d páginas</item>
+        <item quantity="other">Exportar %1$d páginas</item>
+    </plurals>
+    <string name="pages_v2_list_hint">Ej.: 5, 2-4, 1. Mantiene el orden indicado.</string>
+</resources>

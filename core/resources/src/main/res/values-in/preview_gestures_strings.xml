@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="preview_zoom_close">Tutup tampilan diperbesar</string>
+    <string name="preview_controls_show">Penyesuaian</string>
+    <string name="preview_controls_hide">Sembunyikan penyesuaian</string>
+    <string name="preview_gestures_hint">Gunakan dua jari untuk memperbesar dan menjelajah.</string>
+</resources>

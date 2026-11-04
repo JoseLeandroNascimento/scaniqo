@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="onboarding_guide">Panduan singkat Anda</string>
+    <string name="onboarding_swipe">Geser untuk menjelajah sesuai keinginan.</string>
+    <string name="onboarding_scan_category">PINDAI</string>
+    <string name="onboarding_scan_hint">Di Dokumen, ketuk Pindai dokumen.</string>
+    <string name="onboarding_tags_category">ATUR</string>
+    <string name="onboarding_tags_hint">Buka Tag di menu untuk mengedit nama, warna, dan ikon.</string>
+    <string name="onboarding_edit_category">EDIT</string>
+    <string name="onboarding_edit_hint">Gunakan pintasan di Dokumen atau buka Semua alat.</string>
+    <string name="onboarding_share_category">SIMPAN DAN BAGIKAN</string>
+    <string name="onboarding_share_hint">Buka Setelan → Cadangan Google Drive. Menghubungkan akun bersifat opsional.</string>
+</resources>

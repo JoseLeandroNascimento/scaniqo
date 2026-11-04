@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_v3_no_both_travel">缩小后可移动。</string>
+    <string name="layout_v3_no_horizontal_travel">缩小后可水平移动。</string>
+    <string name="layout_v3_no_vertical_travel">缩小后可垂直移动。</string>
+    <string name="layout_v3_reduce_size">缩小</string>
+    <string name="layout_v3_scale">缩放</string>
+    <string name="layout_v3_decrease_scale" formatted="false">缩小 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">放大 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">请输入 25% 至 200% 之间的数值。</string>
+    <string name="layout_v3_without_margin">无边距</string>
+    <string name="layout_v3_with_margin_description">全部内容位于页面边距内</string>
+    <string name="layout_v3_without_margin_description">全部内容位于页面可用区域内</string>
+    <string name="layout_v3_restore_category">恢复</string>
+    <string name="layout_v3_more">更多选项</string>
+    <string name="layout_v3_discard_session">放弃调整</string>
+</resources>

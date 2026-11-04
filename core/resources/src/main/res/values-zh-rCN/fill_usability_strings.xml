@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_tap_to_write">点按页面以输入文字</string>
+    <string name="fill_tap_to_mark">点按页面以添加勾选标记</string>
+</resources>

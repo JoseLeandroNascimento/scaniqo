@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">适应屏幕</string>
+    <string name="fill_mark_font_smaller">减小字号</string>
+    <string name="fill_mark_font_larger">增大字号</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">此页面</string>
+    <string name="fill_mark_every_page">所有页面</string>
+    <string name="fill_mark_remove">删除</string>
+    <string name="fill_mark_apply">应用</string>
+    <string name="fill_mark_no_values">保存常用文本，以便在此重复使用。</string>
+    <string name="fill_mark_move_left">向左移动元素</string>
+    <string name="fill_mark_move_right">向右移动元素</string>
+    <string name="fill_mark_move_up">向上移动元素</string>
+    <string name="fill_mark_move_down">向下移动元素</string>
+    <string name="fill_inline_edit_text">编辑页面文字</string>
+    <string name="fill_selection_grow">放大元素</string>
+    <string name="fill_selection_shrink">缩小元素</string>
+    <string name="fill_selection_top_left">通过左上角调整大小</string>
+    <string name="fill_selection_top_right">通过右上角调整大小</string>
+    <string name="fill_selection_bottom_right">通过右下角调整大小</string>
+    <string name="fill_selection_bottom_left">通过左下角调整大小</string>
+</resources>

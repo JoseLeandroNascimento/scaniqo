@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_no_tag">Sin etiqueta</string>
+    <string name="document_create_title">Guardar documento</string>
+    <string name="document_editor_title">Editar documento</string>
+    <string name="document_name_label">Nombre del documento</string>
+    <string name="document_name_placeholder">Ej.: Contrato de alquiler</string>
+    <string name="document_name_required">Ingresa un nombre para el documento.</string>
+    <string name="document_name_too_long">Usa hasta %1$d caracteres.</string>
+    <string name="document_tag_label">Etiqueta</string>
+    <string name="document_optional">Opcional</string>
+    <string name="document_no_tags_available">Puedes crear etiquetas en Administrar etiquetas y agregar una después.</string>
+    <string name="document_save">Guardar documento</string>
+    <string name="document_save_changes">Guardar cambios</string>
+    <string name="document_saving">Guardando…</string>
+    <string name="document_save_error">No se pudo guardar. Se conservaron tus datos. Reintenta.</string>
+    <string name="document_delete_title">¿Mover a la papelera?</string>
+    <string name="document_delete_body">El documento “%1$s” saldrá de la biblioteca. Puedes restaurarlo desde Papelera en el menú.</string>
+    <string name="document_delete_error">No se pudo mover a la papelera. Reintenta.</string>
+    <string name="document_deleting">Moviendo…</string>
+    <string name="document_updated">Documento actualizado</string>
+    <string name="document_deleted">Documento movido a la papelera</string>
+    <string name="document_downloaded">PDF guardado en la ubicación elegida</string>
+    <string name="document_scan_error">No se pudo abrir el escáner. Reintenta.</string>
+    <string name="document_prepare_error">No se pudo preparar el documento escaneado. Vuelve a escanearlo.</string>
+    <string name="document_export_error">No se pudo descargar el PDF. Reintenta.</string>
+    <string name="document_share_error">No se pudo compartir el PDF. Reintenta.</string>
+</resources>

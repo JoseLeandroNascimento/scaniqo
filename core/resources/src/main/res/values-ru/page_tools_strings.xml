@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_merge">Объединить PDF</string>
+    <string name="pages_numbering_global_hint">Включая страницы, добавленные позже.</string>
+    <string name="pages_move_title">Переместить по номеру</string>
+    <string name="pages_move_from">Откуда</string>
+    <string name="pages_move_to">Куда</string>
+    <string name="pages_move_same">Выберите позицию, отличную от исходной.</string>
+    <string name="pages_move_hint">Используйте номера в текущем порядке.</string>
+</resources>

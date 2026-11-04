@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_error_no_ink">No se encontraron trazos de la firma. Ajusta el recorte o usa una imagen más nítida.</string>
+    <string name="signature_import_error_process_failed">No se pudo procesar la firma. Ajusta el recorte e inténtalo de nuevo.</string>
+    <string name="signature_import_error_process_required">Confirma el recorte y espera a que termine el procesamiento de la firma.</string>
+    <string name="signature_import_error_size_limit">Usa una imagen de hasta 40 MB.</string>
+    <string name="signature_import_error_select_again">Selecciona de nuevo la imagen de la firma.</string>
+</resources>

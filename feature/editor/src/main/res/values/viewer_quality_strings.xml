@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="viewer_tool_quality">Quality</string>
+    <string name="viewer_preview_stale">Could not update. The previous preview was kept.</string>
+    <string name="viewer_preparing_tools">Preparing tools…</string>
+    <string name="viewer_undo_description">Undo last change</string>
+</resources>

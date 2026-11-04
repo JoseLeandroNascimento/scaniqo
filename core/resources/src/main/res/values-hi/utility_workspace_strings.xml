@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_source">दस्तावेज़</string>
+    <string name="utility_workspace_importing">दस्तावेज़ आयात हो रहा है…</string>
+    <string name="utility_workspace_pages">पृष्ठ चुनें</string>
+    <string name="utility_workspace_range">पृष्ठों की सीमा लिखें</string>
+    <string name="utility_workspace_order">चुनने के लिए पृष्ठ पर टैप करें। सीमा लिखकर क्रम भी तय कर सकते हैं।</string>
+    <string name="utility_workspace_output">परिणाम</string>
+    <string name="utility_workspace_jpg_hint">शेयर करने के लिए छोटी फ़ाइलें</string>
+    <string name="utility_workspace_png_hint">ज़्यादा विवरण, बड़ी फ़ाइलें</string>
+    <string name="utility_workspace_copy_hint">नई कॉपी बनेगी। मूल दस्तावेज़ रखा जाएगा।</string>
+    <string name="utility_workspace_change_destination">जगह बदलें</string>
+    <string name="utility_workspace_compress_level">कंप्रेशन स्तर</string>
+    <string name="utility_workspace_balanced">संतुलित</string>
+    <string name="utility_workspace_balanced_hint">अच्छी पठनीयता, मध्यम आकार की कमी।</string>
+    <string name="utility_workspace_strong">ज़्यादा कमी</string>
+    <string name="utility_workspace_strong_hint">छोटी फ़ाइल। छोटे अक्षर और इमेज जाँचें।</string>
+    <string name="utility_workspace_compress_action">कंप्रेस करें और कॉपी बनाएँ</string>
+    <string name="utility_workspace_original_size">मूल</string>
+    <string name="utility_workspace_result_size">कंप्रेस किया गया</string>
+    <string name="utility_workspace_compress_complete">आपका PDF अब छोटा है</string>
+    <string name="utility_workspace_compress_no_gain">यह PDF पहले से छोटा है</string>
+    <string name="utility_workspace_compress_no_gain_hint">आकार नहीं घटा, इसलिए कोई कॉपी नहीं बनी।</string>
+    <string name="utility_workspace_compress_note">कमी फ़ाइल की इमेज पर निर्भर है। टेक्स्ट या पहले से अनुकूलित इमेज वाले PDF का आकार वही रह सकता है।</string>
+    <string name="utility_workspace_saved">%1$d%% छोटा</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — कंप्रेस किया गया</string>
+</resources>

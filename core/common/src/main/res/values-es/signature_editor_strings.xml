@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_editor_empty">Crea una firma antes de guardar.</string>
+    <string name="signature_image_quality_retry">No se pudo separar la firma del papel. Ajusta el recorte, mejora la iluminación o repite la foto con buen enfoque.</string>
+    <string name="runtime_signature_updated">Firma actualizada.</string>
+</resources>

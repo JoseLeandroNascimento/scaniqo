@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_title">Crop signature</string>
+    <string name="signature_crop_left">Left edge</string>
+    <string name="signature_crop_top">Top edge</string>
+    <string name="signature_crop_right">Right edge</string>
+    <string name="signature_crop_bottom">Bottom edge</string>
+    <string name="signature_crop_reset">Full image</string>
+    <string name="signature_crop_apply">Apply crop</string>
+</resources>

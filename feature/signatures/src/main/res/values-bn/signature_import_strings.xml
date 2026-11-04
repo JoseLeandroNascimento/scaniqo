@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_image">ছবি আমদানি করুন</string>
+    <string name="signature_import_image_body">গ্যালারি বা ডিভাইসের ফাইল থেকে একটি ছবি বেছে নিন।</string>
+    <string name="signature_import_scan">স্বাক্ষর স্ক্যান করুন</string>
+    <string name="signature_import_scan_body">ক্যামেরা দিয়ে কাগজে করা স্বাক্ষরের ছবি তুলুন।</string>
+    <string name="signature_import_automatic">পটভূমি স্বয়ংক্রিয়ভাবে সরানো হয়। সংরক্ষণের আগে রেখাগুলি দেখুন।</string>
+    <string name="signature_import_crop_hint">স্বাক্ষর নির্বাচন করতে প্রান্তগুলো টানুন। ছবি সরান এবং বড় বা ছোট করতে দুই আঙুল ব্যবহার করুন।</string>
+    <string name="signature_import_confirm_crop">কাটার অংশ নিশ্চিত করুন</string>
+    <string name="signature_import_processing">স্বাক্ষর প্রস্তুত হচ্ছে…</string>
+    <string name="signature_import_preview_hint">সংরক্ষণের আগে বিভিন্ন পটভূমিতে রেখাগুলো যাচাই করুন।</string>
+    <string name="signature_import_adjust_crop">কাটার ধাপে ফিরুন</string>
+    <string name="signature_import_retake">আবার ছবি তুলুন</string>
+    <string name="signature_import_transparent">দাবার ছক</string>
+    <string name="signature_import_white">সাদা</string>
+    <string name="signature_import_dark">গাঢ়</string>
+</resources>

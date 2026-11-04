@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="overlay_crossmark">Tanda X</string>
+    <string name="signature_finish_tool">Selesai</string>
+    <string name="signature_place_hint">Ketuk tempat Anda ingin menandatangani.</string>
+    <string name="signature_place_center">Letakkan di tengah</string>
+</resources>

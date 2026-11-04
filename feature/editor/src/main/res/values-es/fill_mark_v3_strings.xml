@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_v3_size_value">%1$s pt</string>
+    <string name="fill_v3_points">Puntos</string>
+    <string name="fill_v3_size_error">Introduce un valor entre 6 y 72 pt.</string>
+    <string name="fill_v3_text_box">Cuadro de texto</string>
+    <string name="fill_v3_text_box_hint">Define cómo encaja el texto en el cuadro.</string>
+    <string name="fill_v3_wrap">Ajustar líneas</string>
+    <string name="fill_v3_position_hint">Mueve en pasos pequeños o arrastra el elemento en la página.</string>
+    <string name="fill_v3_repeat_pages">Repetir en páginas</string>
+    <string name="fill_v3_page_count">Destino: %1$d página(s)</string>
+    <string name="fill_v3_empty_existing">Escribe texto o usa Eliminar.</string>
+    <string name="fill_v3_invalid_element">Revisa este elemento antes de continuar.</string>
+</resources>

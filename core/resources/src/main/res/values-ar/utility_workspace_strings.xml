@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_source">المستند</string>
+    <string name="utility_workspace_importing">جارٍ استيراد المستند…</string>
+    <string name="utility_workspace_pages">اختر الصفحات</string>
+    <string name="utility_workspace_range">إدخال نطاق</string>
+    <string name="utility_workspace_order">اضغط على الصفحات لتحديدها. يتيح النطاق تحديد الترتيب.</string>
+    <string name="utility_workspace_output">النتيجة</string>
+    <string name="utility_workspace_jpg_hint">ملفات صغيرة للمشاركة</string>
+    <string name="utility_workspace_png_hint">تفاصيل أكثر، ملفات أكبر</string>
+    <string name="utility_workspace_copy_hint">ستُنشأ نسخة جديدة مع الاحتفاظ بالمستند الأصلي.</string>
+    <string name="utility_workspace_change_destination">تغيير الموقع</string>
+    <string name="utility_workspace_compress_level">مستوى الضغط</string>
+    <string name="utility_workspace_balanced">متوازن</string>
+    <string name="utility_workspace_balanced_hint">وضوح جيد مع تقليل معتدل للحجم.</string>
+    <string name="utility_workspace_strong">تقليل أكبر للحجم</string>
+    <string name="utility_workspace_strong_hint">ملف أصغر. راجع الحروف الصغيرة والصور.</string>
+    <string name="utility_workspace_compress_action">ضغط وإنشاء نسخة</string>
+    <string name="utility_workspace_original_size">الأصلي</string>
+    <string name="utility_workspace_result_size">المضغوط</string>
+    <string name="utility_workspace_compress_complete">أصبح PDF أصغر حجمًا</string>
+    <string name="utility_workspace_compress_no_gain">ملف PDF هذا مضغوط بالفعل</string>
+    <string name="utility_workspace_compress_no_gain_hint">لم تُنشأ نسخة لعدم انخفاض الحجم.</string>
+    <string name="utility_workspace_compress_note">يعتمد التقليل على صور الملف. قد تحتفظ ملفات PDF النصية أو ذات الصور المحسّنة بحجمها.</string>
+    <string name="utility_workspace_saved">أصغر بنسبة %1$d%%</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — مضغوط</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_subtitle">اختر توقيعًا لهذه الصفحة.</string>
+    <string name="signature_library">توقيعاتي</string>
+    <string name="signature_use">استخدام التوقيع %1$s</string>
+    <string name="signature_gesture_hint">اسحب لتحديد الموضع. اضبط الحجم من الزوايا ودوّر بالمقبض العلوي.</string>
+    <string name="signature_adjust_rotate">تدوير</string>
+    <string name="signature_size_hint">اسحب الزوايا لضبط العرض والارتفاع. استخدم إصبعين للحفاظ على النسبة.</string>
+    <string name="signature_rotate_hint">اسحب المقبض فوق التوقيع أو اضبط الزاوية بالشريط.</string>
+    <string name="signature_rotation">التدوير: %1$d°</string>
+    <string name="signature_crop_hint">اضبط الحواف للإبقاء على التوقيع فقط. ستُحفظ صورة المكتبة دون تغيير.</string>
+    <string name="signature_apply">تطبيق ومتابعة</string>
+    <string name="signature_saved_hint">سيُطبّق التوقيع على التعديل الحالي. احفظ PDF في المحرر.</string>
+    <string name="signature_cancel">إلغاء</string>
+    <string name="signature_already_placed">التوقيعات على هذه الصفحة</string>
+    <string name="signature_loading">جارٍ تجهيز الصفحة…</string>
+</resources>

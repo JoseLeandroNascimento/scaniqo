@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_tab_import">استيراد</string>
+    <string name="signature_tab_scan">مسح</string>
+    <string name="runtime_signature_edit">تعديل التوقيع</string>
+    <string name="runtime_signature_draw_hint">ارسم توقيعك في المساحة أدناه.</string>
+    <string name="runtime_signature_preview">معاينة</string>
+    <string name="runtime_signature_font">الخط</string>
+    <string name="runtime_font_pen">قلم</string>
+    <string name="runtime_font_script">خط يدوي</string>
+    <string name="runtime_font_brush">فرشاة</string>
+</resources>

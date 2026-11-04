@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_property_actions">Element actions</string>
+    <string name="fill_property_type">Mark type</string>
+    <string name="fill_property_style">Text style</string>
+    <string name="fill_property_transform">Move and rotate</string>
+    <string name="fill_property_revert">Revert edits</string>
+    <string name="fill_property_opacity">Opacity</string>
+</resources>

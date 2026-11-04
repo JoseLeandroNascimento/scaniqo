@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_intro">PDF-এ ব্যবহার করার জন্য স্বাক্ষর আমদানি বা স্ক্যান করুন। আপনি এঁকে বা টাইপ করেও স্বাক্ষর তৈরি করতে পারেন।</string>
+    <string name="signature_import_crop">কাটার অংশ ঠিক করুন</string>
+    <string name="signature_import_preview">স্বাক্ষর যাচাই করুন</string>
+</resources>

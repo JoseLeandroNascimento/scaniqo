@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="preview_zoom_close">बड़ा दृश्य बंद करें</string>
+    <string name="preview_controls_show">समायोजन</string>
+    <string name="preview_controls_hide">समायोजन छिपाएँ</string>
+    <string name="preview_gestures_hint">ज़ूम करने और देखने के लिए दो उँगलियाँ इस्तेमाल करें।</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_subtitle">এই পৃষ্ঠার জন্য স্বাক্ষর বেছে নিন।</string>
+    <string name="signature_library">আমার স্বাক্ষর</string>
+    <string name="signature_use">%1$s স্বাক্ষর ব্যবহার করুন</string>
+    <string name="signature_gesture_hint">অবস্থান ঠিক করতে টানুন। কোণা দিয়ে আকার বদলান, উপরের হাতল দিয়ে ঘোরান।</string>
+    <string name="signature_adjust_rotate">ঘোরান</string>
+    <string name="signature_size_hint">প্রস্থ ও উচ্চতা বদলাতে কোণা টানুন। দুই আঙুলে অনুপাত বজায় থাকে।</string>
+    <string name="signature_rotate_hint">স্বাক্ষরের উপরের হাতল টানুন বা বার দিয়ে কোণ বদলান।</string>
+    <string name="signature_rotation">ঘূর্ণন: %1$d°</string>
+    <string name="signature_crop_hint">শুধু স্বাক্ষর রাখতে প্রান্ত ঠিক করুন। লাইব্রেরির ছবি অক্ষত থাকবে।</string>
+    <string name="signature_apply">প্রয়োগ করে চালিয়ে যান</string>
+    <string name="signature_saved_hint">এই সম্পাদনায় স্বাক্ষর প্রয়োগ হবে। এডিটরে PDF সংরক্ষণ করুন।</string>
+    <string name="signature_cancel">বাতিল</string>
+    <string name="signature_already_placed">এই পৃষ্ঠার স্বাক্ষর</string>
+    <string name="signature_loading">পৃষ্ঠা প্রস্তুত হচ্ছে…</string>
+</resources>

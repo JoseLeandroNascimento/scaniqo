@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_subtitle">Choose a signature for this page.</string>
+    <string name="signature_library">My signatures</string>
+    <string name="signature_use">Use signature %1$s</string>
+    <string name="signature_gesture_hint">Drag to position. Adjust with the corners and rotate using the top handle.</string>
+    <string name="signature_adjust_rotate">Rotate</string>
+    <string name="signature_size_hint">Drag the corners to adjust width and height. Use two fingers to keep the proportions.</string>
+    <string name="signature_rotate_hint">Drag the handle above the signature or adjust the angle with the slider.</string>
+    <string name="signature_rotation">Rotation: %1$d°</string>
+    <string name="signature_crop_hint">Adjust the edges to keep only the signature. The library image will be preserved.</string>
+    <string name="signature_apply">Apply and continue</string>
+    <string name="signature_saved_hint">The signature will be applied to this edit. Save the PDF in the editor.</string>
+    <string name="signature_cancel">Cancel</string>
+    <string name="signature_already_placed">Signatures on this page</string>
+    <string name="signature_loading">Preparing page…</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_pages">Pages</string>
+    <string name="utility_pages_hint">Toutes, ou par exemple : 1, 3-5. L’ordre saisi est conservé.</string>
+    <string name="utility_choose_destination">Choisir où enregistrer</string>
+    <string name="utility_destination_ready">Destination sélectionnée. Confirmez pour exporter.</string>
+    <string name="utility_receipt_merchant">Commerce</string>
+    <string name="utility_receipt_date">Date</string>
+    <string name="utility_receipt_total">Total</string>
+    <string name="utility_receipt_items">Articles — un par ligne</string>
+    <string name="utility_close">Fermer</string>
+</resources>

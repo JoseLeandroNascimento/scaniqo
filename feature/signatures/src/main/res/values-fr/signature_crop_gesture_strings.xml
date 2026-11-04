@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_drag_hint">Faites glisser les bords ou les coins. Déplacez la sélection depuis son centre.</string>
+    <string name="signature_crop_selection">Zone de recadrage</string>
+    <string name="signature_crop_selection_size">Largeur %1$d%%, hauteur %2$d%%</string>
+    <string name="signature_crop_inward">Réduire ce bord</string>
+    <string name="signature_crop_outward">Agrandir ce bord</string>
+    <string name="signature_crop_move_left">Déplacer la sélection à gauche</string>
+    <string name="signature_crop_move_right">Déplacer la sélection à droite</string>
+    <string name="signature_crop_move_up">Déplacer la sélection vers le haut</string>
+    <string name="signature_crop_move_down">Déplacer la sélection vers le bas</string>
+</resources>

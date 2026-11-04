@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="viewer_tool_quality">الجودة</string>
+    <string name="viewer_preview_stale">تعذر التحديث. تم الاحتفاظ بالمعاينة السابقة.</string>
+    <string name="viewer_preparing_tools">جارٍ تجهيز الأدوات…</string>
+    <string name="viewer_undo_description">التراجع عن آخر تغيير</string>
+</resources>

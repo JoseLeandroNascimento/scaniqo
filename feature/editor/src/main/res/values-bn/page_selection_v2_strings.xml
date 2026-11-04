@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_drag_mode">টেনে সরান</string>
+    <string name="pages_v2_direct_mode">অবস্থানে সরান</string>
+    <string name="pages_v2_selected_position">%1$d অবস্থানে পৃষ্ঠা</string>
+    <string name="pages_v2_final_position">চূড়ান্ত অবস্থান</string>
+    <string name="pages_v2_start">শুরু</string>
+    <string name="pages_v2_end">শেষ</string>
+    <string name="pages_v2_move_to">%1$d-এ সরান</string>
+    <string name="pages_v2_same_position">ইতিমধ্যেই এই অবস্থানে আছে</string>
+    <string name="pages_v2_numbering">পৃষ্ঠা নম্বর</string>
+    <string name="pages_v2_options">পৃষ্ঠা %1$d-এর বিকল্প</string>
+    <string name="pages_v2_moved">পৃষ্ঠা %1$d-এ সরানো হয়েছে</string>
+</resources>

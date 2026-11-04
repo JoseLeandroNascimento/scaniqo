@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_source">Документ</string>
+    <string name="utility_workspace_importing">Импорт документа…</string>
+    <string name="utility_workspace_pages">Выберите страницы</string>
+    <string name="utility_workspace_range">Ввести диапазон</string>
+    <string name="utility_workspace_order">Нажмите на страницы для выбора. Ввод диапазона позволяет задать порядок.</string>
+    <string name="utility_workspace_output">Результат</string>
+    <string name="utility_workspace_jpg_hint">Небольшие файлы для отправки</string>
+    <string name="utility_workspace_png_hint">Больше деталей, больше размер</string>
+    <string name="utility_workspace_copy_hint">Будет создана новая копия. Исходный документ сохранится.</string>
+    <string name="utility_workspace_change_destination">Сменить место</string>
+    <string name="utility_workspace_compress_level">Уровень сжатия</string>
+    <string name="utility_workspace_balanced">Сбалансированное</string>
+    <string name="utility_workspace_balanced_hint">Хорошая читаемость при умеренном сжатии.</string>
+    <string name="utility_workspace_strong">Сильное сжатие</string>
+    <string name="utility_workspace_strong_hint">Файл меньше. Проверьте мелкий текст и изображения.</string>
+    <string name="utility_workspace_compress_action">Сжать и создать копию</string>
+    <string name="utility_workspace_original_size">Оригинал</string>
+    <string name="utility_workspace_result_size">После сжатия</string>
+    <string name="utility_workspace_compress_complete">PDF стал меньше</string>
+    <string name="utility_workspace_compress_no_gain">Этот PDF уже компактен</string>
+    <string name="utility_workspace_compress_no_gain_hint">Копия не создана, так как размер не уменьшился.</string>
+    <string name="utility_workspace_compress_note">Результат зависит от изображений. PDF с текстом или уже оптимизированными изображениями могут сохранить размер.</string>
+    <string name="utility_workspace_saved">Меньше на %1$d%%</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — сжатый</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">Ajustar a la pantalla</string>
+    <string name="fill_mark_font_smaller">Reducir tamaño del texto</string>
+    <string name="fill_mark_font_larger">Aumentar tamaño del texto</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">En esta página</string>
+    <string name="fill_mark_every_page">Todas las páginas</string>
+    <string name="fill_mark_remove">Eliminar</string>
+    <string name="fill_mark_apply">Aplicar</string>
+    <string name="fill_mark_no_values">Guarda textos que uses con frecuencia para reutilizarlos aquí.</string>
+    <string name="fill_mark_move_left">Mover elemento a la izquierda</string>
+    <string name="fill_mark_move_right">Mover elemento a la derecha</string>
+    <string name="fill_mark_move_up">Subir elemento</string>
+    <string name="fill_mark_move_down">Bajar elemento</string>
+    <string name="fill_inline_edit_text">Editar texto en la página</string>
+    <string name="fill_selection_grow">Aumentar elemento</string>
+    <string name="fill_selection_shrink">Reducir elemento</string>
+    <string name="fill_selection_top_left">Ajustar tamaño desde la esquina superior izquierda</string>
+    <string name="fill_selection_top_right">Ajustar tamaño desde la esquina superior derecha</string>
+    <string name="fill_selection_bottom_right">Ajustar tamaño desde la esquina inferior derecha</string>
+    <string name="fill_selection_bottom_left">Ajustar tamaño desde la esquina inferior izquierda</string>
+</resources>

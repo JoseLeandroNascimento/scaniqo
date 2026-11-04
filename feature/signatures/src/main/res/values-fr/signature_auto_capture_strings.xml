@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_scan_align">Cadrez votre signature</string>
+    <string name="signature_scan_hold_still">Ne bougez plus…</string>
+    <string name="signature_scan_more_light">Trouvez un endroit mieux éclairé</string>
+    <string name="signature_scan_move_inside">Placez toute la signature dans le cadre</string>
+    <string name="signature_scan_auto">Capture automatique</string>
+    <string name="signature_scan_manual">Prêt ? Touchez Photographier</string>
+    <string name="signature_scan_capture_now">Photographier</string>
+</resources>

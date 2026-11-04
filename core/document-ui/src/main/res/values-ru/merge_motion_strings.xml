@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_motion_library">Библиотека</string>
+    <string name="merge_motion_device">Устройство</string>
+    <string name="merge_motion_add">Добавить PDF</string>
+    <string name="merge_motion_done">Готово</string>
+    <string name="merge_motion_one">Добавьте ещё один</string>
+    <string name="merge_motion_search">Поиск документов</string>
+    <string name="merge_motion_selected">Выбрано: %1$d</string>
+    <string name="merge_motion_count_description">Объединить %1$d PDF в один</string>
+</resources>

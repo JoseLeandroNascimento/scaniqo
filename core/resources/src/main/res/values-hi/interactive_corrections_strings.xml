@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <plurals name="document_scope_apply_count">
+        <item quantity="one">%1$d पृष्ठ पर लागू करें</item>
+        <item quantity="other">%1$d पृष्ठों पर लागू करें</item>
+    </plurals>
+    <string name="corrections_tab_angle">झुकाएँ</string>
+    <string name="corrections_tab_perspective">किनारे</string>
+    <string name="corrections_tab_curve">वक्र</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">पृष्ठ %1$d / %2$d। प्रीव्यू का पृष्ठ चुनें</string>
+    <string name="corrections_live_title">समायोजन का प्रीव्यू</string>
+    <string name="corrections_live_hint">प्रीव्यू नियंत्रणों के साथ बदलता है। लागू करने पर ही दस्तावेज़ बदलता है।</string>
+    <string name="corrections_preview_choose">प्रीव्यू का पृष्ठ चुनें</string>
+    <string name="corrections_preview_before">पहले</string>
+    <string name="corrections_preview_after">बाद में</string>
+    <string name="corrections_preview_before_description">इस समायोजन से पहले का पृष्ठ देखें</string>
+    <string name="corrections_preview_after_description">इस समायोजन का परिणाम देखें</string>
+    <string name="corrections_preview_before_hint">इस समायोजन से पहले</string>
+    <string name="corrections_preview_after_hint">समायोजन का परिणाम</string>
+    <string name="corrections_preview_updating">अपडेट हो रहा है…</string>
+    <string name="corrections_preview_native_hint">टेक्स्ट और वेक्टर सुरक्षित हैं। इस पृष्ठ को इमेज की तरह ठीक करने के लिए नीचे का विकल्प चालू करें।</string>
+    <string name="corrections_page_navigation_hint">प्रीव्यू बदलने पर नियंत्रण वही रहते हैं, ताकि दूसरे पृष्ठों पर समायोजन देख सकें।</string>
+    <string name="corrections_perspective_editor">कैप्चर के किनारे ठीक करें</string>
+    <string name="corrections_perspective_live_hint">नीचे की इमेज के कोने खींचें और ऊपर परिणाम देखें।</string>
+</resources>

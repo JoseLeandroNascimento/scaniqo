@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">ملاءمة للشاشة</string>
+    <string name="fill_mark_font_smaller">تصغير حجم النص</string>
+    <string name="fill_mark_font_larger">تكبير حجم النص</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">هذه الصفحة</string>
+    <string name="fill_mark_every_page">جميع الصفحات</string>
+    <string name="fill_mark_remove">حذف</string>
+    <string name="fill_mark_apply">تطبيق</string>
+    <string name="fill_mark_no_values">احفظ النصوص التي تستخدمها كثيرًا لإعادة استخدامها هنا.</string>
+    <string name="fill_mark_move_left">تحريك العنصر إلى اليسار</string>
+    <string name="fill_mark_move_right">تحريك العنصر إلى اليمين</string>
+    <string name="fill_mark_move_up">تحريك العنصر إلى أعلى</string>
+    <string name="fill_mark_move_down">تحريك العنصر إلى أسفل</string>
+    <string name="fill_inline_edit_text">تعديل النص على الصفحة</string>
+    <string name="fill_selection_grow">تكبير العنصر</string>
+    <string name="fill_selection_shrink">تصغير العنصر</string>
+    <string name="fill_selection_top_left">ضبط الحجم من الزاوية العلوية اليسرى</string>
+    <string name="fill_selection_top_right">ضبط الحجم من الزاوية العلوية اليمنى</string>
+    <string name="fill_selection_bottom_right">ضبط الحجم من الزاوية السفلية اليمنى</string>
+    <string name="fill_selection_bottom_left">ضبط الحجم من الزاوية السفلية اليسرى</string>
+</resources>

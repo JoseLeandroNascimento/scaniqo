@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_subtitle">文件随时触手可及。</string>
+    <string name="documents_all_tags">全部</string>
+    <string name="documents_scan">扫描文档</string>
+    <string name="documents_loading">正在加载文档…</string>
+    <string name="documents_empty_title">从这里开始创建文档</string>
+    <string name="documents_empty_body">扫描一页或多页，并保存为一个 PDF。</string>
+    <string name="documents_filter_empty_title">此标签下暂无文档</string>
+    <string name="documents_filter_empty_body">选择其他标签或查看所有文档。</string>
+    <string name="documents_clear_filter">查看全部</string>
+    <string name="document_edit">编辑</string>
+    <plurals name="documents_count">
+        <item quantity="other">%d 个文档</item>
+    </plurals>
+</resources>

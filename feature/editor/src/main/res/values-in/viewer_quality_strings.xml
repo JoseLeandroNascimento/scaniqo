@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="viewer_tool_quality">Kualitas</string>
+    <string name="viewer_preview_stale">Tidak dapat memperbarui. Pratinjau sebelumnya tetap ditampilkan.</string>
+    <string name="viewer_preparing_tools">Menyiapkan alat…</string>
+    <string name="viewer_undo_description">Urungkan perubahan terakhir</string>
+</resources>

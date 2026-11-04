@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_label">Pilih PDF</string>
+    <string name="merge_app_description">Halaman ditambahkan sesuai urutan Anda memilih PDF.</string>
+    <string name="merge_app_empty">Tidak ada PDF lain yang tersimpan di aplikasi. Gunakan “Dari perangkat” untuk memilih berkas.</string>
+    <string name="merge_app_selection_order">Urutan ke-%1$d dalam gabungan</string>
+    <string name="merge_app_protected">PDF dilindungi kata sandi</string>
+    <string name="merge_app_result_protected">Perlindungan dokumen yang sedang diedit tetap dipertahankan pada hasil.</string>
+    <string name="merge_app_result_unprotected">Dokumen yang sedang diedit tidak memiliki kata sandi. Halaman dari PDF yang dilindungi juga tidak memiliki kata sandi pada hasil.</string>
+</resources>

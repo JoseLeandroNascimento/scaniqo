@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_interactive_twist">双指旋转</string>
+    <string name="layout_interactive_pinch">双指缩放</string>
+    <string name="layout_interactive_position_space">在“大小”中缩小内容以留出边距。</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_search_query_placeholder">Ex. : contrat, reçu, adresse</string>
+    <string name="document_search_helper">La recherche dans le contenu utilise uniquement le texte sélectionnable des PDF.</string>
+    <string name="document_search_match_name">Trouvé dans le nom</string>
+</resources>

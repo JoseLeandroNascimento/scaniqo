@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow">छायाएँ हटाएँ</string>
+    <string name="quality_filter_light">समान रोशनी</string>
+    <string name="quality_filter_white">सफ़ेद कागज़</string>
+    <string name="quality_filter_adaptive">स्पष्ट टेक्स्ट</string>
+    <string name="quality_filter_noise">नॉइज़ घटाएँ</string>
+    <string name="quality_filter_sharp">विवरण उभारें</string>
+    <string name="quality_filter_bleed">पीछे की छाप घटाएँ</string>
+    <string name="quality_native_title">टेक्स्ट या वेक्टर वाले पृष्ठों पर लागू करें</string>
+    <string name="quality_native_body">डिफ़ॉल्ट रूप से इन पृष्ठों का मूल कंटेंट रहता है। चालू करने पर पृष्ठ इमेज बन जाता है; OCR खोजने योग्य टेक्स्ट फिर बना सकता है।</string>
+    <string name="quality_native_active">सुधार लागू करने पर टेक्स्ट या वेक्टर वाले पृष्ठ भी इमेज बनेंगे।</string>
+    <string name="quality_export_tab">निर्यात</string>
+    <string name="quality_review_tab">जाँच</string>
+    <string name="quality_export_title">PDF की गुणवत्ता</string>
+    <string name="quality_export_high">उच्च गुणवत्ता</string>
+    <string name="quality_export_high_body">इमेज की सटीकता को प्राथमिकता देता है।</string>
+    <string name="quality_export_balanced">संतुलित</string>
+    <string name="quality_export_balanced_body">अच्छी पठनीयता रखते हुए इमेज का आकार घटाता है।</string>
+    <string name="quality_export_small">छोटी फ़ाइल</string>
+    <string name="quality_export_small_body">ज़्यादा कंप्रेशन। शेयर करने से पहले छोटे अक्षर और विवरण जाँचें।</string>
+    <string name="quality_export_hint">सहेजने पर कंप्रेशन लागू होता है। अंतिम आकार मूल फ़ाइल पर निर्भर है; सुरक्षित टेक्स्ट और वेक्टर ज़ूम करने पर भी स्पष्ट रहते हैं।</string>
+    <string name="quality_ocr_title">खोजने योग्य टेक्स्ट</string>
+    <string name="quality_ocr_body">सहेजते समय कैप्चर का मुद्रित टेक्स्ट पहचानता है, पुर्तगाली सहित। प्रोसेसिंग डिवाइस पर होती है और दस्तावेज़ का रूप बना रहता है।</string>
+    <string name="quality_ocr_hint">OCR में गलतियाँ हो सकती हैं और लंबे दस्तावेज़ों में समय लगता है। जिन पृष्ठों का मूल टेक्स्ट सुरक्षित है, उन्हें फिर नहीं पहचाना जाता।</string>
+    <string name="quality_export_apply">विकल्प लागू करें</string>
+    <string name="quality_auto_title">अपने आप सुधार</string>
+    <string name="quality_auto_body">इमेज समायोजन मिलाता है और विश्लेषण में मिले भरोसेमंद झुकाव इस्तेमाल करता है। परिणाम की तुलना और पूर्ववत कर सकते हैं।</string>
+    <string name="quality_auto_apply">यह पृष्ठ सुधारें</string>
+    <string name="quality_auto_apply_all">सभी सुधारें</string>
+    <string name="quality_analysis_title">गुणवत्ता जाँचें</string>
+    <string name="quality_analysis_body">खाली या दोहराए पृष्ठ, धुंधलापन, कम रिज़ॉल्यूशन और संभवतः कटा कंटेंट ढूँढता है। चेतावनियाँ सुझाव हैं: कोई पृष्ठ अपने आप नहीं मिटता।</string>
+    <string name="quality_analysis_run">दस्तावेज़ का विश्लेषण करें</string>
+    <string name="quality_analysis_again">फिर से विश्लेषण करें</string>
+    <string name="quality_analysis_running">पृष्ठों का विश्लेषण हो रहा है…</string>
+    <string name="quality_analysis_cancel">विश्लेषण रद्द करें</string>
+    <string name="quality_analysis_error">विश्लेषण पूरा नहीं हो सका। फिर से कोशिश करें।</string>
+    <string name="quality_analysis_clear">कोई चेतावनी नहीं मिली। फिर भी शेयर करने से पहले दस्तावेज़ जाँचना बेहतर है।</string>
+    <string name="quality_analysis_count">%2$d में से %1$d पृष्ठ जाँचने हैं</string>
+    <plurals name="quality_analysis_native">
+        <item quantity="one">%1$d पृष्ठ के स्रोत में मूल टेक्स्ट या वेक्टर हैं।</item>
+        <item quantity="other">%1$d पृष्ठों के स्रोत में मूल टेक्स्ट या वेक्टर हैं।</item>
+    </plurals>
+    <string name="quality_analysis_page">पृष्ठ %1$d</string>
+    <string name="quality_analysis_blank">शायद खाली है</string>
+    <string name="quality_analysis_duplicate">शायद पृष्ठ %1$d दोहराया गया है</string>
+    <string name="quality_analysis_blurry">शायद धुंधला है</string>
+    <string name="quality_analysis_resolution">कम रिज़ॉल्यूशन</string>
+    <string name="quality_analysis_clipped">किनारे के पास कंटेंट</string>
+    <string name="quality_analysis_angle">सुझाया झुकाव: %1$.1f°</string>
+    <string name="quality_analysis_review">पृष्ठ देखें</string>
+    <string name="quality_analysis_delete">पृष्ठ %1$d मिटाएँ</string>
+</resources>

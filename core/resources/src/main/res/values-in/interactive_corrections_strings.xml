@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <plurals name="document_scope_apply_count">
+        <item quantity="other">Terapkan pada %1$d halaman</item>
+    </plurals>
+    <string name="corrections_tab_angle">Miringkan</string>
+    <string name="corrections_tab_perspective">Tepi</string>
+    <string name="corrections_tab_curve">Lengkung</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">Halaman %1$d dari %2$d. Pilih halaman pratinjau</string>
+    <string name="corrections_live_title">Pratinjau penyesuaian</string>
+    <string name="corrections_live_hint">Pratinjau mengikuti kontrol. Dokumen hanya berubah setelah diterapkan.</string>
+    <string name="corrections_preview_choose">Pilih halaman pratinjau</string>
+    <string name="corrections_preview_before">Sebelum</string>
+    <string name="corrections_preview_after">Sesudah</string>
+    <string name="corrections_preview_before_description">Lihat halaman sebelum penyesuaian ini</string>
+    <string name="corrections_preview_after_description">Lihat hasil penyesuaian ini</string>
+    <string name="corrections_preview_before_hint">Sebelum penyesuaian ini</string>
+    <string name="corrections_preview_after_hint">Hasil penyesuaian</string>
+    <string name="corrections_preview_updating">Memperbarui…</string>
+    <string name="corrections_preview_native_hint">Teks dan vektor tetap dipertahankan. Aktifkan opsi di bawah untuk mengoreksi halaman ini sebagai gambar.</string>
+    <string name="corrections_page_navigation_hint">Mengganti pratinjau mempertahankan kontrol agar penyesuaian dapat diperiksa pada halaman lain.</string>
+    <string name="corrections_perspective_editor">Sesuaikan tepi pada tangkapan</string>
+    <string name="corrections_perspective_live_hint">Seret sudut pada gambar di bawah dan lihat hasilnya di atas.</string>
+</resources>

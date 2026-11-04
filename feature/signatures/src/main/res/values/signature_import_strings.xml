@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_image">Importar imagem</string>
+    <string name="signature_import_image_body">Escolha uma foto da assinatura.</string>
+    <string name="signature_import_scan">Escanear assinatura</string>
+    <string name="signature_import_scan_body">Aponte para sua assinatura no papel.</string>
+    <string name="signature_import_automatic">Fundo e sombras removidos automaticamente.</string>
+    <string name="signature_import_crop_hint">Enquadre só a assinatura. Use dois dedos para ampliar.</string>
+    <string name="signature_import_confirm_crop">Remover fundo</string>
+    <string name="signature_import_processing">Removendo fundo e sombras…</string>
+    <string name="signature_import_preview_hint">Confira os traços e salve.</string>
+    <string name="signature_import_adjust_crop">Ajustar recorte</string>
+    <string name="signature_import_retake">Refazer foto</string>
+    <string name="signature_import_transparent">Transparente</string>
+    <string name="signature_import_white">Branco</string>
+    <string name="signature_import_dark">Escuro</string>
+</resources>

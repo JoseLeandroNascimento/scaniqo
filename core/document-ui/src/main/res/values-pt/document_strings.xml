@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_no_tag">Sem tag</string>
+    <string name="document_create_title">Salvar documento</string>
+    <string name="document_editor_title">Editar documento</string>
+    <string name="document_name_label">Nome do documento</string>
+    <string name="document_name_placeholder">Ex.: Contrato de aluguel</string>
+    <string name="document_name_required">Informe um nome para o documento.</string>
+    <string name="document_name_too_long">Use até %1$d caracteres.</string>
+    <string name="document_tag_label">Tag</string>
+    <string name="document_optional">Opcional</string>
+    <string name="document_no_tags_available">Você pode criar tags em Gerenciar tags e adicionar uma depois.</string>
+    <string name="document_save">Salvar documento</string>
+    <string name="document_save_changes">Salvar alterações</string>
+    <string name="document_saving">Salvando…</string>
+    <string name="document_save_error">Não foi possível salvar. Suas informações foram mantidas. Tente novamente.</string>
+    <string name="document_delete_title">Mover para a lixeira?</string>
+    <string name="document_delete_body">O documento “%1$s” sairá da biblioteca. Você poderá restaurá-lo pela Lixeira no menu.</string>
+    <string name="document_delete_error">Não foi possível mover para a lixeira. Tente novamente.</string>
+    <string name="document_deleting">Movendo…</string>
+    <string name="document_updated">Documento atualizado</string>
+    <string name="document_deleted">Documento movido para a lixeira</string>
+    <string name="document_downloaded">PDF salvo no local escolhido</string>
+    <string name="document_scan_error">Não foi possível abrir o scanner. Tente novamente.</string>
+    <string name="document_prepare_error">Não foi possível preparar o documento escaneado. Tente escanear novamente.</string>
+    <string name="document_export_error">Não foi possível baixar o PDF. Tente novamente.</string>
+    <string name="document_share_error">Não foi possível compartilhar o PDF. Tente novamente.</string>
+</resources>

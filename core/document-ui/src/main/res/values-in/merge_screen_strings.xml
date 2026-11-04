@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_screen_add_files">Tambahkan PDF</string>
+    <string name="merge_move_up">Pindahkan ke atas</string>
+    <string name="merge_move_down">Pindahkan ke bawah</string>
+    <string name="merge_remove">Hapus</string>
+</resources>

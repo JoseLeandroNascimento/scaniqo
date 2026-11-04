@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_title">Pindai tanda tangan</string>
+    <string name="signature_camera_guidance">Posisikan tanda tangan di dalam bingkai. Hanya area ini yang digunakan; latar belakang akan dihapus secara otomatis.</string>
+    <string name="signature_camera_capture">Foto tanda tangan</string>
+</resources>

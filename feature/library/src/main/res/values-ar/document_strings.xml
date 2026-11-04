@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_subtitle">ملفاتك في متناول يدك.</string>
+    <string name="documents_all_tags">الكل</string>
+    <string name="documents_scan">مسح مستند</string>
+    <string name="documents_loading">جارٍ تحميل المستندات…</string>
+    <string name="documents_empty_title">مستندك التالي يبدأ هنا</string>
+    <string name="documents_empty_body">امسح صفحة أو عدة صفحات واحفظها في ملف PDF واحد.</string>
+    <string name="documents_filter_empty_title">لا توجد مستندات بهذا الوسم</string>
+    <string name="documents_filter_empty_body">اختر وسمًا آخر أو اعرض جميع المستندات.</string>
+    <string name="documents_clear_filter">عرض الكل</string>
+    <string name="document_edit">تعديل</string>
+    <plurals name="documents_count">
+        <item quantity="zero">لا مستندات (%d)</item>
+        <item quantity="one">مستند واحد (%d)</item>
+        <item quantity="two">مستندان (%d)</item>
+        <item quantity="few">%d مستندات</item>
+        <item quantity="many">%d مستندًا</item>
+        <item quantity="other">%d مستند</item>
+    </plurals>
+</resources>

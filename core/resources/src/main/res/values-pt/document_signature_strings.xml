@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_subtitle">Escolha uma assinatura para esta página.</string>
+    <string name="signature_library">Minhas assinaturas</string>
+    <string name="signature_use">Usar assinatura %1$s</string>
+    <string name="signature_gesture_hint">Arraste para posicionar. Ajuste pelos cantos e gire pela alça superior.</string>
+    <string name="signature_adjust_rotate">Girar</string>
+    <string name="signature_size_hint">Arraste os cantos para ajustar largura e altura. Com dois dedos, mantenha a proporção.</string>
+    <string name="signature_rotate_hint">Arraste a alça acima da assinatura ou ajuste o ângulo pela barra.</string>
+    <string name="signature_rotation">Rotação: %1$d°</string>
+    <string name="signature_crop_hint">Ajuste as bordas para manter somente a assinatura. A imagem da biblioteca será preservada.</string>
+    <string name="signature_apply">Aplicar e continuar</string>
+    <string name="signature_saved_hint">A assinatura será aplicada nesta edição. Salve o PDF no editor.</string>
+    <string name="signature_cancel">Cancelar</string>
+    <string name="signature_already_placed">Assinaturas nesta página</string>
+    <string name="signature_loading">Preparando página…</string>
+</resources>

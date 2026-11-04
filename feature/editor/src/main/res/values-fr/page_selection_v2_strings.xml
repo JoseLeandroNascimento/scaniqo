@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_drag_mode">Glisser</string>
+    <string name="pages_v2_direct_mode">Déplacer à une position</string>
+    <string name="pages_v2_selected_position">Page à la position %1$d</string>
+    <string name="pages_v2_final_position">Position finale</string>
+    <string name="pages_v2_start">Début</string>
+    <string name="pages_v2_end">Fin</string>
+    <string name="pages_v2_move_to">Déplacer à %1$d</string>
+    <string name="pages_v2_same_position">Déjà à cette position</string>
+    <string name="pages_v2_numbering">Numérotation</string>
+    <string name="pages_v2_options">Options de la page %1$d</string>
+    <string name="pages_v2_moved">Page déplacée à %1$d</string>
+</resources>

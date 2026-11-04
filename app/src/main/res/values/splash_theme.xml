@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Older Android starts with the rest pose; the compat exit view plays the AVD. -->
-    <item name="scaniqo_splash_icon" type="drawable">@drawable/scaniqo_splash_vector</item>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <style name="Theme.Scaniqo.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/scaniqo_brand_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/scaniqo_splash_icon</item>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_metadata_edit">Editar nome e tag</string>
+    <string name="document_page_position">Página %1$d de %2$d</string>
+    <string name="document_processing">Preparando arquivo…</string>
+    <string name="document_not_found_title">Documento não encontrado</string>
+    <string name="document_not_found_body">Este documento não está mais disponível na sua biblioteca.</string>
+    <string name="document_return">Voltar aos documentos</string>
+</resources>

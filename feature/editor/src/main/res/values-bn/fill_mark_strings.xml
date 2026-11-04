@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">পর্দায় মেলান</string>
+    <string name="fill_mark_font_smaller">টেক্সটের আকার কমান</string>
+    <string name="fill_mark_font_larger">টেক্সটের আকার বাড়ান</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">এই পৃষ্ঠায়</string>
+    <string name="fill_mark_every_page">সব পৃষ্ঠা</string>
+    <string name="fill_mark_remove">মুছুন</string>
+    <string name="fill_mark_apply">প্রয়োগ করুন</string>
+    <string name="fill_mark_no_values">বারবার পূরণ করা টেক্সট এখানে আবার ব্যবহারের জন্য সংরক্ষণ করুন।</string>
+    <string name="fill_mark_move_left">উপাদান বামে সরান</string>
+    <string name="fill_mark_move_right">উপাদান ডানে সরান</string>
+    <string name="fill_mark_move_up">উপাদান উপরে সরান</string>
+    <string name="fill_mark_move_down">উপাদান নিচে সরান</string>
+    <string name="fill_inline_edit_text">পৃষ্ঠার টেক্সট সম্পাদনা করুন</string>
+    <string name="fill_selection_grow">উপাদান বড় করুন</string>
+    <string name="fill_selection_shrink">উপাদান ছোট করুন</string>
+    <string name="fill_selection_top_left">উপরের বাম কোণা দিয়ে আকার বদলান</string>
+    <string name="fill_selection_top_right">উপরের ডান কোণা দিয়ে আকার বদলান</string>
+    <string name="fill_selection_bottom_right">নিচের ডান কোণা দিয়ে আকার বদলান</string>
+    <string name="fill_selection_bottom_left">নিচের বাম কোণা দিয়ে আকার বদলান</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="onboarding_guide">আপনার সংক্ষিপ্ত গাইড</string>
+    <string name="onboarding_swipe">নিজের গতিতে জানতে সোয়াইপ করুন।</string>
+    <string name="onboarding_scan_category">স্ক্যান করুন</string>
+    <string name="onboarding_scan_hint">নথি স্ক্রিনে নথি স্ক্যান করুন-এ ট্যাপ করুন।</string>
+    <string name="onboarding_tags_category">সাজিয়ে রাখুন</string>
+    <string name="onboarding_tags_hint">নাম, রং ও আইকন বদলাতে মেনু থেকে ট্যাগ খুলুন।</string>
+    <string name="onboarding_edit_category">সম্পাদনা করুন</string>
+    <string name="onboarding_edit_hint">নথির শর্টকাট ব্যবহার করুন বা সব টুল খুলুন।</string>
+    <string name="onboarding_share_category">রাখুন ও শেয়ার করুন</string>
+    <string name="onboarding_share_hint">সেটিংস → Google Drive ব্যাকআপ খুলুন। সংযোগ করা ঐচ্ছিক।</string>
+</resources>

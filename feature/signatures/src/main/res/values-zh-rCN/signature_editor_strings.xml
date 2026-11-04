@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_tab_import">导入</string>
+    <string name="signature_tab_scan">扫描</string>
+    <string name="runtime_signature_edit">编辑签名</string>
+    <string name="runtime_signature_draw_hint">请在下方区域绘制签名。</string>
+    <string name="runtime_signature_preview">预览</string>
+    <string name="runtime_signature_font">字体</string>
+    <string name="runtime_font_pen">钢笔</string>
+    <string name="runtime_font_script">书法</string>
+    <string name="runtime_font_brush">毛笔</string>
+</resources>

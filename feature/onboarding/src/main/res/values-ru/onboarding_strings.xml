@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="onboarding_skip">Пропустить</string>
+    <string name="onboarding_previous">Предыдущий слайд</string>
+    <string name="onboarding_next">Далее</string>
+    <string name="onboarding_start">Начать работу</string>
+    <string name="onboarding_saving">Сохранение…</string>
+    <string name="onboarding_progress">%1$d из %2$d</string>
+    <string name="onboarding_save_error">Не удалось сохранить прогресс. Нажмите кнопку, чтобы повторить попытку.</string>
+    <string name="onboarding_scan_title">Сканируйте в PDF</string>
+    <string name="onboarding_scan_body">Снимайте документы или импортируйте файлы.</string>
+    <string name="onboarding_tags_title">Порядок с тегами</string>
+    <string name="onboarding_tags_body">Находите документы одним касанием.</string>
+    <string name="onboarding_edit_title">Редактируйте и подписывайте</string>
+    <string name="onboarding_edit_body">Настраивайте страницы, заполняйте и подписывайте PDF.</string>
+    <string name="onboarding_share_title">Делитесь и сохраняйте</string>
+    <string name="onboarding_share_body">Делитесь PDF и при желании сохраняйте копию в Google Drive.</string>
+</resources>

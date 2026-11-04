@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_choose_hint">选择文档库中的 PDF，或从设备导入文件。</string>
+    <string name="utility_workspace_import_device">从设备导入</string>
+    <string name="utility_workspace_search">搜索文档</string>
+    <string name="utility_workspace_no_match">未找到文档。</string>
+    <string name="utility_workspace_selection">已选择 %1$d 页，共 %2$d 页</string>
+    <string name="utility_workspace_select_all">全部</string>
+    <string name="utility_workspace_clear">清空</string>
+    <string name="utility_workspace_page">第 %1$d 页</string>
+    <string name="utility_workspace_locked_pages">为保护隐私，此 PDF 的缩略图已隐藏。请按页码选择。</string>
+    <string name="utility_workspace_empty_selection">请至少选择一页。</string>
+    <string name="utility_workspace_format">图片格式</string>
+    <string name="utility_workspace_zip_hint">每页转换为一张图片，所有图片保存在同一个 ZIP 文件中。</string>
+    <string name="utility_workspace_busy">正在准备文件…</string>
+    <string name="utility_workspace_compress_title">压缩 PDF</string>
+    <string name="utility_workspace_compress_hint">缩小 PDF 中的图像体积，同时保留可搜索文字。</string>
+    <string name="utility_workspace_open_result">打开压缩后的 PDF</string>
+    <string name="utility_workspace_inspect_page">放大第 %1$d 页</string>
+    <string name="utility_workspace_select_page">选择此页面</string>
+    <string name="utility_workspace_deselect_page">取消选择</string>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow_body">Mengurangi bayangan lembut pada kertas dan mempertahankan huruf.</string>
+    <string name="quality_filter_light_body">Menyeimbangkan area terang dan gelap dalam satu tangkapan.</string>
+    <string name="quality_filter_white_body">Mencerahkan latar dokumen yang kekuningan atau keabu-abuan.</string>
+    <string name="quality_filter_adaptive_body">Hitam putih adaptif untuk teks dengan pencahayaan tidak merata.</string>
+    <string name="quality_filter_noise_body">Menghaluskan butiran dan titik kecil tanpa meningkatkan resolusi asli.</string>
+    <string name="quality_filter_sharp_body">Memperjelas tepi. Intensitas rendah menghindari garis tepi buatan.</string>
+    <string name="quality_filter_bleed_body">Mengurangi tanda samar dari sisi belakang lembar. Periksa juga teks dan catatan yang tipis.</string>
+    <string name="quality_filter_intensity">Intensitas</string>
+    <string name="quality_percentage">%1$d%%</string>
+    <string name="quality_correction_angle">Kemiringan</string>
+    <string name="quality_correction_perspective">Perspektif</string>
+    <string name="quality_correction_curve">Kelengkungan</string>
+    <string name="quality_angle_title">Luruskan tangkapan</string>
+    <string name="quality_angle_body">Sesuaikan kemiringan kecil untuk meratakan baris dokumen.</string>
+    <string name="quality_angle_value">%1$.1f°</string>
+    <string name="quality_angle_detect">Deteksi kemiringan</string>
+    <string name="quality_angle_use">Gunakan saran: %1$.1f°</string>
+    <string name="quality_angle_no_suggestion">Kemiringan yang dapat diandalkan tidak ditemukan pada halaman ini.</string>
+    <string name="quality_angle_all_hint">Sudut yang sama diterapkan pada semua halaman.</string>
+    <string name="quality_source_preview">Tangkapan asli</string>
+    <string name="quality_perspective_body">Seret keempat sudut ke tepi dokumen. Area yang dipilih akan diluruskan.</string>
+    <string name="quality_perspective_all_hint">Batas proporsional yang sama digunakan pada semua halaman.</string>
+    <string name="quality_corner_top_left">Sudut kiri atas</string>
+    <string name="quality_corner_top_right">Sudut kanan atas</string>
+    <string name="quality_corner_bottom_right">Sudut kanan bawah</string>
+    <string name="quality_corner_bottom_left">Sudut kiri bawah</string>
+    <string name="quality_corner_left">Pindahkan ke kiri</string>
+    <string name="quality_corner_right">Pindahkan ke kanan</string>
+    <string name="quality_corner_up">Pindahkan ke atas</string>
+    <string name="quality_corner_down">Pindahkan ke bawah</string>
+    <string name="quality_preview_unavailable">Tangkapan asli tidak dapat dibuka.</string>
+    <string name="quality_curve_title">Kompensasi kelengkungan</string>
+    <string name="quality_curve_body">Kompensasi manual perkiraan untuk halaman buku. Sesuaikan perlahan dan periksa hasilnya; detail yang tersembunyi di lipatan tidak direkonstruksi.</string>
+    <string name="quality_curve_value">%1$+d%%</string>
+    <string name="quality_curve_reset">Tanpa kompensasi</string>
+</resources>

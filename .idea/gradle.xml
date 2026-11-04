@@ -4,12 +4,48 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/ads" />
+            <option value="$PROJECT_DIR$/core/common" />
+            <option value="$PROJECT_DIR$/core/designsystem" />
+            <option value="$PROJECT_DIR$/core/document-ui" />
+            <option value="$PROJECT_DIR$/core/domain" />
+            <option value="$PROJECT_DIR$/core/resources" />
+            <option value="$PROJECT_DIR$/core/security" />
+            <option value="$PROJECT_DIR$/core/testing" />
+            <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/data/backup" />
+            <option value="$PROJECT_DIR$/data/documents" />
+            <option value="$PROJECT_DIR$/data/pdf" />
+            <option value="$PROJECT_DIR$/data/preferences" />
+            <option value="$PROJECT_DIR$/data/signatures" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/backup" />
+            <option value="$PROJECT_DIR$/feature/editor" />
+            <option value="$PROJECT_DIR$/feature/library" />
+            <option value="$PROJECT_DIR$/feature/merge" />
+            <option value="$PROJECT_DIR$/feature/onboarding" />
+            <option value="$PROJECT_DIR$/feature/pdf-tools" />
+            <option value="$PROJECT_DIR$/feature/settings" />
+            <option value="$PROJECT_DIR$/feature/signatures" />
           </set>
         </option>
       </GradleProjectSettings>

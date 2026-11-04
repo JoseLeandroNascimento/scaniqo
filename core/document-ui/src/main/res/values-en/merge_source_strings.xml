@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_device">From device</string>
+    <string name="merge_source_app">From app</string>
+    <string name="merge_app_title">App documents</string>
+    <string name="merge_app_search">Search by name</string>
+    <string name="merge_app_no_results">No documents found for this search.</string>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">Merge %1$d PDF</item>
+        <item quantity="other">Merge %1$d PDFs</item>
+    </plurals>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_subtitle">आपकी फ़ाइलें, हमेशा पास।</string>
+    <string name="documents_all_tags">सभी</string>
+    <string name="documents_scan">दस्तावेज़ स्कैन करें</string>
+    <string name="documents_loading">दस्तावेज़ लोड हो रहे हैं…</string>
+    <string name="documents_empty_title">आपका अगला दस्तावेज़ यहाँ से शुरू होता है</string>
+    <string name="documents_empty_body">एक शीट या कई पृष्ठ स्कैन करें और सब एक PDF में सहेजें।</string>
+    <string name="documents_filter_empty_title">इस टैग में कोई दस्तावेज़ नहीं है</string>
+    <string name="documents_filter_empty_body">दूसरा टैग चुनें या सभी दस्तावेज़ देखें।</string>
+    <string name="documents_clear_filter">सभी देखें</string>
+    <string name="document_edit">संपादित करें</string>
+    <plurals name="documents_count">
+        <item quantity="one">%d दस्तावेज़</item>
+        <item quantity="other">%d दस्तावेज़</item>
+    </plurals>
+</resources>

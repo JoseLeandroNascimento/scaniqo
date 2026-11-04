@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_position_hint">拖动签名以调整位置。</string>
+    <string name="signature_scale_hint">保持比例调整大小。</string>
+    <string name="signature_rotation_hint">沿圆环拖动以旋转。</string>
+</resources>

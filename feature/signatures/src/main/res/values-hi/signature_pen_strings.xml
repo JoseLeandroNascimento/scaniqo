@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_pen_color_title">पेन का रंग</string>
+    <string name="signature_pen_color_description">पेन का रंग: %1$s</string>
+    <string name="signature_tip_size_description">नोक की मोटाई: %1$s</string>
+    <string name="signature_tip_extra_fine">बहुत बारीक</string>
+    <string name="signature_tip_fine">बारीक</string>
+    <string name="signature_tip_medium">मध्यम</string>
+    <string name="signature_tip_bold">मोटी</string>
+    <string name="signature_tip_extra_bold">बहुत मोटी</string>
+</resources>

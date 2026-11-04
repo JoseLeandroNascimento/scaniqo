@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_text_alignment">Текст в рамке</string>
+    <string name="fill_text_align_action">Выровнять текст</string>
+    <string name="fill_text_horizontal">По горизонтали</string>
+    <string name="fill_text_vertical">По вертикали</string>
+    <string name="fill_text_start">Начало</string>
+    <string name="fill_text_center">Центр</string>
+    <string name="fill_text_end">Конец</string>
+    <string name="fill_text_top">Сверху</string>
+    <string name="fill_text_middle">Посередине</string>
+    <string name="fill_text_bottom">Снизу</string>
+    <string name="fill_text_auto_box">Рамка по размеру текста</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_error_no_ink">हस्ताक्षर की कोई रेखा नहीं मिली। कटाई ठीक करें या अधिक साफ़ चित्र चुनें।</string>
+    <string name="signature_import_error_process_failed">हस्ताक्षर प्रोसेस नहीं हो सका। कटाई ठीक करें और फिर कोशिश करें।</string>
+    <string name="signature_import_error_process_required">कटाई की पुष्टि करें और हस्ताक्षर की प्रोसेसिंग पूरी होने का इंतज़ार करें।</string>
+    <string name="signature_import_error_size_limit">40 MB तक का चित्र इस्तेमाल करें।</string>
+    <string name="signature_import_error_select_again">हस्ताक्षर का चित्र दोबारा चुनें।</string>
+</resources>

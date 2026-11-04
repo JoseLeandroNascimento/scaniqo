@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_move_handle">拖动控制点对齐内容，点按可居中。</string>
+    <string name="gesture_rotate_handle">绕页面拖动可旋转，点按可旋转 90 度。</string>
+    <string name="gesture_scale_handle">沿对角线拖动角点以调整内容大小。</string>
+    <string name="gesture_scale_increase">放大百分之五</string>
+    <string name="gesture_scale_decrease">缩小百分之五</string>
+</resources>

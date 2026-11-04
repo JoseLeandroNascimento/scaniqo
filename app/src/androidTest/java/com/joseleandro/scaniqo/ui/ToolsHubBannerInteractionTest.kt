@@ -1,5 +1,9 @@
 package com.joseleandro.scaniqo.ui
 
+import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.ads.R as CoreAdsR
+import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,7 +16,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
-import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import com.joseleandro.scaniqo.ui.toolsHub.ToolsHubScreen
@@ -30,23 +33,23 @@ class ToolsHubBannerInteractionTest {
     fun debugBuildUsesGoogleSampleApplicationAndAllPlacementIds() {
         assertEquals(
             "ca-app-pub-3940256099942544~3347511713",
-            text(R.string.admob_app_id),
+            text(CoreAdsR.string.admob_app_id),
         )
         assertEquals(
             "ca-app-pub-3940256099942544/9214589741",
-            text(R.string.admob_banner_unit_id),
+            text(CoreAdsR.string.admob_banner_unit_id),
         )
         assertEquals(
             "ca-app-pub-3940256099942544/6300978111",
-            text(R.string.admob_editor_banner_unit_id),
+            text(CoreAdsR.string.admob_editor_banner_unit_id),
         )
         assertEquals(
             "ca-app-pub-3940256099942544/2247696110",
-            text(R.string.admob_documents_native_unit_id),
+            text(CoreAdsR.string.admob_documents_native_unit_id),
         )
         assertEquals(
             "ca-app-pub-3940256099942544/5224354917",
-            text(R.string.admob_tools_rewarded_unit_id),
+            text(CoreAdsR.string.admob_tools_rewarded_unit_id),
         )
     }
 
@@ -70,7 +73,7 @@ class ToolsHubBannerInteractionTest {
         banner.assertIsDisplayed()
 
         compose.onNodeWithText(text(R.string.tool_catalog_fill)).performScrollTo().performClick()
-        compose.onNodeWithText(text(R.string.quick_tools_sign_hint)).performClick()
+        compose.onNodeWithText(text(CoreResourcesR.string.quick_tools_sign_hint)).performClick()
         banner.assertDoesNotExist()
         compose.onNodeWithContentDescription(text(R.string.tool_catalog_search)).assertDoesNotExist()
 

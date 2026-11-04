@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_title">Dokumen</string>
+    <string name="documents_manage_tags">Kelola tag</string>
+    <string name="documents_scanning">Membuka pemindai…</string>
+    <string name="documents_preparing">Menyiapkan dokumen…</string>
+    <string name="documents_error_title">Dokumen tidak dapat dimuat</string>
+    <string name="documents_error_body">Coba lagi untuk mengakses berkas Anda.</string>
+    <string name="documents_retry">Coba lagi</string>
+    <string name="document_actions">Opsi untuk %1$s</string>
+    <string name="document_download">Unduh</string>
+    <string name="document_share">Bagikan</string>
+    <string name="document_delete">Pindahkan ke sampah</string>
+    <string name="document_cancel">Batal</string>
+    <string name="document_pdf_size">PDF · %1$s</string>
+    <plurals name="document_page_count">
+        <item quantity="other">%d halaman</item>
+    </plurals>
+    <string name="document_viewer_title">Lihat dokumen</string>
+    <string name="document_back">Kembali</string>
+    <string name="document_editor_description">Pilih nama dan tag agar PDF mudah ditemukan nanti.</string>
+    <string name="document_name_counter">%1$d/%2$d</string>
+    <string name="document_tag_optional">Opsional. Pilih tag untuk mengatur dokumen.</string>
+    <string name="document_saved">Dokumen disimpan</string>
+</resources>

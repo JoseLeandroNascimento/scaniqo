@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="onboarding_guide">快速入门指南</string>
+    <string name="onboarding_swipe">左右滑动，按自己的节奏了解。</string>
+    <string name="onboarding_scan_category">扫描</string>
+    <string name="onboarding_scan_hint">在文档页面，点击扫描文档。</string>
+    <string name="onboarding_tags_category">整理</string>
+    <string name="onboarding_tags_hint">在菜单中打开标签，即可编辑名称、颜色和图标。</string>
+    <string name="onboarding_edit_category">编辑</string>
+    <string name="onboarding_edit_hint">使用文档页面的快捷入口，或打开所有工具。</string>
+    <string name="onboarding_share_category">保存和分享</string>
+    <string name="onboarding_share_hint">打开设置 → Google Drive 备份。连接账户是可选的。</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_subtitle">আপনার ফাইল, সবসময় হাতের কাছে।</string>
+    <string name="documents_all_tags">সব</string>
+    <string name="documents_scan">নথি স্ক্যান করুন</string>
+    <string name="documents_loading">নথি লোড হচ্ছে…</string>
+    <string name="documents_empty_title">আপনার পরবর্তী নথি এখান থেকেই শুরু</string>
+    <string name="documents_empty_body">একটি শিট বা একাধিক পৃষ্ঠা স্ক্যান করে সব একটি PDF-এ রাখুন।</string>
+    <string name="documents_filter_empty_title">এই ট্যাগে কোনো নথি নেই</string>
+    <string name="documents_filter_empty_body">অন্য ট্যাগ বেছে নিন বা সব নথি দেখুন।</string>
+    <string name="documents_clear_filter">সব দেখুন</string>
+    <string name="document_edit">সম্পাদনা করুন</string>
+    <plurals name="documents_count">
+        <item quantity="one">%dটি নথি</item>
+        <item quantity="other">%dটি নথি</item>
+    </plurals>
+</resources>

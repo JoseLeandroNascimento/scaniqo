@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="viewer_tool_corrections">校正</string>
+    <string name="viewer_compare_before">调整前</string>
+    <string name="viewer_compare_after">调整后</string>
+    <string name="viewer_compare_description">比较第 %1$d 页的优化效果</string>
+    <string name="viewer_compare_before_description">显示未优化的页面</string>
+    <string name="viewer_compare_after_description">显示优化后的页面</string>
+    <string name="viewer_preview_updating">正在更新预览…</string>
+</resources>

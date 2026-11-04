@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_screen_back">Retour</string>
+    <string name="merge_result_new_document">Nouveau PDF · sans mot de passe</string>
+    <string name="merge_screen_library_error">Impossible de charger vos documents.</string>
+</resources>

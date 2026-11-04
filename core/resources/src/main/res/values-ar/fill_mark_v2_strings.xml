@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_palette_colors">الألوان</string>
+    <string name="fill_mark_recent_color">لون حديث %1$d</string>
+    <string name="fill_mark_manual_size">حجم الخط بالنقاط (6–72)</string>
+    <string name="fill_mark_apply_size">تطبيق الحجم</string>
+    <string name="fill_mark_green">أخضر</string>
+</resources>

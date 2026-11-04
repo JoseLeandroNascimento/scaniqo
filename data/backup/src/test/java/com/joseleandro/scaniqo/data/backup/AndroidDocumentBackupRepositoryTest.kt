@@ -1,0 +1,337 @@
+package com.joseleandro.scaniqo.data.backup
+
+import com.joseleandro.scaniqo.domain.model.DocumentModel
+import com.joseleandro.scaniqo.domain.model.ScannedDocument
+import com.joseleandro.scaniqo.domain.model.TagModel
+import com.joseleandro.scaniqo.domain.repository.DocumentRepository
+import com.joseleandro.scaniqo.domain.repository.TagRepository
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.pdmodel.PDPage
+import com.tom_roush.pdfbox.pdmodel.encryption.AccessPermission
+import com.tom_roush.pdfbox.pdmodel.encryption.StandardProtectionPolicy
+import java.io.File
+import java.net.URI
+import java.util.Base64
+import java.util.UUID
+import java.util.zip.ZipFile
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
+class AndroidDocumentBackupRepositoryTest {
+    @get:Rule val temporary = TemporaryFolder()
+
+    @Test fun newBackupsRestoreOnlyFinalPdfsWithoutTagsOrEditingFiles() = runBlocking {
+        val fixture = fixture()
+        val tag = TagModel(9L, "Recibos", 0xff556677.toInt(), "folder")
+        fixture.tags.state.value = listOf(tag)
+        val original = fixture.seed(editable = true, tagId = tag.id)
+        val directory = File(URI(original.pdfUri)).parentFile!!
+        val originalRecipe = File(directory, "recipe.json").readBytes()
+        File(directory, "thumbnail.jpg").writeText("private thumbnail")
+        val backup = fixture.repository.createBackup()
+        assertEquals(0, backup.editableProjectCount)
+        val result = fixture.repository.restoreBackup(backup.file)
+        assertEquals(1, result.documentCount)
+        assertEquals(0, result.editableProjectCount)
+        val restored = fixture.documents.state.value.single { it.id != original.id }
+        assertNotEquals(original.pdfUri, restored.pdfUri)
+        assertEquals(original.name, restored.name)
+        assertEquals(original.createdAt, restored.createdAt)
+        assertNull(restored.tagId)
+        assertNull(restored.thumbnailUri)
+        assertEquals(listOf(tag), fixture.tags.state.value)
+        val newDirectory = File(URI(restored.pdfUri)).parentFile!!
+        assertEquals(listOf("document.pdf"), newDirectory.list()!!.toList())
+        assertArrayEquals(File(directory, "document.pdf").readBytes(), File(newDirectory, "document.pdf").readBytes())
+        assertArrayEquals(originalRecipe, File(directory, "recipe.json").readBytes())
+        assertTrue(File(directory, "sources.pdf").isFile)
+        assertTrue(File(directory, "signature_1234.png").isFile)
+        fixture.repository.discard(backup.file)
+        assertFalse(backup.file.exists())
+    }
+
+    @Test fun legacyBackupsStillRestoreEditableProjectsAndTags() = runBlocking {
+        val source = fixture()
+        val tag = TagModel(9L, "Recibos", 0xff556677.toInt(), "folder")
+        source.tags.state.value = listOf(tag)
+        val original = source.seed(editable = true, tagId = tag.id)
+        val directory = File(URI(original.pdfUri)).parentFile!!
+        val backup = legacyBackup(source)
+        val destination = fixture()
+        val download = destination.repository.createRestoreFile()
+        backup.copyTo(download, overwrite = true)
+        val result = destination.repository.restoreBackup(download)
+        assertEquals(1, result.editableProjectCount)
+        val restored = destination.documents.state.value.single()
+        val restoredTag = destination.tags.state.value.single()
+        assertEquals(tag.name, restoredTag.name)
+        assertEquals(tag.colorArgb, restoredTag.colorArgb)
+        assertEquals(restoredTag.id, restored.tagId)
+        val newDirectory = File(URI(restored.pdfUri)).parentFile!!
+        listOf("document.pdf", "sources.pdf", "recipe.json", "signature_1234.png").forEach {
+            assertArrayEquals(File(directory, it).readBytes(), File(newDirectory, it).readBytes())
+        }
+    }
+
+    @Test fun brokenAuxiliaryFilesDoNotPreventBackingUpTheFinalPdf() = runBlocking {
+        val fixture = fixture()
+        val original = fixture.seed(editable = true)
+        val directory = File(URI(original.pdfUri)).parentFile!!
+        File(directory, "recipe.json").writeText("{broken")
+        File(directory, "sources.pdf").writeText("not a PDF")
+        val backup = fixture.repository.createBackup()
+        assertEquals(1, backup.documentCount)
+        assertEquals(0, backup.editableProjectCount)
+        ZipFile(backup.file).use { assertEquals(2, it.size()) }
+    }
+
+    @Test fun backupIncludesOnlyActiveDocumentsAndPreservesTrashedProjectFiles() = runBlocking {
+        val fixture = fixture()
+        val active = fixture.seed()
+        val trashed = fixture.seed(editable = true)
+        fixture.documents.state.value = fixture.documents.state.value.map {
+            if (it.id == trashed.id) it.copy(deletedAt = 500L) else it
+        }
+        val directory = File(URI(trashed.pdfUri)).parentFile!!
+        val recipe = File(directory, "recipe.json").readBytes()
+
+        val backup = fixture.repository.createBackup()
+        val result = fixture.repository.restoreBackup(backup.file)
+
+        assertEquals(1, backup.documentCount)
+        assertEquals(1, result.documentCount)
+        val restored = fixture.documents.state.value.single { it.id != active.id && it.id != trashed.id }
+        assertEquals(active.name, restored.name)
+        assertNull(restored.deletedAt)
+        assertArrayEquals(recipe, File(directory, "recipe.json").readBytes())
+        assertTrue(File(directory, "document.pdf").isFile)
+        assertTrue(File(directory, "sources.pdf").isFile)
+    }
+
+    @Test fun protectedPdfRestoresWithoutDecryptingOrCopyingLocalVaultIdsAndSidecars() = runBlocking {
+        val fixture = fixture()
+        val original = fixture.seed(protected = true)
+        val directory = File(URI(original.pdfUri)).parentFile!!
+        File(directory, "recipe.json").writeText("private project metadata")
+        File(directory, "signature_1234.png").writeText("private signature")
+        File(directory, "thumbnail.jpg").writeText("private thumbnail")
+        val backup = fixture.repository.createBackup()
+        assertEquals(1, backup.protectedCount)
+        assertEquals(0, backup.editableProjectCount)
+        ZipFile(backup.file).use { assertEquals(2, it.size()) }
+        val result = fixture.repository.restoreBackup(backup.file)
+        assertEquals(1, result.protectedCount)
+        val restored = fixture.documents.state.value.single { it.id != original.id }
+        assertTrue(restored.isProtected)
+        assertNotEquals(original.protectionKeyId, restored.protectionKeyId)
+        assertTrue(restored.protectionKeyId!!.startsWith("restored:"))
+        assertNull(restored.thumbnailUri)
+        assertArrayEquals(File(URI(original.pdfUri)).readBytes(), File(URI(restored.pdfUri)).readBytes())
+        assertEquals(listOf("document.pdf"), File(URI(restored.pdfUri)).parentFile!!.list()!!.toList())
+    }
+
+    @Test fun aLateDatabaseFailureRollsBackInsertedDocumentsAndNewTags() = runBlocking {
+        val source = fixture()
+        source.tags.state.value = listOf(TagModel(8L, "Trabalho", 0xFF0000FF.toInt()))
+        source.seed(tagId = 8L)
+        source.seed(tagId = 8L)
+        val backup = legacyBackup(source)
+        val destination = fixture()
+        val download = destination.repository.createRestoreFile()
+        backup.copyTo(download, overwrite = true)
+        destination.documents.failAfterInsertOnCall = 2
+        expectFailure { destination.repository.restoreBackup(download) }
+        assertTrue(destination.documents.state.value.isEmpty())
+        assertTrue(destination.tags.state.value.isEmpty())
+        assertTrue(destination.documentsRoot.listFiles().orEmpty().isEmpty())
+        assertEquals(listOf(download.name), destination.cache.list()!!.toList())
+    }
+
+    @Test fun cancellationAfterTheFirstInsertRollsBackOnlyTheNewCopies() = runBlocking {
+        val source = fixture()
+        source.seed()
+        source.seed()
+        val backup = source.repository.createBackup()
+        val destination = fixture()
+        val existing = destination.seed()
+        val download = destination.repository.createRestoreFile()
+        backup.file.copyTo(download, overwrite = true)
+        expectFailure {
+            destination.repository.restoreBackup(download) {
+                if (it.completedDocuments == 1) throw CancellationException("cancel")
+            }
+        }
+        assertEquals(listOf(existing), destination.documents.state.value)
+        assertTrue(File(URI(existing.pdfUri)).isFile)
+        assertEquals(1, destination.documentsRoot.listFiles()!!.size)
+    }
+
+    @Test fun changingTheLibraryDuringBackupDiscardsTheInconsistentSnapshot() = runBlocking {
+        val fixture = fixture()
+        val original = fixture.seed()
+        expectFailure {
+            fixture.repository.createBackup {
+                if (it.completedDocuments == 1) fixture.documents.state.value = listOf(original.copy(name = "Alterado"))
+            }
+        }
+        assertTrue(fixture.cache.listFiles().orEmpty().isEmpty())
+        assertTrue(File(URI(original.pdfUri)).isFile)
+    }
+
+    @Test fun invalidProjectIsRejectedBeforeAnyLibraryMutation() = runBlocking {
+        val source = temporary.newFolder()
+        File(source, "document.pdf").writeText("%PDF-invalid")
+        val archive = temporary.newFile()
+        DocumentBackupArchive().write(archive, listOf(BackupDocumentSource(
+            BackupDocument(UUID.randomUUID().toString(), "Inválido", 1, 1L, null, false, false),
+            source, listOf("document.pdf"))))
+        val destination = fixture()
+        val download = destination.repository.createRestoreFile()
+        archive.copyTo(download, overwrite = true)
+        expectFailure { destination.repository.restoreBackup(download) }
+        assertTrue(destination.documents.state.value.isEmpty())
+        assertTrue(destination.documentsRoot.listFiles().orEmpty().isEmpty())
+    }
+
+    @Test fun temporaryCleanupCannotDeleteAnOwnedDocumentOrAnUnrelatedFile() = runBlocking {
+        val fixture = fixture()
+        val original = fixture.seed()
+        expectFailure { fixture.repository.discard(File(URI(original.pdfUri))) }
+        assertTrue(File(URI(original.pdfUri)).isFile)
+        val download = fixture.repository.createRestoreFile()
+        fixture.repository.discard(download)
+        assertFalse(download.exists())
+    }
+
+    private fun legacyBackup(fixture: Fixture): File {
+        val tagKeys = fixture.tags.state.value.associate { it.id to UUID.randomUUID().toString() }
+        val sources = fixture.documents.state.value.map { document ->
+            val directory = File(URI(document.pdfUri)).parentFile!!
+            val names = directory.listFiles()!!.map { it.name }.sorted()
+            BackupDocumentSource(
+                BackupDocument(
+                    key = UUID.randomUUID().toString(), name = document.name, pageCount = document.pageCount,
+                    createdAt = document.createdAt, tagKey = document.tagId?.let(tagKeys::getValue),
+                    protected = document.isProtected, editableProject = "sources.pdf" in names,
+                ), directory, names,
+            )
+        }
+        return temporary.newFile().also { target ->
+            writeLegacyDocumentBackup(target, sources, fixture.tags.state.value.map {
+                BackupTag(tagKeys.getValue(it.id), it.name, it.colorArgb, it.iconKey)
+            })
+        }
+    }
+
+    private fun fixture(): Fixture {
+        val root = temporary.newFolder()
+        val docsRoot = File(root, "documents").apply { mkdir() }
+        val cache = File(root, "backup").apply { mkdir() }
+        val documents = FakeDocuments()
+        val tags = FakeTags()
+        return Fixture(docsRoot, cache, documents, tags,
+            AndroidDocumentBackupRepository(docsRoot, cache, documents, tags, Dispatchers.Unconfined))
+    }
+
+    private class Fixture(
+        val documentsRoot: File,
+        val cache: File,
+        val documents: FakeDocuments,
+        val tags: FakeTags,
+        val repository: AndroidDocumentBackupRepository,
+    ) {
+        fun seed(editable: Boolean = false, protected: Boolean = false, tagId: Long? = null): DocumentModel {
+            val directory = File(documentsRoot, UUID.randomUUID().toString()).apply { mkdir() }
+            val pdf = File(directory, "document.pdf")
+            PDDocument().use {
+                it.addPage(PDPage())
+                if (protected) it.protect(
+                    StandardProtectionPolicy("fixture-owner", "senha-original", AccessPermission()).apply {
+                        encryptionKeyLength = 128
+                    },
+                )
+                it.save(pdf)
+            }
+            if (editable) {
+                pdf.copyTo(File(directory, "sources.pdf"))
+                // Persisted legacy format is the backup boundary; production DTOs stay private.
+                File(directory, "recipe.json").writeText(
+                    """
+                    {"pages":[{"id":"page","sourcePageIndex":0,
+                    "layout":{"crop":{"left":0.1,"top":0.2,"right":0.9,"bottom":0.8}},
+                    "signatures":[{"id":"ink","filename":"signature_1234.png",
+                    "x":0.1,"y":0.7,"width":0.4,"height":0.1,"rotationDegrees":12.0,"stretchToBounds":true}]}]}
+                    """.trimIndent(),
+                )
+                File(directory, "signature_1234.png").writeBytes(Base64.getDecoder().decode(
+                    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg=="))
+            }
+            val model = DocumentModel(
+                id = documents.nextId++, name = "Documento", pdfUri = pdf.toURI().toString(),
+                pageCount = 1, createdAt = 123456L, sizeBytes = pdf.length(), tagId = tagId,
+                protectionKeyId = if (protected) "old-device-key" else null,
+            )
+            documents.state.value += model
+            return model
+        }
+    }
+
+    private class FakeDocuments : DocumentRepository {
+        val state = MutableStateFlow<List<DocumentModel>>(emptyList())
+        var nextId = 1L
+        var failAfterInsertOnCall: Int? = null
+        private var createCalls = 0
+        override fun observeDocuments() = state.map { list -> list.filter { it.deletedAt == null } }
+        override fun observeTrashedDocuments() = state.map { list -> list.filter { it.deletedAt != null } }
+        override suspend fun moveToTrash(id: Long) = error("unused")
+        override suspend fun restoreFromTrash(id: Long) = error("unused")
+        override suspend fun deletePermanently(id: Long) = error("unused")
+        override suspend fun findById(id: Long) = state.value.find { it.id == id && it.deletedAt == null }
+        override suspend fun create(scan: ScannedDocument, name: String, tagId: Long?): Long {
+            val id = nextId++
+            state.value += DocumentModel(id, name, scan.pdfUri, scan.pageCount, scan.createdAt,
+                scan.sizeBytes, scan.thumbnailUri, tagId, scan.protectionKeyId)
+            if (++createCalls == failAfterInsertOnCall) error("database failure after insertion")
+            return id
+        }
+        override suspend fun delete(document: DocumentModel) { state.value = state.value.filterNot { it.id == document.id } }
+        override suspend fun discardScan(scan: ScannedDocument) = Unit
+        override suspend fun prepareScan(pageUris: List<String>): ScannedDocument = error("unused")
+        override suspend fun update(id: Long, name: String, tagId: Long?) = error("unused")
+        override suspend fun replaceContent(id: Long, scan: ScannedDocument, allowProtectionRemoval: Boolean): DocumentModel = error("unused")
+        override suspend fun export(document: DocumentModel, targetUri: String) = error("unused")
+        override suspend fun prepareShare(document: DocumentModel): String = error("unused")
+    }
+
+    private class FakeTags : TagRepository {
+        val state = MutableStateFlow<List<TagModel>>(emptyList())
+        private var nextId = 100L
+        override fun observeTags() = state
+        override suspend fun findById(id: Long) = state.value.find { it.id == id }
+        override suspend fun create(tag: TagModel): Long {
+            val id = nextId++
+            state.value += tag.copy(id = id)
+            return id
+        }
+        override suspend fun update(tag: TagModel) = error("unused")
+        override suspend fun delete(tag: TagModel) { state.value = state.value.filterNot { it.id == tag.id } }
+    }
+
+    private suspend fun expectFailure(block: suspend () -> Unit) {
+        var thrown = false
+        try { block() } catch (_: Exception) { thrown = true }
+        assertTrue("A operação deveria falhar.", thrown)
+    }
+}

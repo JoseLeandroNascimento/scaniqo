@@ -1,8 +1,8 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="tool_catalog_title">टूल</string>
     <string name="tool_catalog_heading">आप क्या करना चाहते हैं?</string>
     <string name="tool_catalog_search">टूल खोजें</string>
-    <string name="tool_catalog_clear">खोज साफ़ करें</string>
     <string name="tool_catalog_all">सभी</string>
     <string name="tool_catalog_organize">व्यवस्थित करें</string>
     <string name="tool_catalog_convert">बदलें</string>
@@ -10,13 +10,8 @@
     <string name="tool_catalog_fill">भरें और हस्ताक्षर करें</string>
     <string name="tool_catalog_empty">कोई टूल नहीं मिला।</string>
     <string name="tool_catalog_reset">सभी टूल देखें</string>
-    <string name="tool_catalog_compress">PDF कंप्रेस करें</string>
     <string name="tool_catalog_compress_hint">भेजने और शेयर करने के लिए आकार घटाएँ</string>
-    <string name="tool_catalog_fill_page">पृष्ठ पर भरें</string>
+    <string name="tool_catalog_fill_page">भरें</string>
     <string name="tool_catalog_fill_hint">दस्तावेज़ पर टेक्स्ट और निशान रखें</string>
-    <string name="tool_catalog_watermark">वॉटरमार्क</string>
-    <string name="tool_catalog_watermark_hint">टेक्स्ट, इमेज या स्टैम्प से अपना रूप दें</string>
-    <string name="tool_catalog_choose_for">%1$s के लिए दस्तावेज़ चुनें</string>
-    <string name="tool_catalog_count">%1$d टूल उपलब्ध हैं</string>
     <string name="tool_catalog_empty_hint">कोई दूसरा खोज शब्द या श्रेणी आज़माएँ।</string>
 </resources>

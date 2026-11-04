@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_scan_align">ضع توقيعك داخل الإطار</string>
+    <string name="signature_scan_hold_still">ثبّت الهاتف…</string>
+    <string name="signature_scan_more_light">انتقل إلى مكان أكثر إضاءة</string>
+    <string name="signature_scan_move_inside">ضع التوقيع بالكامل داخل الإطار</string>
+    <string name="signature_scan_auto">التقاط تلقائي</string>
+    <string name="signature_scan_manual">جاهز؟ اضغط على التقاط صورة</string>
+    <string name="signature_scan_capture_now">التقاط صورة</string>
+</resources>

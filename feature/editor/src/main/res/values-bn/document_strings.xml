@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_metadata_edit">নাম ও ট্যাগ সম্পাদনা করুন</string>
+    <string name="document_page_position">পৃষ্ঠা %1$d / %2$d</string>
+    <string name="document_processing">ফাইল প্রস্তুত হচ্ছে…</string>
+    <string name="document_not_found_title">নথি পাওয়া যায়নি</string>
+    <string name="document_not_found_body">এই নথি এখন আপনার লাইব্রেরিতে নেই।</string>
+    <string name="document_return">নথিতে ফিরে যান</string>
+</resources>

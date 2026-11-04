@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_title">Резервная копия в Google Drive</string>
+    <string name="backup_heading">Ваши PDF под защитой</string>
+    <string name="backup_connected">Аккаунт подключён</string>
+    <string name="backup_count">PDF на этом устройстве: %1$d</string>
+    <string name="backup_folder">Папка: Scaniqo backups</string>
+    <string name="backup_not_connected">Аккаунт не подключён</string>
+    <string name="backup_scope_title">Только сохранённые PDF</string>
+    <string name="backup_local_summary">Готово к копированию: %1$d PDF · %2$s</string>
+    <string name="backup_automatic_enable">Создавать копии автоматически</string>
+    <string name="backup_automatic_body">Периодически обновляет вашу резервную копию.</string>
+    <string name="backup_wifi_body">Ожидает безлимитное подключение, чтобы не расходовать мобильный трафик.</string>
+    <string name="backup_charging_body">Ожидает подключения устройства к источнику питания.</string>
+    <string name="backup_automatic_authorize">Для автоматического копирования снова нужно разрешение. Подключите Google Drive повторно.</string>
+    <string name="backup_empty_title">Записей пока нет</string>
+    <string name="backup_history_unloaded_body">Обновите, чтобы проверить текущую копию на Drive.</string>
+    <string name="backup_current">Текущая копия</string>
+    <string name="backup_current_unavailable">На Drive нет доступной копии.</string>
+</resources>

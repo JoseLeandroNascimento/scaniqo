@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_title">扫描签名</string>
+    <string name="signature_camera_guidance">将签名放在框内。仅使用框内区域，背景会自动移除。</string>
+    <string name="signature_camera_capture">拍摄签名</string>
+</resources>

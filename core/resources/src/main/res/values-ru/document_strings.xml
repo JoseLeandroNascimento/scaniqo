@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_title">Документы</string>
+    <string name="documents_manage_tags">Управление метками</string>
+    <string name="documents_scanning">Открытие сканера…</string>
+    <string name="documents_preparing">Подготовка документа…</string>
+    <string name="documents_error_title">Не удалось загрузить документы</string>
+    <string name="documents_error_body">Повторите попытку, чтобы открыть файлы.</string>
+    <string name="documents_retry">Повторить</string>
+    <string name="document_actions">Действия с %1$s</string>
+    <string name="document_download">Скачать</string>
+    <string name="document_share">Поделиться</string>
+    <string name="document_delete">В корзину</string>
+    <string name="document_cancel">Отмена</string>
+    <string name="document_pdf_size">PDF · %1$s</string>
+    <plurals name="document_page_count">
+        <item quantity="one">%d страница</item>
+        <item quantity="few">%d страницы</item>
+        <item quantity="many">%d страниц</item>
+        <item quantity="other">%d страницы</item>
+    </plurals>
+    <string name="document_viewer_title">Просмотр документа</string>
+    <string name="document_back">Назад</string>
+    <string name="document_editor_description">Выберите название и метку, чтобы позже найти PDF.</string>
+    <string name="document_name_counter">%1$d/%2$d</string>
+    <string name="document_tag_optional">Необязательно. Выберите метку для документа.</string>
+    <string name="document_saved">Документ сохранён</string>
+</resources>

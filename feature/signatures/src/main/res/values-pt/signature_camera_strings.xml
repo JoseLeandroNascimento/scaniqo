@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_permission_reason">Permita a câmera para escanear sua assinatura.</string>
+    <string name="signature_camera_permission_settings">Ative a câmera nas configurações para escanear.</string>
+    <string name="signature_camera_open_settings">Abrir configurações</string>
+    <string name="signature_camera_allow">Permitir câmera</string>
+    <string name="signature_camera_cancel">Cancelar</string>
+    <string name="signature_camera_capturing">Fotografando…</string>
+    <string name="signature_camera_starting">Abrindo câmera…</string>
+    <string name="signature_camera_unavailable">Não foi possível abrir a câmera. Tente novamente.</string>
+    <string name="signature_camera_missing">Câmera indisponível. Volte e importe uma imagem.</string>
+    <string name="signature_camera_capture_failed">Não foi possível fotografar a assinatura. Tente novamente.</string>
+    <string name="signature_camera_retry">Tentar novamente</string>
+    <string name="signature_camera_frame_changed">O celular se moveu. Segure firme e tente de novo.</string>
+</resources>

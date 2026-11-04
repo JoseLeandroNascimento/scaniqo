@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_move_handle">বিষয়বস্তু সারিবদ্ধ করতে হাতল টানুন। মাঝে আনতে ট্যাপ করুন।</string>
+    <string name="gesture_rotate_handle">ঘোরাতে শিটের চারদিকে টানুন। 90 ডিগ্রি ঘোরাতে ট্যাপ করুন।</string>
+    <string name="gesture_scale_handle">বিষয়বস্তুর আকার বদলাতে কোণা তির্যকভাবে টানুন।</string>
+    <string name="gesture_scale_increase">5 শতাংশ বড় করুন</string>
+    <string name="gesture_scale_decrease">5 শতাংশ ছোট করুন</string>
+</resources>

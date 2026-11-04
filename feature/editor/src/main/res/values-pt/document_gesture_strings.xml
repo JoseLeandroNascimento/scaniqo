@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_move_handle">Arraste a alça para alinhar o conteúdo. Toque para centralizar.</string>
+    <string name="gesture_rotate_handle">Arraste ao redor da folha para girar. Toque para girar 90 graus.</string>
+    <string name="gesture_scale_handle">Arraste o canto na diagonal para redimensionar o conteúdo.</string>
+    <string name="gesture_scale_increase">Ampliar 5 por cento</string>
+    <string name="gesture_scale_decrease">Reduzir 5 por cento</string>
+</resources>

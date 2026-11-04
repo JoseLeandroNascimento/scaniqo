@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_notification_channel">Document backup</string>
+    <string name="backup_notification_title">Backup in progress</string>
+    <string name="backup_notification_message">Saving your PDFs to Google Drive.</string>
+</resources>

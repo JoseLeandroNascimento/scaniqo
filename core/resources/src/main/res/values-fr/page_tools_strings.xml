@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_merge">Fusionner des PDF</string>
+    <string name="pages_numbering_global_hint">Inclut aussi les pages ajoutées plus tard.</string>
+    <string name="pages_move_title">Déplacer directement</string>
+    <string name="pages_move_from">Origine</string>
+    <string name="pages_move_to">Destination</string>
+    <string name="pages_move_same">Choisissez une position différente de l’origine.</string>
+    <string name="pages_move_hint">Utilisez les numéros de l’ordre actuel.</string>
+</resources>

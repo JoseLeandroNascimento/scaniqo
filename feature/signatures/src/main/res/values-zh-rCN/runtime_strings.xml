@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="runtime_signature_delete_body">“%1$s”将从签名库移除，已应用于保存文档中的签名会保留。</string>
+    <string name="runtime_signatures_empty_title">暂无已保存的签名</string>
+</resources>

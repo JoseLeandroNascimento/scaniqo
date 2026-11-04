@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_v3_add_to_page">Añadir a la página</string>
+    <string name="fill_v3_writing">Escribiendo en la página</string>
+    <string name="fill_v3_text_selected">Texto seleccionado</string>
+    <string name="fill_v3_mark_selected">Marca seleccionada</string>
+    <string name="fill_v3_text">Texto</string>
+    <string name="fill_v3_tap_page">Toca la página para añadirlo</string>
+    <string name="fill_v3_tap_again">Toca la página para añadir una marca</string>
+    <string name="fill_v3_hide_keyboard">Ocultar teclado</string>
+    <string name="fill_v3_edit_text">Editar texto</string>
+    <string name="fill_v3_size">Tamaño</string>
+    <string name="fill_v3_mark_size_short">Marca</string>
+    <string name="fill_v3_color">Color</string>
+    <string name="fill_v3_format">Formato</string>
+    <string name="fill_v3_regular">Normal</string>
+    <string name="fill_v3_drag_corner">También puedes arrastrar una esquina en la página.</string>
+    <string name="fill_v3_opacity">Intensidad · %1$d%%</string>
+    <string name="fill_v3_weight">Peso</string>
+    <string name="fill_v3_precise_position">Posición precisa</string>
+    <string name="fill_v3_revert_element">Revertir edición del elemento</string>
+    <string name="fill_v3_tap_next_mark">Toca para añadir otra marca</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_permission_reason">允许使用相机来拍摄签名。照片仅用于创建签名。</string>
+    <string name="signature_camera_permission_settings">相机访问已停用。请在应用设置中启用相机权限以拍摄签名。</string>
+    <string name="signature_camera_open_settings">打开设置</string>
+    <string name="signature_camera_allow">允许使用相机</string>
+    <string name="signature_camera_cancel">取消</string>
+    <string name="signature_camera_capturing">正在拍照…</string>
+    <string name="signature_camera_starting">正在打开相机…</string>
+    <string name="signature_camera_unavailable">无法打开相机。请确认相机可用后重试。</string>
+    <string name="signature_camera_missing">此设备没有可用的相机。请返回并导入图片。</string>
+    <string name="signature_camera_capture_failed">无法拍摄签名。请重试。</string>
+    <string name="signature_camera_retry">重试</string>
+    <string name="signature_camera_frame_changed">拍摄时取景框发生了变化。请保持设备位置不变并重新拍照。</string>
+</resources>

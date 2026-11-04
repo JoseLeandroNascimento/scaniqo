@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_thumbnails">مصغّرات</string>
+    <string name="pages_v2_intervals">نطاقات</string>
+    <string name="pages_v2_from">من</string>
+    <string name="pages_v2_until">إلى</string>
+    <string name="pages_v2_add_range">إضافة نطاق</string>
+    <string name="pages_v2_update_range">تحديث النطاق</string>
+    <string name="pages_v2_edit_list">تحرير القائمة</string>
+    <string name="pages_v2_confirm_selection">تأكيد التحديد</string>
+    <string name="pages_v2_cancel_edit">إلغاء التحرير</string>
+    <string name="pages_v2_order">الترتيب: %1$s</string>
+    <string name="pages_v2_document_order">استخدام ترتيب PDF</string>
+    <string name="pages_v2_range_incomplete">أدخل بداية النطاق ونهايته.</string>
+    <string name="pages_v2_range_reversed">يجب ألا تتجاوز البداية النهاية.</string>
+    <string name="pages_v2_edit_range">تحرير النطاق %1$s</string>
+    <string name="pages_v2_remove_range">إزالة النطاق %1$s</string>
+    <string name="pages_v2_pending_selection">أكد التحديد أو ألغِه قبل المتابعة.</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="zero">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="one">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="two">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="few">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="many">إنشاء PDF من %1$d صفحة</item>
+        <item quantity="other">إنشاء PDF من %1$d صفحة</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="zero">تصدير %1$d صفحة</item>
+        <item quantity="one">تصدير %1$d صفحة</item>
+        <item quantity="two">تصدير %1$d صفحة</item>
+        <item quantity="few">تصدير %1$d صفحة</item>
+        <item quantity="many">تصدير %1$d صفحة</item>
+        <item quantity="other">تصدير %1$d صفحة</item>
+    </plurals>
+    <string name="pages_v2_list_hint">مثال: 5, 2-4, 1. يُحفظ الترتيب المُدخل.</string>
+</resources>

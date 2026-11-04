@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="toast_success_title">Tudo certo</string>
+    <string name="toast_error_title">Algo deu errado</string>
+    <string name="toast_info_title">Informação</string>
+    <string name="toast_dismiss">Fechar mensagem</string>
+</resources>

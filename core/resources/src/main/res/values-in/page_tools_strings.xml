@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_merge">Gabungkan PDF</string>
+    <string name="pages_numbering_global_hint">Termasuk halaman yang ditambahkan nanti.</string>
+    <string name="pages_move_title">Pindahkan langsung</string>
+    <string name="pages_move_from">Asal</string>
+    <string name="pages_move_to">Tujuan</string>
+    <string name="pages_move_same">Pilih posisi yang berbeda dari asal.</string>
+    <string name="pages_move_hint">Gunakan nomor urutan saat ini.</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_image">Importer une image</string>
+    <string name="signature_import_image_body">Choisissez une photo dans la galerie ou les fichiers.</string>
+    <string name="signature_import_scan">Numériser une signature</string>
+    <string name="signature_import_scan_body">Photographiez une signature sur papier avec la caméra.</string>
+    <string name="signature_import_automatic">Le fond est supprimé automatiquement. Vérifiez les traits avant de sauvegarder.</string>
+    <string name="signature_import_crop_hint">Faites glisser les bords pour sélectionner la signature. Déplacez l’image et utilisez deux doigts pour zoomer ou dézoomer.</string>
+    <string name="signature_import_confirm_crop">Confirmer le recadrage</string>
+    <string name="signature_import_processing">Préparation de la signature…</string>
+    <string name="signature_import_preview_hint">Vérifiez les traits sur différents fonds avant d’enregistrer.</string>
+    <string name="signature_import_adjust_crop">Revenir au recadrage</string>
+    <string name="signature_import_retake">Reprendre la photo</string>
+    <string name="signature_import_transparent">Damier</string>
+    <string name="signature_import_white">Blanc</string>
+    <string name="signature_import_dark">Sombre</string>
+</resources>

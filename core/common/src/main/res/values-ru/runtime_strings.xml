@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="runtime_signatures_empty">Библиотека пуста. Создайте первую подпись.</string>
+    <string name="runtime_signature_rename">Переименовать подпись</string>
+    <string name="runtime_name">Название</string>
+    <string name="runtime_image">Изображение</string>
+    <string name="runtime_image_choose">Выбрать изображение</string>
+    <string name="runtime_image_change">Сменить изображение</string>
+    <string name="runtime_remove_white">Удалить белый фон при сохранении</string>
+    <string name="runtime_signature_image_hint">Прозрачные PNG сохраняют прозрачность. Изображения до 10 MB.</string>
+    <string name="runtime_saving">Сохранение…</string>
+    <string name="runtime_default_document">Документ %1$s</string>
+    <string name="runtime_operation_failed">Не удалось завершить операцию. Повторите попытку.</string>
+    <string name="runtime_signature_saved">Подпись сохранена.</string>
+    <string name="runtime_signature_deleted">Подпись удалена.</string>
+    <string name="runtime_signature_renamed">Подпись переименована.</string>
+</resources>

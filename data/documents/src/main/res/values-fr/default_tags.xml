@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="default_tag_work">Travail</string>
+    <string name="default_tag_personal">Personnel</string>
+    <string name="default_tag_studies">Études</string>
+    <string name="default_tag_health">Santé</string>
+    <string name="default_tag_finances">Finances</string>
+    <string name="default_tag_receipts">Reçus</string>
+    <string name="default_tag_contracts">Contrats</string>
+    <string name="default_tag_home">Maison</string>
+</resources>

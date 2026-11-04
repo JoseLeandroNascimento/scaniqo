@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="viewer_tool_corrections">Исправить</string>
+    <string name="viewer_compare_before">До</string>
+    <string name="viewer_compare_after">После</string>
+    <string name="viewer_compare_description">Сравнить улучшения страницы %1$d</string>
+    <string name="viewer_compare_before_description">Показать страницу без улучшений</string>
+    <string name="viewer_compare_after_description">Показать страницу с улучшениями</string>
+    <string name="viewer_preview_updating">Обновление предпросмотра…</string>
+</resources>

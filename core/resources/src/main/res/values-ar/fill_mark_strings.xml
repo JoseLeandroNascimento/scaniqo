@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_page_hint">اضغط لتحديد الموضع. اسحب العنصر أو الزاوية للضبط.</string>
+    <string name="fill_mark_select_hint">اضغط على عنصر لتعديله. استخدم + لتكبير الصفحة.</string>
+    <string name="fill_mark_style">النمط</string>
+    <string name="fill_mark_position">الموضع</string>
+    <string name="fill_mark_zoom">التكبير %1$d%%</string>
+    <string name="fill_mark_zoom_in">تكبير المستند</string>
+    <string name="fill_mark_zoom_out">تصغير المستند</string>
+    <string name="fill_mark_move_page">تحريك الصفحة</string>
+    <string name="fill_mark_edit_page">تحديد موضع العنصر</string>
+    <string name="fill_mark_pan_hint">اسحب للتنقل. اضغط على القلم للعودة إلى التعديل.</string>
+    <string name="fill_mark_font_points">%1$d نقطة</string>
+    <string name="fill_mark_opacity_label">الشدة</string>
+    <string name="fill_mark_scope_hint">اختر موضع التطبيق</string>
+    <string name="fill_mark_values">نصوصي</string>
+    <string name="fill_mark_new">جديد</string>
+    <string name="fill_mark_duplicate">تكرار العنصر</string>
+    <string name="fill_mark_cancel">إلغاء التعديل</string>
+    <string name="fill_mark_number">رقم الصفحة</string>
+    <string name="fill_mark_logo">الشعار</string>
+    <string name="fill_mark_elements">عدد العناصر: %1$d</string>
+    <string name="fill_mark_images">عدد الصور: %1$d</string>
+    <string name="fill_mark_resize">اسحب مقابض الزوايا لضبط الحجم. استخدم مقبض الأسهم للتحريك.</string>
+    <string name="fill_mark_preset_confidential">سري</string>
+    <string name="fill_mark_preset_copy">نسخة</string>
+    <string name="fill_mark_preset_draft">مسودة</string>
+    <string name="fill_mark_presets">استخدام قالب</string>
+    <string name="fill_mark_number_hint">استخدم {pagina} و{total}. مثال: الصفحة {pagina} من {total}.</string>
+    <string name="fill_mark_draft_pending">طبّق العنصر أو ألغِه قبل تغيير الصفحة.</string>
+    <string name="fill_mark_color_selected">تم تحديد %1$s</string>
+    <string name="fill_mark_element_label">العنصر: %1$s</string>
+    <string name="fill_inline_hint">اضغط على الصفحة للكتابة. استخدم إصبعين للتكبير.</string>
+    <string name="fill_inline_check_hint">اضغط لإضافة علامة. استخدم إصبعين للتكبير.</string>
+    <string name="fill_inline_type_hint">اكتب في المستند. اضغط خارجه لإضافة نص آخر.</string>
+    <string name="fill_inline_placeholder">اكتب هنا</string>
+    <string name="fill_inline_hide_keyboard">إنهاء الكتابة</string>
+    <string name="fill_inline_properties">ضبط العنصر</string>
+    <string name="fill_inline_more">المزيد من خيارات التعبئة</string>
+    <string name="fill_inline_hide_controls">إخفاء عناصر التحكم</string>
+    <string name="fill_inline_show_controls">إظهار عناصر التحكم</string>
+    <string name="fill_inline_text_mode">كتابة</string>
+    <string name="fill_inline_saved_hint">عند الضغط على موضع آخر، يُطبّق النص الحالي. يمكنك التراجع من الأعلى.</string>
+    <string name="fill_inline_back_to_page">العودة إلى المستند</string>
+    <string name="fill_selection_move">تحريك العنصر</string>
+    <string name="fill_selection_hint">الزوايا تضبط الحجم، ومقبض الأسهم يحرك العنصر.</string>
+</resources>

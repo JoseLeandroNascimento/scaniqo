@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_scope_current">This page</string>
+    <string name="document_scope_select">Choose</string>
+    <string name="document_scope_all">All</string>
+    <string name="document_scope_title">Which pages should this apply to?</string>
+    <string name="document_scope_hint">The same adjustment will apply only to checked pages.</string>
+    <string name="document_scope_select_all">Select all</string>
+    <string name="document_scope_clear">Clear</string>
+    <string name="document_scope_confirm">Use selection</string>
+    <string name="document_scope_cancel">Cancel</string>
+    <string name="document_scope_page">Page %1$d</string>
+    <string name="document_scope_selected_count">Choose (%1$d)</string>
+    <string name="document_scope_empty">Select at least one page.</string>
+    <plurals name="document_scope_count">
+        <item quantity="one">%1$d page selected</item>
+        <item quantity="other">%1$d pages selected</item>
+    </plurals>
+    <string name="corrections_preview_previous">Preview previous page</string>
+    <string name="corrections_preview_next">Preview next page</string>
+    <string name="corrections_preview_pages">Choose a page to preview</string>
+    <string name="corrections_preview_error">Could not update the preview.</string>
+    <string name="corrections_preview_retry">Try again</string>
+</resources>

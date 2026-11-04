@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_title">نسخ احتياطي على Google Drive</string>
+    <string name="backup_heading">ملفات PDF محفوظة بأمان</string>
+    <string name="backup_connected">الحساب متصل</string>
+    <string name="backup_count">%1$d ملف PDF على هذا الجهاز</string>
+    <string name="backup_folder">المجلد: Scaniqo backups</string>
+    <string name="backup_not_connected">لا يوجد حساب مرتبط</string>
+    <string name="backup_scope_title">ملفات PDF المحفوظة فقط</string>
+    <string name="backup_local_summary">جاهز للنسخ: %1$d ملف PDF · %2$s</string>
+    <string name="backup_automatic_enable">النسخ الاحتياطي تلقائيًا</string>
+    <string name="backup_automatic_body">يحدّث نسختك الاحتياطية بشكل دوري.</string>
+    <string name="backup_wifi_body">ينتظر اتصالًا غير محدود لتجنب رسوم بيانات الهاتف.</string>
+    <string name="backup_charging_body">ينتظر توصيل الجهاز بمصدر طاقة.</string>
+    <string name="backup_automatic_authorize">يحتاج النسخ الاحتياطي التلقائي إلى إذنك مجددًا. أعد ربط Google Drive لاستئنافه.</string>
+    <string name="backup_empty_title">لا توجد سجلات بعد</string>
+    <string name="backup_history_unloaded_body">حدّث للتحقق من النسخة الاحتياطية الحالية على Drive.</string>
+    <string name="backup_current">النسخة الحالية</string>
+    <string name="backup_current_unavailable">لا توجد نسخة احتياطية متاحة على Drive.</string>
+</resources>

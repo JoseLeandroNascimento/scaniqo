@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_subtitle">Seus arquivos, sempre à mão.</string>
+    <string name="documents_all_tags">Todos</string>
+    <string name="documents_scan">Escanear documento</string>
+    <string name="documents_loading">Carregando documentos…</string>
+    <string name="documents_empty_title">Seu próximo documento começa aqui</string>
+    <string name="documents_empty_body">Escaneie uma folha ou várias páginas e guarde tudo em um PDF.</string>
+    <string name="documents_filter_empty_title">Nenhum documento nesta tag</string>
+    <string name="documents_filter_empty_body">Escolha outra tag ou veja todos os documentos.</string>
+    <string name="documents_clear_filter">Ver todos</string>
+    <string name="document_edit">Editar</string>
+    <plurals name="documents_count">
+        <item quantity="one">%d documento</item>
+        <item quantity="many">%d documentos</item>
+        <item quantity="other">%d documentos</item>
+    </plurals>
+</resources>

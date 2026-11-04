@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_property_actions">إجراءات العنصر</string>
+    <string name="fill_property_type">نوع العلامة</string>
+    <string name="fill_property_style">نمط النص</string>
+    <string name="fill_property_transform">تحريك وتدوير</string>
+    <string name="fill_property_revert">التراجع عن التعديلات</string>
+    <string name="fill_property_opacity">العتامة</string>
+</resources>

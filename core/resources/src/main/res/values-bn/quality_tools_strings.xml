@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow_body">কাগজের হালকা ছায়া কমায় এবং অক্ষর অক্ষত রাখে।</string>
+    <string name="quality_filter_light_body">একই ছবির উজ্জ্বল ও অন্ধকার অংশে ভারসাম্য আনে।</string>
+    <string name="quality_filter_white_body">নথির হলদে বা ধূসর পটভূমি হালকা করে।</string>
+    <string name="quality_filter_adaptive_body">অসম আলোয় টেক্সটের জন্য অভিযোজিত সাদাকালো।</string>
+    <string name="quality_filter_noise_body">মূল রেজোলিউশন না বাড়িয়ে দানা ও ছোট বিন্দু কমায়।</string>
+    <string name="quality_filter_sharp_body">প্রান্তের স্পষ্টতা বাড়ায়। কম তীব্রতায় কৃত্রিম সীমানা এড়ানো যায়।</string>
+    <string name="quality_filter_bleed_body">শিটের অন্য পাশের হালকা ছাপ কমায়। হালকা টেক্সট ও টীকাও দেখে নিন।</string>
+    <string name="quality_filter_intensity">তীব্রতা</string>
+    <string name="quality_percentage">%1$d%%</string>
+    <string name="quality_correction_angle">হেলানো ভাব</string>
+    <string name="quality_correction_perspective">পার্সপেক্টিভ</string>
+    <string name="quality_correction_curve">বক্রতা</string>
+    <string name="quality_angle_title">তোলা ছবি সোজা করুন</string>
+    <string name="quality_angle_body">নথির লাইন সারিবদ্ধ করতে সামান্য হেলানো ভাব ঠিক করুন।</string>
+    <string name="quality_angle_value">%1$.1f°</string>
+    <string name="quality_angle_detect">হেলানো ভাব শনাক্ত করুন</string>
+    <string name="quality_angle_use">পরামর্শ ব্যবহার করুন: %1$.1f°</string>
+    <string name="quality_angle_no_suggestion">এই পৃষ্ঠায় নির্ভরযোগ্য হেলানো কোণ পাওয়া যায়নি।</string>
+    <string name="quality_angle_all_hint">সব পৃষ্ঠায় একই কোণ প্রয়োগ হবে।</string>
+    <string name="quality_source_preview">মূল তোলা ছবি</string>
+    <string name="quality_perspective_body">চার কোণা নথির প্রান্ত পর্যন্ত টানুন। বেছে নেওয়া অংশ সোজা করা হবে।</string>
+    <string name="quality_perspective_all_hint">সব পৃষ্ঠায় একই আনুপাতিক সীমানা ব্যবহার হবে।</string>
+    <string name="quality_corner_top_left">উপরের বাম কোণা</string>
+    <string name="quality_corner_top_right">উপরের ডান কোণা</string>
+    <string name="quality_corner_bottom_right">নিচের ডান কোণা</string>
+    <string name="quality_corner_bottom_left">নিচের বাম কোণা</string>
+    <string name="quality_corner_left">বামে সরান</string>
+    <string name="quality_corner_right">ডানে সরান</string>
+    <string name="quality_corner_up">উপরে সরান</string>
+    <string name="quality_corner_down">নিচে সরান</string>
+    <string name="quality_preview_unavailable">মূল তোলা ছবি খোলা যায়নি।</string>
+    <string name="quality_curve_title">বক্রতা সংশোধন করুন</string>
+    <string name="quality_curve_body">বইয়ের পৃষ্ঠার জন্য আনুমানিক ম্যানুয়াল সংশোধন। আলতো করে সমন্বয় করে ফলাফল দেখুন; ভাঁজে ঢাকা বিস্তারিত পুনর্গঠন হয় না।</string>
+    <string name="quality_curve_value">%1$+d%%</string>
+    <string name="quality_curve_reset">সংশোধন ছাড়া</string>
+</resources>

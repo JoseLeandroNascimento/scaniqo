@@ -1,5 +1,8 @@
 package com.joseleandro.scaniqo.ui.branding
 
+import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,8 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-import com.joseleandro.scaniqo.R
 
 /** Load the actual launcher resources using the installed preview runtime. */
 @Preview(name = "Native launcher", apiLevel = 34, widthDp = 280, heightDp = 160, showBackground = true)
@@ -88,7 +89,7 @@ private fun BrandIcon(size: Dp, shape: Shape, monochrome: Boolean = false, dark:
     val tint = if (dark) Color(0xFFC0ECE1) else Color(0xFF12382F)
     Box(Modifier.size(size).clip(shape).background(background)) {
         Image(
-            painterResource(if (monochrome) R.drawable.ic_launcher_monochrome else R.drawable.ic_launcher_foreground),
+            painterResource(if (monochrome) CoreResourcesR.drawable.ic_launcher_monochrome else R.drawable.ic_launcher_foreground),
             contentDescription = null,
             colorFilter = if (monochrome) ColorFilter.tint(tint) else null,
             modifier = Modifier.fillMaxSize().graphicsLayer { scaleX = 1.5f; scaleY = 1.5f },

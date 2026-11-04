@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_tutorial_group">Primeiros passos</string>
+    <string name="settings_tutorial_replay">Ver tutorial</string>
+    <string name="settings_tutorial_summary">Relembre o que você pode fazer no Scaniqo</string>
+</resources>

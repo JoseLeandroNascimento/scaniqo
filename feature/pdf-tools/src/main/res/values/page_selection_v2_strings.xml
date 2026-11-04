@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_thumbnails">Thumbnails</string>
+    <string name="pages_v2_intervals">Ranges</string>
+    <string name="pages_v2_from">From</string>
+    <string name="pages_v2_until">To</string>
+    <string name="pages_v2_add_range">Add range</string>
+    <string name="pages_v2_update_range">Update range</string>
+    <string name="pages_v2_edit_list">Edit list</string>
+    <string name="pages_v2_confirm_selection">Confirm selection</string>
+    <string name="pages_v2_cancel_edit">Cancel editing</string>
+    <string name="pages_v2_order">Order: %1$s</string>
+    <string name="pages_v2_document_order">Use PDF order</string>
+    <string name="pages_v2_range_incomplete">Enter both ends of the range.</string>
+    <string name="pages_v2_range_reversed">The start must be before or equal to the end.</string>
+    <string name="pages_v2_edit_range">Edit range %1$s</string>
+    <string name="pages_v2_remove_range">Remove range %1$s</string>
+    <string name="pages_v2_pending_selection">Confirm or cancel the selection before continuing.</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">Create PDF with %1$d page</item>
+        <item quantity="other">Create PDF with %1$d pages</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">Export %1$d page</item>
+        <item quantity="other">Export %1$d pages</item>
+    </plurals>
+    <string name="pages_v2_list_hint">For example: 5, 2-4, 1. Keeps the entered order.</string>
+</resources>

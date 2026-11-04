@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_scope_current">এই পৃষ্ঠা</string>
+    <string name="document_scope_select">বেছে নিন</string>
+    <string name="document_scope_all">সব</string>
+    <string name="document_scope_title">কোন পৃষ্ঠায় প্রয়োগ করবেন?</string>
+    <string name="document_scope_hint">একই সমন্বয় শুধু চিহ্নিত পৃষ্ঠায় প্রয়োগ হবে।</string>
+    <string name="document_scope_select_all">সব বেছে নিন</string>
+    <string name="document_scope_clear">মুছুন</string>
+    <string name="document_scope_confirm">নির্বাচন ব্যবহার করুন</string>
+    <string name="document_scope_cancel">বাতিল</string>
+    <string name="document_scope_page">পৃষ্ঠা %1$d</string>
+    <string name="document_scope_selected_count">বেছে নিন (%1$d)</string>
+    <string name="document_scope_empty">অন্তত একটি পৃষ্ঠা বেছে নিন।</string>
+    <plurals name="document_scope_count">
+        <item quantity="one">%1$dটি পৃষ্ঠা বেছে নেওয়া হয়েছে</item>
+        <item quantity="other">%1$dটি পৃষ্ঠা বেছে নেওয়া হয়েছে</item>
+    </plurals>
+    <string name="corrections_preview_previous">আগের পৃষ্ঠার প্রিভিউ</string>
+    <string name="corrections_preview_next">পরের পৃষ্ঠার প্রিভিউ</string>
+    <string name="corrections_preview_pages">দেখার জন্য পৃষ্ঠা বেছে নিন</string>
+    <string name="corrections_preview_error">প্রিভিউ আপডেট করা যায়নি।</string>
+    <string name="corrections_preview_retry">আবার চেষ্টা করুন</string>
+</resources>

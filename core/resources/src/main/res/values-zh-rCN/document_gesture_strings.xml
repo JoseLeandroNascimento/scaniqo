@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_straighten_handle">左右拖动控制点以调整倾斜。</string>
+    <string name="gesture_curvature_handle">上下拖动控制点以校正弯曲。</string>
+    <string name="gesture_angle_increase">向右旋转 1 度</string>
+    <string name="gesture_angle_decrease">向左旋转 1 度</string>
+    <string name="gesture_curve_increase">向下弯曲</string>
+    <string name="gesture_curve_decrease">向上弯曲</string>
+    <string name="gesture_drag_handle">拖动控制点</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_share_chooser">PDF শেয়ার করুন</string>
+    <string name="document_pdf_loading">পৃষ্ঠা লোড হচ্ছে</string>
+    <string name="document_thumbnail_description">নথির থাম্বনেইল</string>
+</resources>

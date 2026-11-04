@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_pen_color_title">কলমের রং</string>
+    <string name="signature_pen_color_description">কলমের রং: %1$s</string>
+    <string name="signature_tip_size_description">কলমের নিবের পুরুত্ব: %1$s</string>
+    <string name="signature_tip_extra_fine">খুব সরু</string>
+    <string name="signature_tip_fine">সরু</string>
+    <string name="signature_tip_medium">মাঝারি</string>
+    <string name="signature_tip_bold">মোটা</string>
+    <string name="signature_tip_extra_bold">খুব মোটা</string>
+</resources>

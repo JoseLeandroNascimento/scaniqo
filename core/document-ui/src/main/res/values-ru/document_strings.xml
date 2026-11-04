@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_no_tag">Без метки</string>
+    <string name="document_create_title">Сохранить документ</string>
+    <string name="document_editor_title">Изменить документ</string>
+    <string name="document_name_label">Название документа</string>
+    <string name="document_name_placeholder">Например: Договор аренды</string>
+    <string name="document_name_required">Введите название документа.</string>
+    <string name="document_name_too_long">Не более %1$d символов.</string>
+    <string name="document_tag_label">Метка</string>
+    <string name="document_optional">Необязательно</string>
+    <string name="document_no_tags_available">Создайте метки в разделе управления метками и добавьте одну позже.</string>
+    <string name="document_save">Сохранить документ</string>
+    <string name="document_save_changes">Сохранить изменения</string>
+    <string name="document_saving">Сохранение…</string>
+    <string name="document_save_error">Не удалось сохранить. Введённые данные сохранены. Повторите попытку.</string>
+    <string name="document_delete_title">Переместить в корзину?</string>
+    <string name="document_delete_body">Документ «%1$s» исчезнет из библиотеки. Его можно восстановить из корзины в меню.</string>
+    <string name="document_delete_error">Не удалось переместить в корзину. Повторите попытку.</string>
+    <string name="document_deleting">Перемещение…</string>
+    <string name="document_updated">Документ обновлён</string>
+    <string name="document_deleted">Документ перемещён в корзину</string>
+    <string name="document_downloaded">PDF сохранён в выбранном месте</string>
+    <string name="document_scan_error">Не удалось открыть сканер. Повторите попытку.</string>
+    <string name="document_prepare_error">Не удалось подготовить отсканированный документ. Отсканируйте его ещё раз.</string>
+    <string name="document_export_error">Не удалось скачать PDF. Повторите попытку.</string>
+    <string name="document_share_error">Не удалось поделиться PDF. Повторите попытку.</string>
+</resources>

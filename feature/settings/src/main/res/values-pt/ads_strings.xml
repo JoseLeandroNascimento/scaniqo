@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="ads_privacy_options">Privacidade dos anúncios</string>
+    <string name="ads_privacy_error">Não foi possível abrir as opções de privacidade. Tente novamente.</string>
+</resources>

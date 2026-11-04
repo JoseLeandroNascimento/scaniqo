@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <plurals name="document_scope_apply_count">
+        <item quantity="one">Применить к %1$d странице</item>
+        <item quantity="few">Применить к %1$d страницам</item>
+        <item quantity="many">Применить к %1$d страницам</item>
+        <item quantity="other">Применить к страницам: %1$d</item>
+    </plurals>
+    <string name="corrections_tab_angle">Наклон</string>
+    <string name="corrections_tab_perspective">Края</string>
+    <string name="corrections_tab_curve">Изгиб</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">Страница %1$d из %2$d. Выбрать страницу предпросмотра</string>
+    <string name="corrections_live_title">Предпросмотр настройки</string>
+    <string name="corrections_live_hint">Предпросмотр обновляется при настройке. Документ меняется только после применения.</string>
+    <string name="corrections_preview_choose">Выбрать страницу предпросмотра</string>
+    <string name="corrections_preview_before">До</string>
+    <string name="corrections_preview_after">После</string>
+    <string name="corrections_preview_before_description">Показать страницу до настройки</string>
+    <string name="corrections_preview_after_description">Показать результат настройки</string>
+    <string name="corrections_preview_before_hint">До этой настройки</string>
+    <string name="corrections_preview_after_hint">Результат настройки</string>
+    <string name="corrections_preview_updating">Обновление…</string>
+    <string name="corrections_preview_native_hint">Текст и векторная графика сохраняются. Для коррекции страницы как изображения включите параметр ниже.</string>
+    <string name="corrections_page_navigation_hint">При смене предпросмотра настройки сохраняются, чтобы оценить их на других страницах.</string>
+    <string name="corrections_perspective_editor">Настроить края снимка</string>
+    <string name="corrections_perspective_live_hint">Тяните углы на изображении ниже и следите за результатом выше.</string>
+</resources>

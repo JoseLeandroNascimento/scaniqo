@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_move_handle">कंटेंट संरेखित करने के लिए हैंडल खींचें। बीच में रखने के लिए टैप करें।</string>
+    <string name="gesture_rotate_handle">घुमाने के लिए शीट के चारों ओर खींचें। 90 डिग्री घुमाने के लिए टैप करें।</string>
+    <string name="gesture_scale_handle">कंटेंट का आकार बदलने के लिए कोना तिरछा खींचें।</string>
+    <string name="gesture_scale_increase">5 प्रतिशत बड़ा करें</string>
+    <string name="gesture_scale_decrease">5 प्रतिशत छोटा करें</string>
+</resources>

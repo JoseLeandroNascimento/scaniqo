@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_v3_align">Aligner</string>
+    <string name="layout_v3_align_target">Aligner : %1$s, %2$s</string>
+    <string name="layout_v3_hide_precise">Masquer la position précise</string>
+    <string name="layout_v3_precise">Position précise</string>
+    <string name="layout_v3_nudge">Déplacer vers %1$s</string>
+    <string name="layout_v3_center">Centrer le contenu</string>
+    <string name="layout_v3_custom_size">Personnalisé · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">Les cadrages utilisent une échelle de 100%.</string>
+</resources>

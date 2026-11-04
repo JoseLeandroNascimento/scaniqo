@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="tools_hub_title">جميع الأدوات</string>
+    <string name="tools_hub_organize">إنشاء وتنظيم</string>
+    <string name="tools_hub_convert">تحويل واستخراج</string>
+    <string name="tools_hub_edit">تعديل PDF</string>
+    <string name="tools_hub_originals">الشهادات</string>
+    <string name="tools_hub_images_pdf">تحويل صور إلى PDF</string>
+    <string name="tools_hub_images_pdf_hint">أنشئ مستندًا من صورك</string>
+    <string name="tools_hub_id">مستند بوجهين</string>
+    <string name="tools_hub_id_hint">رتّب الوجهين على صفحة واحدة</string>
+    <string name="tools_hub_receipt">استخراج بيانات الإيصالات</string>
+    <string name="tools_hub_receipt_hint">راجع البيانات المتعرف عليها وصدّرها بصيغة CSV</string>
+    <string name="tools_hub_fill">تعبئة</string>
+    <string name="tools_hub_fill_hint">أضف نصوصًا وعلامات إلى النماذج الممسوحة</string>
+    <string name="tools_hub_annotate">تعليق</string>
+    <string name="tools_hub_annotate_hint">ميّز المقاطع وأضف ملاحظات</string>
+    <string name="tools_hub_watermark">علامات ورؤوس صفحات</string>
+    <string name="tools_hub_watermark_hint">خصص PDF بالنصوص والعلامات</string>
+    <string name="tools_hub_redact">حجب المعلومات</string>
+    <string name="tools_hub_redact_hint">أنشئ نسخة مع إزالة المناطق المختارة</string>
+    <string name="tools_hub_certificates">توقيع بشهادة</string>
+    <string name="tools_hub_certificates_hint">وقّع رقميًا أو افحص سلامة PDF</string>
+    <string name="tools_hub_choose">اختر مستندًا</string>
+    <string name="tools_hub_choose_hint">افتح PDF من مكتبتك للمتابعة.</string>
+    <string name="tools_hub_search">البحث بالاسم</string>
+    <string name="tools_hub_empty">استورد PDF أو امسحه لاستخدام هذا التعديل.</string>
+</resources>

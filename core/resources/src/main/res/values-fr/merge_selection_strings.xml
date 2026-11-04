@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_selection_new_document">Crée un nouveau PDF sans mot de passe. Les fichiers d’origine sont conservés.</string>
+    <string name="merge_selection_editor">Choisissez les PDF et définissez l’ordre d’ajout des pages.</string>
+    <string name="merge_selection_current">Document actuel · %1$s</string>
+    <string name="merge_selection_all_added">Tous ajoutés.</string>
+    <string name="merge_selection_add_files">Ajouter des fichiers de l’appareil</string>
+    <string name="merge_selection_external">Fichier de l’appareil</string>
+    <string name="merge_selection_remove">Retirer %1$s de la sélection</string>
+    <string name="merge_selection_cancel_drag">Annuler la réorganisation</string>
+    <string name="merge_selection_protected">Les PDF protégés peuvent demander un mot de passe. Le résultat sera sans mot de passe.</string>
+    <string name="merge_selection_preserve_protection">La protection du document en cours d’édition sera conservée dans le résultat.</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="one">Sélectionnez %1$d PDF</item>
+        <item quantity="many">Sélectionnez %1$d PDF</item>
+        <item quantity="other">Sélectionnez %1$d PDF</item>
+    </plurals>
+</resources>

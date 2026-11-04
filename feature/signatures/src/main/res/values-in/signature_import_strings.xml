@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_image">Impor gambar</string>
+    <string name="signature_import_image_body">Pilih foto dari galeri atau file perangkat.</string>
+    <string name="signature_import_scan">Pindai tanda tangan</string>
+    <string name="signature_import_scan_body">Foto tanda tangan di kertas menggunakan kamera.</string>
+    <string name="signature_import_automatic">Latar belakang dihapus otomatis. Periksa goresan sebelum menyimpan.</string>
+    <string name="signature_import_crop_hint">Seret tepi untuk memilih tanda tangan. Geser gambar dan gunakan dua jari untuk memperbesar atau memperkecil.</string>
+    <string name="signature_import_confirm_crop">Konfirmasi potongan</string>
+    <string name="signature_import_processing">Menyiapkan tanda tangan…</string>
+    <string name="signature_import_preview_hint">Periksa goresan pada berbagai latar sebelum menyimpan.</string>
+    <string name="signature_import_adjust_crop">Kembali ke potongan</string>
+    <string name="signature_import_retake">Ambil foto ulang</string>
+    <string name="signature_import_transparent">Kotak-kotak</string>
+    <string name="signature_import_white">Putih</string>
+    <string name="signature_import_dark">Gelap</string>
+</resources>

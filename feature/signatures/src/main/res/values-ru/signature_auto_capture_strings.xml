@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_scan_align">Поместите подпись в рамку</string>
+    <string name="signature_scan_hold_still">Держите телефон неподвижно…</string>
+    <string name="signature_scan_more_light">Перейдите в более освещённое место</string>
+    <string name="signature_scan_move_inside">Поместите всю подпись внутри рамки</string>
+    <string name="signature_scan_auto">Автоматическая съёмка</string>
+    <string name="signature_scan_manual">Готово? Нажмите «Сфотографировать»</string>
+    <string name="signature_scan_capture_now">Сфотографировать</string>
+</resources>

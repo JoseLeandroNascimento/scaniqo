@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_label">Выбрать PDF</string>
+    <string name="merge_app_description">Страницы будут добавлены в порядке выбора PDF.</string>
+    <string name="merge_app_empty">В приложении нет других PDF. Выберите «С устройства» для выбора файлов.</string>
+    <string name="merge_app_selection_order">Порядок объединения: %1$d</string>
+    <string name="merge_app_protected">PDF защищён паролем</string>
+    <string name="merge_app_result_protected">Защита редактируемого документа сохранится в результате.</string>
+    <string name="merge_app_result_unprotected">Редактируемый документ без пароля. Страницы защищённых PDF в результате также будут без пароля.</string>
+</resources>

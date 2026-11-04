@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="runtime_signature_delete_body">«%1$s» будет удалена из библиотеки. Подписи в сохранённых документах останутся.</string>
+    <string name="runtime_signatures_empty_title">Нет сохранённых подписей</string>
+</resources>

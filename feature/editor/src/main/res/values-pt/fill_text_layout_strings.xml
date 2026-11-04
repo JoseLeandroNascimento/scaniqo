@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_text_alignment">Texto na caixa</string>
+    <string name="fill_text_align_action">Alinhar texto</string>
+    <string name="fill_text_horizontal">Horizontal</string>
+    <string name="fill_text_vertical">Vertical</string>
+    <string name="fill_text_start">Início</string>
+    <string name="fill_text_center">Centro</string>
+    <string name="fill_text_end">Fim</string>
+    <string name="fill_text_top">Topo</string>
+    <string name="fill_text_middle">Meio</string>
+    <string name="fill_text_bottom">Base</string>
+    <string name="fill_text_auto_box">Ajustar caixa ao texto</string>
+</resources>

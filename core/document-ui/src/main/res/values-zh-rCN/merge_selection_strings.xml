@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_selection_order_title">顺序</string>
+    <string name="merge_selection_drag_hint">长按以重新排序</string>
+    <string name="merge_selection_library_title">您的文档</string>
+    <string name="merge_selection_empty">添加 PDF 以开始。</string>
+    <string name="merge_selection_empty_title">将您的 PDF 合为一体</string>
+    <string name="merge_selection_library_empty">文档库中没有可用文档。</string>
+    <string name="merge_selection_move_up">将 %1$s 上移</string>
+    <string name="merge_selection_move_down">将 %1$s 下移</string>
+    <string name="merge_selection_drag_handle">调整 %1$s 的顺序，当前位置 %2$d，共 %3$d 项</string>
+</resources>

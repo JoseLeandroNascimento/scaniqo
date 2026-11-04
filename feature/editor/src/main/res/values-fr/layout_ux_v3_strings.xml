@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_v3_no_both_travel">Réduisez pour déplacer.</string>
+    <string name="layout_v3_no_horizontal_travel">Réduisez pour déplacer horizontalement.</string>
+    <string name="layout_v3_no_vertical_travel">Réduisez pour déplacer verticalement.</string>
+    <string name="layout_v3_reduce_size">Réduire</string>
+    <string name="layout_v3_scale">Échelle</string>
+    <string name="layout_v3_decrease_scale" formatted="false">Réduire de 1%</string>
+    <string name="layout_v3_increase_scale" formatted="false">Augmenter de 1%</string>
+    <string name="layout_v3_scale_error" formatted="false">Saisissez une valeur entre 25% et 200%.</string>
+    <string name="layout_v3_without_margin">Sans marge</string>
+    <string name="layout_v3_with_margin_description">Tout le contenu dans les marges de la page</string>
+    <string name="layout_v3_without_margin_description">Tout le contenu dans la zone de la page</string>
+    <string name="layout_v3_restore_category">Restaurer</string>
+    <string name="layout_v3_more">Autres options</string>
+    <string name="layout_v3_discard_session">Annuler les réglages</string>
+</resources>

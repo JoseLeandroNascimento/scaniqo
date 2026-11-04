@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_editor_empty">Buat tanda tangan sebelum menyimpan.</string>
+    <string name="signature_image_quality_retry">Tanda tangan tidak dapat dipisahkan dari kertas. Pangkas lebih dekat, perbaiki pencahayaan, atau ambil ulang foto dengan fokus yang jelas.</string>
+    <string name="runtime_signature_updated">Tanda tangan diperbarui.</string>
+</resources>

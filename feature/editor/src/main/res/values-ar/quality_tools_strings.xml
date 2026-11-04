@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow">إزالة الظلال</string>
+    <string name="quality_filter_light">إضاءة موحدة</string>
+    <string name="quality_filter_white">ورق أبيض</string>
+    <string name="quality_filter_adaptive">نص واضح</string>
+    <string name="quality_filter_noise">تقليل التشويش</string>
+    <string name="quality_filter_sharp">تعزيز التفاصيل</string>
+    <string name="quality_filter_bleed">تخفيف ظهور الخلف</string>
+    <string name="quality_native_title">تطبيق على الصفحات ذات النص أو الرسومات المتجهة</string>
+    <string name="quality_native_body">تحتفظ هذه الصفحات بمحتواها الأصلي افتراضيًا. عند التفعيل تصبح الصفحة صورة، وقد يعيد OCR إنشاء النص القابل للبحث.</string>
+    <string name="quality_native_active">ستُحوّل الصفحات ذات النص أو الرسومات المتجهة إلى صور أيضًا عند تطبيق التصحيح.</string>
+    <string name="quality_export_tab">التصدير</string>
+    <string name="quality_review_tab">الفحص</string>
+    <string name="quality_export_title">جودة PDF</string>
+    <string name="quality_export_high">جودة عالية</string>
+    <string name="quality_export_high_body">إعطاء الأولوية لدقة الصور.</string>
+    <string name="quality_export_balanced">متوازن</string>
+    <string name="quality_export_balanced_body">تقليل حجم الصور مع الحفاظ على وضوح القراءة.</string>
+    <string name="quality_export_small">ملف أصغر</string>
+    <string name="quality_export_small_body">ضغط أكبر. راجع الحروف الصغيرة والتفاصيل قبل المشاركة.</string>
+    <string name="quality_export_hint">يُطبّق الضغط عند الحفظ. يعتمد الحجم النهائي على الملف الأصلي؛ يبقى النص والرسومات المتجهة المحفوظة واضحة عند التكبير.</string>
+    <string name="quality_ocr_title">نص قابل للبحث</string>
+    <string name="quality_ocr_body">يتعرف عند الحفظ على النص المطبوع بالأحرف اللاتينية، بما فيه البرتغالية. تتم المعالجة على الجهاز مع الحفاظ على مظهر المستند.</string>
+    <string name="quality_ocr_hint">قد يخطئ OCR ويستغرق وقتًا أطول للمستندات الطويلة. لا يُعاد التعرف على الصفحات التي حُفظ نصها الأصلي.</string>
+    <string name="quality_export_apply">تطبيق الخيارات</string>
+    <string name="quality_auto_title">تحسين تلقائي</string>
+    <string name="quality_auto_body">يجمع تعديلات الصورة ويستخدم زوايا الميل الموثوقة المكتشفة بالتحليل. يمكنك مقارنة النتيجة والتراجع عنها.</string>
+    <string name="quality_auto_apply">تحسين هذه الصفحة</string>
+    <string name="quality_auto_apply_all">تحسين الكل</string>
+    <string name="quality_analysis_title">مراجعة الجودة</string>
+    <string name="quality_analysis_body">يبحث عن الصفحات الفارغة أو المكررة والضبابية والدقة المنخفضة والمحتوى المحتمل اقتصاصه. التنبيهات اقتراحات؛ لا تُحذف صفحات تلقائيًا.</string>
+    <string name="quality_analysis_run">تحليل المستند</string>
+    <string name="quality_analysis_again">إعادة التحليل</string>
+    <string name="quality_analysis_running">جارٍ تحليل الصفحات…</string>
+    <string name="quality_analysis_cancel">إلغاء التحليل</string>
+    <string name="quality_analysis_error">تعذر إكمال التحليل. أعد المحاولة.</string>
+    <string name="quality_analysis_clear">لم تُكتشف تنبيهات. نوصي بمراجعة المستند قبل مشاركته.</string>
+    <string name="quality_analysis_count">يلزم مراجعة %1$d من %2$d صفحة</string>
+    <plurals name="quality_analysis_native">
+        <item quantity="zero">لا صفحات بنص أو رسومات متجهة أصلية (%1$d).</item>
+        <item quantity="one">صفحة واحدة تحتوي على نص أو رسومات متجهة أصلية (%1$d).</item>
+        <item quantity="two">صفحتان تحتويان على نص أو رسومات متجهة أصلية (%1$d).</item>
+        <item quantity="few">%1$d صفحات تحتوي على نص أو رسومات متجهة أصلية.</item>
+        <item quantity="many">%1$d صفحة تحتوي على نص أو رسومات متجهة أصلية.</item>
+        <item quantity="other">%1$d صفحة تحتوي على نص أو رسومات متجهة أصلية.</item>
+    </plurals>
+    <string name="quality_analysis_page">الصفحة %1$d</string>
+    <string name="quality_analysis_blank">قد تكون فارغة</string>
+    <string name="quality_analysis_duplicate">قد تكون تكرارًا للصفحة %1$d</string>
+    <string name="quality_analysis_blurry">قد تكون ضبابية</string>
+    <string name="quality_analysis_resolution">دقة منخفضة</string>
+    <string name="quality_analysis_clipped">المحتوى قريب من الحافة</string>
+    <string name="quality_analysis_angle">الميل المقترح: %1$.1f°</string>
+    <string name="quality_analysis_review">عرض الصفحة</string>
+    <string name="quality_analysis_delete">حذف الصفحة %1$d</string>
+</resources>

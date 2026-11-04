@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_title">Numériser une signature</string>
+    <string name="signature_camera_guidance">Placez la signature dans le cadre. Seule cette zone sera utilisée ; le fond sera supprimé automatiquement.</string>
+    <string name="signature_camera_capture">Photographier la signature</string>
+</resources>

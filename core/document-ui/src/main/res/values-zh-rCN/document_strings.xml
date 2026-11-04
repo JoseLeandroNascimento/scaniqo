@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_no_tag">无标签</string>
+    <string name="document_create_title">保存文档</string>
+    <string name="document_editor_title">编辑文档</string>
+    <string name="document_name_label">文档名称</string>
+    <string name="document_name_placeholder">例如：租赁合同</string>
+    <string name="document_name_required">请输入文档名称。</string>
+    <string name="document_name_too_long">最多使用 %1$d 个字符。</string>
+    <string name="document_tag_label">标签</string>
+    <string name="document_optional">可选</string>
+    <string name="document_no_tags_available">可在“管理标签”中创建标签，稍后再添加。</string>
+    <string name="document_save">保存文档</string>
+    <string name="document_save_changes">保存更改</string>
+    <string name="document_saving">正在保存…</string>
+    <string name="document_save_error">无法保存。输入的信息已保留，请重试。</string>
+    <string name="document_delete_title">移至回收站？</string>
+    <string name="document_delete_body">文档“%1$s”将从文档库移除。可通过菜单中的回收站恢复。</string>
+    <string name="document_delete_error">无法移至回收站，请重试。</string>
+    <string name="document_deleting">正在移动…</string>
+    <string name="document_updated">文档已更新</string>
+    <string name="document_deleted">文档已移至回收站</string>
+    <string name="document_downloaded">PDF 已保存到所选位置</string>
+    <string name="document_scan_error">无法打开扫描仪，请重试。</string>
+    <string name="document_prepare_error">无法准备扫描的文档，请重新扫描。</string>
+    <string name="document_export_error">无法下载 PDF，请重试。</string>
+    <string name="document_share_error">无法分享 PDF，请重试。</string>
+</resources>

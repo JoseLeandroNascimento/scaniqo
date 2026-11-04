@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="default_tag_work">কাজ</string>
+    <string name="default_tag_personal">ব্যক্তিগত</string>
+    <string name="default_tag_studies">পড়াশোনা</string>
+    <string name="default_tag_health">স্বাস্থ্য</string>
+    <string name="default_tag_finances">অর্থ</string>
+    <string name="default_tag_receipts">রসিদ</string>
+    <string name="default_tag_contracts">চুক্তি</string>
+    <string name="default_tag_home">বাড়ি</string>
+</resources>

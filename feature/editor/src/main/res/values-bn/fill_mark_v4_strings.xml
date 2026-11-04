@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_v4_tool_text">টেক্সট</string>
+    <string name="fill_v4_mark_check">চেক</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">টেক্সট যোগ করুন</string>
+    <string name="fill_v4_add_mark">চিহ্ন যোগ করুন</string>
+    <string name="fill_v4_edit_text">টেক্সট সম্পাদনা করুন</string>
+    <string name="fill_v4_size">আকার</string>
+    <string name="fill_v4_color">রং</string>
+    <string name="fill_v4_bold">বোল্ড</string>
+    <string name="fill_v4_italic">ইটালিক</string>
+    <string name="fill_v4_underline">আন্ডারলাইন</string>
+    <string name="fill_v4_duplicate">অনুলিপি করুন</string>
+    <string name="fill_v4_delete">মুছুন</string>
+    <string name="fill_v4_more_actions">অ্যাকশন</string>
+    <string name="fill_v4_page_hint_insert_text">টেক্সট যোগ করতে পৃষ্ঠায় ট্যাপ করুন।</string>
+    <string name="fill_v4_page_hint_insert_check">চেক চিহ্ন যোগ করতে পৃষ্ঠায় ট্যাপ করুন।</string>
+    <string name="fill_v4_page_hint_insert_cross">X চিহ্ন যোগ করতে পৃষ্ঠায় ট্যাপ করুন।</string>
+    <string name="fill_v4_page_hint_selected">সরাতে উপাদানটি টানুন। আকার বদলাতে হ্যান্ডেল ব্যবহার করুন।</string>
+    <string name="fill_v4_updating_page">পৃষ্ঠা আপডেট হচ্ছে…</string>
+</resources>

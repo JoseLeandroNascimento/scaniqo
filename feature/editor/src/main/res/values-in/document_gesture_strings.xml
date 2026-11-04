@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_move_handle">Seret pegangan untuk meratakan konten. Ketuk untuk memusatkan.</string>
+    <string name="gesture_rotate_handle">Seret mengelilingi lembar untuk memutar. Ketuk untuk memutar 90 derajat.</string>
+    <string name="gesture_scale_handle">Seret sudut secara diagonal untuk mengubah ukuran konten.</string>
+    <string name="gesture_scale_increase">Perbesar 5 persen</string>
+    <string name="gesture_scale_decrease">Perkecil 5 persen</string>
+</resources>

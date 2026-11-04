@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_v3_add_to_page">إضافة إلى الصفحة</string>
+    <string name="fill_v3_writing">الكتابة على الصفحة</string>
+    <string name="fill_v3_text_selected">تم تحديد النص</string>
+    <string name="fill_v3_mark_selected">تم تحديد العلامة</string>
+    <string name="fill_v3_text">نص</string>
+    <string name="fill_v3_tap_page">اضغط على الصفحة للإضافة</string>
+    <string name="fill_v3_tap_again">اضغط على الصفحة لإضافة علامة</string>
+    <string name="fill_v3_hide_keyboard">إخفاء لوحة المفاتيح</string>
+    <string name="fill_v3_edit_text">تحرير النص</string>
+    <string name="fill_v3_size">الحجم</string>
+    <string name="fill_v3_mark_size_short">علامة</string>
+    <string name="fill_v3_color">اللون</string>
+    <string name="fill_v3_format">التنسيق</string>
+    <string name="fill_v3_regular">عادي</string>
+    <string name="fill_v3_drag_corner">يمكنك أيضًا سحب زاوية على الصفحة.</string>
+    <string name="fill_v3_opacity">الكثافة · %1$d%%</string>
+    <string name="fill_v3_weight">السماكة</string>
+    <string name="fill_v3_precise_position">موضع دقيق</string>
+    <string name="fill_v3_revert_element">التراجع عن تحرير العنصر</string>
+    <string name="fill_v3_tap_next_mark">اضغط لإضافة علامة أخرى</string>
+</resources>

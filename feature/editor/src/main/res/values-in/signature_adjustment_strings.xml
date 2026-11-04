@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_position_hint">Seret tanda tangan untuk mengubah posisinya.</string>
+    <string name="signature_scale_hint">Ubah ukuran dengan mempertahankan proporsi.</string>
+    <string name="signature_rotation_hint">Seret mengelilingi cincin untuk memutar.</string>
+</resources>

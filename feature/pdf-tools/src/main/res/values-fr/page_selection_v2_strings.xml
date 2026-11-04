@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_thumbnails">Miniatures</string>
+    <string name="pages_v2_intervals">Plages</string>
+    <string name="pages_v2_from">De</string>
+    <string name="pages_v2_until">À</string>
+    <string name="pages_v2_add_range">Ajouter une plage</string>
+    <string name="pages_v2_update_range">Modifier la plage</string>
+    <string name="pages_v2_edit_list">Modifier la liste</string>
+    <string name="pages_v2_confirm_selection">Confirmer la sélection</string>
+    <string name="pages_v2_cancel_edit">Annuler la modification</string>
+    <string name="pages_v2_order">Ordre : %1$s</string>
+    <string name="pages_v2_document_order">Utiliser l’ordre du PDF</string>
+    <string name="pages_v2_range_incomplete">Renseignez le début et la fin de la plage.</string>
+    <string name="pages_v2_range_reversed">Le début doit précéder ou égaler la fin.</string>
+    <string name="pages_v2_edit_range">Modifier la plage %1$s</string>
+    <string name="pages_v2_remove_range">Supprimer la plage %1$s</string>
+    <string name="pages_v2_pending_selection">Confirmez ou annulez la sélection pour continuer.</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">Créer un PDF de %1$d page</item>
+        <item quantity="many">Créer un PDF de %1$d pages</item>
+        <item quantity="other">Créer un PDF de %1$d pages</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">Exporter %1$d page</item>
+        <item quantity="many">Exporter %1$d pages</item>
+        <item quantity="other">Exporter %1$d pages</item>
+    </plurals>
+    <string name="pages_v2_list_hint">Ex. : 5, 2-4, 1. Conserve l’ordre saisi.</string>
+</resources>

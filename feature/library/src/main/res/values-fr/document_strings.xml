@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_subtitle">Vos fichiers, toujours à portée de main.</string>
+    <string name="documents_all_tags">Tous</string>
+    <string name="documents_scan">Numériser un document</string>
+    <string name="documents_loading">Chargement des documents…</string>
+    <string name="documents_empty_title">Votre prochain document commence ici</string>
+    <string name="documents_empty_body">Numérisez une feuille ou plusieurs pages et enregistrez-les dans un PDF.</string>
+    <string name="documents_filter_empty_title">Aucun document avec cette étiquette</string>
+    <string name="documents_filter_empty_body">Choisissez une autre étiquette ou affichez tous les documents.</string>
+    <string name="documents_clear_filter">Tout afficher</string>
+    <string name="document_edit">Modifier</string>
+    <plurals name="documents_count">
+        <item quantity="one">%d document</item>
+        <item quantity="many">%d documents</item>
+        <item quantity="other">%d documents</item>
+    </plurals>
+</resources>

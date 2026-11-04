@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_context_replace">बदलें</string>
+    <string name="signature_context_cancel">संपादन रद्द करें</string>
+    <string name="signature_context_delete">मिटाएँ</string>
+    <string name="signature_apply_adjustments">बदलाव लागू करें</string>
+    <string name="signature_open_adjustments">समायोजित करें</string>
+    <string name="signature_add">हस्ताक्षर जोड़ें</string>
+</resources>

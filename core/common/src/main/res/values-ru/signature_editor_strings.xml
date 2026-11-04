@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_editor_empty">Создайте подпись перед сохранением.</string>
+    <string name="signature_image_quality_retry">Не удалось отделить подпись от бумаги. Обрежьте ближе, улучшите освещение или сделайте новый чёткий снимок.</string>
+    <string name="runtime_signature_updated">Подпись обновлена.</string>
+</resources>

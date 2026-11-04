@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="preview_zoom_close">Закрыть увеличенный просмотр</string>
+    <string name="preview_controls_show">Настройки</string>
+    <string name="preview_controls_hide">Скрыть настройки</string>
+    <string name="preview_gestures_hint">Используйте два пальца для увеличения и перемещения.</string>
+</resources>

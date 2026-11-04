@@ -7,6 +7,14 @@ import androidx.lifecycle.ViewModelStore
 import com.joseleandro.scaniqo.core.navigation.AppRoute
 import com.joseleandro.scaniqo.core.navigation.NavigationViewModel
 import com.joseleandro.scaniqo.data.local.ScaniqoDatabase
+import com.joseleandro.scaniqo.domain.repository.BackupFingerprint
+import com.joseleandro.scaniqo.domain.repository.DocumentSearchRepository
+import com.joseleandro.scaniqo.ui.documentCertificates.DocumentCertificatesViewModel
+import com.joseleandro.scaniqo.ui.documentMerge.DocumentQuickMergeViewModel
+import com.joseleandro.scaniqo.ui.onboarding.OnboardingViewModel
+import com.joseleandro.scaniqo.ui.pdfTools.PdfUtilityViewModel
+import com.joseleandro.scaniqo.ui.settings.SettingsViewModel
+import com.joseleandro.scaniqo.ui.signatures.SignaturesViewModel
 import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerViewModel
 import com.joseleandro.scaniqo.ui.documents.DocumentsViewModel
@@ -76,6 +84,20 @@ class AppModuleTest {
         assertNotNull(documents.uiState.value)
         assertNotNull(actions.uiState.value)
         assertNotNull(viewer.uiState.value)
+    }
+
+    @Test fun featureEntriesResolveThroughTheApplicationComposition() {
+        // The paused dispatcher keeps initialization cancellable without starting user workflows.
+        resolve<SettingsViewModel>("settings")
+        resolve<OnboardingViewModel>("onboarding")
+        resolve<SignaturesViewModel>("signatures")
+        resolve<DocumentQuickMergeViewModel>("merge")
+        resolve<PdfUtilityViewModel>("pdf-tools")
+        resolve<DocumentCertificatesViewModel>("certificates")
+
+        val koin = requireNotNull(graph).koin
+        assertNotNull(koin.get<BackupFingerprint>())
+        assertNotNull(koin.get<DocumentSearchRepository>())
     }
 
     private inline fun <reified T : ViewModel> resolve(key: String): T =

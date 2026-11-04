@@ -1,5 +1,8 @@
 package com.joseleandro.scaniqo.ui
 
+import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
+
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
@@ -11,7 +14,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.platform.app.InstrumentationRegistry
-import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -55,9 +57,9 @@ class ToolsHubSearchInteractionTest {
         compose.onNodeWithContentDescription(searchLabel).performClick()
         val field = compose.onNode(hasSetTextAction() and hasContentDescription(searchLabel))
         field.assertExists()
-        val mergeTitle = text(R.string.quick_tools_merge)
-        val mergeHint = text(R.string.quick_tools_merge_hint)
-        val importHint = text(R.string.quick_tools_import_hint)
+        val mergeTitle = text(CoreResourcesR.string.quick_tools_merge)
+        val mergeHint = text(CoreResourcesR.string.quick_tools_merge_hint)
+        val importHint = text(CoreResourcesR.string.quick_tools_import_hint)
         field.performTextInput(mergeTitle)
         field.performImeAction()
         compose.onNodeWithText(mergeHint).assertExists()
@@ -68,7 +70,7 @@ class ToolsHubSearchInteractionTest {
         compose.onNodeWithText(mergeHint).assertExists()
         compose.onNodeWithText(importHint).assertDoesNotExist()
 
-        compose.onNodeWithContentDescription(text(R.string.tool_catalog_clear)).performClick()
+        compose.onNodeWithContentDescription(text(CoreResourcesR.string.tool_catalog_clear)).performClick()
         field.assertExists()
         field.performImeAction()
         compose.onNodeWithText(importHint).assertExists()
@@ -107,7 +109,7 @@ class ToolsHubSearchInteractionTest {
         val searchLabel = text(R.string.tool_catalog_search)
         compose.onNodeWithContentDescription(searchLabel).performClick()
         compose.onNode(hasSetTextAction() and hasContentDescription(searchLabel))
-            .performTextInput(text(R.string.tool_catalog_compress))
+            .performTextInput(text(CoreResourcesR.string.tool_catalog_compress))
         compose.onNode(hasSetTextAction() and hasContentDescription(searchLabel)).performImeAction()
         compose.onNodeWithText(text(R.string.tool_catalog_compress_hint)).performClick()
         compose.runOnIdle { assertEquals(listOf(PdfUtility.COMPRESS_PDF), opened) }

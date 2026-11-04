@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_choose_hint">লাইব্রেরি থেকে PDF বেছে নিন বা ডিভাইস থেকে ফাইল আমদানি করুন।</string>
+    <string name="utility_workspace_import_device">ডিভাইস থেকে আমদানি করুন</string>
+    <string name="utility_workspace_search">নথি খুঁজুন</string>
+    <string name="utility_workspace_no_match">কোনো নথি পাওয়া যায়নি।</string>
+    <string name="utility_workspace_selection">%2$dটির মধ্যে %1$dটি বেছে নেওয়া হয়েছে</string>
+    <string name="utility_workspace_select_all">সব</string>
+    <string name="utility_workspace_clear">মুছুন</string>
+    <string name="utility_workspace_page">পৃষ্ঠা %1$d</string>
+    <string name="utility_workspace_locked_pages">গোপনীয়তার জন্য এই PDF-এর থাম্বনেইল লুকানো। পৃষ্ঠা নম্বর দিয়ে বেছে নিন।</string>
+    <string name="utility_workspace_empty_selection">অন্তত একটি পৃষ্ঠা বেছে নিন।</string>
+    <string name="utility_workspace_format">ছবির ফরম্যাট</string>
+    <string name="utility_workspace_zip_hint">প্রতিটি পৃষ্ঠা ছবি হয়। সব একটি ZIP ফাইলে থাকে।</string>
+    <string name="utility_workspace_busy">ফাইল প্রস্তুত হচ্ছে…</string>
+    <string name="utility_workspace_compress_title">PDF কম্প্রেস করুন</string>
+    <string name="utility_workspace_compress_hint">PDF-এর ছবির আকার কমিয়ে অনুসন্ধানযোগ্য টেক্সট বজায় রাখুন।</string>
+    <string name="utility_workspace_open_result">কম্প্রেস করা PDF খুলুন</string>
+    <string name="utility_workspace_inspect_page">পৃষ্ঠা %1$d বড় করুন</string>
+    <string name="utility_workspace_select_page">এই পৃষ্ঠা বেছে নিন</string>
+    <string name="utility_workspace_deselect_page">নির্বাচন থেকে সরান</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_context_replace">Ganti</string>
+    <string name="signature_context_cancel">Batalkan pengeditan</string>
+    <string name="signature_context_delete">Hapus</string>
+    <string name="signature_apply_adjustments">Terapkan penyesuaian</string>
+    <string name="signature_open_adjustments">Sesuaikan</string>
+    <string name="signature_add">Tambahkan tanda tangan</string>
+</resources>

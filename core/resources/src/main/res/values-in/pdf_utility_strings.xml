@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_pages">Halaman</string>
+    <string name="utility_pages_hint">Semua, atau contoh: 1, 3-5. Urutan yang dimasukkan dipertahankan.</string>
+    <string name="utility_choose_destination">Pilih lokasi penyimpanan</string>
+    <string name="utility_destination_ready">Tujuan dipilih. Konfirmasikan untuk mengekspor.</string>
+    <string name="utility_receipt_merchant">Tempat usaha</string>
+    <string name="utility_receipt_date">Tanggal</string>
+    <string name="utility_receipt_total">Total</string>
+    <string name="utility_receipt_items">Item — satu per baris</string>
+    <string name="utility_close">Tutup</string>
+</resources>

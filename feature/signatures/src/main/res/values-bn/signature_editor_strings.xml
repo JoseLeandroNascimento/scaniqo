@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_tab_import">আমদানি</string>
+    <string name="signature_tab_scan">স্ক্যান</string>
+    <string name="runtime_signature_edit">স্বাক্ষর সম্পাদনা</string>
+    <string name="runtime_signature_draw_hint">নিচের জায়গায় আপনার স্বাক্ষর আঁকুন।</string>
+    <string name="runtime_signature_preview">প্রিভিউ</string>
+    <string name="runtime_signature_font">ফন্ট</string>
+    <string name="runtime_font_pen">কলম</string>
+    <string name="runtime_font_script">ক্যালিগ্রাফি</string>
+    <string name="runtime_font_brush">তুলি</string>
+</resources>

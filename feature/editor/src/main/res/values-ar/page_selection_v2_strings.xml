@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_drag_mode">سحب</string>
+    <string name="pages_v2_direct_mode">نقل إلى موضع</string>
+    <string name="pages_v2_selected_position">الصفحة في الموضع %1$d</string>
+    <string name="pages_v2_final_position">الموضع النهائي</string>
+    <string name="pages_v2_start">البداية</string>
+    <string name="pages_v2_end">النهاية</string>
+    <string name="pages_v2_move_to">نقل إلى %1$d</string>
+    <string name="pages_v2_same_position">موجودة في هذا الموضع</string>
+    <string name="pages_v2_numbering">ترقيم الصفحات</string>
+    <string name="pages_v2_options">خيارات الصفحة %1$d</string>
+    <string name="pages_v2_moved">نُقلت الصفحة إلى %1$d</string>
+</resources>

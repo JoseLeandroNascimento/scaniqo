@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_label">Seleccionar PDF</string>
+    <string name="merge_app_description">Las páginas se agregarán en el orden en que selecciones los PDF.</string>
+    <string name="merge_app_empty">No hay otros PDF guardados en la aplicación. Usa “Del dispositivo” para seleccionar archivos.</string>
+    <string name="merge_app_selection_order">Posición %1$d en la combinación</string>
+    <string name="merge_app_protected">PDF protegido por contraseña</string>
+    <string name="merge_app_result_protected">Se mantendrá en el resultado la protección del documento en edición.</string>
+    <string name="merge_app_result_unprotected">El documento en edición no tiene contraseña. Las páginas de los PDF protegidos tampoco tendrán contraseña en el resultado.</string>
+</resources>

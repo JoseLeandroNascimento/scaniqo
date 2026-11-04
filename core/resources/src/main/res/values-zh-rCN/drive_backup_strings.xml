@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_title">备份到 Google Drive</string>
+    <string name="backup_heading">安全备份您的 PDF</string>
+    <string name="backup_connected">账号已连接</string>
+    <string name="backup_count">此设备上有 %1$d 个 PDF</string>
+    <string name="backup_folder">文件夹：Scaniqo backups</string>
+    <string name="backup_not_connected">未连接账号</string>
+    <string name="backup_scope_title">仅备份已保存的 PDF</string>
+    <string name="backup_local_summary">待备份：%1$d 个 PDF · %2$s</string>
+    <string name="backup_automatic_enable">自动创建备份</string>
+    <string name="backup_automatic_body">定期更新您的备份。</string>
+    <string name="backup_wifi_body">等待非按流量计费的网络，以避免产生移动数据费用。</string>
+    <string name="backup_charging_body">等待设备接通电源。</string>
+    <string name="backup_automatic_authorize">自动备份需要再次获得您的授权。请重新连接 Google Drive 以继续。</string>
+    <string name="backup_empty_title">暂无历史记录</string>
+    <string name="backup_history_unloaded_body">刷新以检查 Drive 中的当前备份。</string>
+    <string name="backup_current">当前备份</string>
+    <string name="backup_current_unavailable">Drive 中没有可用备份。</string>
+</resources>

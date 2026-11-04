@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_selection_order_title">क्रम</string>
+    <string name="merge_selection_drag_hint">क्रम बदलने के लिए दबाकर रखें</string>
+    <string name="merge_selection_library_title">आपके दस्तावेज़</string>
+    <string name="merge_selection_empty">शुरू करने के लिए PDF जोड़ें।</string>
+    <string name="merge_selection_empty_title">आपके PDF, एक साथ</string>
+    <string name="merge_selection_library_empty">लाइब्रेरी में कोई दस्तावेज़ उपलब्ध नहीं है।</string>
+    <string name="merge_selection_move_up">%1$s ऊपर ले जाएँ</string>
+    <string name="merge_selection_move_down">%1$s नीचे ले जाएँ</string>
+    <string name="merge_selection_drag_handle">%1$s का क्रम बदलें, स्थिति %2$d / %3$d</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Sample application ID for isolated library tests; :app overrides it per variant. -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_banner_unit_id" translatable="false"></string>
+    <string name="admob_editor_banner_unit_id" translatable="false"></string>
+    <string name="admob_documents_native_unit_id" translatable="false"></string>
+    <string name="admob_tools_rewarded_unit_id" translatable="false"></string>
+</resources>

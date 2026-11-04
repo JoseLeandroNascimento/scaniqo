@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_permission_reason">हस्ताक्षर की फ़ोटो लेने के लिए कैमरे की अनुमति दें। फ़ोटो का इस्तेमाल केवल हस्ताक्षर बनाने के लिए होगा।</string>
+    <string name="signature_camera_permission_settings">कैमरे का ऐक्सेस बंद है। हस्ताक्षर की फ़ोटो लेने के लिए ऐप की सेटिंग में कैमरे की अनुमति चालू करें।</string>
+    <string name="signature_camera_open_settings">सेटिंग खोलें</string>
+    <string name="signature_camera_allow">कैमरे की अनुमति दें</string>
+    <string name="signature_camera_cancel">रद्द करें</string>
+    <string name="signature_camera_capturing">फ़ोटो ली जा रही है…</string>
+    <string name="signature_camera_starting">कैमरा खुल रहा है…</string>
+    <string name="signature_camera_unavailable">कैमरा नहीं खुल सका। जाँचें कि कैमरा उपलब्ध है और फिर कोशिश करें।</string>
+    <string name="signature_camera_missing">इस डिवाइस पर कोई कैमरा उपलब्ध नहीं है। चित्र आयात करने के लिए वापस जाएँ।</string>
+    <string name="signature_camera_capture_failed">हस्ताक्षर की फ़ोटो नहीं ली जा सकी। फिर कोशिश करें।</string>
+    <string name="signature_camera_retry">फिर कोशिश करें</string>
+    <string name="signature_camera_frame_changed">फ़ोटो लेते समय फ़्रेम बदल गया। डिवाइस को उसी स्थिति में रखें और दोबारा फ़ोटो लें।</string>
+</resources>

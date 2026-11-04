@@ -1,5 +1,8 @@
 package com.joseleandro.scaniqo.ui.toolsHub
 
+import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
+
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.ui.focus.FocusRequester
@@ -47,11 +50,10 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.ads.ToolsBannerAd
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentSourceStep
-import com.joseleandro.scaniqo.ui.documentCommon.components.ScaniqoEmptyState
+import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -66,14 +68,14 @@ internal enum class CatalogTool(
     @StringRes val title: Int, @StringRes val hint: Int, @DrawableRes val icon: Int,
     val group: ToolGroup, val accent: Color,
 ) {
-    IMPORT(R.string.quick_tools_import, R.string.quick_tools_import_hint, R.drawable.ic_document_import, ToolGroup.ORGANIZE, Color(0xFF396E9A)),
-    MERGE(R.string.quick_tools_merge, R.string.quick_tools_merge_hint, R.drawable.ic_tool_merge, ToolGroup.ORGANIZE, Color(0xFF74549B)),
+    IMPORT(CoreResourcesR.string.quick_tools_import, CoreResourcesR.string.quick_tools_import_hint, CoreResourcesR.drawable.ic_document_import, ToolGroup.ORGANIZE, Color(0xFF396E9A)),
+    MERGE(CoreResourcesR.string.quick_tools_merge, CoreResourcesR.string.quick_tools_merge_hint, CoreResourcesR.drawable.ic_tool_merge, ToolGroup.ORGANIZE, Color(0xFF74549B)),
     EXTRACT(R.string.tools_hub_split, R.string.tools_hub_split_hint, R.drawable.ic_tool_extract, ToolGroup.ORGANIZE, Color(0xFFAA632B)),
     PDF_IMAGES(R.string.tools_hub_pdf_images, R.string.tools_hub_pdf_images_hint, R.drawable.ic_tool_export_images, ToolGroup.CONVERT, Color(0xFF9F5358)),
-    COMPRESS(R.string.tool_catalog_compress, R.string.tool_catalog_compress_hint, R.drawable.ic_tool_compress, ToolGroup.ORGANIZE, Color(0xFF277F73)),
-    EDITOR(R.string.tools_hub_editor, R.string.tools_hub_editor_hint, R.drawable.ic_tool_pdf_edit, ToolGroup.EDIT, Color(0xFF376B8E)),
-    SIGN(R.string.quick_tools_sign, R.string.quick_tools_sign_hint, R.drawable.ic_tool_signature, ToolGroup.FILL, Color(0xFF735A91)),
-    FILL_PAGE(R.string.tool_catalog_fill_page, R.string.tool_catalog_fill_hint, R.drawable.ic_tool_fill_page, ToolGroup.FILL, Color(0xFF387E88)),
+    COMPRESS(CoreResourcesR.string.tool_catalog_compress, R.string.tool_catalog_compress_hint, CoreResourcesR.drawable.ic_tool_compress, ToolGroup.ORGANIZE, Color(0xFF277F73)),
+    EDITOR(R.string.tools_hub_editor, R.string.tools_hub_editor_hint, CoreResourcesR.drawable.ic_tool_pdf_edit, ToolGroup.EDIT, Color(0xFF376B8E)),
+    SIGN(CoreResourcesR.string.quick_tools_sign, CoreResourcesR.string.quick_tools_sign_hint, CoreResourcesR.drawable.ic_tool_signature, ToolGroup.FILL, Color(0xFF735A91)),
+    FILL_PAGE(R.string.tool_catalog_fill_page, R.string.tool_catalog_fill_hint, CoreResourcesR.drawable.ic_tool_fill_page, ToolGroup.FILL, Color(0xFF387E88)),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -204,7 +206,7 @@ fun ToolsHubScreen(
                         },
                         enabled = enabled,
                     ) {
-                        Icon(painterResource(R.drawable.arrow_back_24px),
+                        Icon(painterResource(CoreResourcesR.drawable.arrow_back_24px),
                             stringResource(R.string.tools_hub_back))
                     }
                 },
@@ -217,8 +219,8 @@ fun ToolsHubScreen(
                                     searchFocus.requestFocus()
                                     keyboard?.show()
                                 }) {
-                                    Icon(painterResource(R.drawable.ic_toast_close),
-                                        stringResource(R.string.tool_catalog_clear))
+                                    Icon(painterResource(CoreResourcesR.drawable.ic_toast_close),
+                                        stringResource(CoreResourcesR.string.tool_catalog_clear))
                                 }
                             }
                         } else {
@@ -226,7 +228,7 @@ fun ToolsHubScreen(
                                 isSearching = true
                                 requestSearchFocus = true
                             }, enabled = enabled) {
-                                Icon(painterResource(R.drawable.ic_document_search),
+                                Icon(painterResource(CoreResourcesR.drawable.ic_document_search),
                                     stringResource(R.string.tool_catalog_search))
                             }
                         }
@@ -291,9 +293,9 @@ fun ToolsHubScreen(
                     ScaniqoEmptyState(
                         title = stringResource(R.string.tool_catalog_empty),
                         description = stringResource(R.string.tool_catalog_empty_hint),
-                        iconRes = R.drawable.ic_document_search,
+                        iconRes = CoreResourcesR.drawable.ic_document_search,
                         actionLabel = stringResource(if (group == ToolGroup.ALL)
-                            R.string.tool_catalog_clear else R.string.tool_catalog_reset),
+                            CoreResourcesR.string.tool_catalog_clear else R.string.tool_catalog_reset),
                         onAction = { query = ""; if (group != ToolGroup.ALL) group = ToolGroup.ALL },
                     )
                 }
@@ -365,17 +367,17 @@ private fun ToolsHubSourcePreview() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.quick_tools_sign)) },
+                    title = { Text(stringResource(CoreResourcesR.string.quick_tools_sign)) },
                     navigationIcon = {
                         IconButton(onClick = {}) {
-                            Icon(painterResource(R.drawable.arrow_back_24px), stringResource(R.string.tools_hub_back))
+                            Icon(painterResource(CoreResourcesR.drawable.arrow_back_24px), stringResource(R.string.tools_hub_back))
                         }
                     },
                 )
             },
         ) { padding ->
             DocumentSourceStep(
-                toolTitle = stringResource(R.string.quick_tools_sign),
+                toolTitle = stringResource(CoreResourcesR.string.quick_tools_sign),
                 documents = emptyList(),
                 isLoading = false,
                 loadError = false,

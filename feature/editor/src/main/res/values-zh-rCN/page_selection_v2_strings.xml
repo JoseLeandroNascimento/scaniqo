@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_drag_mode">拖动</string>
+    <string name="pages_v2_direct_mode">移至指定位置</string>
+    <string name="pages_v2_selected_position">位于第 %1$d 位的页面</string>
+    <string name="pages_v2_final_position">最终位置</string>
+    <string name="pages_v2_start">开头</string>
+    <string name="pages_v2_end">末尾</string>
+    <string name="pages_v2_move_to">移至第 %1$d 位</string>
+    <string name="pages_v2_same_position">已在此位置</string>
+    <string name="pages_v2_numbering">页码</string>
+    <string name="pages_v2_options">第 %1$d 页的选项</string>
+    <string name="pages_v2_moved">页面已移至第 %1$d 位</string>
+</resources>

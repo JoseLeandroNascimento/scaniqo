@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <plurals name="document_scope_apply_count">
+        <item quantity="one">Aplicar a %1$d página</item>
+        <item quantity="many">Aplicar a %1$d páginas</item>
+        <item quantity="other">Aplicar a %1$d páginas</item>
+    </plurals>
+    <string name="corrections_tab_angle">Inclinar</string>
+    <string name="corrections_tab_perspective">Bordes</string>
+    <string name="corrections_tab_curve">Curva</string>
+    <string name="corrections_preview_position">%1$d / %2$d</string>
+    <string name="corrections_preview_choose_position">Página %1$d de %2$d. Elegir página de vista previa</string>
+    <string name="corrections_live_title">Vista previa del ajuste</string>
+    <string name="corrections_live_hint">La vista previa sigue los controles. El documento solo cambia al aplicar.</string>
+    <string name="corrections_preview_choose">Elegir página de vista previa</string>
+    <string name="corrections_preview_before">Antes</string>
+    <string name="corrections_preview_after">Después</string>
+    <string name="corrections_preview_before_description">Ver página antes de este ajuste</string>
+    <string name="corrections_preview_after_description">Ver resultado de este ajuste</string>
+    <string name="corrections_preview_before_hint">Antes de este ajuste</string>
+    <string name="corrections_preview_after_hint">Resultado del ajuste</string>
+    <string name="corrections_preview_updating">Actualizando…</string>
+    <string name="corrections_preview_native_hint">Se conservan texto y vectores. Para corregir esta página como imagen, activa la opción de abajo.</string>
+    <string name="corrections_page_navigation_hint">Cambiar la vista previa conserva los controles para revisar el ajuste en otras páginas.</string>
+    <string name="corrections_perspective_editor">Ajustar bordes en la captura</string>
+    <string name="corrections_perspective_live_hint">Arrastra las esquinas de la imagen de abajo y revisa el resultado arriba.</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_v3_align">对齐</string>
+    <string name="layout_v3_align_target">对齐：%1$s，%2$s</string>
+    <string name="layout_v3_hide_precise">隐藏精确位置</string>
+    <string name="layout_v3_precise">精确位置</string>
+    <string name="layout_v3_nudge">向%1$s移动</string>
+    <string name="layout_v3_center">内容居中</string>
+    <string name="layout_v3_custom_size">自定义 · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">取景预设使用 100% 缩放。</string>
+</resources>

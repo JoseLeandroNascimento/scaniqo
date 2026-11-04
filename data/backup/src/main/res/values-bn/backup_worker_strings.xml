@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_notification_channel">ডকুমেন্ট ব্যাকআপ</string>
+    <string name="backup_notification_title">ব্যাকআপ চলছে</string>
+    <string name="backup_notification_message">আপনার PDF ফাইল Google Drive-এ সেভ করা হচ্ছে।</string>
+</resources>

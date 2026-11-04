@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_v4_tool_mark">Marque</string>
+    <string name="fill_v4_edit_mark">Modifier la marque</string>
+    <string name="fill_v4_format">Format</string>
+    <string name="fill_v4_collapse">Réduire</string>
+    <string name="fill_v4_stop_inserting">Arrêter</string>
+    <string name="fill_v4_page_hint_neutral">Touchez un élément pour le modifier. Choisissez Texte ou Marque pour ajouter un élément.</string>
+    <string name="fill_v4_page_hint_insert_mark">Touchez la page pour ajouter une marque.</string>
+    <string name="fill_v4_selection_resize">Redimensionner cet élément</string>
+</resources>

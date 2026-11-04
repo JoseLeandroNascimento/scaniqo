@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_title">Rogner la signature</string>
+    <string name="signature_crop_left">Bord gauche</string>
+    <string name="signature_crop_top">Bord supérieur</string>
+    <string name="signature_crop_right">Bord droit</string>
+    <string name="signature_crop_bottom">Bord inférieur</string>
+    <string name="signature_crop_reset">Image entière</string>
+    <string name="signature_crop_apply">Appliquer le rognage</string>
+</resources>

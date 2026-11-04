@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_choose_hint">लाइब्रेरी से PDF चुनें या डिवाइस से फ़ाइल आयात करें।</string>
+    <string name="utility_workspace_import_device">डिवाइस से आयात करें</string>
+    <string name="utility_workspace_search">दस्तावेज़ खोजें</string>
+    <string name="utility_workspace_no_match">कोई दस्तावेज़ नहीं मिला।</string>
+    <string name="utility_workspace_selection">%2$d में से %1$d चुने गए</string>
+    <string name="utility_workspace_select_all">सभी</string>
+    <string name="utility_workspace_clear">साफ़ करें</string>
+    <string name="utility_workspace_page">पृष्ठ %1$d</string>
+    <string name="utility_workspace_locked_pages">गोपनीयता के लिए इस PDF के थंबनेल छिपे हैं। पृष्ठ संख्याओं से चुनें।</string>
+    <string name="utility_workspace_empty_selection">कम से कम एक पृष्ठ चुनें।</string>
+    <string name="utility_workspace_format">इमेज का फ़ॉर्मैट</string>
+    <string name="utility_workspace_zip_hint">हर पृष्ठ इमेज बनता है। सभी एक ZIP फ़ाइल में रहती हैं।</string>
+    <string name="utility_workspace_busy">फ़ाइल तैयार हो रही है…</string>
+    <string name="utility_workspace_compress_title">PDF कंप्रेस करें</string>
+    <string name="utility_workspace_compress_hint">PDF की इमेज का आकार घटाएँ और खोजने योग्य टेक्स्ट बनाए रखें।</string>
+    <string name="utility_workspace_open_result">कंप्रेस किया PDF खोलें</string>
+    <string name="utility_workspace_inspect_page">पृष्ठ %1$d बड़ा करें</string>
+    <string name="utility_workspace_select_page">यह पृष्ठ चुनें</string>
+    <string name="utility_workspace_deselect_page">चयन से हटाएँ</string>
+</resources>

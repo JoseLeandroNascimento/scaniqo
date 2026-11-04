@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow_body">Уменьшает мягкие тени на бумаге, сохраняя буквы.</string>
+    <string name="quality_filter_light_body">Выравнивает светлые и тёмные участки снимка.</string>
+    <string name="quality_filter_white_body">Осветляет желтоватый или серый фон документа.</string>
+    <string name="quality_filter_adaptive_body">Адаптивный чёрно-белый режим для текста с неравномерным освещением.</string>
+    <string name="quality_filter_noise_body">Сглаживает зернистость и мелкие точки без повышения исходного разрешения.</string>
+    <string name="quality_filter_sharp_body">Повышает чёткость краёв. Низкая интенсивность помогает избежать искусственных контуров.</string>
+    <string name="quality_filter_bleed_body">Ослабляет светлые следы с обратной стороны листа. Проверьте также бледный текст и заметки.</string>
+    <string name="quality_filter_intensity">Интенсивность</string>
+    <string name="quality_percentage">%1$d%%</string>
+    <string name="quality_correction_angle">Наклон</string>
+    <string name="quality_correction_perspective">Перспектива</string>
+    <string name="quality_correction_curve">Изгиб</string>
+    <string name="quality_angle_title">Выпрямить снимок</string>
+    <string name="quality_angle_body">Исправьте небольшой наклон, чтобы выровнять строки документа.</string>
+    <string name="quality_angle_value">%1$.1f°</string>
+    <string name="quality_angle_detect">Определить наклон</string>
+    <string name="quality_angle_use">Использовать предложенный угол: %1$.1f°</string>
+    <string name="quality_angle_no_suggestion">Не удалось надёжно определить наклон этой страницы.</string>
+    <string name="quality_angle_all_hint">Одинаковый угол будет применён ко всем страницам.</string>
+    <string name="quality_source_preview">Исходный снимок</string>
+    <string name="quality_perspective_body">Перетащите четыре угла к краям документа. Выбранная область будет выпрямлена.</string>
+    <string name="quality_perspective_all_hint">Для всех страниц будут использованы одинаковые пропорциональные границы.</string>
+    <string name="quality_corner_top_left">Левый верхний угол</string>
+    <string name="quality_corner_top_right">Правый верхний угол</string>
+    <string name="quality_corner_bottom_right">Правый нижний угол</string>
+    <string name="quality_corner_bottom_left">Левый нижний угол</string>
+    <string name="quality_corner_left">Сдвинуть влево</string>
+    <string name="quality_corner_right">Сдвинуть вправо</string>
+    <string name="quality_corner_up">Сдвинуть вверх</string>
+    <string name="quality_corner_down">Сдвинуть вниз</string>
+    <string name="quality_preview_unavailable">Не удалось открыть исходный снимок.</string>
+    <string name="quality_curve_title">Компенсировать изгиб</string>
+    <string name="quality_curve_body">Приблизительная ручная компенсация изгиба книжных страниц. Настраивайте понемногу и проверяйте результат; скрытые в сгибе детали не восстанавливаются.</string>
+    <string name="quality_curve_value">%1$+d%%</string>
+    <string name="quality_curve_reset">Без компенсации</string>
+</resources>

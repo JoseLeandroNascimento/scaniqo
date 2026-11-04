@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_position_hint">اسحب التوقيع لتغيير موضعه.</string>
+    <string name="signature_scale_hint">غيّر الحجم مع الحفاظ على النسب.</string>
+    <string name="signature_rotation_hint">اسحب حول الحلقة لتدوير التوقيع.</string>
+</resources>

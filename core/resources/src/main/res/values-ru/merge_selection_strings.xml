@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_selection_new_document">Создаёт новый PDF без пароля. Исходные файлы сохраняются.</string>
+    <string name="merge_selection_editor">Выберите PDF и задайте порядок добавления страниц.</string>
+    <string name="merge_selection_current">Текущий документ · %1$s</string>
+    <string name="merge_selection_all_added">Все добавлены.</string>
+    <string name="merge_selection_add_files">Добавить файлы с устройства</string>
+    <string name="merge_selection_external">Файл с устройства</string>
+    <string name="merge_selection_remove">Убрать %1$s из выбранных</string>
+    <string name="merge_selection_cancel_drag">Отменить изменение порядка</string>
+    <string name="merge_selection_protected">Защищённые PDF могут запросить пароль. Результат будет без пароля.</string>
+    <string name="merge_selection_preserve_protection">Защита редактируемого документа сохранится в результате.</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="one">Выберите %1$d PDF</item>
+        <item quantity="few">Выберите %1$d PDF</item>
+        <item quantity="many">Выберите %1$d PDF</item>
+        <item quantity="other">Выберите %1$d PDF</item>
+    </plurals>
+</resources>

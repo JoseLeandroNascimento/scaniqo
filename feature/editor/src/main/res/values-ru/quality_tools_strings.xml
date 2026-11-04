@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow">Убрать тени</string>
+    <string name="quality_filter_light">Равномерный свет</string>
+    <string name="quality_filter_white">Белая бумага</string>
+    <string name="quality_filter_adaptive">Чёткий текст</string>
+    <string name="quality_filter_noise">Уменьшить шум</string>
+    <string name="quality_filter_sharp">Усилить детали</string>
+    <string name="quality_filter_bleed">Ослабить просвечивание</string>
+    <string name="quality_native_title">Применять к страницам с текстом или векторами</string>
+    <string name="quality_native_body">По умолчанию исходное содержимое сохраняется. При включении страница станет изображением; OCR может восстановить текст для поиска.</string>
+    <string name="quality_native_active">При коррекции страницы с текстом и векторной графикой также будут преобразованы в изображения.</string>
+    <string name="quality_export_tab">Экспорт</string>
+    <string name="quality_review_tab">Проверка</string>
+    <string name="quality_export_title">Качество PDF</string>
+    <string name="quality_export_high">Высокое качество</string>
+    <string name="quality_export_high_body">Приоритет точности изображений.</string>
+    <string name="quality_export_balanced">Сбалансированное</string>
+    <string name="quality_export_balanced_body">Уменьшает размер изображений с сохранением читаемости.</string>
+    <string name="quality_export_small">Меньший файл</string>
+    <string name="quality_export_small_body">Сильное сжатие. Перед отправкой проверьте мелкий текст и детали.</string>
+    <string name="quality_export_hint">Сжатие применяется при сохранении. Итоговый размер зависит от оригинала; сохранённые текст и векторы остаются чёткими при увеличении.</string>
+    <string name="quality_ocr_title">Поиск по тексту</string>
+    <string name="quality_ocr_body">При сохранении распознаётся печатный текст на латинице, включая португальский. Обработка выполняется на устройстве с сохранением вида документа.</string>
+    <string name="quality_ocr_hint">OCR может ошибаться и занимает больше времени на длинных документах. Страницы с сохранённым исходным текстом повторно не распознаются.</string>
+    <string name="quality_export_apply">Применить параметры</string>
+    <string name="quality_auto_title">Автоулучшение</string>
+    <string name="quality_auto_body">Объединяет настройки изображения и надёжно определённые углы наклона. Результат можно сравнить и отменить.</string>
+    <string name="quality_auto_apply">Улучшить страницу</string>
+    <string name="quality_auto_apply_all">Улучшить все</string>
+    <string name="quality_analysis_title">Проверить качество</string>
+    <string name="quality_analysis_body">Ищет пустые и повторяющиеся страницы, размытие, низкое разрешение и возможную обрезку. Предупреждения — лишь рекомендации: страницы не удаляются автоматически.</string>
+    <string name="quality_analysis_run">Проанализировать документ</string>
+    <string name="quality_analysis_again">Анализировать заново</string>
+    <string name="quality_analysis_running">Анализ страниц…</string>
+    <string name="quality_analysis_cancel">Отменить анализ</string>
+    <string name="quality_analysis_error">Не удалось завершить анализ. Повторите попытку.</string>
+    <string name="quality_analysis_clear">Предупреждений нет. Всё же рекомендуем проверить документ перед отправкой.</string>
+    <string name="quality_analysis_count">Нужно проверить %1$d из %2$d страниц</string>
+    <plurals name="quality_analysis_native">
+        <item quantity="one">%1$d страница содержит исходный текст или векторы.</item>
+        <item quantity="few">%1$d страницы содержат исходный текст или векторы.</item>
+        <item quantity="many">%1$d страниц содержат исходный текст или векторы.</item>
+        <item quantity="other">Страниц с исходным текстом или векторами: %1$d.</item>
+    </plurals>
+    <string name="quality_analysis_page">Страница %1$d</string>
+    <string name="quality_analysis_blank">Возможно, пустая страница</string>
+    <string name="quality_analysis_duplicate">Возможный повтор страницы %1$d</string>
+    <string name="quality_analysis_blurry">Возможное размытие</string>
+    <string name="quality_analysis_resolution">Низкое разрешение</string>
+    <string name="quality_analysis_clipped">Содержимое близко к краю</string>
+    <string name="quality_analysis_angle">Предложенный наклон: %1$.1f°</string>
+    <string name="quality_analysis_review">Посмотреть страницу</string>
+    <string name="quality_analysis_delete">Удалить страницу %1$d</string>
+</resources>

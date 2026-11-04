@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="preview_zoom_close">Fermer la vue agrandie</string>
+    <string name="preview_controls_show">Réglages</string>
+    <string name="preview_controls_hide">Masquer les réglages</string>
+    <string name="preview_gestures_hint">Utilisez deux doigts pour agrandir et naviguer.</string>
+</resources>

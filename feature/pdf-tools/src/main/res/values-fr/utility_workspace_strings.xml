@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_choose_hint">Choisissez un PDF de la bibliothèque ou importez un fichier de l’appareil.</string>
+    <string name="utility_workspace_import_device">Importer depuis l’appareil</string>
+    <string name="utility_workspace_search">Rechercher un document</string>
+    <string name="utility_workspace_no_match">Aucun document trouvé.</string>
+    <string name="utility_workspace_selection">%1$d sur %2$d sélectionnées</string>
+    <string name="utility_workspace_select_all">Toutes</string>
+    <string name="utility_workspace_clear">Effacer</string>
+    <string name="utility_workspace_page">Page %1$d</string>
+    <string name="utility_workspace_locked_pages">Pour préserver la confidentialité, les miniatures de ce PDF sont masquées. Choisissez par numéro de page.</string>
+    <string name="utility_workspace_empty_selection">Sélectionnez au moins une page.</string>
+    <string name="utility_workspace_format">Format des images</string>
+    <string name="utility_workspace_zip_hint">Chaque page devient une image. Toutes sont regroupées dans un fichier ZIP.</string>
+    <string name="utility_workspace_busy">Préparation du fichier…</string>
+    <string name="utility_workspace_compress_title">Compresser le PDF</string>
+    <string name="utility_workspace_compress_hint">Réduisez la taille des images du PDF en conservant le texte consultable par recherche.</string>
+    <string name="utility_workspace_open_result">Ouvrir le PDF compressé</string>
+    <string name="utility_workspace_inspect_page">Agrandir la page %1$d</string>
+    <string name="utility_workspace_select_page">Sélectionner cette page</string>
+    <string name="utility_workspace_deselect_page">Retirer de la sélection</string>
+</resources>

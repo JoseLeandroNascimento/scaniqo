@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_v2_thumbnails">Миниатюры</string>
+    <string name="pages_v2_intervals">Диапазоны</string>
+    <string name="pages_v2_from">От</string>
+    <string name="pages_v2_until">До</string>
+    <string name="pages_v2_add_range">Добавить диапазон</string>
+    <string name="pages_v2_update_range">Обновить диапазон</string>
+    <string name="pages_v2_edit_list">Изменить список</string>
+    <string name="pages_v2_confirm_selection">Подтвердить выбор</string>
+    <string name="pages_v2_cancel_edit">Отменить изменения</string>
+    <string name="pages_v2_order">Порядок: %1$s</string>
+    <string name="pages_v2_document_order">Использовать порядок PDF</string>
+    <string name="pages_v2_range_incomplete">Введите начало и конец диапазона.</string>
+    <string name="pages_v2_range_reversed">Начало не должно превышать конец.</string>
+    <string name="pages_v2_edit_range">Изменить диапазон %1$s</string>
+    <string name="pages_v2_remove_range">Удалить диапазон %1$s</string>
+    <string name="pages_v2_pending_selection">Подтвердите или отмените выбор перед продолжением.</string>
+    <plurals name="pages_v2_create_pdf">
+        <item quantity="one">Создать PDF из %1$d страницы</item>
+        <item quantity="few">Создать PDF из %1$d страниц</item>
+        <item quantity="many">Создать PDF из %1$d страниц</item>
+        <item quantity="other">Создать PDF из %1$d страниц</item>
+    </plurals>
+    <plurals name="pages_v2_export_images">
+        <item quantity="one">Экспортировать %1$d страницу</item>
+        <item quantity="few">Экспортировать %1$d страниц</item>
+        <item quantity="many">Экспортировать %1$d страниц</item>
+        <item quantity="other">Экспортировать %1$d страниц</item>
+    </plurals>
+    <string name="pages_v2_list_hint">Например: 5, 2-4, 1. Введённый порядок сохраняется.</string>
+</resources>

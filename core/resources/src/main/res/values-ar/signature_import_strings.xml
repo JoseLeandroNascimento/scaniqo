@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_intro">استورد توقيعك أو امسحه ضوئيًا لاستخدامه في ملفات PDF. يمكنك أيضًا رسمه أو كتابته.</string>
+    <string name="signature_import_crop">ضبط الاقتصاص</string>
+    <string name="signature_import_preview">مراجعة التوقيع</string>
+</resources>

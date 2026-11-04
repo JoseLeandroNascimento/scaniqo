@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_source">Dokumen</string>
+    <string name="utility_workspace_importing">Mengimpor dokumen…</string>
+    <string name="utility_workspace_pages">Pilih halaman</string>
+    <string name="utility_workspace_range">Masukkan rentang</string>
+    <string name="utility_workspace_order">Ketuk halaman untuk memilih. Rentang dapat menentukan urutan.</string>
+    <string name="utility_workspace_output">Hasil</string>
+    <string name="utility_workspace_jpg_hint">Berkas ringan untuk dibagikan</string>
+    <string name="utility_workspace_png_hint">Lebih detail, berkas lebih besar</string>
+    <string name="utility_workspace_copy_hint">Salinan baru akan dibuat. Dokumen asli tetap dipertahankan.</string>
+    <string name="utility_workspace_change_destination">Ganti lokasi</string>
+    <string name="utility_workspace_compress_level">Tingkat kompresi</string>
+    <string name="utility_workspace_balanced">Seimbang</string>
+    <string name="utility_workspace_balanced_hint">Keterbacaan baik, pengurangan ukuran sedang.</string>
+    <string name="utility_workspace_strong">Pengurangan lebih besar</string>
+    <string name="utility_workspace_strong_hint">Berkas lebih ringan. Periksa huruf kecil dan gambar.</string>
+    <string name="utility_workspace_compress_action">Kompres dan buat salinan</string>
+    <string name="utility_workspace_original_size">Asli</string>
+    <string name="utility_workspace_result_size">Dikompresi</string>
+    <string name="utility_workspace_compress_complete">PDF Anda lebih ringan</string>
+    <string name="utility_workspace_compress_no_gain">PDF ini sudah ringkas</string>
+    <string name="utility_workspace_compress_no_gain_hint">Tidak ada salinan dibuat karena ukurannya tidak berkurang.</string>
+    <string name="utility_workspace_compress_note">Pengurangan bergantung pada gambar dalam berkas. PDF dengan teks atau gambar yang sudah dioptimalkan mungkin tetap berukuran sama.</string>
+    <string name="utility_workspace_saved">%1$d%% lebih kecil</string>
+    <string name="utility_workspace_compressed_suffix">%1$s — dikompresi</string>
+</resources>

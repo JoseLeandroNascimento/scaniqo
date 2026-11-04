@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_v3_align">সারিবদ্ধ করুন</string>
+    <string name="layout_v3_align_target">সারিবদ্ধ করুন: %1$s, %2$s</string>
+    <string name="layout_v3_hide_precise">নির্ভুল অবস্থান লুকান</string>
+    <string name="layout_v3_precise">নির্ভুল অবস্থান</string>
+    <string name="layout_v3_nudge">%1$s দিকে সরান</string>
+    <string name="layout_v3_center">বিষয়বস্তু কেন্দ্রে আনুন</string>
+    <string name="layout_v3_custom_size">কাস্টম · %1$s · %2$d%% · %3$s</string>
+    <string name="layout_v3_preset_hint" formatted="false">ফ্রেমিং প্রিসেটে 100% স্কেল ব্যবহৃত হয়।</string>
+</resources>

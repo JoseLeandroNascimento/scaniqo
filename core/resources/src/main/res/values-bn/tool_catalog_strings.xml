@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="tool_catalog_clear">অনুসন্ধান মুছুন</string>
+    <string name="tool_catalog_compress">PDF কম্প্রেস করুন</string>
+    <string name="tool_catalog_watermark">জলছাপ</string>
+    <string name="tool_catalog_watermark_hint">টেক্সট, ছবি বা স্ট্যাম্প দিয়ে সাজান</string>
+    <string name="tool_catalog_choose_for">%1$s-এর জন্য নথি বেছে নিন</string>
+    <string name="tool_catalog_count">%1$dটি টুল উপলব্ধ</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="tool_catalog_clear">Effacer la recherche</string>
+    <string name="tool_catalog_compress">Compresser le PDF</string>
+    <string name="tool_catalog_watermark">Filigrane</string>
+    <string name="tool_catalog_watermark_hint">Personnalisez avec du texte, des images ou des tampons</string>
+    <string name="tool_catalog_choose_for">Choisissez un document pour %1$s</string>
+    <string name="tool_catalog_count">%1$d outils disponibles</string>
+</resources>

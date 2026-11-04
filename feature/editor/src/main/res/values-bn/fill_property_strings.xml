@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_property_actions">উপাদানের কাজ</string>
+    <string name="fill_property_type">চিহ্নের ধরন</string>
+    <string name="fill_property_style">টেক্সটের স্টাইল</string>
+    <string name="fill_property_transform">সরান ও ঘোরান</string>
+    <string name="fill_property_revert">সম্পাদনা ফিরিয়ে নিন</string>
+    <string name="fill_property_opacity">অস্বচ্ছতা</string>
+</resources>

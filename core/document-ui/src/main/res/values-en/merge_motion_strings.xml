@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_motion_library">Library</string>
+    <string name="merge_motion_device">Device</string>
+    <string name="merge_motion_add">Add PDFs</string>
+    <string name="merge_motion_done">Done</string>
+    <string name="merge_motion_one">One more to go</string>
+    <string name="merge_motion_search">Search documents</string>
+    <string name="merge_motion_selected">Selected: %1$d</string>
+    <string name="merge_motion_count_description">Merge %1$d PDFs into one</string>
+</resources>

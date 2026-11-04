@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_scan_align">将签名对准取景框</string>
+    <string name="signature_scan_hold_still">请保持手机稳定…</string>
+    <string name="signature_scan_more_light">请移至光线更充足的地方</string>
+    <string name="signature_scan_move_inside">请将完整签名放在框内</string>
+    <string name="signature_scan_auto">自动拍摄</string>
+    <string name="signature_scan_manual">准备好了吗？点按“拍照”</string>
+    <string name="signature_scan_capture_now">拍照</string>
+</resources>

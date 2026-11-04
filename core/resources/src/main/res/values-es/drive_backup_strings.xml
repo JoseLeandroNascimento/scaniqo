@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="backup_title">Copia de seguridad en Google Drive</string>
+    <string name="backup_heading">Tus PDF a salvo</string>
+    <string name="backup_connected">Cuenta conectada</string>
+    <string name="backup_count">%1$d PDF en este dispositivo</string>
+    <string name="backup_folder">Carpeta: Scaniqo backups</string>
+    <string name="backup_not_connected">Ninguna cuenta conectada</string>
+    <string name="backup_scope_title">Solo PDF guardados</string>
+    <string name="backup_local_summary">Listos para copiar: %1$d PDF · %2$s</string>
+    <string name="backup_automatic_enable">Crear copias automáticamente</string>
+    <string name="backup_automatic_body">Actualiza tu copia de seguridad periódicamente.</string>
+    <string name="backup_wifi_body">Espera una conexión sin tarifa para evitar gastos de datos móviles.</string>
+    <string name="backup_charging_body">Espera a que el dispositivo esté conectado a la corriente.</string>
+    <string name="backup_automatic_authorize">La copia automática necesita tu permiso de nuevo. Reconecta Google Drive para reanudarla.</string>
+    <string name="backup_empty_title">Aún no hay registros</string>
+    <string name="backup_history_unloaded_body">Actualiza para comprobar la copia actual en Drive.</string>
+    <string name="backup_current">Copia actual</string>
+    <string name="backup_current_unavailable">No hay ninguna copia disponible en Drive.</string>
+</resources>

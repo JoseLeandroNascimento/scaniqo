@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_device">С устройства</string>
+    <string name="merge_source_app">Из приложения</string>
+    <string name="merge_app_title">Документы приложения</string>
+    <string name="merge_app_search">Поиск по названию</string>
+    <string name="merge_app_no_results">По этому запросу документы не найдены.</string>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="one">Объединить %1$d PDF</item>
+        <item quantity="few">Объединить %1$d PDF</item>
+        <item quantity="many">Объединить %1$d PDF</item>
+        <item quantity="other">Объединить %1$d PDF</item>
+    </plurals>
+</resources>

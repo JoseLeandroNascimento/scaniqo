@@ -1,11 +1,13 @@
 package com.joseleandro.scaniqo.ui.branding
 
+import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
+
 import android.app.Application
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.VectorDrawable
 import android.os.Build
 import android.view.ContextThemeWrapper
-import com.joseleandro.scaniqo.R
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -20,9 +22,9 @@ class ScaniqoSplashResourcesTest {
     @Test
     fun animationInflatesOnBothLegacyAndNativeSplashPlatforms() {
         val context = RuntimeEnvironment.getApplication()
-        assertEquals(3000, context.resources.getInteger(R.integer.scaniqo_splash_duration))
-        assertTrue(context.getDrawable(R.drawable.scaniqo_splash_animated) is AnimatedVectorDrawable)
-        assertTrue(context.getDrawable(R.drawable.scaniqo_splash_vector) is VectorDrawable)
+        assertEquals(3000, context.resources.getInteger(CoreResourcesR.integer.scaniqo_splash_duration))
+        assertTrue(context.getDrawable(CoreResourcesR.drawable.scaniqo_splash_animated) is AnimatedVectorDrawable)
+        assertTrue(context.getDrawable(CoreResourcesR.drawable.scaniqo_splash_vector) is VectorDrawable)
     }
 
     @Test

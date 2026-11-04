@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="runtime_signatures_empty">مكتبتك فارغة. أنشئ أول توقيع.</string>
+    <string name="runtime_signature_rename">إعادة تسمية التوقيع</string>
+    <string name="runtime_name">الاسم</string>
+    <string name="runtime_image">صورة</string>
+    <string name="runtime_image_choose">اختيار صورة</string>
+    <string name="runtime_image_change">تغيير الصورة</string>
+    <string name="runtime_remove_white">إزالة الخلفية البيضاء عند الحفظ</string>
+    <string name="runtime_signature_image_hint">تحتفظ ملفات PNG الشفافة بشفافيتها. صور حتى 10 MB.</string>
+    <string name="runtime_saving">جارٍ الحفظ…</string>
+    <string name="runtime_default_document">مستند %1$s</string>
+    <string name="runtime_operation_failed">تعذر إكمال العملية. أعد المحاولة.</string>
+    <string name="runtime_signature_saved">تم حفظ التوقيع.</string>
+    <string name="runtime_signature_deleted">تم حذف التوقيع.</string>
+    <string name="runtime_signature_renamed">تمت إعادة تسمية التوقيع.</string>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow_body">कागज़ की हल्की छायाएँ घटाता है और अक्षर सुरक्षित रखता है।</string>
+    <string name="quality_filter_light_body">एक ही कैप्चर के उजले और गहरे हिस्सों में संतुलन करता है।</string>
+    <string name="quality_filter_white_body">दस्तावेज़ के पीले या धूसर बैकग्राउंड को हल्का करता है।</string>
+    <string name="quality_filter_adaptive_body">असमान रोशनी वाले टेक्स्ट के लिए अनुकूल काला-सफ़ेद।</string>
+    <string name="quality_filter_noise_body">मूल रिज़ॉल्यूशन बढ़ाए बिना दाने और छोटे बिंदु कम करता है।</string>
+    <string name="quality_filter_sharp_body">किनारे स्पष्ट करता है। कम तीव्रता से कृत्रिम आउटलाइन से बचते हैं।</string>
+    <string name="quality_filter_bleed_body">शीट के दूसरी तरफ़ के हल्के निशान घटाता है। हल्के टेक्स्ट और टिप्पणियाँ भी जाँचें।</string>
+    <string name="quality_filter_intensity">तीव्रता</string>
+    <string name="quality_percentage">%1$d%%</string>
+    <string name="quality_correction_angle">झुकाव</string>
+    <string name="quality_correction_perspective">परिप्रेक्ष्य</string>
+    <string name="quality_correction_curve">वक्रता</string>
+    <string name="quality_angle_title">कैप्चर सीधा करें</string>
+    <string name="quality_angle_body">दस्तावेज़ की पंक्तियाँ सीधी करने के लिए हल्का झुकाव ठीक करें।</string>
+    <string name="quality_angle_value">%1$.1f°</string>
+    <string name="quality_angle_detect">झुकाव पहचानें</string>
+    <string name="quality_angle_use">सुझाव इस्तेमाल करें: %1$.1f°</string>
+    <string name="quality_angle_no_suggestion">इस पृष्ठ पर भरोसेमंद झुकाव नहीं मिला।</string>
+    <string name="quality_angle_all_hint">सभी पृष्ठों पर एक ही कोण लागू होगा।</string>
+    <string name="quality_source_preview">मूल कैप्चर</string>
+    <string name="quality_perspective_body">चारों कोनों को दस्तावेज़ के किनारों तक खींचें। चुना क्षेत्र सीधा किया जाएगा।</string>
+    <string name="quality_perspective_all_hint">सभी पृष्ठों पर वही आनुपातिक सीमाएँ इस्तेमाल होंगी।</string>
+    <string name="quality_corner_top_left">ऊपरी बायाँ कोना</string>
+    <string name="quality_corner_top_right">ऊपरी दायाँ कोना</string>
+    <string name="quality_corner_bottom_right">निचला दायाँ कोना</string>
+    <string name="quality_corner_bottom_left">निचला बायाँ कोना</string>
+    <string name="quality_corner_left">बाएँ ले जाएँ</string>
+    <string name="quality_corner_right">दाएँ ले जाएँ</string>
+    <string name="quality_corner_up">ऊपर ले जाएँ</string>
+    <string name="quality_corner_down">नीचे ले जाएँ</string>
+    <string name="quality_preview_unavailable">मूल कैप्चर नहीं खुल सका।</string>
+    <string name="quality_curve_title">वक्रता सुधारें</string>
+    <string name="quality_curve_body">किताब के पृष्ठों के लिए लगभग मैन्युअल सुधार। धीरे समायोजित करें और परिणाम देखें; मोड़ में छिपे विवरण वापस नहीं बनते।</string>
+    <string name="quality_curve_value">%1$+d%%</string>
+    <string name="quality_curve_reset">बिना सुधार</string>
+</resources>

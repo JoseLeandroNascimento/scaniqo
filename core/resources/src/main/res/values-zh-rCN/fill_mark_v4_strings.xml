@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_v4_tool_mark">标记</string>
+    <string name="fill_v4_edit_mark">编辑标记</string>
+    <string name="fill_v4_format">格式</string>
+    <string name="fill_v4_collapse">收起</string>
+    <string name="fill_v4_stop_inserting">停止</string>
+    <string name="fill_v4_page_hint_neutral">点按元素可编辑。选择文本或标记可添加内容。</string>
+    <string name="fill_v4_page_hint_insert_mark">点按页面以添加标记。</string>
+    <string name="fill_v4_selection_resize">调整元素大小</string>
+</resources>

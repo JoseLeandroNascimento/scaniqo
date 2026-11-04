@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_scan_align">हस्ताक्षर को फ़्रेम में रखें</string>
+    <string name="signature_scan_hold_still">फ़ोन स्थिर रखें…</string>
+    <string name="signature_scan_more_light">ज़्यादा रोशनी वाली जगह पर जाएँ</string>
+    <string name="signature_scan_move_inside">पूरा हस्ताक्षर फ़्रेम के अंदर रखें</string>
+    <string name="signature_scan_auto">अपने आप फ़ोटो</string>
+    <string name="signature_scan_manual">तैयार हैं? फ़ोटो लें पर टैप करें</string>
+    <string name="signature_scan_capture_now">फ़ोटो लें</string>
+</resources>

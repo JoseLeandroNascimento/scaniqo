@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_choose_hint">Выберите PDF из библиотеки или импортируйте файл с устройства.</string>
+    <string name="utility_workspace_import_device">Импорт с устройства</string>
+    <string name="utility_workspace_search">Найти документ</string>
+    <string name="utility_workspace_no_match">Документы не найдены.</string>
+    <string name="utility_workspace_selection">Выбрано %1$d из %2$d</string>
+    <string name="utility_workspace_select_all">Все</string>
+    <string name="utility_workspace_clear">Очистить</string>
+    <string name="utility_workspace_page">Страница %1$d</string>
+    <string name="utility_workspace_locked_pages">Для конфиденциальности миниатюры PDF скрыты. Выбирайте по номерам страниц.</string>
+    <string name="utility_workspace_empty_selection">Выберите хотя бы одну страницу.</string>
+    <string name="utility_workspace_format">Формат изображений</string>
+    <string name="utility_workspace_zip_hint">Каждая страница станет изображением. Все изображения будут в одном ZIP.</string>
+    <string name="utility_workspace_busy">Подготовка файла…</string>
+    <string name="utility_workspace_compress_title">Сжать PDF</string>
+    <string name="utility_workspace_compress_hint">Уменьшите размер изображений в PDF, сохранив поиск по тексту.</string>
+    <string name="utility_workspace_open_result">Открыть сжатый PDF</string>
+    <string name="utility_workspace_inspect_page">Увеличить страницу %1$d</string>
+    <string name="utility_workspace_select_page">Выбрать эту страницу</string>
+    <string name="utility_workspace_deselect_page">Убрать из выбранных</string>
+</resources>

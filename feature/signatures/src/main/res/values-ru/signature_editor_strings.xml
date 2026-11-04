@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_tab_import">Импорт</string>
+    <string name="signature_tab_scan">Сканировать</string>
+    <string name="runtime_signature_edit">Изменить подпись</string>
+    <string name="runtime_signature_draw_hint">Нарисуйте подпись в области ниже.</string>
+    <string name="runtime_signature_preview">Предпросмотр</string>
+    <string name="runtime_signature_font">Шрифт</string>
+    <string name="runtime_font_pen">Ручка</string>
+    <string name="runtime_font_script">Каллиграфия</string>
+    <string name="runtime_font_brush">Кисть</string>
+</resources>

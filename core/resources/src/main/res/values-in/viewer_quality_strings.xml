@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="viewer_tool_corrections">Perbaiki</string>
+    <string name="viewer_compare_before">Sebelum</string>
+    <string name="viewer_compare_after">Sesudah</string>
+    <string name="viewer_compare_description">Bandingkan peningkatan halaman %1$d</string>
+    <string name="viewer_compare_before_description">Tampilkan halaman tanpa peningkatan</string>
+    <string name="viewer_compare_after_description">Tampilkan halaman dengan peningkatan</string>
+    <string name="viewer_preview_updating">Memperbarui pratinjau…</string>
+</resources>

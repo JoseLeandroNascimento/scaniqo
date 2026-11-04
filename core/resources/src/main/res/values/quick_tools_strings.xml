@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quick_tools_import">Import PDF</string>
+    <string name="quick_tools_import_hint">From your device</string>
+    <string name="quick_tools_merge">Merge PDFs</string>
+    <string name="quick_tools_merge_hint">Combine and organize</string>
+    <string name="quick_tools_sign">Sign document</string>
+    <string name="quick_tools_sign_hint">Position your signature</string>
+    <string name="quick_merge_working">Preparing your new PDF…</string>
+    <string name="quick_merge_continue">Continue</string>
+</resources>

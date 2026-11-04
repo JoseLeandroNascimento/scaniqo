@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_selection_new_document">Membuat PDF baru tanpa kata sandi. Berkas asli tetap dipertahankan.</string>
+    <string name="merge_selection_editor">Pilih PDF dan tentukan urutan penambahan halaman.</string>
+    <string name="merge_selection_current">Dokumen saat ini · %1$s</string>
+    <string name="merge_selection_all_added">Semua telah ditambahkan.</string>
+    <string name="merge_selection_add_files">Tambahkan berkas dari perangkat</string>
+    <string name="merge_selection_external">Berkas perangkat</string>
+    <string name="merge_selection_remove">Hapus %1$s dari pilihan</string>
+    <string name="merge_selection_cancel_drag">Batalkan perubahan urutan</string>
+    <string name="merge_selection_protected">PDF yang dilindungi mungkin meminta kata sandi. Hasilnya tidak memiliki kata sandi.</string>
+    <string name="merge_selection_preserve_protection">Perlindungan dokumen yang sedang diedit tetap dipertahankan pada hasil.</string>
+    <plurals name="merge_selection_minimum">
+        <item quantity="other">Pilih %1$d PDF</item>
+    </plurals>
+</resources>

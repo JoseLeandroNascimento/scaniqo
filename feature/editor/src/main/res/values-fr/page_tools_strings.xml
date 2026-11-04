@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pages_scan">Numériser</string>
+    <string name="pages_numbering">Numéroter toutes les pages</string>
+    <string name="pages_move_action">Déplacer la page</string>
+    <string name="pages_drag_hint">Appuyez longuement sur une page et faites-la glisser pour réorganiser.</string>
+    <string name="pages_drag_handle">Réorganiser la page %1$d</string>
+    <string name="pages_drag_cancel">Annuler le déplacement</string>
+    <string name="pages_page">Page %1$d</string>
+    <string name="pages_selected">Sélectionnée</string>
+    <string name="pages_move_up">Déplacer vers le haut</string>
+    <string name="pages_move_down">Déplacer vers le bas</string>
+    <string name="pages_one_page">Ajoutez des pages pour modifier leur ordre.</string>
+</resources>

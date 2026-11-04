@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_no_tag">بلا وسم</string>
+    <string name="document_create_title">حفظ المستند</string>
+    <string name="document_editor_title">تعديل المستند</string>
+    <string name="document_name_label">اسم المستند</string>
+    <string name="document_name_placeholder">مثال: عقد إيجار</string>
+    <string name="document_name_required">أدخل اسمًا للمستند.</string>
+    <string name="document_name_too_long">استخدم %1$d حرفًا كحد أقصى.</string>
+    <string name="document_tag_label">الوسم</string>
+    <string name="document_optional">اختياري</string>
+    <string name="document_no_tags_available">يمكنك إنشاء وسوم من إدارة الوسوم وإضافة أحدها لاحقًا.</string>
+    <string name="document_save">حفظ المستند</string>
+    <string name="document_save_changes">حفظ التغييرات</string>
+    <string name="document_saving">جارٍ الحفظ…</string>
+    <string name="document_save_error">تعذر الحفظ. تم الاحتفاظ بمعلوماتك. أعد المحاولة.</string>
+    <string name="document_delete_title">نقل إلى سلة المهملات؟</string>
+    <string name="document_delete_body">سيُزال المستند «%1$s» من المكتبة. يمكنك استعادته من سلة المهملات في القائمة.</string>
+    <string name="document_delete_error">تعذر النقل إلى سلة المهملات. أعد المحاولة.</string>
+    <string name="document_deleting">جارٍ النقل…</string>
+    <string name="document_updated">تم تحديث المستند</string>
+    <string name="document_deleted">تم نقل المستند إلى سلة المهملات</string>
+    <string name="document_downloaded">تم حفظ PDF في الموقع المحدد</string>
+    <string name="document_scan_error">تعذر فتح الماسح. أعد المحاولة.</string>
+    <string name="document_prepare_error">تعذر تجهيز المستند الممسوح. حاول مسحه مجددًا.</string>
+    <string name="document_export_error">تعذر تنزيل PDF. أعد المحاولة.</string>
+    <string name="document_share_error">تعذر مشاركة PDF. أعد المحاولة.</string>
+</resources>

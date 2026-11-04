@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_pen_color_title">Pen color</string>
+    <string name="signature_pen_color_description">Pen color: %1$s</string>
+    <string name="signature_tip_size_description">Tip size: %1$s</string>
+    <string name="signature_tip_extra_fine">Extra fine</string>
+    <string name="signature_tip_fine">Fine</string>
+    <string name="signature_tip_medium">Medium</string>
+    <string name="signature_tip_bold">Bold</string>
+    <string name="signature_tip_extra_bold">Extra bold</string>
+</resources>

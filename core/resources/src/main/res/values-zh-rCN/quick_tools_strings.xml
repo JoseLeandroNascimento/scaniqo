@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quick_tools_import">导入 PDF</string>
+    <string name="quick_tools_import_hint">从设备导入</string>
+    <string name="quick_tools_merge">合并 PDF</string>
+    <string name="quick_tools_merge_hint">合并并整理</string>
+    <string name="quick_tools_sign">为文档签名</string>
+    <string name="quick_tools_sign_hint">放置您的签名</string>
+    <string name="quick_merge_working">正在准备新的 PDF…</string>
+    <string name="quick_merge_continue">继续</string>
+</resources>

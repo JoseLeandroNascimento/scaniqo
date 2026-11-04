@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_scope_current">هذه الصفحة</string>
+    <string name="document_scope_select">اختيار</string>
+    <string name="document_scope_all">الكل</string>
+    <string name="document_scope_title">التطبيق على أي صفحات؟</string>
+    <string name="document_scope_hint">سيُطبّق الضبط نفسه على الصفحات المحددة فقط.</string>
+    <string name="document_scope_select_all">تحديد الكل</string>
+    <string name="document_scope_clear">مسح</string>
+    <string name="document_scope_confirm">استخدام التحديد</string>
+    <string name="document_scope_cancel">إلغاء</string>
+    <string name="document_scope_page">الصفحة %1$d</string>
+    <string name="document_scope_selected_count">اختيار (%1$d)</string>
+    <string name="document_scope_empty">حدد صفحة واحدة على الأقل.</string>
+    <plurals name="document_scope_count">
+        <item quantity="zero">لم تُحدد صفحات (%1$d)</item>
+        <item quantity="one">حُددت صفحة واحدة (%1$d)</item>
+        <item quantity="two">حُددت صفحتان (%1$d)</item>
+        <item quantity="few">حُددت %1$d صفحات</item>
+        <item quantity="many">حُددت %1$d صفحة</item>
+        <item quantity="other">حُددت %1$d صفحة</item>
+    </plurals>
+    <string name="corrections_preview_previous">معاينة الصفحة السابقة</string>
+    <string name="corrections_preview_next">معاينة الصفحة التالية</string>
+    <string name="corrections_preview_pages">اختيار صفحة للعرض</string>
+    <string name="corrections_preview_error">تعذر تحديث المعاينة.</string>
+    <string name="corrections_preview_retry">إعادة المحاولة</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_intro">导入或扫描签名以用于 PDF。您也可以手写或输入签名。</string>
+    <string name="signature_import_crop">调整裁剪</string>
+    <string name="signature_import_preview">检查签名</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">Fit to screen</string>
+    <string name="fill_mark_font_smaller">Decrease text size</string>
+    <string name="fill_mark_font_larger">Increase text size</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">On this page</string>
+    <string name="fill_mark_every_page">All pages</string>
+    <string name="fill_mark_remove">Delete</string>
+    <string name="fill_mark_apply">Apply</string>
+    <string name="fill_mark_no_values">Save text you often fill in to reuse it here.</string>
+    <string name="fill_mark_move_left">Move element left</string>
+    <string name="fill_mark_move_right">Move element right</string>
+    <string name="fill_mark_move_up">Move element up</string>
+    <string name="fill_mark_move_down">Move element down</string>
+    <string name="fill_inline_edit_text">Edit text on page</string>
+    <string name="fill_selection_grow">Enlarge element</string>
+    <string name="fill_selection_shrink">Reduce element</string>
+    <string name="fill_selection_top_left">Resize from top left corner</string>
+    <string name="fill_selection_top_right">Resize from top right corner</string>
+    <string name="fill_selection_bottom_right">Resize from bottom right corner</string>
+    <string name="fill_selection_bottom_left">Resize from bottom left corner</string>
+</resources>

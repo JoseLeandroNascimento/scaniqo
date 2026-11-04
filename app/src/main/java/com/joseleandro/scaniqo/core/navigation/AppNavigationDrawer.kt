@@ -1,5 +1,8 @@
 package com.joseleandro.scaniqo.core.navigation
 
+import com.joseleandro.scaniqo.R
+import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
+
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -35,7 +38,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.joseleandro.scaniqo.R
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 /** Menu visual independente da pilha de navegação e das operações com documentos. */
@@ -85,19 +87,19 @@ internal fun AppNavigationDrawer(
                 )
             }
             DrawerDestination(
-                label = stringResource(R.string.documents_title),
-                icon = R.drawable.ic_tool_pages,
+                label = stringResource(CoreResourcesR.string.documents_title),
+                icon = CoreResourcesR.drawable.ic_tool_pages,
                 selected = currentRoute == AppRoute.Documents,
                 onClick = onClose,
             )
             DrawerDestination(
                 label = stringResource(R.string.menu_import_pdf),
-                icon = R.drawable.ic_document_import,
+                icon = CoreResourcesR.drawable.ic_document_import,
                 onClick = onImportPdf,
             )
             DrawerDestination(
-                label = stringResource(R.string.tools_hub_title),
-                icon = R.drawable.ic_tag_tools,
+                label = stringResource(CoreResourcesR.string.tools_hub_title),
+                icon = CoreResourcesR.drawable.ic_tag_tools,
                 selected = currentRoute == AppRoute.Tools,
                 onClick = { onNavigate(AppRoute.Tools) },
             )
@@ -107,24 +109,24 @@ internal fun AppNavigationDrawer(
             )
             DrawerDestination(
                 label = stringResource(R.string.menu_tags),
-                icon = R.drawable.ic_tag_label,
+                icon = CoreResourcesR.drawable.ic_tag_label,
                 selected = currentRoute == AppRoute.Tags,
                 onClick = { onNavigate(AppRoute.Tags) },
             )
             DrawerDestination(
                 label = stringResource(R.string.menu_signatures),
-                icon = R.drawable.ic_tool_signature,
+                icon = CoreResourcesR.drawable.ic_tool_signature,
                 selected = currentRoute == AppRoute.Signatures,
                 onClick = { onNavigate(AppRoute.Signatures) },
             )
             DrawerDestination(
-                label = stringResource(R.string.trash_title),
-                icon = R.drawable.delete_24px,
+                label = stringResource(CoreResourcesR.string.trash_title),
+                icon = CoreResourcesR.drawable.delete_24px,
                 selected = currentRoute == AppRoute.Trash,
                 onClick = { onNavigate(AppRoute.Trash) },
             )
             DrawerDestination(
-                label = stringResource(R.string.settings_title),
+                label = stringResource(CoreResourcesR.string.settings_title),
                 icon = R.drawable.ic_settings,
                 selected = currentRoute in setOf(AppRoute.Settings, AppRoute.Personalization,
                     AppRoute.PdfPreferences, AppRoute.DriveBackup, AppRoute.PasswordSettings),

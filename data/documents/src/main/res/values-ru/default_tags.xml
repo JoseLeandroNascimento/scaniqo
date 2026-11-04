@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="default_tag_work">Работа</string>
+    <string name="default_tag_personal">Личное</string>
+    <string name="default_tag_studies">Учёба</string>
+    <string name="default_tag_health">Здоровье</string>
+    <string name="default_tag_finances">Финансы</string>
+    <string name="default_tag_receipts">Квитанции</string>
+    <string name="default_tag_contracts">Договоры</string>
+    <string name="default_tag_home">Дом</string>
+</resources>

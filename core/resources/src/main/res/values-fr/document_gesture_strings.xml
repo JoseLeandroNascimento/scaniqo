@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="gesture_straighten_handle">Faites glisser la poignée latéralement pour ajuster l’inclinaison.</string>
+    <string name="gesture_curvature_handle">Faites glisser la poignée vers le haut ou le bas pour corriger la courbure.</string>
+    <string name="gesture_angle_increase">Tourner de 1 degré vers la droite</string>
+    <string name="gesture_angle_decrease">Tourner de 1 degré vers la gauche</string>
+    <string name="gesture_curve_increase">Courber vers le bas</string>
+    <string name="gesture_curve_decrease">Courber vers le haut</string>
+    <string name="gesture_drag_handle">Faites glisser la poignée</string>
+</resources>

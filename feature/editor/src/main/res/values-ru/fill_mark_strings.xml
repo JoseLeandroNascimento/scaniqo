@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_fit">По размеру экрана</string>
+    <string name="fill_mark_font_smaller">Уменьшить размер текста</string>
+    <string name="fill_mark_font_larger">Увеличить размер текста</string>
+    <string name="fill_mark_opacity_value">%1$d%%</string>
+    <string name="fill_mark_this_page">На этой странице</string>
+    <string name="fill_mark_every_page">Все страницы</string>
+    <string name="fill_mark_remove">Удалить</string>
+    <string name="fill_mark_apply">Применить</string>
+    <string name="fill_mark_no_values">Сохраните часто используемые тексты для повторного использования.</string>
+    <string name="fill_mark_move_left">Сдвинуть элемент влево</string>
+    <string name="fill_mark_move_right">Сдвинуть элемент вправо</string>
+    <string name="fill_mark_move_up">Сдвинуть элемент вверх</string>
+    <string name="fill_mark_move_down">Сдвинуть элемент вниз</string>
+    <string name="fill_inline_edit_text">Редактировать текст на странице</string>
+    <string name="fill_selection_grow">Увеличить элемент</string>
+    <string name="fill_selection_shrink">Уменьшить элемент</string>
+    <string name="fill_selection_top_left">Изменить размер за левый верхний угол</string>
+    <string name="fill_selection_top_right">Изменить размер за правый верхний угол</string>
+    <string name="fill_selection_bottom_right">Изменить размер за правый нижний угол</string>
+    <string name="fill_selection_bottom_left">Изменить размер за левый нижний угол</string>
+</resources>

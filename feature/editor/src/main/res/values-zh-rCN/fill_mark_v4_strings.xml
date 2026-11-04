@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_v4_tool_text">文本</string>
+    <string name="fill_v4_mark_check">勾选</string>
+    <string name="fill_v4_mark_cross">X</string>
+    <string name="fill_v4_add_text">添加文本</string>
+    <string name="fill_v4_add_mark">添加标记</string>
+    <string name="fill_v4_edit_text">编辑文本</string>
+    <string name="fill_v4_size">大小</string>
+    <string name="fill_v4_color">颜色</string>
+    <string name="fill_v4_bold">加粗</string>
+    <string name="fill_v4_italic">斜体</string>
+    <string name="fill_v4_underline">下划线</string>
+    <string name="fill_v4_duplicate">复制</string>
+    <string name="fill_v4_delete">删除</string>
+    <string name="fill_v4_more_actions">操作</string>
+    <string name="fill_v4_page_hint_insert_text">点按页面以添加文本。</string>
+    <string name="fill_v4_page_hint_insert_check">点按页面以添加对勾。</string>
+    <string name="fill_v4_page_hint_insert_cross">点按页面以添加叉号 X。</string>
+    <string name="fill_v4_page_hint_selected">拖动元素以移动。使用控制点调整大小。</string>
+    <string name="fill_v4_updating_page">正在更新页面…</string>
+</resources>

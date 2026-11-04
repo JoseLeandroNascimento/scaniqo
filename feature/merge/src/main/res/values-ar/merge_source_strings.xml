@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <plurals name="merge_app_selected_count">
+        <item quantity="zero">لم تُحدد ملفات PDF (%1$d)</item>
+        <item quantity="one">حُدد ملف PDF واحد (%1$d)</item>
+        <item quantity="two">حُدد ملفا PDF (%1$d)</item>
+        <item quantity="few">حُددت %1$d ملفات PDF</item>
+        <item quantity="many">حُدد %1$d ملف PDF</item>
+        <item quantity="other">حُدد %1$d ملف PDF</item>
+    </plurals>
+</resources>

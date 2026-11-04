@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_property_actions">元素操作</string>
+    <string name="fill_property_type">标记类型</string>
+    <string name="fill_property_style">文字样式</string>
+    <string name="fill_property_transform">移动和旋转</string>
+    <string name="fill_property_revert">撤销编辑</string>
+    <string name="fill_property_opacity">不透明度</string>
+</resources>

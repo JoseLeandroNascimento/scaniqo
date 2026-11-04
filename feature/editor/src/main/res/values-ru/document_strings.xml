@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_metadata_edit">Изменить название и метку</string>
+    <string name="document_page_position">Страница %1$d из %2$d</string>
+    <string name="document_processing">Подготовка файла…</string>
+    <string name="document_not_found_title">Документ не найден</string>
+    <string name="document_not_found_body">Этот документ больше недоступен в библиотеке.</string>
+    <string name="document_return">К документам</string>
+</resources>

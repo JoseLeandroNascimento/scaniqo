@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="merge_source_device">من الجهاز</string>
+    <string name="merge_source_app">من التطبيق</string>
+    <string name="merge_app_title">مستندات التطبيق</string>
+    <string name="merge_app_search">البحث بالاسم</string>
+    <string name="merge_app_no_results">لم يُعثر على مستندات لهذا البحث.</string>
+    <plurals name="merge_app_confirm_count">
+        <item quantity="zero">دمج %1$d ملف PDF</item>
+        <item quantity="one">دمج ملف PDF واحد (%1$d)</item>
+        <item quantity="two">دمج ملفي PDF (%1$d)</item>
+        <item quantity="few">دمج %1$d ملفات PDF</item>
+        <item quantity="many">دمج %1$d ملف PDF</item>
+        <item quantity="other">دمج %1$d ملف PDF</item>
+    </plurals>
+</resources>

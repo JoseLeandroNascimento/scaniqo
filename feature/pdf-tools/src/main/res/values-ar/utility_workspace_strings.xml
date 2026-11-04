@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="utility_workspace_choose_hint">اختر PDF من المكتبة أو استورد ملفًا من الجهاز.</string>
+    <string name="utility_workspace_import_device">استيراد من الجهاز</string>
+    <string name="utility_workspace_search">البحث عن مستند</string>
+    <string name="utility_workspace_no_match">لم يُعثر على مستندات.</string>
+    <string name="utility_workspace_selection">تم تحديد %1$d من %2$d</string>
+    <string name="utility_workspace_select_all">الكل</string>
+    <string name="utility_workspace_clear">مسح</string>
+    <string name="utility_workspace_page">الصفحة %1$d</string>
+    <string name="utility_workspace_locked_pages">لخصوصيتك، تُخفى الصور المصغرة لهذا PDF. اختر بأرقام الصفحات.</string>
+    <string name="utility_workspace_empty_selection">حدد صفحة واحدة على الأقل.</string>
+    <string name="utility_workspace_format">تنسيق الصور</string>
+    <string name="utility_workspace_zip_hint">تتحول كل صفحة إلى صورة، وتُجمع الصور في ملف ZIP واحد.</string>
+    <string name="utility_workspace_busy">جارٍ تجهيز الملف…</string>
+    <string name="utility_workspace_compress_title">ضغط PDF</string>
+    <string name="utility_workspace_compress_hint">قلل حجم صور PDF مع الحفاظ على النص القابل للبحث.</string>
+    <string name="utility_workspace_open_result">فتح PDF المضغوط</string>
+    <string name="utility_workspace_inspect_page">تكبير الصفحة %1$d</string>
+    <string name="utility_workspace_select_page">تحديد هذه الصفحة</string>
+    <string name="utility_workspace_deselect_page">إزالة من التحديد</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="fill_mark_palette_colors">Warna</string>
+    <string name="fill_mark_recent_color">Warna terbaru %1$d</string>
+    <string name="fill_mark_manual_size">Ukuran font dalam poin (6–72)</string>
+    <string name="fill_mark_apply_size">Terapkan ukuran</string>
+    <string name="fill_mark_green">Hijau</string>
+</resources>

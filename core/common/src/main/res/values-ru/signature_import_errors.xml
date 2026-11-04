@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_import_error_no_ink">Штрихи подписи не найдены. Настройте обрезку или используйте более чёткое изображение.</string>
+    <string name="signature_import_error_process_failed">Не удалось обработать подпись. Настройте обрезку и повторите попытку.</string>
+    <string name="signature_import_error_process_required">Подтвердите обрезку и дождитесь завершения обработки подписи.</string>
+    <string name="signature_import_error_size_limit">Используйте изображение размером до 40 МБ.</string>
+    <string name="signature_import_error_select_again">Выберите изображение подписи заново.</string>
+</resources>

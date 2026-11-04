@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="layout_interactive_position">الموضع</string>
+    <string name="layout_interactive_rotate">تدوير</string>
+    <string name="layout_interactive_drag">اسحب للمحاذاة</string>
+    <string name="layout_interactive_rotate_left">تدوير 90 درجة إلى اليسار</string>
+    <string name="layout_interactive_rotate_right">تدوير 90 درجة إلى اليمين</string>
+</resources>

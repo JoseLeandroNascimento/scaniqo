@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="document_scope_current">Halaman ini</string>
+    <string name="document_scope_select">Pilih</string>
+    <string name="document_scope_all">Semua</string>
+    <string name="document_scope_title">Terapkan pada halaman mana?</string>
+    <string name="document_scope_hint">Penyesuaian yang sama hanya diterapkan pada halaman yang ditandai.</string>
+    <string name="document_scope_select_all">Pilih semua</string>
+    <string name="document_scope_clear">Hapus</string>
+    <string name="document_scope_confirm">Gunakan pilihan</string>
+    <string name="document_scope_cancel">Batal</string>
+    <string name="document_scope_page">Halaman %1$d</string>
+    <string name="document_scope_selected_count">Pilih (%1$d)</string>
+    <string name="document_scope_empty">Pilih minimal satu halaman.</string>
+    <plurals name="document_scope_count">
+        <item quantity="other">%1$d halaman dipilih</item>
+    </plurals>
+    <string name="corrections_preview_previous">Pratinjau halaman sebelumnya</string>
+    <string name="corrections_preview_next">Pratinjau halaman berikutnya</string>
+    <string name="corrections_preview_pages">Pilih halaman untuk ditampilkan</string>
+    <string name="corrections_preview_error">Pratinjau tidak dapat diperbarui.</string>
+    <string name="corrections_preview_retry">Coba lagi</string>
+</resources>

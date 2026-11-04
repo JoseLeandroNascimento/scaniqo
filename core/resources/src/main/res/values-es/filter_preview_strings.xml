@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="filter_preview_options">Elige el efecto</string>
+    <string name="filter_preview_samples">Miniaturas de esta página con intensidad máxima.</string>
+    <string name="filter_preview_loading">Preparando efectos…</string>
+    <string name="filter_preview_thumbnails_error">No se pudieron cargar las miniaturas.</string>
+    <string name="filter_preview_thumbnail_description">Vista previa del filtro %1$s</string>
+    <string name="filter_preview_native_preserved">Esta página contiene texto o vectores. Para ver los efectos, permite la conversión a imagen abajo.</string>
+    <string name="filter_preview_live_hint">Revisa el resultado antes de aplicar. La intensidad solo cambia la vista previa grande.</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_permission_reason">Permite el acceso a la cámara para fotografiar tu firma. La foto solo se utilizará para crear la firma.</string>
+    <string name="signature_camera_permission_settings">El acceso a la cámara está desactivado. Activa el permiso de cámara en los ajustes de la aplicación para fotografiar tu firma.</string>
+    <string name="signature_camera_open_settings">Abrir ajustes</string>
+    <string name="signature_camera_allow">Permitir cámara</string>
+    <string name="signature_camera_cancel">Cancelar</string>
+    <string name="signature_camera_capturing">Fotografiando…</string>
+    <string name="signature_camera_starting">Abriendo cámara…</string>
+    <string name="signature_camera_unavailable">No se pudo abrir la cámara. Comprueba que esté disponible e inténtalo de nuevo.</string>
+    <string name="signature_camera_missing">Este dispositivo no tiene una cámara disponible. Vuelve para importar una imagen.</string>
+    <string name="signature_camera_capture_failed">No se pudo fotografiar tu firma. Inténtalo de nuevo.</string>
+    <string name="signature_camera_retry">Reintentar</string>
+    <string name="signature_camera_frame_changed">El encuadre cambió durante la captura. Mantén el dispositivo en la misma posición y vuelve a fotografiar.</string>
+</resources>

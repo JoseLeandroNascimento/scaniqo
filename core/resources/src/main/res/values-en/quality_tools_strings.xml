@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow_body">Reduces soft shadows on paper while preserving letters.</string>
+    <string name="quality_filter_light_body">Balances light and dark areas within the same capture.</string>
+    <string name="quality_filter_white_body">Lightens a yellowed or gray document background.</string>
+    <string name="quality_filter_adaptive_body">Adaptive black and white for text with uneven lighting.</string>
+    <string name="quality_filter_noise_body">Smooths grain and small specks without increasing the original resolution.</string>
+    <string name="quality_filter_sharp_body">Sharpens edges. Lower intensities avoid artificial outlines.</string>
+    <string name="quality_filter_bleed_body">Reduces faint marks from the other side of the sheet. Also review faint text and notes.</string>
+    <string name="quality_filter_intensity">Intensity</string>
+    <string name="quality_percentage">%1$d%%</string>
+    <string name="quality_correction_angle">Tilt</string>
+    <string name="quality_correction_perspective">Perspective</string>
+    <string name="quality_correction_curve">Curvature</string>
+    <string name="quality_angle_title">Straighten capture</string>
+    <string name="quality_angle_body">Adjust slight tilts to align the document’s lines.</string>
+    <string name="quality_angle_value">%1$.1f°</string>
+    <string name="quality_angle_detect">Detect tilt</string>
+    <string name="quality_angle_use">Use suggestion: %1$.1f°</string>
+    <string name="quality_angle_no_suggestion">No reliable tilt was found on this page.</string>
+    <string name="quality_angle_all_hint">The same angle will apply to all pages.</string>
+    <string name="quality_source_preview">Original capture</string>
+    <string name="quality_perspective_body">Drag the four corners to the document’s edges. The selected area will be straightened.</string>
+    <string name="quality_perspective_all_hint">The same proportional boundaries will be used on all pages.</string>
+    <string name="quality_corner_top_left">Top left corner</string>
+    <string name="quality_corner_top_right">Top right corner</string>
+    <string name="quality_corner_bottom_right">Bottom right corner</string>
+    <string name="quality_corner_bottom_left">Bottom left corner</string>
+    <string name="quality_corner_left">Move left</string>
+    <string name="quality_corner_right">Move right</string>
+    <string name="quality_corner_up">Move up</string>
+    <string name="quality_corner_down">Move down</string>
+    <string name="quality_preview_unavailable">Could not open the original capture.</string>
+    <string name="quality_curve_title">Compensate for curvature</string>
+    <string name="quality_curve_body">Approximate manual compensation for book pages. Adjust gently and check the result; it does not reconstruct details hidden in the fold.</string>
+    <string name="quality_curve_value">%1$+d%%</string>
+    <string name="quality_curve_reset">No compensation</string>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="localization_summary">Idioma, formatos locales y dirección de lectura</string>
+    <string name="localization_restart_hint">El cambio reabre la pantalla actual para aplicar el idioma.</string>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow_body">Reduz sombras suaves sobre o papel e preserva as letras.</string>
+    <string name="quality_filter_light_body">Equilibra áreas claras e escuras de uma mesma captura.</string>
+    <string name="quality_filter_white_body">Clareia o fundo amarelado ou acinzentado do documento.</string>
+    <string name="quality_filter_adaptive_body">Preto e branco adaptativo para texto com iluminação irregular.</string>
+    <string name="quality_filter_noise_body">Suaviza granulação e pequenos pontos sem aumentar a resolução original.</string>
+    <string name="quality_filter_sharp_body">Aumenta a definição das bordas. Intensidades menores evitam contornos artificiais.</string>
+    <string name="quality_filter_bleed_body">Atenua marcas claras do outro lado da folha. Revise também textos e anotações suaves.</string>
+    <string name="quality_filter_intensity">Intensidade</string>
+    <string name="quality_percentage">%1$d%%</string>
+    <string name="quality_correction_angle">Inclinação</string>
+    <string name="quality_correction_perspective">Perspectiva</string>
+    <string name="quality_correction_curve">Curvatura</string>
+    <string name="quality_angle_title">Endireitar a captura</string>
+    <string name="quality_angle_body">Ajuste pequenas inclinações para alinhar as linhas do documento.</string>
+    <string name="quality_angle_value">%1$.1f°</string>
+    <string name="quality_angle_detect">Detectar inclinação</string>
+    <string name="quality_angle_use">Usar sugestão: %1$.1f°</string>
+    <string name="quality_angle_no_suggestion">Não foi encontrada uma inclinação confiável nesta página.</string>
+    <string name="quality_angle_all_hint">O mesmo ângulo será aplicado a todas as páginas.</string>
+    <string name="quality_source_preview">Captura original</string>
+    <string name="quality_perspective_body">Arraste os quatro cantos até as bordas do documento. A área selecionada será retificada.</string>
+    <string name="quality_perspective_all_hint">Os mesmos limites proporcionais serão usados em todas as páginas.</string>
+    <string name="quality_corner_top_left">Canto superior esquerdo</string>
+    <string name="quality_corner_top_right">Canto superior direito</string>
+    <string name="quality_corner_bottom_right">Canto inferior direito</string>
+    <string name="quality_corner_bottom_left">Canto inferior esquerdo</string>
+    <string name="quality_corner_left">Mover para a esquerda</string>
+    <string name="quality_corner_right">Mover para a direita</string>
+    <string name="quality_corner_up">Mover para cima</string>
+    <string name="quality_corner_down">Mover para baixo</string>
+    <string name="quality_preview_unavailable">Não foi possível abrir a captura original.</string>
+    <string name="quality_curve_title">Compensar a curvatura</string>
+    <string name="quality_curve_body">Compensação manual aproximada para páginas de livros. Ajuste suavemente e confira o resultado; não reconstrói detalhes ocultos na dobra.</string>
+    <string name="quality_curve_value">%1$+d%%</string>
+    <string name="quality_curve_reset">Sem compensação</string>
+</resources>

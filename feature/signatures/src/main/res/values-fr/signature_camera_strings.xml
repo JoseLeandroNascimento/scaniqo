@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_camera_permission_reason">Autorisez l’accès à la caméra pour photographier votre signature. La photo servira uniquement à créer la signature.</string>
+    <string name="signature_camera_permission_settings">L’accès à la caméra est désactivé. Activez l’autorisation de la caméra dans les paramètres de l’application pour photographier votre signature.</string>
+    <string name="signature_camera_open_settings">Ouvrir les paramètres</string>
+    <string name="signature_camera_allow">Autoriser la caméra</string>
+    <string name="signature_camera_cancel">Annuler</string>
+    <string name="signature_camera_capturing">Prise de photo…</string>
+    <string name="signature_camera_starting">Ouverture de la caméra…</string>
+    <string name="signature_camera_unavailable">Impossible d’ouvrir la caméra. Vérifiez sa disponibilité et réessayez.</string>
+    <string name="signature_camera_missing">Cet appareil ne dispose d’aucune caméra disponible. Revenez en arrière pour importer une image.</string>
+    <string name="signature_camera_capture_failed">Impossible de photographier votre signature. Réessayez.</string>
+    <string name="signature_camera_retry">Réessayer</string>
+    <string name="signature_camera_frame_changed">Le cadrage a changé pendant la capture. Gardez l’appareil dans la même position et reprenez la photo.</string>
+</resources>

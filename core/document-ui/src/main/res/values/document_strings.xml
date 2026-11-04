@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="documents_no_tag">No tag</string>
+    <string name="document_create_title">Save document</string>
+    <string name="document_editor_title">Edit document</string>
+    <string name="document_name_label">Document name</string>
+    <string name="document_name_placeholder">E.g., Rental agreement</string>
+    <string name="document_name_required">Enter a name for the document.</string>
+    <string name="document_name_too_long">Use up to %1$d characters.</string>
+    <string name="document_tag_label">Tag</string>
+    <string name="document_optional">Optional</string>
+    <string name="document_no_tags_available">You can create tags in Manage tags and add one later.</string>
+    <string name="document_save">Save document</string>
+    <string name="document_save_changes">Save changes</string>
+    <string name="document_saving">Saving…</string>
+    <string name="document_save_error">Could not save. Your information has been kept. Try again.</string>
+    <string name="document_delete_title">Move to trash?</string>
+    <string name="document_delete_body">“%1$s” will be removed from the library. You can restore it from Trash in the menu.</string>
+    <string name="document_delete_error">Could not move to trash. Try again.</string>
+    <string name="document_deleting">Moving…</string>
+    <string name="document_updated">Document updated</string>
+    <string name="document_deleted">Document moved to trash</string>
+    <string name="document_downloaded">PDF saved to the selected location</string>
+    <string name="document_scan_error">Could not open the scanner. Try again.</string>
+    <string name="document_prepare_error">Could not prepare the scanned document. Try scanning again.</string>
+    <string name="document_export_error">Could not download the PDF. Try again.</string>
+    <string name="document_share_error">Could not share the PDF. Try again.</string>
+</resources>

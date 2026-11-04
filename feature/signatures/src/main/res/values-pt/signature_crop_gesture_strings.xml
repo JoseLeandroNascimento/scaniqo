@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_crop_drag_hint">Arraste as bordas ou os cantos. Mova a seleção pelo centro.</string>
+    <string name="signature_crop_selection">Área de recorte</string>
+    <string name="signature_crop_selection_size">Largura %1$d%%, altura %2$d%%</string>
+    <string name="signature_crop_inward">Mover para dentro</string>
+    <string name="signature_crop_outward">Mover para fora</string>
+    <string name="signature_crop_move_left">Mover seleção à esquerda</string>
+    <string name="signature_crop_move_right">Mover seleção à direita</string>
+    <string name="signature_crop_move_up">Mover seleção para cima</string>
+    <string name="signature_crop_move_down">Mover seleção para baixo</string>
+</resources>

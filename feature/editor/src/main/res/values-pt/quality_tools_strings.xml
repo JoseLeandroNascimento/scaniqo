@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quality_filter_shadow">Remover sombras</string>
+    <string name="quality_filter_light">Luz uniforme</string>
+    <string name="quality_filter_white">Papel branco</string>
+    <string name="quality_filter_adaptive">Texto nítido</string>
+    <string name="quality_filter_noise">Reduzir ruído</string>
+    <string name="quality_filter_sharp">Realçar detalhes</string>
+    <string name="quality_filter_bleed">Atenuar verso</string>
+    <string name="quality_native_title">Aplicar em páginas com texto ou vetores</string>
+    <string name="quality_native_body">Por padrão, essas páginas mantêm seu conteúdo original. Ao ativar, a página vira uma imagem; OCR pode recriar o texto pesquisável.</string>
+    <string name="quality_native_active">As páginas com texto ou vetores também serão convertidas em imagem ao aplicar a correção.</string>
+    <string name="quality_export_tab">Exportação</string>
+    <string name="quality_review_tab">Verificação</string>
+    <string name="quality_export_title">Qualidade do PDF</string>
+    <string name="quality_export_high">Alta qualidade</string>
+    <string name="quality_export_high_body">Prioriza a fidelidade das imagens.</string>
+    <string name="quality_export_balanced">Equilibrado</string>
+    <string name="quality_export_balanced_body">Reduz o tamanho das imagens com boa legibilidade.</string>
+    <string name="quality_export_small">Arquivo menor</string>
+    <string name="quality_export_small_body">Compressão maior. Revise letras pequenas e detalhes antes de compartilhar.</string>
+    <string name="quality_export_hint">A compressão é aplicada ao salvar. O tamanho final depende do arquivo original; texto e vetores preservados continuam nítidos ao ampliar.</string>
+    <string name="quality_ocr_title">Texto pesquisável</string>
+    <string name="quality_ocr_body">Ao salvar, reconhece texto impresso nas capturas, incluindo português. O processamento é feito no aparelho e a aparência do documento é mantida.</string>
+    <string name="quality_ocr_hint">OCR pode cometer erros e demora mais em documentos longos. Páginas com texto nativo preservado não são reconhecidas novamente.</string>
+    <string name="quality_export_apply">Aplicar opções</string>
+    <string name="quality_auto_title">Melhoria automática</string>
+    <string name="quality_auto_body">Combina os ajustes de imagem e usa inclinações confiáveis encontradas na análise. O resultado pode ser comparado e desfeito.</string>
+    <string name="quality_auto_apply">Melhorar esta página</string>
+    <string name="quality_auto_apply_all">Melhorar todas</string>
+    <string name="quality_analysis_title">Revisar a qualidade</string>
+    <string name="quality_analysis_body">Procura páginas em branco ou repetidas, desfoque, baixa resolução e possível conteúdo cortado. Os avisos são sugestões: nenhuma página é excluída automaticamente.</string>
+    <string name="quality_analysis_run">Analisar documento</string>
+    <string name="quality_analysis_again">Analisar novamente</string>
+    <string name="quality_analysis_running">Analisando as páginas…</string>
+    <string name="quality_analysis_cancel">Cancelar análise</string>
+    <string name="quality_analysis_error">Não foi possível concluir a análise. Tente novamente.</string>
+    <string name="quality_analysis_clear">Nenhum alerta encontrado. Ainda recomendamos conferir o documento antes de compartilhar.</string>
+    <string name="quality_analysis_count">%1$d de %2$d páginas para revisar</string>
+    <plurals name="quality_analysis_native">
+        <item quantity="one">%1$d página contém texto ou vetores nativos na fonte.</item>
+        <item quantity="many">%1$d páginas contêm texto ou vetores nativos na fonte.</item>
+        <item quantity="other">%1$d páginas contêm texto ou vetores nativos na fonte.</item>
+    </plurals>
+    <string name="quality_analysis_page">Página %1$d</string>
+    <string name="quality_analysis_blank">Possivelmente em branco</string>
+    <string name="quality_analysis_duplicate">Possível repetição da página %1$d</string>
+    <string name="quality_analysis_blurry">Possível desfoque</string>
+    <string name="quality_analysis_resolution">Baixa resolução</string>
+    <string name="quality_analysis_clipped">Conteúdo próximo da borda</string>
+    <string name="quality_analysis_angle">Inclinação sugerida: %1$.1f°</string>
+    <string name="quality_analysis_review">Ver página</string>
+    <string name="quality_analysis_delete">Excluir página %1$d</string>
+</resources>

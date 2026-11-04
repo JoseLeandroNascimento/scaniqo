@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_tutorial_group">শুরু করুন</string>
+    <string name="settings_tutorial_replay">টিউটোরিয়াল দেখুন</string>
+    <string name="settings_tutorial_summary">Scaniqo দিয়ে কী করতে পারেন তা আবার দেখুন</string>
+</resources>

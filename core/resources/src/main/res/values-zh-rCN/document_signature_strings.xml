@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="signature_document_subtitle">为此页选择签名。</string>
+    <string name="signature_library">我的签名</string>
+    <string name="signature_use">使用签名 %1$s</string>
+    <string name="signature_gesture_hint">拖动可放置，拖动角点调整大小，使用顶部控制点旋转。</string>
+    <string name="signature_adjust_rotate">旋转</string>
+    <string name="signature_size_hint">拖动角点调整宽高。双指操作可保持比例。</string>
+    <string name="signature_rotate_hint">拖动签名上方的控制点，或使用滑块调整角度。</string>
+    <string name="signature_rotation">旋转：%1$d°</string>
+    <string name="signature_crop_hint">调整边缘，仅保留签名。签名库中的图像保持不变。</string>
+    <string name="signature_apply">应用并继续</string>
+    <string name="signature_saved_hint">签名将应用于当前编辑。请在编辑器中保存 PDF。</string>
+    <string name="signature_cancel">取消</string>
+    <string name="signature_already_placed">此页的签名</string>
+    <string name="signature_loading">正在准备页面…</string>
+</resources>

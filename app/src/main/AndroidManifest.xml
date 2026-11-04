@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:name=".ScaniqoApplication"
@@ -17,9 +12,6 @@
         android:supportsRtl="true"
         android:localeConfig="@xml/locales_config"
         android:theme="@style/Theme.Scaniqo">
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id" />
         <!-- Compartilha somente cópias temporárias, com permissão de leitura por URI. -->
         <provider
             android:name=".core.files.ScaniqoFileProvider"
@@ -30,12 +22,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/document_file_paths" />
         </provider>
-
-        <service
-            android:name="androidx.work.impl.foreground.SystemForegroundService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync"
-            tools:node="merge" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
