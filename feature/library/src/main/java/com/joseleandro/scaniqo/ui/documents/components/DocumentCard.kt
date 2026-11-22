@@ -6,6 +6,7 @@ import com.joseleandro.scaniqo.feature.library.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,132 +63,135 @@ internal fun DocumentCard(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            Surface(
-                modifier = Modifier
-                    .width(80.dp)
-                    .aspectRatio(595f / 842f),
-                shape = MaterialTheme.shapes.small,
-                shadowElevation = 2.dp,
+        BoxWithConstraints {
+            val thumbnailWidth = if ((maxWidth < 320.dp) || (LocalDensity.current.fontScale > 1.3f)) 56.dp else 80.dp
+            Row(
+                modifier = Modifier.padding(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.Top,
             ) {
-                DocumentThumbnail(
-                    document = document,
+                Surface(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .width(thumbnailWidth)
                         .aspectRatio(595f / 842f),
-                )
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Top,
+                    shape = MaterialTheme.shapes.small,
+                    shadowElevation = 2.dp,
                 ) {
-                    Text(
-                        text = document.name,
+                    DocumentThumbnail(
+                        document = document,
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(top = 5.dp),
-                        style = MaterialTheme.typography.titleMedium.copy(textDirection = TextDirection.ContentOrLtr),
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
+                            .fillMaxWidth()
+                            .aspectRatio(595f / 842f),
                     )
-                    Box {
-                        IconButton(
-                            onClick = { showMenu = true },
-                            enabled = actionsEnabled && !isBusy,
-                            modifier = Modifier.size(48.dp),
-                        ) {
-                            if (isBusy) {
-                                CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                            } else {
-                                Icon(
-                                    painterResource(CoreResourcesR.drawable.more_vert_24px),
-                                    contentDescription = stringResource(
-                                        CoreResourcesR.string.document_actions,
-                                        bidiArgument(document.name)
-                                    ),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Top,
+                    ) {
+                        Text(
+                            text = document.name,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(top = 5.dp),
+                            style = MaterialTheme.typography.titleMedium.copy(textDirection = TextDirection.ContentOrLtr),
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Box {
+                            IconButton(
+                                onClick = { showMenu = true },
+                                enabled = actionsEnabled && !isBusy,
+                                modifier = Modifier.size(48.dp),
+                            ) {
+                                if (isBusy) {
+                                    CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                                } else {
+                                    Icon(
+                                        painterResource(CoreResourcesR.drawable.more_vert_24px),
+                                        contentDescription = stringResource(
+                                            CoreResourcesR.string.document_actions,
+                                            bidiArgument(document.name)
+                                        ),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                            DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.document_edit)) },
+                                    leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.edit_24px), null) },
+                                    onClick = { showMenu = false; onOpen() },
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(CoreResourcesR.string.document_download)) },
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(CoreResourcesR.drawable.ic_document_download),
+                                            null
+                                        )
+                                    },
+                                    onClick = {
+                                        showMenu = false; onEvent(
+                                        DocumentActionEvent.Download(
+                                            document
+                                        )
+                                    )
+                                    },
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(CoreResourcesR.string.document_share)) },
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(CoreResourcesR.drawable.ic_document_share),
+                                            null
+                                        )
+                                    },
+                                    onClick = {
+                                        showMenu = false; onEvent(DocumentActionEvent.Share(document))
+                                    },
+                                )
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            stringResource(CoreResourcesR.string.document_delete),
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(CoreResourcesR.drawable.delete_24px),
+                                            null,
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    },
+                                    onClick = {
+                                        showMenu = false; onEvent(
+                                        DocumentActionEvent.RequestDelete(
+                                            document
+                                        )
+                                    )
+                                    },
                                 )
                             }
                         }
-                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.document_edit)) },
-                                leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.edit_24px), null) },
-                                onClick = { showMenu = false; onOpen() },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(CoreResourcesR.string.document_download)) },
-                                leadingIcon = {
-                                    Icon(
-                                        painterResource(CoreResourcesR.drawable.ic_document_download),
-                                        null
-                                    )
-                                },
-                                onClick = {
-                                    showMenu = false; onEvent(
-                                    DocumentActionEvent.Download(
-                                        document
-                                    )
-                                )
-                                },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(CoreResourcesR.string.document_share)) },
-                                leadingIcon = {
-                                    Icon(
-                                        painterResource(CoreResourcesR.drawable.ic_document_share),
-                                        null
-                                    )
-                                },
-                                onClick = {
-                                    showMenu = false; onEvent(DocumentActionEvent.Share(document))
-                                },
-                            )
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        stringResource(CoreResourcesR.string.document_delete),
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painterResource(CoreResourcesR.drawable.delete_24px),
-                                        null,
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
-                                },
-                                onClick = {
-                                    showMenu = false; onEvent(
-                                    DocumentActionEvent.RequestDelete(
-                                        document
-                                    )
-                                )
-                                },
-                            )
-                        }
                     }
+                    Text(
+                        text = documentDate(document),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = stringResource(CoreResourcesR.string.document_pdf_size, bidiArgument(documentFileSize(document))),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    if (tag != null) DocumentTagLabel(tag)
                 }
-                Text(
-                    text = documentDate(document),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = stringResource(CoreResourcesR.string.document_pdf_size, bidiArgument(documentFileSize(document))),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                if (tag != null) DocumentTagLabel(tag)
             }
         }
     }

@@ -13,6 +13,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -108,6 +110,7 @@ internal fun DocumentMergeScreen(
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding()
+                .wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = 840.dp).fillMaxWidth()
                 .padding(horizontal = 20.dp).padding(bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {

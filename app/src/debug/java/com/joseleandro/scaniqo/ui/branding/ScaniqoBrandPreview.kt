@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.core.content.res.ResourcesCompat
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,9 +39,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 private fun NativeLauncherPreview() {
     val context = LocalContext.current
+    val resources = LocalResources.current
     Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
         listOf(R.mipmap.ic_launcher, R.mipmap.ic_launcher_round).forEach { resource ->
-            val drawable = context.getDrawable(resource)
+            val drawable = ResourcesCompat.getDrawable(resources, resource, context.theme)
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(drawable?.javaClass?.simpleName.orEmpty(), fontSize = 10.sp)
                 AndroidView(

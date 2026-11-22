@@ -7,9 +7,12 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 
 class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+    init {
+        savedStateHandle.remove<Any>("navigation_back_stack_v3")
+    }
+
     private val navigationStack by savedStateHandle.saved(
-        // Older saved stacks can contain the removed interactive forms destination.
-        key = "navigation_back_stack_v3",
+        key = "navigation_back_stack_v4",
         serializer = NavBackStackSerializer(AppRoute.serializer()),
     ) {
         NavBackStack<AppRoute>(AppRoute.Documents)
@@ -22,6 +25,14 @@ class NavigationViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         if (navigationStack.last() != route) {
             navigationStack.add(route)
         }
+    }
+
+    fun navigateToTopLevel(route: AppRoute) {
+        if (navigationStack.last() == route) return
+        while (navigationStack.size > 1) {
+            navigationStack.removeAt(navigationStack.lastIndex)
+        }
+        if (route != AppRoute.Documents) navigationStack.add(route)
     }
 
     fun goBack() {

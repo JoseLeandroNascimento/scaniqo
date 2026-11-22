@@ -80,7 +80,7 @@ internal fun DocumentToolsBar(
     // A superfície cobre também os insets; somente os controles respeitam a área segura.
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        color = MaterialTheme.colorScheme.surface,
     ) {
         Column(
             modifier = Modifier.windowInsetsPadding(
@@ -96,7 +96,7 @@ internal fun DocumentToolsBar(
                 }
                 val toolsScroll = rememberLazyListState()
                 val rightToLeft = LocalLayoutDirection.current == LayoutDirection.Rtl
-                val edgeColor = MaterialTheme.colorScheme.surfaceContainerLow
+                val edgeColor = MaterialTheme.colorScheme.surface
                 val arrowColor = MaterialTheme.colorScheme.onSurfaceVariant
                 // A indicação é desenhada sobre a faixa, sem interceptar toques ou arrastos.
                 LazyRow(

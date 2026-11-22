@@ -136,7 +136,7 @@ class NavigationViewModelTest {
         viewModel.navigateTo(AppRoute.Settings)
         val serializer = NavBackStackSerializer(AppRoute.serializer())
         for (destination in listOf(AppRoute.Personalization, AppRoute.PdfPreferences,
-            AppRoute.DriveBackup, AppRoute.PasswordSettings)) {
+            AppRoute.DriveBackup, AppRoute.PasswordSettings, AppRoute.LanguageSettings)) {
             viewModel.navigateTo(destination)
             val restored = Json.decodeFromString(serializer, Json.encodeToString(
                 serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),

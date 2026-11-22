@@ -5,6 +5,3 @@ plugins {
 android {
     namespace = "com.joseleandro.scaniqo.core.resources"
 }
-
-dependencies {
-}

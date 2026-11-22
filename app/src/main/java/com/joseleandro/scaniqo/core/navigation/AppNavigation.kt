@@ -2,17 +2,25 @@ package com.joseleandro.scaniqo.core.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import com.joseleandro.scaniqo.R
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.joseleandro.scaniqo.core.ads.RewardedTool
@@ -29,6 +37,10 @@ import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverla
 import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
+import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
+import com.joseleandro.scaniqo.widget.WidgetLaunchViewModel
+import com.joseleandro.scaniqo.widget.canOpenWidgetDestination
+import com.joseleandro.scaniqo.widget.dispatchWidgetDestination
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentToolsViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerRoute
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentEditorToolRoute
@@ -48,6 +60,7 @@ import com.joseleandro.scaniqo.ui.documents.event.DocumentsEvent
 import com.joseleandro.scaniqo.ui.documents.platform.PdfImportHandler
 import com.joseleandro.scaniqo.ui.backup.DriveBackupRoute
 import com.joseleandro.scaniqo.ui.security.PasswordSettingsScreen
+import com.joseleandro.scaniqo.ui.settings.LanguageSettingsRoute
 import com.joseleandro.scaniqo.ui.settings.SettingsSection
 import com.joseleandro.scaniqo.ui.signatures.SignaturesScreen
 import com.joseleandro.scaniqo.ui.tags.TagsRoute
@@ -57,7 +70,8 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun AppNavigation(
+internal fun AppNavigation(
+    widgetLaunchViewModel: WidgetLaunchViewModel,
     viewModel: NavigationViewModel = koinViewModel(),
     documentsViewModel: DocumentsViewModel = koinViewModel(),
     actionsViewModel: DocumentActionsViewModel = koinViewModel(),
@@ -79,6 +93,49 @@ fun AppNavigation(
     val actionsState by actionsViewModel.uiState.collectAsStateWithLifecycle()
     val canStartDocumentAction = !importState.isActive && !actionsState.isBusy &&
         actionsState.editor == null && actionsState.pendingDeletion == null
+    val toolsState by toolsViewModel.uiState.collectAsStateWithLifecycle()
+    val mergeState by mergeViewModel.uiState.collectAsStateWithLifecycle()
+    val widgetRequest by widgetLaunchViewModel.pending.collectAsStateWithLifecycle()
+    val canOpenWidget = canOpenWidgetDestination(
+        importState.isActive, showSignaturePicker, actionsState, toolsState, mergeState,
+    )
+    val widgetToast = rememberAppToastState()
+    val widgetWaitMessage = stringResource(R.string.widget_finish_current_action)
+    var notifiedWidgetRequest by rememberSaveable { mutableStateOf<String?>(null) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(widgetRequest, canOpenWidget, lifecycleOwner) {
+        val request = widgetRequest ?: return@LaunchedEffect
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            // Recheck live operation states after returning from an external picker/scanner.
+            val ready = canOpenWidget && canOpenWidgetDestination(
+                importViewModel.uiState.value.isActive,
+                showSignaturePicker,
+                actionsViewModel.uiState.value,
+                toolsViewModel.uiState.value,
+                mergeViewModel.uiState.value,
+            )
+            if (!ready) {
+                if (notifiedWidgetRequest != request.id) {
+                    notifiedWidgetRequest = request.id
+                    widgetToast.show(widgetWaitMessage)
+                }
+                return@repeatOnLifecycle
+            }
+            val destination = widgetLaunchViewModel.consume(request) ?: return@repeatOnLifecycle
+            widgetToast.dismiss()
+            dispatchWidgetDestination(
+                destination = destination,
+                navigate = viewModel::navigateTo,
+                scan = {
+                    actionsViewModel.onDocumentAction(
+                        DocumentActionEvent.StartScan(documentsViewModel.uiState.value.selectedTagId),
+                    )
+                },
+                importPdf = { importViewModel.chooseFile() },
+            )
+            scope.launch { drawerState.close() }
+        }
+    }
     val navigate: (AppRoute) -> Unit = { route ->
         scope.launch { drawerState.close(); viewModel.navigateTo(route) }
     }
@@ -175,9 +232,12 @@ fun AppNavigation(
         mergeViewModel = mergeViewModel,
         vault = vault,
     )
-    ModalNavigationDrawer(
+    AdaptiveNavigationFrame(
+        currentRoute = currentRoute,
         drawerState = drawerState,
-        gesturesEnabled = currentRoute == AppRoute.Documents && canStartDocumentAction,
+        navigationEnabled = canStartDocumentAction,
+        onNavigate = viewModel::navigateToTopLevel,
+        onImportPdf = importPdf,
         drawerContent = {
             AppNavigationDrawer(
                 currentRoute = currentRoute,
@@ -345,8 +405,10 @@ fun AppNavigation(
                         onPdf = { viewModel.navigateTo(AppRoute.PdfPreferences) },
                         onBackup = { viewModel.navigateTo(AppRoute.DriveBackup) },
                         onPasswords = { viewModel.navigateTo(AppRoute.PasswordSettings) },
+                        onLanguage = { viewModel.navigateTo(AppRoute.LanguageSettings) },
                     )
                 }
+                entry<AppRoute.LanguageSettings> { LanguageSettingsRoute(onBack = viewModel::goBack) }
                 entry<AppRoute.Personalization> {
                     SettingsDestination(section = SettingsSection.PERSONALIZATION, onBack = viewModel::goBack)
                 }
@@ -358,6 +420,10 @@ fun AppNavigation(
             },
         )
         DocumentActionOverlays(actionsState, actionsViewModel::onDocumentAction)
+        AppToastHost(
+            widgetToast,
+            Modifier.align(Alignment.BottomCenter).safeDrawingPadding().imePadding(),
+        )
         }
     }
 }

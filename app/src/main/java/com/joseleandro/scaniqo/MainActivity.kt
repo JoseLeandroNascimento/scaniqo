@@ -2,11 +2,14 @@ package com.joseleandro.scaniqo
 
 import com.joseleandro.scaniqo.R
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.joseleandro.scaniqo.core.navigation.AppNavigation
+import com.joseleandro.scaniqo.core.navigation.FoldAwareAppContent
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
@@ -24,21 +27,38 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.joseleandro.scaniqo.ui.branding.LaunchAnimationSession
 import com.joseleandro.scaniqo.ui.branding.ScaniqoSplashController
 import com.joseleandro.scaniqo.ui.branding.systemAnimationScale
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.joseleandro.scaniqo.domain.model.AppThemeMode
 import com.joseleandro.scaniqo.domain.repository.AppSettingsRepository
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import com.joseleandro.scaniqo.ui.onboarding.OnboardingRoute
 import com.joseleandro.scaniqo.ui.onboarding.OnboardingViewModel
+import com.joseleandro.scaniqo.widget.WidgetLaunchViewModel
+import com.joseleandro.scaniqo.widget.WidgetUpdater
+import com.joseleandro.scaniqo.widget.parseWidgetIntent
 
 class MainActivity : AppCompatActivity() {
     private var launchContentReady by mutableStateOf(false)
+    private val widgetLaunchViewModel: WidgetLaunchViewModel by viewModels(
+        extrasProducer = {
+            MutableCreationExtras(defaultViewModelCreationExtras).apply {
+                // Exported Activity extras must not seed this queue's SavedStateHandle.
+                this[DEFAULT_ARGS_KEY] = Bundle.EMPTY
+            }
+        },
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
+        WidgetUpdater.localesChanged(this, resources.configuration.locales.toLanguageTags())
+        // Restored requests belong to SavedStateHandle; do not replay the original launch Intent.
+        if (savedInstanceState == null) acceptWidgetIntent(intent)
         val animationScale = systemAnimationScale(this)
         val animateLaunch = LaunchAnimationSession.process.shouldAnimate(
             restored = savedInstanceState != null,
@@ -68,10 +88,12 @@ class MainActivity : AppCompatActivity() {
             }
             ScaniqoTheme(darkTheme = dark, colorTheme = preferences.colorTheme) {
                 if (launchContentReady) {
-                    if (onboardingCompleted) {
-                        AppNavigation()
-                    } else {
-                        OnboardingRoute(viewModel = onboarding)
+                    FoldAwareAppContent(this@MainActivity) {
+                        if (onboardingCompleted) {
+                            AppNavigation(widgetLaunchViewModel = widgetLaunchViewModel)
+                        } else {
+                            OnboardingRoute(viewModel = onboarding)
+                        }
                     }
                 } else {
                     // Draw a first frame for the native splash handoff without mounting auth handlers.
@@ -86,5 +108,21 @@ class MainActivity : AppCompatActivity() {
         ScaniqoSplashController(this, splash, animateLaunch, animationScale) {
             launchContentReady = true
         }.install()
+    }
+
+    override fun onLocalesChanged(locales: LocaleListCompat) {
+        super.onLocalesChanged(locales)
+        // The callback has the applied locales even while AppCompat's storage write is pending.
+        WidgetUpdater.localesChanged(this, locales.toLanguageTags())
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        acceptWidgetIntent(intent)
+    }
+
+    private fun acceptWidgetIntent(intent: Intent?) {
+        parseWidgetIntent(this, intent)?.let(widgetLaunchViewModel::enqueue)
     }
 }

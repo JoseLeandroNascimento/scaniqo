@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">Tindakan cepat</string>
+    <string name="widget_quick_actions_description">Pindai, impor, cari, atau gabungkan PDF dari layar utama.</string>
+    <string name="widget_recent_documents_name">Dokumen terbaru</string>
+    <string name="widget_recent_documents_description">Buka PDF terbaru dari layar utama.</string>
+    <string name="widget_recent_title">PDF terbaru</string>
+    <string name="widget_scan">Pindai</string>
+    <string name="widget_import">Impor</string>
+    <string name="widget_search">Cari</string>
+    <string name="widget_merge">Gabung</string>
+    <string name="widget_open_library">Buka pustaka</string>
+    <string name="widget_recent_empty">Belum ada PDF. Pindai atau impor dokumen pertama Anda.</string>
+    <string name="widget_recent_error">PDF tidak dapat dimuat. Buka pustaka untuk mencoba lagi.</string>
+    <string name="widget_document_protected">PDF dilindungi sandi</string>
+    <string name="widget_loading">Memuat widget…</string>
+    <string name="widget_preview_document">Dokumen pindaian</string>
+    <string name="widget_preview_details">3 halaman · Hari ini</string>
+    <string name="widget_finish_current_action">Selesaikan tindakan saat ini untuk membuka pintasan ini.</string>
+    <plurals name="widget_document_pages">
+        <item quantity="other">%d halaman</item>
+    </plurals>
+</resources>

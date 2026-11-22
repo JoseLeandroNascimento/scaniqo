@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -159,7 +161,9 @@ internal fun PdfUtilityWorkspace(
         bottomBar = {
             Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 3.dp) {
                 Column(
-                    Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 20.dp, vertical = 12.dp),
+                    Modifier.fillMaxWidth().navigationBarsPadding()
+                        .wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = 840.dp).fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Button(onClick = {
@@ -196,7 +200,8 @@ internal fun PdfUtilityWorkspace(
         LazyVerticalGrid(
             columns = GridCells.Adaptive(88.dp),
             state = pageGridState,
-            modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
+            modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)
+                .wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = 840.dp).fillMaxWidth(),
             contentPadding = PaddingValues(20.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -383,12 +388,16 @@ private fun WorkspaceNotice(message: String, error: Boolean = false) {
 }
 
 @Preview(name = "Extrair páginas", widthDp = 390, heightDp = 844, locale = "pt-rBR")
+@Preview(name = "Extrair páginas tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Extrair páginas dobrável", widthDp = 673, heightDp = 841, locale = "pt-rBR")
 @Preview(name = "Extrair páginas escuro", widthDp = 390, heightDp = 844, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Extrair páginas fonte ampliada", widthDp = 320, heightDp = 740, locale = "pt-rBR", fontScale = 1.5f)
 @Composable
 private fun PdfUtilityWorkspacePreview() = PdfUtilityPreviewContent(PdfUtility.EXTRACT_PAGES)
 
 @Preview(name = "Comprimir PDF", widthDp = 390, heightDp = 844, locale = "pt-rBR")
+@Preview(name = "Compressão tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Compressão estreita", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
 @Composable
 private fun PdfCompressionWorkspacePreview() = PdfUtilityPreviewContent(PdfUtility.COMPRESS_PDF)
 

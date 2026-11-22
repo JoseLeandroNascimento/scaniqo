@@ -52,6 +52,8 @@ internal fun SignatureImageFlowScreen(
         )
         return
     }
+    val contentModifier = modifier.wrapContentWidth(Alignment.CenterHorizontally)
+        .widthIn(max = 840.dp).fillMaxWidth()
     val preview = editor.imageStep == SignatureImageStep.PREVIEW
     val busy = editor.isProcessing || editor.isSaving
     var imageReady by remember(editor.imageUri, editor.processedImageUri, preview) { mutableStateOf(false) }
@@ -60,7 +62,7 @@ internal fun SignatureImageFlowScreen(
     if (editor.imageStep == SignatureImageStep.SELECT) {
         val scan = editor.input == SignatureInput.SCAN
         Column(
-            modifier.padding(24.dp).verticalScroll(rememberScrollState()),
+            contentModifier.padding(24.dp).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         ) {
@@ -90,103 +92,107 @@ internal fun SignatureImageFlowScreen(
         }
         return
     }
-    Column(
-        modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(
-            stringResource(if (preview) R.string.signature_import_preview_hint else R.string.signature_import_crop_hint),
-            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-            if (preview) {
-                editor.processedImageUri?.let { uri ->
-                    SignatureTransparencyPreview(
-                        uri, background, Modifier.fillMaxSize(),
-                        onImageReady = { imageReady = it; onPreviewReady(it) },
-                    )
-                }
-            } else {
-                editor.imageUri?.let { uri ->
-                    SignatureCropEditor(
-                        uri = uri, aspectRatio = editor.imageAspectRatio, crop = editor.crop,
-                        onCropChange = { if (!busy) onEvent(SignaturesEvent.CropChanged(it)) },
-                        onImageReady = { imageReady = it },
-                        modifier = Modifier.fillMaxSize(),
-                        enableImageGestures = true, resetKey = resetKey, enabled = !busy,
-                    )
-                }
-            }
-            androidx.compose.animation.AnimatedVisibility(
-                visible = editor.isProcessing,
-                enter = fadeIn(tween(180)) + scaleIn(initialScale = 0.96f, animationSpec = tween(180)),
-                exit = fadeOut(tween(120)),
-            ) {
-                Surface(
-                    modifier = Modifier.padding(24.dp).semantics { liveRegion = LiveRegionMode.Polite },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    tonalElevation = 6.dp,
-                    shadowElevation = 2.dp,
-                ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 28.dp, vertical = 24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        CircularProgressIndicator(Modifier.size(32.dp), strokeWidth = 3.dp)
-                        Text(
-                            stringResource(R.string.signature_import_processing),
-                            style = MaterialTheme.typography.titleSmall,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            }
-        }
+    BoxWithConstraints(contentModifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
+        val controlsMaxHeight = (maxHeight * .4f).coerceAtMost(220.dp)
         Column(
-            Modifier.fillMaxWidth().animateContentSize().heightIn(max = 220.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            if (!editor.showSaveDialog) editor.error?.let {
-                Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium)
-            }
-            if (preview) {
-                if (editor.processedImageUri != null) FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SignaturePreviewBackground.entries.forEach { option ->
-                        FilterChip(
-                            selected = background == option,
-                            onClick = { background = option },
-                            label = { Text(stringResource(option.label)) },
+            Text(
+                stringResource(if (preview) R.string.signature_import_preview_hint else R.string.signature_import_crop_hint),
+                style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                if (preview) {
+                    editor.processedImageUri?.let { uri ->
+                        SignatureTransparencyPreview(
+                            uri, background, Modifier.fillMaxSize(),
+                            onImageReady = { imageReady = it; onPreviewReady(it) },
+                        )
+                    }
+                } else {
+                    editor.imageUri?.let { uri ->
+                        SignatureCropEditor(
+                            uri = uri, aspectRatio = editor.imageAspectRatio, crop = editor.crop,
+                            onCropChange = { if (!busy) onEvent(SignaturesEvent.CropChanged(it)) },
+                            onImageReady = { imageReady = it },
+                            modifier = Modifier.fillMaxSize(),
+                            enableImageGestures = true, resetKey = resetKey, enabled = !busy,
                         )
                     }
                 }
-                TextButton(
-                    onClick = { onEvent(if (editor.fromCamera) SignaturesEvent.OpenCamera else SignaturesEvent.AdjustCrop) },
-                    enabled = !busy,
-                    modifier = Modifier.align(Alignment.CenterHorizontally).testTag("signature_image_revise"),
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = editor.isProcessing,
+                    enter = fadeIn(tween(180)) + scaleIn(initialScale = 0.96f, animationSpec = tween(180)),
+                    exit = fadeOut(tween(120)),
                 ) {
-                    Icon(painterResource(if (editor.fromCamera) CoreResourcesR.drawable.ic_document_scan else CoreResourcesR.drawable.ic_signature_crop), null,
-                        Modifier.size(20.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(if (editor.fromCamera) R.string.signature_import_retake else R.string.signature_import_adjust_crop))
+                    Surface(
+                        modifier = Modifier.padding(24.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        tonalElevation = 6.dp,
+                        shadowElevation = 2.dp,
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 28.dp, vertical = 24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            CircularProgressIndicator(Modifier.size(32.dp), strokeWidth = 3.dp)
+                            Text(
+                                stringResource(R.string.signature_import_processing),
+                                style = MaterialTheme.typography.titleSmall,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
                 }
-            } else {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween) {
+            }
+            Column(
+                Modifier.fillMaxWidth().animateContentSize().heightIn(max = controlsMaxHeight).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (!editor.showSaveDialog) editor.error?.let {
+                    Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium)
+                }
+                if (preview) {
+                    if (editor.processedImageUri != null) FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SignaturePreviewBackground.entries.forEach { option ->
+                            FilterChip(
+                                selected = background == option,
+                                onClick = { background = option },
+                                label = { Text(stringResource(option.label)) },
+                            )
+                        }
+                    }
                     TextButton(
-                        enabled = !busy && editor.imageUri != null,
-                        onClick = {
-                            resetKey++
-                            onEvent(SignaturesEvent.CropChanged(PdfSignatureCrop(0f, 0f, 1f, 1f)))
-                        },
-                    ) { Text(stringResource(R.string.signature_crop_reset)) }
-                    Button(
-                        enabled = !busy && imageReady && editor.imageUri != null,
-                        onClick = { onEvent(SignaturesEvent.ProcessImage) },
-                        modifier = Modifier.testTag("signature_import_confirm"),
-                    ) { Text(stringResource(R.string.signature_import_confirm_crop)) }
+                        onClick = { onEvent(if (editor.fromCamera) SignaturesEvent.OpenCamera else SignaturesEvent.AdjustCrop) },
+                        enabled = !busy,
+                        modifier = Modifier.align(Alignment.CenterHorizontally).testTag("signature_image_revise"),
+                    ) {
+                        Icon(painterResource(if (editor.fromCamera) CoreResourcesR.drawable.ic_document_scan else CoreResourcesR.drawable.ic_signature_crop), null,
+                            Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(if (editor.fromCamera) R.string.signature_import_retake else R.string.signature_import_adjust_crop))
+                    }
+                } else {
+                    FlowRow(Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        TextButton(
+                            enabled = !busy && editor.imageUri != null,
+                            onClick = {
+                                resetKey++
+                                onEvent(SignaturesEvent.CropChanged(PdfSignatureCrop(0f, 0f, 1f, 1f)))
+                            },
+                        ) { Text(stringResource(R.string.signature_crop_reset)) }
+                        Button(
+                            enabled = !busy && imageReady && editor.imageUri != null,
+                            onClick = { onEvent(SignaturesEvent.ProcessImage) },
+                            modifier = Modifier.testTag("signature_import_confirm"),
+                        ) { Text(stringResource(R.string.signature_import_confirm_crop)) }
+                    }
                 }
             }
         }
@@ -239,6 +245,8 @@ private fun SignatureImportPreview() {
 }
 
 @Preview(name = "Conferir transparência", locale = "pt-rBR")
+@Preview(name = "Conferir transparência paisagem", widthDp = 760, heightDp = 240, locale = "pt-rBR")
+@Preview(name = "Conferir transparência tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
 @Composable
 private fun SignatureProcessedPreview() {
     ScaniqoTheme {

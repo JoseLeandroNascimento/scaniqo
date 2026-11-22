@@ -6,7 +6,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -78,37 +78,6 @@ internal fun FillMarkTextAlignmentControls(
                     modifier = Modifier.weight(1f))
                 Switch(checked = draft.autoSizeText, onCheckedChange = null, enabled = editable)
             }
-        }
-    }
-}
-
-@Composable
-internal fun FillMarkTextAlignmentMenu(
-    draft: PdfOverlay,
-    editable: Boolean,
-    onUpdate: (PdfOverlay) -> Unit,
-) {
-    var expanded by remember(draft.id) { mutableStateOf(false) }
-    Box {
-        IconButton(onClick = { expanded = true }, enabled = editable) {
-            Icon(
-                painterResource(when (draft.textHorizontalAlignment) {
-                    PdfTextHorizontalAlignment.START -> R.drawable.ic_fill_text_start
-                    PdfTextHorizontalAlignment.CENTER -> R.drawable.ic_fill_text_center
-                    PdfTextHorizontalAlignment.END -> R.drawable.ic_fill_text_end
-                }),
-                stringResource(R.string.fill_text_align_action),
-            )
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.width(280.dp),
-        ) {
-            FillMarkTextAlignmentControls(
-                draft = draft, editable = editable, onUpdate = onUpdate,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            )
         }
     }
 }

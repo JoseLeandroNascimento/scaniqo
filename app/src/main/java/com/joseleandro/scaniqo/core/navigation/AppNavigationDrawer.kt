@@ -129,7 +129,8 @@ internal fun AppNavigationDrawer(
                 label = stringResource(CoreResourcesR.string.settings_title),
                 icon = R.drawable.ic_settings,
                 selected = currentRoute in setOf(AppRoute.Settings, AppRoute.Personalization,
-                    AppRoute.PdfPreferences, AppRoute.DriveBackup, AppRoute.PasswordSettings),
+                    AppRoute.PdfPreferences, AppRoute.DriveBackup, AppRoute.PasswordSettings,
+                    AppRoute.LanguageSettings),
                 onClick = { onNavigate(AppRoute.Settings) },
             )
         }

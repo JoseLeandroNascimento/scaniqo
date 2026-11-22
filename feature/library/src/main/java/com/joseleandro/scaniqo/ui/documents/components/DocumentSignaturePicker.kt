@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -53,57 +54,62 @@ fun DocumentSignaturePicker(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
-        Column(
-            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 16.dp),
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().imePadding(),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(stringResource(R.string.quick_sign_choose), style = MaterialTheme.typography.titleLarge)
-            Text(stringResource(R.string.quick_sign_description), style = MaterialTheme.typography.bodyMedium)
-            OutlinedTextField(
-                value = query, onValueChange = { query = it },
-                label = { Text(stringResource(R.string.quick_sign_search)) },
-                singleLine = true, modifier = Modifier.fillMaxWidth(),
-            )
-            LazyColumn(
-                Modifier.fillMaxWidth().heightIn(max = 480.dp),
-                contentPadding = PaddingValues(bottom = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                when {
-                    isLoading -> item { CircularProgressIndicator(Modifier.padding(20.dp)) }
-                    loadError -> item {
+            item(key = "header") {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.quick_sign_choose), style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(R.string.quick_sign_description), style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            item(key = "search") {
+                OutlinedTextField(
+                    value = query, onValueChange = { query = it },
+                    label = { Text(stringResource(R.string.quick_sign_search)) },
+                    singleLine = true, modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            item(key = "import") {
+                TextButton(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(CoreResourcesR.string.quick_tools_import))
+                }
+            }
+            when {
+                isLoading -> item { CircularProgressIndicator(Modifier.padding(20.dp)) }
+                loadError -> item {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(stringResource(CoreResourcesR.string.documents_error_title))
                         TextButton(onClick = onRetry) { Text(stringResource(CoreResourcesR.string.documents_retry)) }
                     }
-                    visible.isEmpty() -> item {
-                        Text(stringResource(if (documents.isEmpty()) R.string.quick_sign_empty else R.string.quick_sign_no_results))
-                    }
-                    else -> items(visible, key = { it.id }) { document ->
-                        Surface(
-                            onClick = { onSelect(document.id) },
-                            shape = MaterialTheme.shapes.medium,
-                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                }
+                visible.isEmpty() -> item {
+                    Text(stringResource(if (documents.isEmpty()) R.string.quick_sign_empty else R.string.quick_sign_no_results))
+                }
+                else -> items(visible, key = { it.id }) { document ->
+                    Surface(
+                        onClick = { onSelect(document.id) },
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth().heightIn(min = 72.dp).padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
-                            Row(
-                                Modifier.fillMaxWidth().heightIn(min = 72.dp).padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            ) {
-                                Icon(painterResource(CoreResourcesR.drawable.ic_tool_signature), null, Modifier.size(24.dp))
-                                Column(Modifier.weight(1f)) {
-                                    Text(document.name, style = MaterialTheme.typography.titleSmall)
-                                    Text(pluralStringResource(CoreResourcesR.plurals.document_page_count, document.pageCount, document.pageCount),
-                                        style = MaterialTheme.typography.bodySmall)
-                                }
-                                if (document.isProtected) Icon(painterResource(CoreResourcesR.drawable.ic_document_lock),
-                                    stringResource(CoreResourcesR.string.merge_app_protected))
+                            Icon(painterResource(CoreResourcesR.drawable.ic_tool_signature), null, Modifier.size(24.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(document.name, style = MaterialTheme.typography.titleSmall)
+                                Text(pluralStringResource(CoreResourcesR.plurals.document_page_count, document.pageCount, document.pageCount),
+                                    style = MaterialTheme.typography.bodySmall)
                             }
+                            if (document.isProtected) Icon(painterResource(CoreResourcesR.drawable.ic_document_lock),
+                                stringResource(CoreResourcesR.string.merge_app_protected))
                         }
                     }
                 }
-            }
-            TextButton(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(CoreResourcesR.string.quick_tools_import))
             }
         }
     }

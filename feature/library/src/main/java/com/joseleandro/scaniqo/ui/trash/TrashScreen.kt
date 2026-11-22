@@ -7,7 +7,6 @@ import android.content.res.Configuration
 import android.text.format.DateFormat
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -70,6 +69,8 @@ import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.core.utils.documentFileSize
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.ui.components.DialogActions
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
+import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import java.util.Date
@@ -151,25 +152,21 @@ internal fun TrashScreen(
                         }
                     },
                 )
-                state.documents.isEmpty() -> TrashCenteredStatus(
-                    modifier = Modifier.width(contentWidth).fillMaxHeight(),
-                    minHeight = availableHeight,
-                    title = stringResource(R.string.trash_empty_title),
-                    body = stringResource(R.string.trash_empty_body),
-                    visual = {
-                        Surface(
-                            shape = MaterialTheme.shapes.extraLarge,
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                        ) {
-                            Image(
-                                painterResource(R.drawable.trash_empty_illustration),
-                                contentDescription = null,
-                                modifier = Modifier.padding(20.dp)
-                                    .width(192.dp).aspectRatio(240f / 184f),
-                            )
-                        }
-                    },
-                )
+                state.documents.isEmpty() -> Column(
+                    modifier = Modifier
+                        .width(contentWidth)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .heightIn(min = availableHeight),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    ScaniqoEmptyState(
+                        title = stringResource(R.string.trash_empty_title),
+                        description = stringResource(R.string.trash_empty_body),
+                        illustration = EmptyStateIllustration.TRASH,
+                    )
+                }
                 else -> LazyColumn(
                     modifier = Modifier.width(contentWidth).fillMaxHeight(),
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
@@ -607,6 +604,7 @@ private fun TrashPreview() {
 @Preview(name = "Lixeira vazia escura", widthDp = 390, heightDp = 780, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Lixeira vazia com fonte ampliada", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 1.5f)
 @Preview(name = "Lixeira vazia em árabe", widthDp = 390, heightDp = 780, locale = "ar")
+@Preview(name = "Lixeira vazia tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
 @Composable
 private fun TrashEmptyPreview() {
     ScaniqoTheme {

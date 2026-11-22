@@ -71,6 +71,10 @@ sealed interface AppRoute : NavKey {
     data object Settings : AppRoute
 
     @Serializable
+    @SerialName("language_settings")
+    data object LanguageSettings : AppRoute
+
+    @Serializable
     @SerialName("personalization")
     data object Personalization : AppRoute
 

@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -36,6 +37,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.domain.model.*
@@ -55,6 +57,7 @@ fun SettingsRoute(
     onBackup: () -> Unit = {},
     onPasswords: () -> Unit = {},
     onTutorial: () -> Unit = {},
+    onLanguage: () -> Unit = {},
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val ads: AdMobManager = koinInject()
@@ -75,6 +78,7 @@ fun SettingsRoute(
     SettingsScreen(preferences, section, viewModel::change, onBack,
         onPersonalization, onPdf, onBackup, onPasswords, snackbarHost = { SnackbarHost(snackbar) },
         onTutorial = onTutorial,
+        onLanguage = onLanguage,
         showAdsPrivacyOptions = adsState.privacyOptionsRequired,
         adsPrivacyOptionsEnabled = activity != null && !adsState.privacyFormOpen && !adsState.consentUpdating,
         onAdsPrivacyOptions = {
@@ -103,10 +107,9 @@ internal fun SettingsScreen(
     adsPrivacyOptionsEnabled: Boolean = true,
     onAdsPrivacyOptions: () -> Unit = {},
     onTutorial: () -> Unit = {},
+    onLanguage: () -> Unit = {},
 ) {
     var restore by rememberSaveable { mutableStateOf(false) }
-    var languageSettings by rememberSaveable { mutableStateOf(false) }
-    if (languageSettings) LanguageSettingsDialog { languageSettings = false }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         topBar = {
@@ -125,152 +128,142 @@ internal fun SettingsScreen(
         },
         snackbarHost = snackbarHost,
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
-            contentPadding = PaddingValues(20.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            when (section) {
-                SettingsSection.HOME -> {
-                    item { PersonalizationEntry(preferences, onPersonalization) }
-                    item {
-                        SettingsGroup(stringResource(R.string.localization_title)) {
-                            SettingsDestination(R.drawable.ic_settings_device, stringResource(R.string.localization_language),
-                                currentLanguageSummary()) { languageSettings = true }
+        Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding), contentAlignment = Alignment.TopCenter) {
+            LazyColumn(
+                modifier = Modifier.widthIn(max = 720.dp).fillMaxSize(),
+                contentPadding = PaddingValues(20.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                when (section) {
+                    SettingsSection.HOME -> {
+                        item { PersonalizationEntry(preferences, onPersonalization) }
+                        item {
+                            SettingsGroup(stringResource(R.string.localization_title)) {
+                                SettingsDestination(R.drawable.ic_settings_device, stringResource(R.string.localization_language),
+                                    currentLanguageSummary(), onLanguage)
+                            }
+                        }
+                        item {
+                            SettingsGroup(stringResource(R.string.settings_pdf_export)) {
+                                SettingsDestination(
+                                    CoreResourcesR.drawable.ic_tool_quality, stringResource(R.string.settings_pdf_defaults),
+                                    stringResource(R.string.settings_pdf_summary, stringResource(preferences.exportQuality.title()),
+                                        preferences.imageFormat.name), onPdf,
+                                )
+                            }
+                        }
+                        item {
+                            SettingsGroup(stringResource(R.string.settings_protection)) {
+                                SettingsDestination(CoreResourcesR.drawable.ic_cloud_backup, stringResource(CoreResourcesR.string.backup_title),
+                                    stringResource(R.string.settings_backup_body), onBackup)
+                                SettingsDivider()
+                                SettingsDestination(CoreResourcesR.drawable.ic_tool_lock, stringResource(R.string.menu_pdf_password),
+                                    stringResource(R.string.settings_password_body), onPasswords)
+                            }
+                        }
+                        item {
+                            SettingsGroup(stringResource(R.string.settings_tutorial_group)) {
+                                SettingsDestination(CoreResourcesR.drawable.ic_document_search, stringResource(R.string.settings_tutorial_replay),
+                                    stringResource(R.string.settings_tutorial_summary), onTutorial)
+                            }
+                        }
+                        if (showAdsPrivacyOptions) item {
+                            TextButton(
+                                onClick = onAdsPrivacyOptions,
+                                enabled = adsPrivacyOptionsEnabled,
+                                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                            ) {
+                                Icon(painterResource(CoreResourcesR.drawable.ic_tool_lock), null, Modifier.size(18.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.ads_privacy_options), textAlign = TextAlign.Center)
+                            }
+                        }
+                        item {
+                            TextButton(onClick = { restore = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                                Icon(painterResource(CoreResourcesR.drawable.ic_document_undo), null, Modifier.size(18.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.settings_restore), textAlign = TextAlign.Center)
+                            }
                         }
                     }
-                    item {
-                        SettingsGroup(stringResource(R.string.settings_pdf_export)) {
-                            SettingsDestination(
-                                CoreResourcesR.drawable.ic_tool_quality, stringResource(R.string.settings_pdf_defaults),
-                                stringResource(R.string.settings_pdf_summary, stringResource(preferences.exportQuality.title()),
-                                    preferences.imageFormat.name), onPdf,
-                            )
-                        }
-                    }
-                    item {
-                        SettingsGroup(stringResource(R.string.settings_protection)) {
-                            SettingsDestination(CoreResourcesR.drawable.ic_cloud_backup, stringResource(CoreResourcesR.string.backup_title),
-                                stringResource(R.string.settings_backup_body), onBackup)
-                            SettingsDivider()
-                            SettingsDestination(CoreResourcesR.drawable.ic_tool_lock, stringResource(R.string.menu_pdf_password),
-                                stringResource(R.string.settings_password_body), onPasswords)
-                        }
-                    }
-                    item {
-                        SettingsGroup(stringResource(R.string.settings_tutorial_group)) {
-                            SettingsDestination(CoreResourcesR.drawable.ic_document_search, stringResource(R.string.settings_tutorial_replay),
-                                stringResource(R.string.settings_tutorial_summary), onTutorial)
-                        }
-                    }
-                    if (showAdsPrivacyOptions) item {
-                        TextButton(
-                            onClick = onAdsPrivacyOptions,
-                            enabled = adsPrivacyOptionsEnabled,
-                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
-                        ) {
-                            Icon(painterResource(CoreResourcesR.drawable.ic_tool_lock), null, Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.ads_privacy_options), textAlign = TextAlign.Center)
-                        }
-                    }
-                    item {
-                        TextButton(onClick = { restore = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                            Icon(painterResource(CoreResourcesR.drawable.ic_document_undo), null, Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.settings_restore), textAlign = TextAlign.Center)
-                        }
-                    }
-                }
-                SettingsSection.PERSONALIZATION -> {
-                    item { AppearancePreview(preferences) }
-                    item {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            SectionTitle(stringResource(R.string.settings_appearance))
-                            Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                AppThemeMode.entries.forEach { mode ->
+                    SettingsSection.PERSONALIZATION -> {
+                        item { AppearancePreview(preferences) }
+                        item {
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                SectionTitle(stringResource(R.string.settings_appearance))
+                                SettingsChoices(AppThemeMode.entries, minimumItemWidth = 96.dp, maxColumns = 3) { mode, choiceModifier ->
                                     ModeChoice(mode, preferences.themeMode == mode,
-                                        { onChange(SettingsChange.Mode(mode)) }, Modifier.weight(1f))
+                                        { onChange(SettingsChange.Mode(mode)) }, choiceModifier)
+                                }
+                            }
+                        }
+                        item {
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                SectionTitle(stringResource(R.string.settings_palette))
+                                SettingsChoices(AppColorTheme.entries, minimumItemWidth = 136.dp, maxColumns = 3) { theme, choiceModifier ->
+                                    PaletteChoice(theme, preferences.colorTheme == theme,
+                                        { onChange(SettingsChange.Palette(theme)) }, choiceModifier)
                                 }
                             }
                         }
                     }
-                    item {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            SectionTitle(stringResource(R.string.settings_palette))
-                            Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                AppColorTheme.entries.chunked(2).forEach { pair ->
-                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                        pair.forEach { theme ->
-                                            PaletteChoice(theme, preferences.colorTheme == theme,
-                                                { onChange(SettingsChange.Palette(theme)) }, Modifier.weight(1f))
+                    SettingsSection.PDF -> {
+                        item {
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                SectionTitle(stringResource(R.string.settings_quality))
+                                Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    PdfExportQuality.entries.forEach { quality ->
+                                        QualityChoice(quality, preferences.exportQuality == quality) {
+                                            onChange(SettingsChange.Quality(quality))
                                         }
                                     }
                                 }
+                                Text(stringResource(R.string.settings_pdf_defaults_hint),
+                                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
-                    }
-                }
-                SettingsSection.PDF -> {
-                    item {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            SectionTitle(stringResource(R.string.settings_quality))
-                            Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                PdfExportQuality.entries.forEach { quality ->
-                                    QualityChoice(quality, preferences.exportQuality == quality) {
-                                        onChange(SettingsChange.Quality(quality))
-                                    }
-                                }
+                        item {
+                            SettingsGroup(stringResource(R.string.settings_pdf_defaults)) {
+                                SettingsToggle(CoreResourcesR.drawable.ic_document_search, stringResource(R.string.settings_ocr),
+                                    stringResource(R.string.settings_ocr_body), preferences.ocrEnabled) { onChange(SettingsChange.Ocr(it)) }
+                                SettingsDivider()
+                                SettingsToggle(R.drawable.ic_overlay_number, stringResource(R.string.settings_numbering),
+                                    stringResource(R.string.settings_numbering_body), preferences.pageNumbers) { onChange(SettingsChange.Numbering(it)) }
                             }
-                            Text(stringResource(R.string.settings_pdf_defaults_hint),
-                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                    }
-                    item {
-                        SettingsGroup(stringResource(R.string.settings_pdf_defaults)) {
-                            SettingsToggle(CoreResourcesR.drawable.ic_document_search, stringResource(R.string.settings_ocr),
-                                stringResource(R.string.settings_ocr_body), preferences.ocrEnabled) { onChange(SettingsChange.Ocr(it)) }
-                            SettingsDivider()
-                            SettingsToggle(R.drawable.ic_overlay_number, stringResource(R.string.settings_numbering),
-                                stringResource(R.string.settings_numbering_body), preferences.pageNumbers) { onChange(SettingsChange.Numbering(it)) }
-                        }
-                    }
-                    item {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            SectionTitle(stringResource(R.string.settings_images))
-                            Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                PdfImageFormat.entries.forEach { format ->
+                        item {
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                SectionTitle(stringResource(R.string.settings_images))
+                                SettingsChoices(PdfImageFormat.entries, minimumItemWidth = 136.dp, maxColumns = 2) { format, choiceModifier ->
                                     OptionCard(format.name, stringResource(if (format == PdfImageFormat.JPEG)
                                         R.string.settings_jpeg_body else R.string.settings_png_body),
-                                        preferences.imageFormat == format, Modifier.weight(1f)) {
+                                        preferences.imageFormat == format, choiceModifier) {
                                         onChange(SettingsChange.ImageFormat(format))
                                     }
                                 }
                             }
                         }
-                    }
-                    item {
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            SectionTitle(stringResource(R.string.settings_compression))
-                            Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                PdfCompressionLevel.entries.forEach { level ->
+                        item {
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                SectionTitle(stringResource(R.string.settings_compression))
+                                SettingsChoices(PdfCompressionLevel.entries, minimumItemWidth = 136.dp, maxColumns = 2) { level, choiceModifier ->
                                     OptionCard(stringResource(if (level == PdfCompressionLevel.BALANCED)
                                         R.string.settings_compression_balanced else R.string.settings_compression_strong),
-                                        null, preferences.compressionLevel == level, Modifier.weight(1f)) {
+                                        null, preferences.compressionLevel == level, choiceModifier) {
                                         onChange(SettingsChange.Compression(level))
                                     }
                                 }
+                                Text(stringResource(R.string.settings_utilities_hint),
+                                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
-                            Text(stringResource(R.string.settings_utilities_hint),
-                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
-            }
-            if (section != SettingsSection.HOME) item {
-                Text(stringResource(R.string.settings_saved_automatically),
-                    Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (section != SettingsSection.HOME) item {
+                    Text(stringResource(R.string.settings_saved_automatically),
+                        Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
             }
         }
     }
@@ -285,6 +278,30 @@ internal fun SettingsScreen(
                 stringResource(R.string.settings_cancel), { restore = false })
         },
     )
+}
+
+@Composable
+private fun <T> SettingsChoices(
+    choices: List<T>,
+    minimumItemWidth: Dp,
+    maxColumns: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable (T, Modifier) -> Unit,
+) {
+    val fontScale = LocalDensity.current.fontScale.coerceAtLeast(1f)
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val gap = 12.dp
+        val columns = ((maxWidth + gap) / (minimumItemWidth * fontScale + gap))
+            .toInt().coerceIn(1, maxColumns)
+        Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(gap)) {
+            choices.chunked(columns).forEach { row ->
+                Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                    row.forEach { choice -> content(choice, Modifier.weight(1f).fillMaxHeight()) }
+                    repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -521,6 +538,8 @@ private fun SettingsHomePreview() {
     ScaniqoTheme { SettingsScreen(AppSettings(), SettingsSection.HOME, {}, {}) }
 }
 @Preview(name = "Personalizar", widthDp = 390, heightDp = 900, locale = "pt-rBR")
+@Preview(name = "Personalizar tablet", widthDp = 1024, heightDp = 768, locale = "pt-rBR")
+@Preview(name = "Personalizar dobrável fechado", widthDp = 280, heightDp = 720, locale = "pt-rBR")
 @Preview(name = "Personalizar fonte ampliada", widthDp = 320, heightDp = 900, locale = "pt-rBR", fontScale = 1.5f)
 @Composable
 private fun PersonalizationPreview() {

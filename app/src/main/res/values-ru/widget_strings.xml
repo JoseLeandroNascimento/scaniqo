@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">Быстрые действия</string>
+    <string name="widget_quick_actions_description">Сканируйте, импортируйте, ищите и объединяйте PDF с главного экрана.</string>
+    <string name="widget_recent_documents_name">Недавние документы</string>
+    <string name="widget_recent_documents_description">Открывайте последние PDF с главного экрана.</string>
+    <string name="widget_recent_title">Недавние PDF</string>
+    <string name="widget_scan">Сканировать</string>
+    <string name="widget_import">Импорт</string>
+    <string name="widget_search">Поиск</string>
+    <string name="widget_merge">Объединить</string>
+    <string name="widget_open_library">Открыть библиотеку</string>
+    <string name="widget_recent_empty">Пока нет PDF. Отсканируйте или импортируйте первый документ.</string>
+    <string name="widget_recent_error">Не удалось загрузить PDF. Откройте библиотеку и повторите попытку.</string>
+    <string name="widget_document_protected">PDF защищён паролем</string>
+    <string name="widget_loading">Загрузка виджета…</string>
+    <string name="widget_preview_document">Сканированный документ</string>
+    <string name="widget_preview_details">3 страницы · Сегодня</string>
+    <string name="widget_finish_current_action">Завершите текущее действие, чтобы открыть этот ярлык.</string>
+    <plurals name="widget_document_pages">
+        <item quantity="one">%d страница</item>
+        <item quantity="few">%d страницы</item>
+        <item quantity="many">%d страниц</item>
+        <item quantity="other">%d страницы</item>
+    </plurals>
+</resources>

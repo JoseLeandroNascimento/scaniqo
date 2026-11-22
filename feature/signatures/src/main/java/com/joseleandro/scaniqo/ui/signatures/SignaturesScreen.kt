@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -51,6 +53,7 @@ import com.joseleandro.scaniqo.ui.components.DialogActions
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
 import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -109,20 +112,24 @@ fun SignaturesScreen(
             )
         },
     ) { padding ->
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(280.dp),
             modifier = Modifier.fillMaxSize().padding(padding),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 104.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             when {
-                state.isLoading -> item { CircularProgressIndicator(Modifier.padding(24.dp)) }
-                state.loadError -> item {
-                    Text(stringResource(CoreResourcesR.string.runtime_signatures_load_error))
-                    TextButton(onClick = { viewModel.onEvent(SignaturesEvent.Retry) }) {
-                        Text(stringResource(CoreResourcesR.string.runtime_retry))
+                state.isLoading -> item(span = { GridItemSpan(maxLineSpan) }) { CircularProgressIndicator(Modifier.padding(24.dp)) }
+                state.loadError -> item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column {
+                        Text(stringResource(CoreResourcesR.string.runtime_signatures_load_error))
+                        TextButton(onClick = { viewModel.onEvent(SignaturesEvent.Retry) }) {
+                            Text(stringResource(CoreResourcesR.string.runtime_retry))
+                        }
                     }
                 }
-                state.signatures.isEmpty() -> item(key = "empty") { SignaturesEmptyState() }
+                state.signatures.isEmpty() -> item(key = "empty", span = { GridItemSpan(maxLineSpan) }) { SignaturesEmptyState() }
                 else -> items(state.signatures, key = { it.id }) { signature ->
                     SignatureCard(
                         name = signature.name,
@@ -228,7 +235,7 @@ private fun SignaturesEmptyState() {
     ScaniqoEmptyState(
         title = stringResource(R.string.runtime_signatures_empty_title),
         description = stringResource(CoreResourcesR.string.runtime_signatures_body),
-        iconRes = CoreResourcesR.drawable.ic_tool_signature,
+        illustration = EmptyStateIllustration.SIGNATURES,
     )
 }
 
@@ -250,7 +257,8 @@ private fun SignatureCardPreview() {
     }
 }
 
-@Preview(name = "Sem assinaturas", showBackground = true, locale = "pt-rBR")
+@Preview(name = "Sem assinaturas", showBackground = true, widthDp = 390, locale = "pt-rBR")
+@Preview(name = "Sem assinaturas tablet", showBackground = true, widthDp = 840, locale = "pt-rBR")
 @Preview(name = "Sem assinaturas escuro", showBackground = true, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Sem assinaturas fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
 @Composable

@@ -24,9 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,11 +72,25 @@ fun AppToast(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
-    val isDarkSurface = colors.surface.luminance() < 0.5f
     val accent = when (type) {
-        AppToastType.SUCCESS -> if (isDarkSurface) Color(0xFF91D9AE) else Color(0xFF246B45)
+        AppToastType.SUCCESS -> colors.secondary
         AppToastType.ERROR -> colors.error
         AppToastType.INFO -> colors.primary
+    }
+    val onAccent = when (type) {
+        AppToastType.SUCCESS -> colors.onSecondary
+        AppToastType.ERROR -> colors.onError
+        AppToastType.INFO -> colors.onPrimary
+    }
+    val container = when (type) {
+        AppToastType.SUCCESS -> colors.secondaryContainer
+        AppToastType.ERROR -> colors.errorContainer
+        AppToastType.INFO -> colors.primaryContainer
+    }
+    val onContainer = when (type) {
+        AppToastType.SUCCESS -> colors.onSecondaryContainer
+        AppToastType.ERROR -> colors.onErrorContainer
+        AppToastType.INFO -> colors.onPrimaryContainer
     }
     val title = stringResource(
         when (type) {
@@ -93,15 +104,12 @@ fun AppToast(
         AppToastType.ERROR -> CoreResourcesR.drawable.ic_toast_error
         AppToastType.INFO -> CoreResourcesR.drawable.ic_toast_info
     }
-    val container = accent.copy(alpha = 0.055f).compositeOver(colors.surfaceContainerHigh)
-    val badge = accent.copy(alpha = 0.12f).compositeOver(container)
-
     Surface(
         modifier = modifier.widthIn(max = 560.dp).fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         color = container,
-        contentColor = colors.onSurface,
-        border = BorderStroke(1.dp, accent.copy(alpha = 0.2f)),
+        contentColor = onContainer,
+        border = BorderStroke(1.dp, accent.copy(alpha = 0.6f)),
         shadowElevation = 6.dp,
     ) {
         Row(
@@ -113,13 +121,13 @@ fun AppToast(
                 modifier = Modifier
                     .padding(top = 4.dp)
                     .size(40.dp)
-                    .background(badge, RoundedCornerShape(12.dp)),
+                    .background(accent, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     painter = painterResource(iconRes),
                     contentDescription = null,
-                    tint = accent,
+                    tint = onAccent,
                     modifier = Modifier.size(24.dp),
                 )
             }
@@ -131,12 +139,12 @@ fun AppToast(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
-                    color = accent,
+                    color = onContainer,
                 )
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = colors.onSurface,
+                    color = onContainer,
                 )
             }
             IconButton(
@@ -146,7 +154,7 @@ fun AppToast(
                 Icon(
                     painter = painterResource(CoreResourcesR.drawable.ic_toast_close),
                     contentDescription = stringResource(R.string.toast_dismiss),
-                    tint = colors.onSurfaceVariant,
+                    tint = onContainer,
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -154,18 +162,20 @@ fun AppToast(
     }
 }
 
-@Preview(name = "Toast claro", showBackground = true, widthDp = 420)
+@Preview(name = "Toast claro", showBackground = true, widthDp = 420, locale = "pt-rBR")
 @Preview(
     name = "Toast escuro",
     showBackground = true,
     widthDp = 420,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
+    locale = "pt-rBR",
 )
 @Preview(
     name = "Toast fonte grande",
     showBackground = true,
     widthDp = 360,
     fontScale = 1.6f,
+    locale = "pt-rBR",
 )
 @Composable
 private fun AppToastPreview() {

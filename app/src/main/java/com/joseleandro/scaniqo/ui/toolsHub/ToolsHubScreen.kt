@@ -31,6 +31,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -54,6 +55,7 @@ import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.ads.ToolsBannerAd
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentSourceStep
 import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
 import com.joseleandro.scaniqo.ui.documents.state.DocumentsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -269,41 +271,72 @@ fun ToolsHubScreen(
                 modifier = Modifier.padding(padding).consumeWindowInsets(padding),
             )
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(if (LocalDensity.current.fontScale > 1.3f) 230.dp else 154.dp),
-                state = gridState,
+            BoxWithConstraints(
                 modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentAlignment = Alignment.TopCenter,
             ) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text(stringResource(R.string.tool_catalog_heading), Modifier.padding(top = 12.dp).semantics { heading() },
-                            style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            items(ToolGroup.entries, key = { it.name }) { option ->
-                                FilterChip(selected = group == option, onClick = { group = option; focus.clearFocus(); keyboard?.hide() },
-                                    label = { Text(stringResource(option.label)) })
+                val minTileWidth = if (maxWidth >= 600.dp) 196.dp else 154.dp
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minTileWidth * LocalDensity.current.fontScale.coerceAtLeast(1f)),
+                    state = gridState,
+                    modifier = Modifier.widthIn(max = 1200.dp).fillMaxSize(),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            Text(stringResource(R.string.tool_catalog_heading), Modifier.padding(top = 12.dp).semantics { heading() },
+                                style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(ToolGroup.entries, key = { it.name }) { option ->
+                                    FilterChip(selected = group == option, onClick = { group = option; focus.clearFocus(); keyboard?.hide() },
+                                        label = { Text(stringResource(option.label)) })
+                                }
                             }
                         }
                     }
-                }
-                if (visible.isEmpty()) item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
-                    ScaniqoEmptyState(
-                        title = stringResource(R.string.tool_catalog_empty),
-                        description = stringResource(R.string.tool_catalog_empty_hint),
-                        iconRes = CoreResourcesR.drawable.ic_document_search,
-                        actionLabel = stringResource(if (group == ToolGroup.ALL)
-                            CoreResourcesR.string.tool_catalog_clear else R.string.tool_catalog_reset),
-                        onAction = { query = ""; if (group != ToolGroup.ALL) group = ToolGroup.ALL },
-                    )
-                }
-                items(visible, key = { it.name }) { tool ->
-                    ToolTile(tool, labels.getValue(tool).first, labels.getValue(tool).second, enabled) { open(tool) }
+                    if (visible.isEmpty()) item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
+                        ToolCatalogEmptyState(
+                            resetFilters = group != ToolGroup.ALL,
+                            onReset = { query = ""; if (group != ToolGroup.ALL) group = ToolGroup.ALL },
+                        )
+                    }
+                    items(visible, key = { it.name }) { tool ->
+                        ToolTile(tool, labels.getValue(tool).first, labels.getValue(tool).second, enabled) { open(tool) }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ToolCatalogEmptyState(
+    resetFilters: Boolean,
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ScaniqoEmptyState(
+        title = stringResource(R.string.tool_catalog_empty),
+        description = stringResource(R.string.tool_catalog_empty_hint),
+        illustration = EmptyStateIllustration.NO_RESULTS,
+        modifier = modifier,
+        actionLabel = stringResource(if (resetFilters) R.string.tool_catalog_reset
+            else CoreResourcesR.string.tool_catalog_clear),
+        onAction = onReset,
+    )
+}
+
+@Preview(name = "Ferramentas sem resultados", widthDp = 390, locale = "pt-rBR", showBackground = true)
+@Preview(name = "Ferramentas sem resultados escuro", widthDp = 390, locale = "pt-rBR",
+    uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(name = "Ferramentas sem resultados texto ampliado", widthDp = 320, locale = "pt-rBR",
+    fontScale = 1.5f, showBackground = true)
+@Composable
+private fun ToolCatalogEmptyPreview() {
+    ScaniqoTheme {
+        Surface { ToolCatalogEmptyState(resetFilters = false, onReset = {}) }
     }
 }
 
@@ -338,6 +371,8 @@ private fun ToolTile(tool: CatalogTool, title: String, hint: String, enabled: Bo
 @Preview(name = "Ferramentas escuro", widthDp = 390, heightDp = 844, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Ferramentas fonte ampliada", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 1.5f)
 @Preview(name = "Ferramentas fonte muito ampliada", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 2f)
+@Preview(name = "Ferramentas dobrável", widthDp = 673, heightDp = 841, locale = "pt-rBR")
+@Preview(name = "Ferramentas tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
 @Composable
 private fun ToolsHubPreview() {
     ScaniqoTheme {

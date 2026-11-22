@@ -88,6 +88,8 @@ import com.joseleandro.scaniqo.ui.backup.state.DriveBackupPhase
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupProblem
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupUiState
 import com.joseleandro.scaniqo.ui.components.DialogActions
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
+import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,6 +109,7 @@ internal fun DriveBackupScreen(
     onChargingOnlyChange: (Boolean) -> Unit = {},
     onRetry: () -> Unit = {},
     onDelete: (BackupHistoryEntry) -> Unit = {},
+    snackbarHost: @Composable () -> Unit = {},
 ) {
     var confirmBackup by rememberSaveable { mutableStateOf(false) }
     var confirmDisconnect by rememberSaveable { mutableStateOf(false) }
@@ -125,6 +128,7 @@ internal fun DriveBackupScreen(
     val recentHistory = state.history.take(5)
     Scaffold(
         modifier = modifier,
+        snackbarHost = snackbarHost,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.backup_screen_title)) },
@@ -190,7 +194,7 @@ internal fun DriveBackupScreen(
                         val reconnect = problem == DriveBackupProblem.AUTHORIZATION ||
                             problem == DriveBackupProblem.PERMISSION || problem == DriveBackupProblem.ACCOUNT_CHANGED
                         BackupProblemCard(
-                            message = stringResource(problem.label()),
+                            message = stringResource(problem.messageResource()),
                             action = stringResource(if (reconnect) R.string.backup_reconnect else R.string.backup_retry),
                             enabled = !busy,
                             onAction = if (reconnect) onConnect else onRetry,
@@ -738,24 +742,12 @@ private fun BackupHistoryEmptyState(modifier: Modifier = Modifier) {
         shape = MaterialTheme.shapes.extraLarge,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
-        Column(
-            Modifier.padding(horizontal = 24.dp, vertical = 20.dp).semantics(mergeDescendants = true) {},
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            BackupHistoryIllustration()
-            Text(
-                stringResource(R.string.backup_empty),
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                stringResource(R.string.backup_empty_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
+        ScaniqoEmptyState(
+            title = stringResource(R.string.backup_empty),
+            description = stringResource(R.string.backup_empty_hint),
+            illustration = EmptyStateIllustration.BACKUP,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        )
     }
 }
 
@@ -921,7 +913,7 @@ private fun DriveBackupPhase.label(): Int = when (this) {
     DriveBackupPhase.IDLE -> CoreResourcesR.string.backup_title
 }
 
-private fun DriveBackupProblem.label(): Int = when (this) {
+internal fun DriveBackupProblem.messageResource(): Int = when (this) {
     DriveBackupProblem.AUTHORIZATION -> R.string.backup_error_auth
     DriveBackupProblem.CONFIGURATION -> R.string.backup_error_configuration
     DriveBackupProblem.API_DISABLED -> R.string.backup_error_api_disabled

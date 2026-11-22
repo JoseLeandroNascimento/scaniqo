@@ -3,20 +3,16 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 import com.joseleandro.scaniqo.feature.editor.R
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -32,9 +28,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -52,115 +45,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
-import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentPageScope
-import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentPageScopeMode
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
-
-@Composable
-internal fun DocumentToolPageScope(
-    pages: List<PdfPageSpec>,
-    currentPageId: String,
-    scope: DocumentPageScope,
-    onScopeChange: (DocumentPageScope) -> Unit,
-    enabled: Boolean,
-) {
-    var choosing by remember { mutableStateOf(false) }
-    val labels = listOf(
-        stringResource(R.string.document_scope_current),
-        if (scope.mode == DocumentPageScopeMode.SELECTED) {
-            stringResource(R.string.document_scope_selected_count, scope.targets(pages, currentPageId).size)
-        } else stringResource(R.string.document_scope_select),
-        stringResource(R.string.document_scope_all),
-    )
-    val selectMode: (DocumentPageScopeMode) -> Unit = { mode ->
-        if (mode == DocumentPageScopeMode.SELECTED) choosing = true
-        else onScopeChange(scope.copy(mode = mode))
-    }
-    val fontScale = LocalDensity.current.fontScale
-    BoxWithConstraints(Modifier.fillMaxWidth()) {
-        // Fontes grandes ganham espaço próprio, mantendo as mesmas três opções e a mesma seleção.
-        if (maxWidth < 240.dp * fontScale) {
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            ) {
-                Column(Modifier.fillMaxWidth().selectableGroup()) {
-                    DocumentPageScopeMode.entries.forEachIndexed { index, mode ->
-                        val selected = scope.mode == mode
-                        Surface(
-                            color = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                            else MaterialTheme.colorScheme.surface,
-                            contentColor = when {
-                                !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = .38f)
-                                selected -> MaterialTheme.colorScheme.onSecondaryContainer
-                                else -> MaterialTheme.colorScheme.onSurface
-                            },
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                                    .selectable(
-                                        selected = selected,
-                                        enabled = enabled,
-                                        role = Role.RadioButton,
-                                        onClick = { selectMode(mode) },
-                                    )
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    labels[index],
-                                    modifier = Modifier.weight(1f),
-                                    style = MaterialTheme.typography.labelLarge.copy(textDirection = TextDirection.ContentOrLtr),
-                                )
-                                RadioButton(selected = selected, onClick = null, enabled = enabled)
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-                DocumentPageScopeMode.entries.forEachIndexed { index, mode ->
-                    SegmentedButton(
-                        selected = scope.mode == mode,
-                        onClick = { selectMode(mode) },
-                        enabled = enabled,
-                        shape = SegmentedButtonDefaults.itemShape(index, 3),
-                        icon = {},
-                        modifier = Modifier.heightIn(min = 48.dp).fillMaxHeight(),
-                    ) {
-                        Text(
-                            labels[index],
-                            style = MaterialTheme.typography.labelLarge.copy(textDirection = TextDirection.ContentOrLtr),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            }
-        }
-    }
-    if (choosing) {
-        DocumentPagePickerDialog(
-            pages = pages,
-            selectedIds = scope.pageIds.ifEmpty { setOf(currentPageId) },
-            allowMultiple = true,
-            onDismiss = { choosing = false },
-            onConfirm = {
-                onScopeChange(DocumentPageScope(DocumentPageScopeMode.SELECTED, it))
-                choosing = false
-            },
-        )
-    }
-}
 
 /** A grade é virtualizada para continuar leve mesmo em arquivos com muitas páginas. */
 @Composable

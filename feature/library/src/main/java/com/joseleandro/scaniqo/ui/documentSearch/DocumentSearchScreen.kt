@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -67,6 +68,7 @@ import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.DocumentSearchResult
 import com.joseleandro.scaniqo.domain.repository.DocumentSearchRepository
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
 import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentSearch.state.DocumentSearchUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -164,9 +166,11 @@ fun DocumentSearchScreen(
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding)
                 .imePadding(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LazyColumn(
                 modifier = Modifier
+                    .widthIn(max = 840.dp)
                     .fillMaxWidth()
                     .weight(1f),
                 contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
@@ -185,7 +189,7 @@ fun DocumentSearchScreen(
                         ScaniqoEmptyState(
                             title = stringResource(R.string.document_search_initial_title),
                             description = stringResource(R.string.document_search_initial_body),
-                            iconRes = CoreResourcesR.drawable.ic_document_search,
+                            illustration = EmptyStateIllustration.SEARCH,
                             modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
                         )
                     }
@@ -212,7 +216,7 @@ fun DocumentSearchScreen(
                         ScaniqoEmptyState(
                             title = stringResource(R.string.document_search_empty_title),
                             description = stringResource(R.string.document_search_empty_body),
-                            iconRes = CoreResourcesR.drawable.ic_document_search,
+                            illustration = EmptyStateIllustration.NO_RESULTS,
                             modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)
                                 .semantics { liveRegion = LiveRegionMode.Polite },
                             actionLabel = stringResource(R.string.document_search_clear),
@@ -388,7 +392,7 @@ private fun SearchStatus(
     }
 }
 
-@Preview(name = "Pesquisa inicial", showBackground = true)
+@Preview(name = "Pesquisa inicial", widthDp = 390, heightDp = 780, locale = "pt-rBR")
 @Composable
 private fun DocumentSearchInitialPreview() {
     ScaniqoTheme {
@@ -402,13 +406,15 @@ private fun DocumentSearchInitialPreview() {
     }
 }
 
-@Preview(name = "Pesquisa sem resultados", showBackground = true)
+@Preview(name = "Pesquisa sem resultados", widthDp = 390, heightDp = 780, locale = "pt-rBR")
 @Preview(
     name = "Pesquisa sem resultados escuro",
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Preview(name = "Pesquisa sem resultados RTL", showBackground = true, locale = "ar")
+@Preview(name = "Pesquisa vazia fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
+@Preview(name = "Pesquisa vazia tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
 @Composable
 private fun DocumentSearchEmptyPreview() {
     ScaniqoTheme {
@@ -428,6 +434,8 @@ private fun DocumentSearchEmptyPreview() {
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
+@Preview(name = "Resultados tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Resultados tela externa", widthDp = 320, heightDp = 720, locale = "pt-rBR")
 @Composable
 private fun DocumentSearchResultsPreview() {
     val document = DocumentModel(

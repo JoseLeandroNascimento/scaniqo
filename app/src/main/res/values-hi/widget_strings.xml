@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">त्वरित कार्रवाइयाँ</string>
+    <string name="widget_quick_actions_description">होम स्क्रीन से PDF स्कैन, आयात, खोजें या मर्ज करें।</string>
+    <string name="widget_recent_documents_name">हाल के दस्तावेज़</string>
+    <string name="widget_recent_documents_description">होम स्क्रीन से अपने हाल के PDF खोलें।</string>
+    <string name="widget_recent_title">हाल के PDF</string>
+    <string name="widget_scan">स्कैन</string>
+    <string name="widget_import">आयात</string>
+    <string name="widget_search">खोजें</string>
+    <string name="widget_merge">मर्ज</string>
+    <string name="widget_open_library">लाइब्रेरी खोलें</string>
+    <string name="widget_recent_empty">अभी कोई PDF नहीं है। अपना पहला दस्तावेज़ स्कैन या आयात करें।</string>
+    <string name="widget_recent_error">PDF लोड नहीं हो सके। फिर कोशिश करने के लिए लाइब्रेरी खोलें।</string>
+    <string name="widget_document_protected">पासवर्ड से सुरक्षित PDF</string>
+    <string name="widget_loading">विजेट लोड हो रहा है…</string>
+    <string name="widget_preview_document">स्कैन किया गया दस्तावेज़</string>
+    <string name="widget_preview_details">3 पेज · आज</string>
+    <string name="widget_finish_current_action">यह शॉर्टकट खोलने के लिए मौजूदा कार्रवाई पूरी करें।</string>
+    <plurals name="widget_document_pages">
+        <item quantity="one">%d पेज</item>
+        <item quantity="other">%d पेज</item>
+    </plurals>
+</resources>

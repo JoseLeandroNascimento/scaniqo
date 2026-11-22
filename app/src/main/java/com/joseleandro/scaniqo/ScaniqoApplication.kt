@@ -1,6 +1,8 @@
 package com.joseleandro.scaniqo
 
 import android.app.Application
+import android.content.res.Configuration
+import com.joseleandro.scaniqo.widget.WidgetUpdater
 import android.util.Log
 import com.joseleandro.scaniqo.domain.repository.PdfEditorRepository
 import com.joseleandro.scaniqo.domain.repository.BackupScheduler
@@ -25,6 +27,7 @@ class ScaniqoApplication : Application() {
             androidContext(this@ScaniqoApplication)
             modules(appModule)
         }
+        WidgetUpdater.start(this)
         applicationScope.launch {
             try {
                 val settings = dependencyGraph.koin.get<BackupSettingsRepository>().settings.value
@@ -46,5 +49,10 @@ class ScaniqoApplication : Application() {
                 Log.w("Scaniqo", "Não foi possível limpar as sessões antigas do editor.", failure)
             }
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        WidgetUpdater.refresh(this)
     }
 }

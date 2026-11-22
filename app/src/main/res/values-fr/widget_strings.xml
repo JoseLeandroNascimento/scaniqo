@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">Actions rapides</string>
+    <string name="widget_quick_actions_description">Numérisez, importez, recherchez ou fusionnez des PDF depuis l’écran d’accueil.</string>
+    <string name="widget_recent_documents_name">Documents récents</string>
+    <string name="widget_recent_documents_description">Ouvrez vos derniers PDF depuis l’écran d’accueil.</string>
+    <string name="widget_recent_title">PDF récents</string>
+    <string name="widget_scan">Numériser</string>
+    <string name="widget_import">Importer</string>
+    <string name="widget_search">Chercher</string>
+    <string name="widget_merge">Fusionner</string>
+    <string name="widget_open_library">Ouvrir la bibliothèque</string>
+    <string name="widget_recent_empty">Aucun PDF. Numérisez ou importez votre premier document.</string>
+    <string name="widget_recent_error">Impossible de charger les PDF. Ouvrez la bibliothèque pour réessayer.</string>
+    <string name="widget_document_protected">PDF protégé par mot de passe</string>
+    <string name="widget_loading">Chargement du widget…</string>
+    <string name="widget_preview_document">Document numérisé</string>
+    <string name="widget_preview_details">3 pages · Aujourd’hui</string>
+    <string name="widget_finish_current_action">Terminez l’action en cours pour ouvrir ce raccourci.</string>
+    <plurals name="widget_document_pages">
+        <item quantity="one">%d page</item>
+        <item quantity="many">%d pages</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+</resources>

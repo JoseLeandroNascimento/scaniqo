@@ -70,7 +70,7 @@ fun OnboardingScreen(
     Surface(modifier.fillMaxSize(), color = colors.surface) {
         Box(Modifier.fillMaxSize()) {
             Column(
-                modifier = Modifier.align(Alignment.TopCenter).widthIn(max = 640.dp)
+                modifier = Modifier.align(Alignment.TopCenter).widthIn(max = 960.dp)
                     .fillMaxSize().safeDrawingPadding(),
             ) {
                 Row(
@@ -92,56 +92,67 @@ fun OnboardingScreen(
                     key = { it },
                 ) { index ->
                     BoxWithConstraints(Modifier.fillMaxSize()) {
-                        val illustrationHeight = minOf(
-                            (maxHeight * 0.62f).coerceIn(180.dp, 400.dp),
-                            (maxWidth - 16.dp) * (300f / 320f),
-                        )
-                        val minimumHeight = maxHeight
-                        Column(
-                            modifier = Modifier.fillMaxSize()
-                                .verticalScroll(rememberScrollState())
-                                .heightIn(min = minimumHeight)
-                                .padding(horizontal = 8.dp, vertical = 16.dp)
-                                .graphicsLayer {
-                                    val offset = ((pager.currentPage - index) +
-                                        pager.currentPageOffsetFraction).absoluteValue.coerceIn(0f, 1f)
-                                    alpha = 1f - 0.35f * offset
-                                    scaleX = 1f - 0.04f * offset
-                                    scaleY = scaleX
-                                },
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                        ) {
-                            val page = tutorialPages[index]
-                            OnboardingIllustration(
-                                page = index,
-                                modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth()
-                                    .height(illustrationHeight).clearAndSetSemantics {},
-                                animate = animateIllustrations && pager.settledPage == index &&
-                                    !pager.isScrollInProgress,
+                        val sideBySide = maxWidth >= 600.dp
+                        val illustrationHeight = if (sideBySide) {
+                            minOf(
+                                (maxHeight - 32.dp).coerceIn(96.dp, 400.dp),
+                                (maxWidth / 2 - 32.dp) * (300f / 320f),
                             )
-                            Spacer(Modifier.height(24.dp))
-                            Text(
-                                text = stringResource(page.title),
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                                    .widthIn(max = 360.dp).semantics { heading() },
-                                style = MaterialTheme.typography.headlineMedium,
-                                textAlign = TextAlign.Center,
+                        } else {
+                            minOf(
+                                (maxHeight * 0.62f).coerceIn(180.dp, 400.dp),
+                                (maxWidth - 16.dp) * (300f / 320f),
                             )
-                            Spacer(Modifier.height(12.dp))
-                            Text(
-                                text = stringResource(page.description),
-                                modifier = Modifier.padding(horizontal = 24.dp).widthIn(max = 360.dp),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = colors.onSurfaceVariant,
-                                textAlign = TextAlign.Center,
-                            )
+                        }
+                        val pageModifier = Modifier.fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .heightIn(min = maxHeight)
+                            .padding(horizontal = 8.dp, vertical = 16.dp)
+                            .graphicsLayer {
+                                val offset = ((pager.currentPage - index) +
+                                    pager.currentPageOffsetFraction).absoluteValue.coerceIn(0f, 1f)
+                                alpha = 1f - 0.35f * offset
+                                scaleX = 1f - 0.04f * offset
+                                scaleY = scaleX
+                            }
+                        val animate = animateIllustrations && pager.settledPage == index &&
+                            !pager.isScrollInProgress
+                        if (sideBySide) {
+                            Row(
+                                modifier = pageModifier,
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                OnboardingIllustration(
+                                    page = index,
+                                    modifier = Modifier.weight(1f).height(illustrationHeight)
+                                        .clearAndSetSemantics {},
+                                    animate = animate,
+                                )
+                                OnboardingPageText(tutorialPages[index], Modifier.weight(1f))
+                            }
+                        } else {
+                            Column(
+                                modifier = pageModifier,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                OnboardingIllustration(
+                                    page = index,
+                                    modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth()
+                                        .height(illustrationHeight).clearAndSetSemantics {},
+                                    animate = animate,
+                                )
+                                Spacer(Modifier.height(24.dp))
+                                OnboardingPageText(tutorialPages[index])
+                            }
                         }
                     }
                 }
 
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)
+                    modifier = Modifier.align(Alignment.CenterHorizontally).widthIn(max = 480.dp)
+                        .fillMaxWidth().padding(horizontal = 24.dp)
                         .padding(top = 8.dp, bottom = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -218,7 +229,31 @@ fun OnboardingScreen(
     }
 }
 
+@Composable
+private fun OnboardingPageText(page: TutorialPage, modifier: Modifier = Modifier) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = stringResource(page.title),
+            modifier = Modifier.padding(horizontal = 16.dp)
+                .widthIn(max = 360.dp).semantics { heading() },
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            text = stringResource(page.description),
+            modifier = Modifier.padding(horizontal = 24.dp).widthIn(max = 360.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
 @Preview(name = "Primeiro acesso", widthDp = 390, heightDp = 844, locale = "pt-rBR")
+@Preview(name = "Tutorial celular horizontal", widthDp = 800, heightDp = 360, locale = "pt-rBR")
+@Preview(name = "Tutorial tablet", widthDp = 1024, heightDp = 768, locale = "pt-rBR")
+@Preview(name = "Tutorial dobrável aberto", widthDp = 673, heightDp = 841, locale = "pt-rBR")
 @Preview(name = "Primeiro acesso escuro", widthDp = 390, heightDp = 844, locale = "pt-rBR",
     uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Fonte ampliada", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 1.5f)

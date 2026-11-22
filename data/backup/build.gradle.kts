@@ -19,5 +19,4 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:resources"))
     implementation(project(":data:pdf"))
-    testImplementation(libs.pdfbox.android)
 }

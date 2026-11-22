@@ -55,11 +55,15 @@ internal fun DriveAuthorizationHandler(viewModel: DriveBackupViewModel) {
         val requestId = launchedRequest
         launchedRequest = -1L
         if (!viewModel.isAwaitingAuthorization(requestId)) return@rememberLauncherForActivityResult
-        if (result.resultCode != Activity.RESULT_OK || result.data == null) {
-            viewModel.authorizationFailed(requestId)
-        } else {
-            try {
-                complete(requestId, client.getAuthorizationResultFromIntent(result.data!!))
+        val data = result.data
+        when {
+            data?.hasExtra(ActivityResultContracts.StartIntentSenderForResult.EXTRA_SEND_INTENT_EXCEPTION) == true ->
+                viewModel.authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION)
+            result.resultCode == Activity.RESULT_CANCELED -> viewModel.authorizationFailed(requestId)
+            result.resultCode != Activity.RESULT_OK || data == null ->
+                viewModel.authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION)
+            else -> try {
+                complete(requestId, client.getAuthorizationResultFromIntent(data))
             } catch (error: Exception) {
                 viewModel.authorizationFailed(requestId, authorizationProblem(error))
             }

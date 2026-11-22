@@ -20,6 +20,10 @@ import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
+@Preview(name = "Documentos tela externa", widthDp = 320, heightDp = 720, locale = "pt-rBR")
+@Preview(name = "Documentos dobrável", widthDp = 673, heightDp = 841, locale = "pt-rBR")
+@Preview(name = "Documentos tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Documentos texto grande", widthDp = 320, heightDp = 640, fontScale = 2f, locale = "pt-rBR")
 @Composable
 private fun DocumentsScreenPreview() {
     ScaniqoTheme {
@@ -34,9 +38,9 @@ private fun DocumentsScreenPreview() {
                         iconKey = TagIcon.WORK.key
                     )
                 ),
-                documents = listOf(
+                documents = List(6) { index ->
                     DocumentModel(
-                        id = 1,
+                        id = index.toLong() + 1,
                         name = "Contrato de prestação de serviços",
                         pdfUri = "preview.pdf",
                         pageCount = 3,
@@ -44,6 +48,59 @@ private fun DocumentsScreenPreview() {
                         sizeBytes = 248_000L,
                         thumbnailUri = null,
                         tagId = 1,
+                    )
+                },
+            ),
+            actionsState = DocumentActionsUiState(isLoadingTags = false),
+            onEvent = {},
+            onDocumentAction = {},
+            onOpenMenu = {},
+            onImportPdf = {},
+            onSearch = {},
+            onOpenDocument = {},
+            onMergePdfs = {},
+            onSignDocument = {},
+            onAllTools = {},
+        )
+    }
+}
+
+@Preview(name = "Biblioteca vazia", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Preview(name = "Biblioteca vazia tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Biblioteca vazia fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
+@Composable
+private fun DocumentsEmptyPreview() {
+    ScaniqoTheme {
+        DocumentsScreen(
+            uiState = DocumentsUiState(isLoading = false),
+            actionsState = DocumentActionsUiState(isLoadingTags = false),
+            onEvent = {},
+            onDocumentAction = {},
+            onOpenMenu = {},
+            onImportPdf = {},
+            onSearch = {},
+            onOpenDocument = {},
+            onMergePdfs = {},
+            onSignDocument = {},
+            onAllTools = {},
+        )
+    }
+}
+
+@Preview(name = "Tag sem documentos", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Composable
+private fun DocumentsFilteredEmptyPreview() {
+    ScaniqoTheme {
+        DocumentsScreen(
+            uiState = DocumentsUiState(
+                isLoading = false,
+                selectedTagId = 1,
+                tags = listOf(
+                    TagModel(
+                        id = 1,
+                        name = "Trabalho",
+                        colorArgb = Color(0xFF4F7CAC).toArgb(),
+                        iconKey = TagIcon.WORK.key,
                     ),
                 ),
             ),

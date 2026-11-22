@@ -1,5 +1,5 @@
 [versions]
-agp = "9.6.0-alpha02"
+agp = "9.6.0-alpha03"
 coreKtx = "1.19.1"
 appcompat = "1.8.0"
 coreSplashscreen = "1.2.0"
@@ -18,6 +18,8 @@ cameraX = "1.6.2"
 mlkitDocumentScanner = "16.0.0"
 mlkitTextRecognition = "16.0.1"
 navigation3 = "1.2.0"
+window = "1.5.1"
+glance = "1.2.0"
 kotlinxSerialization = "1.11.0"
 kotlinxCoroutines = "1.9.0"
 pdfboxAndroid = "2.0.27.0"
@@ -64,6 +66,9 @@ androidx-camera-view = { group = "androidx.camera", name = "camera-view", versio
 mlkit-document-scanner = { group = "com.google.android.gms", name = "play-services-mlkit-document-scanner", version.ref = "mlkitDocumentScanner" }
 mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 
+androidx-window = { group = "androidx.window", name = "window", version.ref = "window" }
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
 androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
 androidx-lifecycle-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "lifecycleRuntimeKtx" }

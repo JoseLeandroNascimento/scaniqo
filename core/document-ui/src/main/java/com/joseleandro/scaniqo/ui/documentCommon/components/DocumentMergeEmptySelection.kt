@@ -1,59 +1,44 @@
 package com.joseleandro.scaniqo.ui.documentCommon.components
 
-import com.joseleandro.scaniqo.core.documentui.R
-import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
-
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joseleandro.scaniqo.core.documentui.R
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
+import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
+
 @Composable
-internal fun DocumentMergeEmptySelection(enabled: Boolean, onPickFiles: () -> Unit) {
-    Surface(
-        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-        shape = MaterialTheme.shapes.extraLarge,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-    ) {
-        Column(
-            Modifier.padding(horizontal = 24.dp, vertical = 28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.primaryContainer) {
-                Icon(
-                    painterResource(CoreResourcesR.drawable.ic_document_import),
-                    contentDescription = null,
-                    modifier = Modifier.padding(16.dp).size(32.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
-            Text(
-                stringResource(R.string.merge_selection_empty_title),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                stringResource(R.string.merge_selection_empty),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-            OutlinedButton(onClick = onPickFiles, enabled = enabled) {
-                Text(stringResource(R.string.merge_screen_add_files))
-            }
-        }
+internal fun DocumentMergeEmptySelection(
+    enabled: Boolean,
+    onPickFiles: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ScaniqoEmptyState(
+        title = stringResource(R.string.merge_selection_empty_title),
+        description = stringResource(R.string.merge_selection_empty),
+        illustration = EmptyStateIllustration.MERGE,
+        modifier = modifier.fillMaxWidth().padding(top = 8.dp),
+        actionLabel = stringResource(R.string.merge_screen_add_files),
+        onAction = onPickFiles,
+        actionEnabled = enabled,
+    )
+}
+
+@Preview(name = "Mesclagem vazia", widthDp = 390, locale = "pt-rBR", showBackground = true)
+@Preview(name = "Mesclagem vazia escura", widthDp = 390, locale = "pt-rBR",
+    uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(name = "Mesclagem vazia texto ampliado", widthDp = 320, locale = "pt-rBR",
+    fontScale = 1.5f, showBackground = true)
+@Composable
+private fun DocumentMergeEmptySelectionPreview() {
+    ScaniqoTheme {
+        Surface { DocumentMergeEmptySelection(enabled = true, onPickFiles = {}) }
     }
 }

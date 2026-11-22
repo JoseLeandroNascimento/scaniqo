@@ -4,14 +4,18 @@ import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import com.joseleandro.scaniqo.feature.library.R
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -26,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -40,8 +45,8 @@ import com.joseleandro.scaniqo.ui.ads.DocumentListRow
 import com.joseleandro.scaniqo.ui.ads.DocumentsNativeAd
 import com.joseleandro.scaniqo.ui.ads.rememberDocumentsNativeAds
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
-import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverlays
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
 import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentCommon.feedback.rememberDocumentToastState
@@ -156,96 +161,107 @@ fun DocumentsScreen(
             )
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding)
-                .padding(bottom = if (nativeAds.isNotEmpty()) scanButtonHeight + 32.dp else 0.dp),
-            contentPadding = PaddingValues(top = 8.dp, bottom = if (nativeAds.isNotEmpty()) 16.dp else 112.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        Box(
+            modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            item(key = "quick_tools") {
-                DocumentQuickTools(
-                    enabled = !actionsBusy && actionsState.editor == null && actionsState.pendingDeletion == null,
-                    onImport = onImportPdf,
-                    onMerge = onMergePdfs,
-                    onSign = onSignDocument,
-                    onAllTools = onAllTools,
-                )
-            }
-            item(key = "filters") {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text(
-                        text = stringResource(R.string.documents_subtitle),
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(336.dp * density.fontScale.coerceAtLeast(1f)),
+                modifier = Modifier
+                    .widthIn(max = 1200.dp)
+                    .fillMaxSize()
+                    .padding(bottom = if (nativeAds.isNotEmpty()) scanButtonHeight + 32.dp else 0.dp),
+                contentPadding = PaddingValues(top = 8.dp, bottom = if (nativeAds.isNotEmpty()) 16.dp else scanButtonHeight + 48.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                item(key = "quick_tools", span = { GridItemSpan(maxLineSpan) }) {
+                    DocumentQuickTools(
+                        enabled = !actionsBusy && actionsState.editor == null && actionsState.pendingDeletion == null,
+                        onImport = onImportPdf,
+                        onMerge = onMergePdfs,
+                        onSign = onSignDocument,
+                        onAllTools = onAllTools,
                     )
-                    DocumentTagFilters(
-                        tags = uiState.tags,
-                        selectedTagId = uiState.selectedTagId,
-                        onSelect = { onEvent(DocumentsEvent.SelectTag(it)) },
-                    )
-                    if (!uiState.isLoading && !uiState.loadError) {
+                }
+                item(key = "filters", span = { GridItemSpan(maxLineSpan) }) {
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text(
-                            text = pluralStringResource(
-                                R.plurals.documents_count,
-                                visibleDocuments.size,
-                                visibleDocuments.size,
-                            ),
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                            style = MaterialTheme.typography.labelLarge,
+                            text = stringResource(R.string.documents_subtitle),
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+                        DocumentTagFilters(
+                            tags = uiState.tags,
+                            selectedTagId = uiState.selectedTagId,
+                            onSelect = { onEvent(DocumentsEvent.SelectTag(it)) },
+                        )
+                        if (!uiState.isLoading && !uiState.loadError) {
+                            Text(
+                                text = pluralStringResource(
+                                    R.plurals.documents_count,
+                                    visibleDocuments.size,
+                                    visibleDocuments.size,
+                                ),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
-            }
-            when {
-                uiState.isLoading -> item(key = "loading") {
-                    DocumentsLoading()
-                }
+                when {
+                    uiState.isLoading -> item(key = "loading", span = { GridItemSpan(maxLineSpan) }) {
+                        DocumentsLoading()
+                    }
 
-                uiState.loadError -> item(key = "error") {
-                    DocumentStatus(
-                        title = stringResource(CoreResourcesR.string.documents_error_title),
-                        description = stringResource(CoreResourcesR.string.documents_error_body),
-                        actionLabel = stringResource(CoreResourcesR.string.documents_retry),
-                        onAction = { onEvent(DocumentsEvent.RetryLoad) },
-                    )
-                }
+                    uiState.loadError -> item(key = "error", span = { GridItemSpan(maxLineSpan) }) {
+                        DocumentStatus(
+                            title = stringResource(CoreResourcesR.string.documents_error_title),
+                            description = stringResource(CoreResourcesR.string.documents_error_body),
+                            actionLabel = stringResource(CoreResourcesR.string.documents_retry),
+                            onAction = { onEvent(DocumentsEvent.RetryLoad) },
+                        )
+                    }
 
-                visibleDocuments.isEmpty() -> item(key = "empty") {
-                    val filtered = uiState.selectedTagId != null
-                    ScaniqoEmptyState(
-                        title = stringResource(if (filtered) R.string.documents_filter_empty_title else R.string.documents_empty_title),
-                        description = stringResource(if (filtered) R.string.documents_filter_empty_body else R.string.documents_empty_body),
-                        iconRes = if (filtered) CoreResourcesR.drawable.ic_tag_document else CoreResourcesR.drawable.ic_document_scan,
-                        actionLabel = if (filtered) stringResource(R.string.documents_clear_filter) else null,
-                        onAction = if (filtered) {
-                            { onEvent(DocumentsEvent.SelectTag(null)) }
-                        } else null,
-                    )
-                }
+                    visibleDocuments.isEmpty() -> item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
+                        val filtered = uiState.selectedTagId != null
+                        ScaniqoEmptyState(
+                            title = stringResource(if (filtered) R.string.documents_filter_empty_title else R.string.documents_empty_title),
+                            description = stringResource(if (filtered) R.string.documents_filter_empty_body else R.string.documents_empty_body),
+                            illustration = if (filtered) EmptyStateIllustration.FILTERED_DOCUMENTS else EmptyStateIllustration.DOCUMENTS,
+                            actionLabel = if (filtered) stringResource(R.string.documents_clear_filter) else null,
+                            onAction = if (filtered) {
+                                { onEvent(DocumentsEvent.SelectTag(null)) }
+                            } else null,
+                        )
+                    }
 
-                else -> items(documentRows, key = DocumentListRow::key) { row ->
-                    when (row) {
-                        is DocumentListRow.Document -> {
-                            val document = visibleDocuments[row.documentIndex]
-                            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                                DocumentCard(
-                                    document = document,
-                                    tag = uiState.tagsById[document.tagId],
-                                    isBusy = actionsState.busyDocumentId == document.id,
-                                    actionsEnabled = !actionsBusy,
-                                    onOpen = { if (!actionsBusy) onOpenDocument(document.id) },
-                                    onEvent = onDocumentAction,
-                                )
+                    else -> items(
+                        items = documentRows,
+                        key = DocumentListRow::key,
+                        span = { row ->
+                            GridItemSpan(if (row is DocumentListRow.NativeAdSlot) maxLineSpan else 1)
+                        },
+                    ) { row ->
+                        when (row) {
+                            is DocumentListRow.Document -> {
+                                val document = visibleDocuments[row.documentIndex]
+                                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                    DocumentCard(
+                                        document = document,
+                                        tag = uiState.tagsById[document.tagId],
+                                        isBusy = actionsState.busyDocumentId == document.id,
+                                        actionsEnabled = !actionsBusy,
+                                        onOpen = { if (!actionsBusy) onOpenDocument(document.id) },
+                                        onEvent = onDocumentAction,
+                                    )
+                                }
                             }
-                        }
 
-                        is DocumentListRow.NativeAdSlot -> nativeAds[row.slot]?.let { ad ->
-                            DocumentsNativeAd(ad = ad, modifier = Modifier.padding(horizontal = 16.dp))
+                            is DocumentListRow.NativeAdSlot -> nativeAds[row.slot]?.let { ad ->
+                                DocumentsNativeAd(ad = ad, modifier = Modifier.padding(horizontal = 16.dp))
+                            }
                         }
                     }
                 }

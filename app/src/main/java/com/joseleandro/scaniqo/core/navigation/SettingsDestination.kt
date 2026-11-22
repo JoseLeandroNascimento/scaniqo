@@ -19,6 +19,7 @@ internal fun SettingsDestination(
     onPdf: () -> Unit = {},
     onBackup: () -> Unit = {},
     onPasswords: () -> Unit = {},
+    onLanguage: () -> Unit = {},
 ) {
     var tutorialVisible by rememberSaveable { mutableStateOf(false) }
     if (tutorialVisible) {
@@ -32,6 +33,7 @@ internal fun SettingsDestination(
             onPdf = onPdf,
             onBackup = onBackup,
             onPasswords = onPasswords,
+            onLanguage = onLanguage,
             onTutorial = { tutorialVisible = true },
         )
     }

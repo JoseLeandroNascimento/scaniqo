@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">দ্রুত কাজ</string>
+    <string name="widget_quick_actions_description">হোম স্ক্রিন থেকে PDF স্ক্যান, আমদানি, খুঁজুন বা একত্র করুন।</string>
+    <string name="widget_recent_documents_name">সাম্প্রতিক নথি</string>
+    <string name="widget_recent_documents_description">হোম স্ক্রিন থেকে সাম্প্রতিক PDF খুলুন।</string>
+    <string name="widget_recent_title">সাম্প্রতিক PDF</string>
+    <string name="widget_scan">স্ক্যান</string>
+    <string name="widget_import">আমদানি</string>
+    <string name="widget_search">খুঁজুন</string>
+    <string name="widget_merge">একত্র</string>
+    <string name="widget_open_library">লাইব্রেরি খুলুন</string>
+    <string name="widget_recent_empty">এখনও কোনো PDF নেই। আপনার প্রথম নথি স্ক্যান বা আমদানি করুন।</string>
+    <string name="widget_recent_error">PDF লোড করা যায়নি। আবার চেষ্টা করতে লাইব্রেরি খুলুন।</string>
+    <string name="widget_document_protected">পাসওয়ার্ড দিয়ে সুরক্ষিত PDF</string>
+    <string name="widget_loading">উইজেট লোড হচ্ছে…</string>
+    <string name="widget_preview_document">স্ক্যান করা নথি</string>
+    <string name="widget_preview_details">3 পৃষ্ঠা · আজ</string>
+    <string name="widget_finish_current_action">এই শর্টকাট খুলতে বর্তমান কাজটি শেষ করুন।</string>
+    <plurals name="widget_document_pages">
+        <item quantity="one">%d পৃষ্ঠা</item>
+        <item quantity="other">%d পৃষ্ঠা</item>
+    </plurals>
+</resources>

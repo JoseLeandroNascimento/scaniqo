@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">Ações rápidas</string>
+    <string name="widget_quick_actions_description">Escaneie, importe, busque ou mescle PDFs pela tela inicial.</string>
+    <string name="widget_recent_documents_name">Documentos recentes</string>
+    <string name="widget_recent_documents_description">Abra seus PDFs mais recentes pela tela inicial.</string>
+    <string name="widget_recent_title">PDFs recentes</string>
+    <string name="widget_scan">Escanear</string>
+    <string name="widget_import">Importar</string>
+    <string name="widget_search">Buscar</string>
+    <string name="widget_merge">Mesclar</string>
+    <string name="widget_open_library">Abrir biblioteca</string>
+    <string name="widget_recent_empty">Nenhum PDF ainda. Escaneie ou importe seu primeiro documento.</string>
+    <string name="widget_recent_error">Não foi possível carregar os PDFs. Abra a biblioteca para tentar novamente.</string>
+    <string name="widget_document_protected">PDF protegido por senha</string>
+    <string name="widget_loading">Carregando widget…</string>
+    <string name="widget_preview_document">Documento escaneado</string>
+    <string name="widget_preview_details">3 páginas · Hoje</string>
+    <string name="widget_finish_current_action">Conclua a ação atual para abrir o atalho.</string>
+    <plurals name="widget_document_pages">
+        <item quantity="one">%d página</item>
+        <item quantity="many">%d páginas</item>
+        <item quantity="other">%d páginas</item>
+    </plurals>
+</resources>

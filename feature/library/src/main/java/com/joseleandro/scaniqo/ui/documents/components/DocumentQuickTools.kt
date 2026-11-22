@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -41,44 +43,57 @@ internal fun DocumentQuickTools(
 ) {
     val listState = rememberLazyListState()
     val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
-    LazyRow(
-        state = listState,
-        flingBehavior = rememberSnapFlingBehavior(listState),
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item(key = "import") {
-            QuickToolCard(
-                CoreResourcesR.drawable.ic_document_import, CoreResourcesR.string.quick_tools_import,
-                CoreResourcesR.string.quick_tools_import_hint, enabled, onImport,
-                container = if (dark) Color(0xFF173D58) else Color(0xFFDCEEFF),
-                content = if (dark) Color(0xFFDCEEFF) else Color(0xFF173D58),
-            )
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val minCardWidth = 208.dp * LocalDensity.current.fontScale.coerceIn(1f, 1.5f)
+        val availableWidth = (maxWidth - 32.dp).coerceAtLeast(0.dp)
+        val cardWidth = if (availableWidth >= ((minCardWidth * 4) + 36.dp)) {
+            (availableWidth - 36.dp) / 4
+        } else {
+            minOf(minCardWidth, availableWidth)
         }
-        item(key = "merge") {
-            QuickToolCard(
-                CoreResourcesR.drawable.ic_tool_merge, CoreResourcesR.string.quick_tools_merge,
-                CoreResourcesR.string.quick_tools_merge_hint, enabled, onMerge,
-                container = if (dark) Color(0xFF42345E) else Color(0xFFEDE4FF),
-                content = if (dark) Color(0xFFEDE4FF) else Color(0xFF42345E),
-            )
-        }
-        item(key = "sign") {
-            QuickToolCard(
-                CoreResourcesR.drawable.ic_tool_signature, CoreResourcesR.string.quick_tools_sign,
-                CoreResourcesR.string.quick_tools_sign_hint, enabled, onSign,
-                container = if (dark) Color(0xFF21483E) else Color(0xFFDDF3E9),
-                content = if (dark) Color(0xFFDDF3E9) else Color(0xFF21483E),
-            )
-        }
-        item(key = "all_tools") {
-            QuickToolCard(
-                CoreResourcesR.drawable.ic_tag_tools, CoreResourcesR.string.tools_hub_title,
-                R.string.tools_hub_hint, enabled, onAllTools,
-                container = if (dark) Color(0xFF4B4031) else Color(0xFFFFEED6),
-                content = if (dark) Color(0xFFFFEED6) else Color(0xFF4B4031),
-            )
+        LazyRow(
+            state = listState,
+            flingBehavior = rememberSnapFlingBehavior(listState),
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            item(key = "import") {
+                QuickToolCard(
+                    CoreResourcesR.drawable.ic_document_import, CoreResourcesR.string.quick_tools_import,
+                    CoreResourcesR.string.quick_tools_import_hint, enabled, onImport,
+                    modifier = Modifier.width(cardWidth),
+                    container = if (dark) Color(0xFF173D58) else Color(0xFFDCEEFF),
+                    content = if (dark) Color(0xFFDCEEFF) else Color(0xFF173D58),
+                )
+            }
+            item(key = "merge") {
+                QuickToolCard(
+                    CoreResourcesR.drawable.ic_tool_merge, CoreResourcesR.string.quick_tools_merge,
+                    CoreResourcesR.string.quick_tools_merge_hint, enabled, onMerge,
+                    modifier = Modifier.width(cardWidth),
+                    container = if (dark) Color(0xFF42345E) else Color(0xFFEDE4FF),
+                    content = if (dark) Color(0xFFEDE4FF) else Color(0xFF42345E),
+                )
+            }
+            item(key = "sign") {
+                QuickToolCard(
+                    CoreResourcesR.drawable.ic_tool_signature, CoreResourcesR.string.quick_tools_sign,
+                    CoreResourcesR.string.quick_tools_sign_hint, enabled, onSign,
+                    modifier = Modifier.width(cardWidth),
+                    container = if (dark) Color(0xFF21483E) else Color(0xFFDDF3E9),
+                    content = if (dark) Color(0xFFDDF3E9) else Color(0xFF21483E),
+                )
+            }
+            item(key = "all_tools") {
+                QuickToolCard(
+                    CoreResourcesR.drawable.ic_tag_tools, CoreResourcesR.string.tools_hub_title,
+                    R.string.tools_hub_hint, enabled, onAllTools,
+                    modifier = Modifier.width(cardWidth),
+                    container = if (dark) Color(0xFF4B4031) else Color(0xFFFFEED6),
+                    content = if (dark) Color(0xFFFFEED6) else Color(0xFF4B4031),
+                )
+            }
         }
     }
 }
@@ -92,11 +107,12 @@ private fun QuickToolCard(
     onClick: () -> Unit,
     container: Color,
     content: Color,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.width(208.dp).heightIn(min = 168.dp),
+        modifier = modifier.heightIn(min = 168.dp),
         shape = RoundedCornerShape(24.dp),
         color = container,
         contentColor = content.copy(alpha = if (enabled) 1f else 0.5f),

@@ -61,6 +61,8 @@ class DriveBackupViewModel(
     val uiState = state.asStateFlow()
     private val channel = Channel<DriveBackupEffect>(Channel.UNLIMITED)
     val effects = channel.receiveAsFlow()
+    private val connectionErrorChannel = Channel<DriveBackupProblem>(Channel.CONFLATED)
+    val connectionErrors = connectionErrorChannel.receiveAsFlow()
     private var generation = 0L
     private var job: Job? = null
     private var pending: Action? = null
@@ -192,6 +194,7 @@ class DriveBackupViewModel(
         if (!isAwaitingAuthorization(requestId)) return
         pending = null
         state.update { it.copy(phase = DriveBackupPhase.IDLE, problem = problem, progress = null, backupUnchanged = false) }
+        problem?.let { connectionErrorChannel.trySend(it) }
         if (problem == DriveBackupProblem.AUTHORIZATION || problem == DriveBackupProblem.PERMISSION) {
             viewModelScope.launch {
                 runCatching { preferences.update { it.copy(needsAuthorization = it.accountEmail != null) } }
@@ -218,6 +221,7 @@ class DriveBackupViewModel(
                         preferences.update { it.withoutAccount() }
                         state.update { it.copy(accountEmail = null, currentBackup = null, history = emptyList(),
                             hasLoadedBackups = false, problem = DriveBackupProblem.ACCOUNT_CHANGED) }
+                        connectionErrorChannel.trySend(DriveBackupProblem.ACCOUNT_CHANGED)
                         return@withLock
                     }
                     preferences.update { it.copy(accountEmail = email, needsAuthorization = false) }
@@ -317,6 +321,7 @@ class DriveBackupViewModel(
                         state.update { it.copy(accountEmail = null, currentBackup = null, hasLoadedBackups = false) }
                     }
                     state.update { it.copy(problem = problem, backupUnchanged = false) }
+                    if (state.value.phase == DriveBackupPhase.CONNECTING) connectionErrorChannel.trySend(problem)
                 } finally {
                     temporary?.let { file -> withContext(NonCancellable) { runCatching { local.discard(file) } } }
                 }

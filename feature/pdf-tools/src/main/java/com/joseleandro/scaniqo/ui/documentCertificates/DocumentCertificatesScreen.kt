@@ -3,6 +3,7 @@ package com.joseleandro.scaniqo.ui.documentCertificates
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import com.joseleandro.scaniqo.feature.pdftools.R
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -35,6 +36,8 @@ import com.joseleandro.scaniqo.domain.model.PdfCertificateDocument
 import com.joseleandro.scaniqo.domain.model.PdfCertificateSignature
 import com.joseleandro.scaniqo.domain.model.PdfSignatureIntegrity
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
+import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,9 +65,19 @@ internal fun DocumentCertificatesScreen(
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (state.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
-                    Text(stringResource(R.string.certificate_intro), style = MaterialTheme.typography.bodyMedium)
-                    OutlinedButton(onClick = onPickPdf, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.certificate_pick_pdf))
+                    if (state.document == null && !state.busy && state.error == null && state.message == null) {
+                        ScaniqoEmptyState(
+                            title = stringResource(R.string.certificate_screen_title),
+                            description = stringResource(R.string.certificate_intro),
+                            illustration = EmptyStateIllustration.CERTIFICATES,
+                            actionLabel = stringResource(R.string.certificate_pick_pdf),
+                            onAction = onPickPdf,
+                        )
+                    } else {
+                        Text(stringResource(R.string.certificate_intro), style = MaterialTheme.typography.bodyMedium)
+                        OutlinedButton(onClick = onPickPdf, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.certificate_pick_pdf))
+                        }
                     }
                     state.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error) }
                     state.message?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.primary) }
@@ -129,6 +142,21 @@ internal fun DocumentCertificatesScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(name = "Certificados sem PDF", widthDp = 390, heightDp = 780, locale = "pt-rBR", showBackground = true)
+@Preview(name = "Certificados sem PDF escuro", widthDp = 390, heightDp = 780, locale = "pt-rBR",
+    uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(name = "Certificados sem PDF texto ampliado", widthDp = 320, heightDp = 640, locale = "pt-rBR",
+    fontScale = 1.5f, showBackground = true)
+@Composable
+private fun DocumentCertificatesEmptyPreview() {
+    ScaniqoTheme {
+        DocumentCertificatesScreen(
+            state = DocumentCertificatesUiState(),
+            onBack = {}, onPickPdf = {}, onChooseCertificate = {}, onInstallCertificate = {}, onSign = {}, onSave = {},
+        )
     }
 }
 

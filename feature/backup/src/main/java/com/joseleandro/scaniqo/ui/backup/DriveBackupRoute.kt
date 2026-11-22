@@ -11,11 +11,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.ui.backup.platform.DriveAuthorizationHandler
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupPhase
 import com.joseleandro.scaniqo.ui.components.DialogActions
+import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
+import com.joseleandro.scaniqo.ui.components.toast.AppToastType
+import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -24,6 +32,16 @@ fun DriveBackupRoute(
     viewModel: DriveBackupViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val toast = rememberAppToastState()
+    val resources = LocalResources.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(viewModel, toast, resources, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.connectionErrors.collectLatest { problem ->
+                toast.show(resources.getString(problem.messageResource()), AppToastType.ERROR)
+            }
+        }
+    }
     var confirmLeave by rememberSaveable { mutableStateOf(false) }
     var leaveWhenIdle by rememberSaveable { mutableStateOf(false) }
     DriveAuthorizationHandler(viewModel)
@@ -40,7 +58,10 @@ fun DriveBackupRoute(
     DriveBackupScreen(
         state = state,
         onBack = leave,
-        onConnect = viewModel::connect,
+        onConnect = {
+            toast.dismiss()
+            viewModel.connect()
+        },
         onBackup = viewModel::backup,
         onRestore = viewModel::restore,
         onDisconnect = viewModel::disconnect,
@@ -49,8 +70,12 @@ fun DriveBackupRoute(
         onFrequencyChange = viewModel::setFrequency,
         onWifiOnlyChange = viewModel::setWifiOnly,
         onChargingOnlyChange = viewModel::setChargingOnly,
-        onRetry = viewModel::retry,
+        onRetry = {
+            toast.dismiss()
+            viewModel.retry()
+        },
         onDelete = viewModel::deleteHistory,
+        snackbarHost = { AppToastHost(toast) },
     )
     if (confirmLeave && state.isBusy) AlertDialog(
         onDismissRequest = { confirmLeave = false },

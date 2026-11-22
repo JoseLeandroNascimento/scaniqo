@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">إجراءات سريعة</string>
+    <string name="widget_quick_actions_description">امسح ملفات PDF ضوئيًا أو استوردها أو ابحث عنها أو ادمجها من الشاشة الرئيسية.</string>
+    <string name="widget_recent_documents_name">المستندات الأخيرة</string>
+    <string name="widget_recent_documents_description">افتح أحدث ملفات PDF من الشاشة الرئيسية.</string>
+    <string name="widget_recent_title">ملفات PDF الأخيرة</string>
+    <string name="widget_scan">مسح</string>
+    <string name="widget_import">استيراد</string>
+    <string name="widget_search">بحث</string>
+    <string name="widget_merge">دمج</string>
+    <string name="widget_open_library">فتح المكتبة</string>
+    <string name="widget_recent_empty">لا توجد ملفات PDF بعد. امسح مستندك الأول ضوئيًا أو استورده.</string>
+    <string name="widget_recent_error">تعذّر تحميل ملفات PDF. افتح المكتبة للمحاولة مجددًا.</string>
+    <string name="widget_document_protected">ملف PDF محمي بكلمة مرور</string>
+    <string name="widget_loading">جارٍ تحميل الأداة…</string>
+    <string name="widget_preview_document">مستند ممسوح ضوئيًا</string>
+    <string name="widget_preview_details">3 صفحات · اليوم</string>
+    <string name="widget_finish_current_action">أكمل الإجراء الحالي لفتح هذا الاختصار.</string>
+    <plurals name="widget_document_pages">
+        <item quantity="zero">%d صفحة</item>
+        <item quantity="one">%d صفحة</item>
+        <item quantity="two">%d صفحتان</item>
+        <item quantity="few">%d صفحات</item>
+        <item quantity="many">%d صفحة</item>
+        <item quantity="other">%d صفحة</item>
+    </plurals>
+</resources>

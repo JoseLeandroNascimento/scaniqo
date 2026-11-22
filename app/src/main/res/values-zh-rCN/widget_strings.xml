@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">快捷操作</string>
+    <string name="widget_quick_actions_description">在主屏幕上扫描、导入、搜索或合并 PDF。</string>
+    <string name="widget_recent_documents_name">最近的文档</string>
+    <string name="widget_recent_documents_description">从主屏幕打开最近的 PDF。</string>
+    <string name="widget_recent_title">最近的 PDF</string>
+    <string name="widget_scan">扫描</string>
+    <string name="widget_import">导入</string>
+    <string name="widget_search">搜索</string>
+    <string name="widget_merge">合并</string>
+    <string name="widget_open_library">打开文档库</string>
+    <string name="widget_recent_empty">还没有 PDF。扫描或导入您的第一份文档。</string>
+    <string name="widget_recent_error">无法加载 PDF。请打开文档库重试。</string>
+    <string name="widget_document_protected">受密码保护的 PDF</string>
+    <string name="widget_loading">正在加载小组件…</string>
+    <string name="widget_preview_document">扫描的文档</string>
+    <string name="widget_preview_details">3 页 · 今天</string>
+    <string name="widget_finish_current_action">请完成当前操作后再打开此快捷方式。</string>
+    <plurals name="widget_document_pages">
+        <item quantity="other">%d 页</item>
+    </plurals>
+</resources>

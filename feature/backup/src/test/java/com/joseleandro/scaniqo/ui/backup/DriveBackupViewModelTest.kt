@@ -56,6 +56,7 @@ class DriveBackupViewModelTest {
     private val local = FakeLocalBackup()
     private val remote = FakeDrive()
     private val effects = mutableListOf<DriveBackupEffect>()
+    private val receivedConnectionErrors = mutableListOf<DriveBackupProblem>()
     @get:Rule val temporary = TemporaryFolder()
     private val preferences = FakeBackupSettings()
     private val scheduler = FakeBackupScheduler()
@@ -105,6 +106,7 @@ class DriveBackupViewModelTest {
     @Test
     fun cancelledAuthorizationIgnoresItsLateResult() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         viewModel.connect()
         val id = authorizationId()
         viewModel.authorizationFailed(id)
@@ -116,11 +118,13 @@ class DriveBackupViewModelTest {
         assertNull(viewModel.uiState.value.accountEmail)
         assertNull(viewModel.uiState.value.problem)
         assertTrue(remote.accountTokens.isEmpty())
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
     fun cancellingThenStartingAgainAcceptsOnlyTheNewAuthorization() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         viewModel.connect()
         val first = authorizationId()
         viewModel.cancel()
@@ -137,11 +141,13 @@ class DriveBackupViewModelTest {
         assertEquals(listOf("current-token"), remote.accountTokens)
         assertEquals(remote.email, viewModel.uiState.value.accountEmail)
         assertNull(viewModel.uiState.value.problem)
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
     fun duplicateAuthorizationDoesNotRepeatTheRemoteOperation() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         viewModel.connect()
         val id = authorizationId()
         viewModel.authorized(id, "token")
@@ -153,11 +159,13 @@ class DriveBackupViewModelTest {
         assertEquals(listOf("token"), remote.accountTokens)
         assertEquals(listOf("token"), remote.listTokens)
         assertEquals(DriveBackupPhase.IDLE, viewModel.uiState.value.phase)
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
     fun emptyTokenReturnsAnAuthorizationErrorWithoutContactingDrive() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         viewModel.connect()
         viewModel.authorized(authorizationId(), "  ")
         runCurrent()
@@ -165,6 +173,85 @@ class DriveBackupViewModelTest {
         assertEquals(DriveBackupProblem.AUTHORIZATION, viewModel.uiState.value.problem)
         assertFalse(viewModel.uiState.value.isBusy)
         assertTrue(remote.accountTokens.isEmpty())
+        assertEquals(listOf(DriveBackupProblem.AUTHORIZATION), receivedConnectionErrors)
+    }
+
+    @Test
+    fun repeatingTheSameAuthorizationFailureEmitsFeedbackForEachAttempt() = runTest(dispatcher) {
+        start()
+        collectConnectionErrors()
+
+        repeat(2) {
+            viewModel.connect()
+            val requestId = authorizationId()
+            viewModel.authorizationFailed(requestId, DriveBackupProblem.PERMISSION)
+            viewModel.authorizationFailed(requestId, DriveBackupProblem.REMOTE)
+            runCurrent()
+        }
+
+        assertEquals(
+            listOf(DriveBackupProblem.PERMISSION, DriveBackupProblem.PERMISSION),
+            receivedConnectionErrors,
+        )
+        assertEquals(2, effects.filterIsInstance<DriveBackupEffect.Authorize>().size)
+        assertEquals(DriveBackupProblem.PERMISSION, viewModel.uiState.value.problem)
+        assertTrue(remote.accountTokens.isEmpty())
+    }
+
+    @Test
+    fun connectionFailureWaitsUntilTheScreenStartsCollectingFeedback() = runTest(dispatcher) {
+        start()
+        viewModel.connect()
+        viewModel.authorizationFailed(authorizationId(), DriveBackupProblem.NETWORK)
+        runCurrent()
+
+        assertFalse(viewModel.uiState.value.isBusy)
+        collectConnectionErrors()
+        runCurrent()
+
+        assertEquals(listOf(DriveBackupProblem.NETWORK), receivedConnectionErrors)
+    }
+
+    @Test
+    fun consumedConnectionFeedbackIsNotReplayedWhenTheScreenStartsAgain() = runTest(dispatcher) {
+        start()
+        val firstCollection = collectConnectionErrors()
+        viewModel.connect()
+        viewModel.authorizationFailed(authorizationId(), DriveBackupProblem.CONFIGURATION)
+        runCurrent()
+        assertEquals(listOf(DriveBackupProblem.CONFIGURATION), receivedConnectionErrors)
+
+        firstCollection.cancel()
+        runCurrent()
+        receivedConnectionErrors.clear()
+        collectConnectionErrors()
+        runCurrent()
+
+        assertTrue(receivedConnectionErrors.isEmpty())
+        assertEquals(DriveBackupProblem.CONFIGURATION, viewModel.uiState.value.problem)
+
+        viewModel.connect()
+        viewModel.authorizationFailed(authorizationId(), DriveBackupProblem.CONFIGURATION)
+        runCurrent()
+        assertEquals(listOf(DriveBackupProblem.CONFIGURATION), receivedConnectionErrors)
+    }
+
+    @Test
+    fun failingToLoadBackupsWhileConnectingEmitsConnectionFeedback() = runTest(dispatcher) {
+        start()
+        collectConnectionErrors()
+        remote.listFailure = DriveBackupException.Network()
+
+        viewModel.connect()
+        viewModel.authorized(authorizationId(), "connect-token")
+        runCurrent()
+
+        assertEquals(listOf("connect-token"), remote.accountTokens)
+        assertEquals(listOf("connect-token"), remote.listTokens)
+        assertEquals(listOf(DriveBackupProblem.NETWORK), receivedConnectionErrors)
+        assertEquals(DriveBackupProblem.NETWORK, viewModel.uiState.value.problem)
+        assertFalse(viewModel.uiState.value.hasLoadedBackups)
+        assertFalse(viewModel.uiState.value.isBusy)
     }
 
     @Test
@@ -231,6 +318,7 @@ class DriveBackupViewModelTest {
     @Test
     fun failedPreparationNeverUploadsAnArchiveThatWasNotProduced() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         connectAccount()
         local.createFailure = IOException("Local storage unavailable")
         viewModel.backup()
@@ -241,6 +329,7 @@ class DriveBackupViewModelTest {
         assertTrue(remote.uploads.isEmpty())
         assertTrue(local.discarded.isEmpty())
         assertFalse(viewModel.uiState.value.isBusy)
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
@@ -280,6 +369,7 @@ class DriveBackupViewModelTest {
     @Test
     fun cancellingImmediatelyAfterAuthorizationCannotLeaveTheScreenBusy() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         viewModel.connect()
         viewModel.authorized(authorizationId(), "token")
         viewModel.cancel()
@@ -288,11 +378,13 @@ class DriveBackupViewModelTest {
         assertEquals(DriveBackupPhase.IDLE, viewModel.uiState.value.phase)
         assertFalse(viewModel.uiState.value.isBusy)
         assertTrue(remote.accountTokens.isEmpty())
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
     fun aLateAccountLookupAfterCancellationCannotConnectTheAccount() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         remote.accountGate = CompletableDeferred()
         remote.ignoreAccountCancellation = true
         viewModel.connect()
@@ -306,11 +398,13 @@ class DriveBackupViewModelTest {
         assertNull(viewModel.uiState.value.accountEmail)
         assertTrue(remote.listTokens.isEmpty())
         assertEquals(DriveBackupPhase.IDLE, viewModel.uiState.value.phase)
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
     fun aLateBackupListAfterCancellationCannotPublishStaleEntries() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         remote.listGate = CompletableDeferred()
         remote.ignoreListCancellation = true
         viewModel.connect()
@@ -324,6 +418,7 @@ class DriveBackupViewModelTest {
         assertNull(viewModel.uiState.value.currentBackup)
         assertNull(viewModel.uiState.value.problem)
         assertEquals(DriveBackupPhase.IDLE, viewModel.uiState.value.phase)
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
@@ -448,6 +543,7 @@ class DriveBackupViewModelTest {
     @Test
     fun switchingAccountNeverSendsTheAlreadyConfirmedBackup() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         connectAccount()
         remote.email = "different@example.com"
         viewModel.backup()
@@ -460,6 +556,7 @@ class DriveBackupViewModelTest {
         assertNull(viewModel.uiState.value.currentBackup)
         assertEquals(DriveBackupProblem.ACCOUNT_CHANGED, viewModel.uiState.value.problem)
         assertFalse(viewModel.uiState.value.isBusy)
+        assertEquals(listOf(DriveBackupProblem.ACCOUNT_CHANGED), receivedConnectionErrors)
     }
 
     @Test
@@ -493,6 +590,7 @@ class DriveBackupViewModelTest {
     @Test
     fun unauthorizedUploadClearsTheTokenAndAccountAndDiscardsTheArchive() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         connectAccount()
         remote.uploadFailure = DriveBackupException.Unauthorized()
         viewModel.backup()
@@ -505,6 +603,7 @@ class DriveBackupViewModelTest {
         assertEquals(DriveBackupProblem.AUTHORIZATION, viewModel.uiState.value.problem)
         assertEquals(listOf(local.prepared.file), local.discarded)
         assertFalse(viewModel.uiState.value.isBusy)
+        assertTrue(receivedConnectionErrors.isEmpty())
     }
 
     @Test
@@ -655,6 +754,7 @@ class DriveBackupViewModelTest {
     @Test
     fun apiDisabledHasAnActionableErrorAndDoesNotClaimAnEmptyHistory() = runTest(dispatcher) {
         start()
+        collectConnectionErrors()
         remote.accountFailure = DriveBackupException.ApiDisabled()
         viewModel.connect()
         viewModel.authorized(authorizationId(), "token")
@@ -662,6 +762,7 @@ class DriveBackupViewModelTest {
         assertEquals(DriveBackupProblem.API_DISABLED, viewModel.uiState.value.problem)
         assertFalse(viewModel.uiState.value.hasLoadedBackups)
         assertNull(preferences.settings.value.accountEmail)
+        assertEquals(listOf(DriveBackupProblem.API_DISABLED), receivedConnectionErrors)
     }
 
     @Test
@@ -1350,6 +1451,11 @@ class DriveBackupViewModelTest {
         }
     }
 
+    private fun TestScope.collectConnectionErrors() =
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.connectionErrors.collect(receivedConnectionErrors::add)
+        }
+
     private suspend fun TestScope.start(documentCount: Int = 2) {
         documents.documents.value = List(documentCount) { index ->
             val pdf = temporary.newFile("document-$index.pdf").apply { writeText("PDF fixture $index") }
@@ -1498,6 +1604,7 @@ class DriveBackupViewModelTest {
         var listedBackups = listOf(existing)
         var email: String? = "owner@example.com"
         var accountFailure: Exception? = null
+        var listFailure: Exception? = null
         var uploadFailure: Exception? = null
         var downloadFailure: Exception? = null
         var downloadArchive: File? = null
@@ -1524,6 +1631,7 @@ class DriveBackupViewModelTest {
             listTokens += accessToken
             if (ignoreListCancellation) withContext(NonCancellable) { listGate?.await() }
             else listGate?.await()
+            listFailure?.let { throw it }
             return listedBackups
         }
 

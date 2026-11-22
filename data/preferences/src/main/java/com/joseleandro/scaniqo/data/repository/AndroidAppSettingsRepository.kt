@@ -14,6 +14,22 @@ import kotlinx.coroutines.withContext
 
 class AndroidAppSettingsRepository(context: Context) : AppSettingsRepository {
     private val preferences = context.applicationContext.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+
+    init {
+        val obsoleteWidgetKeys = listOf(
+            "widget_quick_actions",
+            "widget_compact_action",
+            "widget_recent_document_count",
+            "widget_show_document_date",
+            "widget_show_protected_documents",
+        )
+        if (obsoleteWidgetKeys.any(preferences::contains)) {
+            val editor = preferences.edit()
+            obsoleteWidgetKeys.forEach(editor::remove)
+            editor.apply()
+        }
+    }
+
     private val mutex = Mutex()
     private val state = MutableStateFlow(readSettings())
     override val settings = state.asStateFlow()

@@ -121,6 +121,27 @@ class AndroidAppSettingsRepositoryTest {
         assertFalse(repository.settings.value == AppSettings())
     }
 
+    @Test fun obsoleteWidgetOptionsAreRemovedWithoutTouchingOtherPreferences() = runTest {
+        val expectedSettings = customizedSettings()
+        AndroidAppSettingsRepository(context).update { expectedSettings }
+        check(preferences.edit().putString("unrelated_preference", "preserve").commit())
+        val expectedPreferences = preferences.all.toMap()
+        check(preferences.edit()
+            .putString("widget_quick_actions", "IMPORT,MERGE")
+            .putInt("widget_compact_action", 3)
+            .putInt("widget_recent_document_count", 2)
+            .putBoolean("widget_show_document_date", false)
+            .putBoolean("widget_show_protected_documents", false)
+            .commit())
+
+        val migrated = AndroidAppSettingsRepository(context)
+
+        assertEquals(expectedSettings, migrated.settings.value)
+        assertEquals(expectedPreferences, preferences.all)
+        assertEquals(expectedSettings, AndroidAppSettingsRepository(context).settings.value)
+        assertEquals(expectedPreferences, preferences.all)
+    }
+
     private fun customizedSettings() = AppSettings(
         themeMode = AppThemeMode.DARK,
         colorTheme = AppColorTheme.LAVENDER,

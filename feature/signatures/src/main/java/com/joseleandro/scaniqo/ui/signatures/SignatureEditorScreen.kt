@@ -115,7 +115,8 @@ fun SignatureEditorScreen(
             )
         } else {
             Column(
-                modifier = Modifier.fillMaxSize().padding(padding)
+                modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)
+                    .wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = 840.dp).fillMaxWidth()
                     .imePadding().verticalScroll(rememberScrollState()).padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -427,6 +428,9 @@ private fun SignatureDrawingPad(editor: SignatureEditorState, onEvent: (Signatur
 }
 
 @Preview(name = "Criar assinatura", showBackground = true, locale = "pt-rBR")
+@Preview(name = "Criar assinatura tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Criar assinatura dobrável", widthDp = 673, heightDp = 841, locale = "pt-rBR")
+@Preview(name = "Criar assinatura estreita", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
 @Preview(name = "Criar assinatura escuro", showBackground = true, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun SignatureEditorPreview() {

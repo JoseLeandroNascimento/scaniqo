@@ -15,6 +15,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -60,6 +63,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -123,7 +127,9 @@ internal fun PdfCompressionWorkspace(
         bottomBar = {
             Surface(color = MaterialTheme.colorScheme.surface) {
                 Column(
-                    Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 20.dp, vertical = 12.dp),
+                    Modifier.fillMaxWidth().navigationBarsPadding()
+                        .wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = 840.dp).fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
@@ -154,6 +160,7 @@ internal fun PdfCompressionWorkspace(
     ) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)
+                .wrapContentWidth(Alignment.CenterHorizontally).widthIn(max = 840.dp).fillMaxWidth()
                 .verticalScroll(scroll).padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
@@ -189,10 +196,21 @@ internal fun PdfCompressionWorkspace(
                         }
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Text(stringResource(R.string.compression_level), style = MaterialTheme.typography.titleSmall)
-                            Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                PdfCompressionLevel.entries.forEach { level ->
-                                    CompressionLevelChoice(level, compression == level, enabled,
-                                        { onCompression(level) }, Modifier.weight(1f))
+                            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                                if (maxWidth / LocalDensity.current.fontScale < 320.dp) {
+                                    Column(Modifier.fillMaxWidth().selectableGroup(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                        PdfCompressionLevel.entries.forEach { level ->
+                                            CompressionLevelChoice(level, compression == level, enabled,
+                                                { onCompression(level) }, Modifier.fillMaxWidth())
+                                        }
+                                    }
+                                } else {
+                                    Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                        PdfCompressionLevel.entries.forEach { level ->
+                                            CompressionLevelChoice(level, compression == level, enabled,
+                                                { onCompression(level) }, Modifier.weight(1f))
+                                        }
+                                    }
                                 }
                             }
                             if (compression == PdfCompressionLevel.STRONG) {

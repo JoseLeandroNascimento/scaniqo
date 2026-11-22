@@ -20,8 +20,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Button
@@ -45,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -61,6 +65,7 @@ import com.joseleandro.scaniqo.domain.model.TagModel
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.components.toast.AppToastType
 import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
+import com.joseleandro.scaniqo.ui.components.EmptyStateIllustration
 import com.joseleandro.scaniqo.ui.components.ScaniqoEmptyState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import com.joseleandro.scaniqo.ui.theme.dimensions
@@ -115,54 +120,58 @@ fun TagsScreen(
             )
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
-            contentPadding = PaddingValues(
-                start = dimensions.screenPadding,
-                end = dimensions.screenPadding,
-                top = dimensions.spacingMd,
-                bottom = 104.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        Box(
+            modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            item(key = "header") {
-                TagsHeader(
-                    count = uiState.tags.size,
-                    showCount = !uiState.isLoading && !uiState.loadError,
-                    modifier = Modifier.padding(bottom = 12.dp),
-                )
-            }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(300.dp * LocalDensity.current.fontScale.coerceAtLeast(1f)),
+                modifier = Modifier.widthIn(max = 1200.dp).fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = dimensions.screenPadding,
+                    end = dimensions.screenPadding,
+                    top = dimensions.spacingMd,
+                    bottom = 104.dp,
+                ),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                item(key = "header", span = { GridItemSpan(maxLineSpan) }) {
+                    TagsHeader(
+                        count = uiState.tags.size,
+                        showCount = !uiState.isLoading && !uiState.loadError,
+                        modifier = Modifier.padding(bottom = 12.dp),
+                    )
+                }
 
-            when {
-                uiState.isLoading -> item(key = "loading") {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 64.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
-                        Text(
-                            stringResource(CoreResourcesR.string.tags_loading),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                when {
+                    uiState.isLoading -> item(key = "loading", span = { GridItemSpan(maxLineSpan) }) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 64.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                            Text(
+                                stringResource(CoreResourcesR.string.tags_loading),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    uiState.loadError -> item(key = "error", span = { GridItemSpan(maxLineSpan) }) {
+                        TagsLoadError(onRetry = { onEvent(TagsEvent.RetryLoad) })
+                    }
+                    uiState.tags.isEmpty() -> item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
+                        TagsEmptyState()
+                    }
+                    else -> items(uiState.tags, key = { it.id }) { tag ->
+                        TagItemCard(
+                            tag = tag,
+                            onEdit = { onEvent(TagsEvent.EditTag(tag)) },
+                            onDelete = { onEvent(TagsEvent.RequestDelete(tag)) },
                         )
                     }
-                }
-                uiState.loadError -> item(key = "error") {
-                    TagsLoadError(onRetry = { onEvent(TagsEvent.RetryLoad) })
-                }
-                uiState.tags.isEmpty() -> item(key = "empty") {
-                    TagsEmptyState()
-                }
-                else -> items(uiState.tags, key = { it.id }) { tag ->
-                    TagItemCard(
-                        tag = tag,
-                        onEdit = { onEvent(TagsEvent.EditTag(tag)) },
-                        onDelete = { onEvent(TagsEvent.RequestDelete(tag)) },
-                    )
                 }
             }
         }
@@ -312,7 +321,7 @@ private fun TagsEmptyState() {
     ScaniqoEmptyState(
         title = stringResource(R.string.tags_empty_title),
         description = stringResource(R.string.tags_empty_description),
-        iconRes = CoreResourcesR.drawable.ic_tag_label,
+        illustration = EmptyStateIllustration.TAGS,
     )
 }
 
@@ -387,6 +396,9 @@ private fun DeleteTagDialog(
 
 @Preview(name = "Claro", showBackground = true)
 @Preview(name = "Escuro", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Tags tela externa", widthDp = 320, heightDp = 720, locale = "pt-rBR")
+@Preview(name = "Tags tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Tags texto grande", widthDp = 320, heightDp = 640, fontScale = 2f, locale = "pt-rBR")
 @Composable
 private fun TagsScreenPreview() {
     ScaniqoTheme {
@@ -405,9 +417,10 @@ private fun TagsScreenPreview() {
     }
 }
 
-@Preview(name = "Sem tags", showBackground = true)
+@Preview(name = "Sem tags", widthDp = 390, heightDp = 780, locale = "pt-rBR")
 @Preview(name = "Sem tags escuro", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Sem tags fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
+@Preview(name = "Sem tags tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
 @Composable
 private fun TagsEmptyPreview() {
     ScaniqoTheme {

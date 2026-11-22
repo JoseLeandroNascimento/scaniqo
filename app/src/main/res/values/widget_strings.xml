@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_actions_name">Quick actions</string>
+    <string name="widget_quick_actions_description">Scan, import, search or merge PDFs from your home screen.</string>
+    <string name="widget_recent_documents_name">Recent documents</string>
+    <string name="widget_recent_documents_description">Open your latest PDFs from your home screen.</string>
+    <string name="widget_recent_title">Recent PDFs</string>
+    <string name="widget_scan">Scan</string>
+    <string name="widget_import">Import</string>
+    <string name="widget_search">Search</string>
+    <string name="widget_merge">Merge</string>
+    <string name="widget_open_library">Open library</string>
+    <string name="widget_recent_empty">No PDFs yet. Scan or import your first document.</string>
+    <string name="widget_recent_error">Could not load your PDFs. Open the library to try again.</string>
+    <string name="widget_document_protected">Password-protected PDF</string>
+    <string name="widget_loading">Loading your widget…</string>
+    <string name="widget_preview_document">Scanned document</string>
+    <string name="widget_preview_details">3 pages · Today</string>
+    <string name="widget_finish_current_action">Finish your current action to open this shortcut.</string>
+    <string name="widget_document_details" translatable="false">%1$s · %2$s</string>
+    <plurals name="widget_document_pages">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+</resources>
