@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import com.joseleandro.scaniqo.ui.ads.LocalOpenPremium
+import com.joseleandro.scaniqo.ui.premium.PremiumRoute
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -152,6 +155,7 @@ internal fun AppNavigation(
         }
     }
 
+    CompositionLocalProvider(LocalOpenPremium provides { viewModel.navigateTo(AppRoute.Premium) }) {
     DocumentActionsHandler(
         viewModel = actionsViewModel,
         onDocumentCreated = { creation ->
@@ -416,6 +420,7 @@ internal fun AppNavigation(
                 entry<AppRoute.Trash> { TrashRoute(onBack = viewModel::goBack) }
                 entry<AppRoute.Tags> { TagsRoute(onNavigationBack = viewModel::goBack) }
                 entry<AppRoute.Signatures> { SignaturesScreen(onBack = viewModel::goBack) }
+                entry<AppRoute.Premium> { PremiumRoute(onBack = viewModel::goBack) }
                 entry<AppRoute.Settings> {
                     SettingsDestination(
                         section = SettingsSection.HOME, onBack = viewModel::goBack,
@@ -424,6 +429,7 @@ internal fun AppNavigation(
                         onBackup = { viewModel.navigateTo(AppRoute.DriveBackup) },
                         onPasswords = { viewModel.navigateTo(AppRoute.PasswordSettings) },
                         onLanguage = { viewModel.navigateTo(AppRoute.LanguageSettings) },
+                        onPremium = { viewModel.navigateTo(AppRoute.Premium) },
                     )
                 }
                 entry<AppRoute.LanguageSettings> { LanguageSettingsRoute(onBack = viewModel::goBack) }
@@ -431,17 +437,28 @@ internal fun AppNavigation(
                     SettingsDestination(section = SettingsSection.PERSONALIZATION, onBack = viewModel::goBack)
                 }
                 entry<AppRoute.PdfPreferences> {
-                    SettingsDestination(section = SettingsSection.PDF, onBack = viewModel::goBack)
+                    SettingsDestination(
+                        section = SettingsSection.PDF, onBack = viewModel::goBack,
+                        onPremium = { viewModel.navigateTo(AppRoute.Premium) },
+                    )
                 }
                 entry<AppRoute.PasswordSettings> { PasswordSettingsScreen(onBack = viewModel::goBack) }
-                entry<AppRoute.DriveBackup> { DriveBackupRoute(onBack = viewModel::goBack) }
+                entry<AppRoute.DriveBackup> {
+                    DriveBackupRoute(
+                        onBack = viewModel::goBack,
+                        onPremium = { viewModel.navigateTo(AppRoute.Premium) },
+                    )
+                }
             },
         )
-        DocumentActionOverlays(actionsState, actionsViewModel::onDocumentAction)
+        if (currentRoute != AppRoute.Premium) {
+            DocumentActionOverlays(actionsState, actionsViewModel::onDocumentAction)
+        }
         AppToastHost(
             widgetToast,
             Modifier.align(Alignment.BottomCenter).safeDrawingPadding().imePadding(),
         )
         }
+    }
     }
 }

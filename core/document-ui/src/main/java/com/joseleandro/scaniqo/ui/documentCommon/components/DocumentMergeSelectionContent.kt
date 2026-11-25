@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
+import com.joseleandro.scaniqo.ui.ads.PremiumAdFreeButton
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentDragBounds
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentReorderDrag
@@ -329,6 +330,7 @@ fun DocumentMergeSelectionContent(
                     footerLabel, style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
                 )
+                if (actionShowsVideo && selected.size >= minimumSelection) PremiumAdFreeButton()
             }
         }
     }

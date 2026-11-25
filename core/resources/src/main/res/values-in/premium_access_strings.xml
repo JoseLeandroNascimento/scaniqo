@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_active">Premium aktif</string>
+    <string name="premium_access_offer_summary">Tanpa iklan, alat tanpa video, dan pencadangan otomatis. Sekali beli.</string>
+    <string name="premium_access_active_summary">Manfaat Anda telah terbuka. Lihat pembelian dan pemulihan.</string>
+    <string name="premium_access_explore">Jelajahi Premium</string>
+    <string name="premium_access_automatic">Pencadangan otomatis dengan Premium</string>
+    <string name="premium_access_automatic_body">Simpan salinan di Drive tanpa memulai setiap pencadangan. Pencadangan manual dan pemulihan tetap gratis.</string>
+    <string name="premium_access_processing">Pemrosesan lanjutan dengan Premium</string>
+    <string name="premium_access_processing_body">Gunakan akselerasi perangkat keras untuk filter yang didukung.</string>
+    <string name="premium_access_checking">Memeriksa akses Premium…</string>
+</resources>

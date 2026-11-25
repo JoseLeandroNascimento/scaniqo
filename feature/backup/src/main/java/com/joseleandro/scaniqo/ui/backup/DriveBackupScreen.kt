@@ -75,6 +75,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.core.localization.bidiArgument
@@ -110,6 +111,8 @@ internal fun DriveBackupScreen(
     onRetry: () -> Unit = {},
     onDelete: (BackupHistoryEntry) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
+    premiumEntitlement: PremiumEntitlement = PremiumEntitlement.FREE,
+    onPremium: () -> Unit = {},
 ) {
     var confirmBackup by rememberSaveable { mutableStateOf(false) }
     var confirmDisconnect by rememberSaveable { mutableStateOf(false) }
@@ -220,7 +223,14 @@ internal fun DriveBackupScreen(
                 }
                 if (accountEmail != null) {
                     item(key = "automatic") {
-                        BackupAutomaticCard(
+                        if (!premiumEntitlement.isPremium) {
+                            BackupPremiumCard(
+                                entitlement = premiumEntitlement,
+                                enabled = !busy,
+                                onPremium = onPremium,
+                                modifier = Modifier.animateItem(),
+                            )
+                        } else BackupAutomaticCard(
                             settings = state.settings,
                             enabled = settingsEnabled,
                             canToggle = !state.isBusy && !state.isSavingSettings &&
@@ -580,6 +590,35 @@ private fun BackupProgressCard(state: DriveBackupUiState, onCancel: () -> Unit, 
                 TextButton(onClick = onCancel, enabled = state.phase != DriveBackupPhase.CANCELLING) {
                     Text(stringResource(R.string.backup_cancel))
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BackupPremiumCard(
+    entitlement: PremiumEntitlement,
+    enabled: Boolean,
+    onPremium: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+    ) {
+        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(painterResource(CoreResourcesR.drawable.ic_symbol_cloud_done), null)
+            Text(
+                stringResource(CoreResourcesR.string.premium_access_automatic),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                stringResource(CoreResourcesR.string.premium_access_automatic_body),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            TextButton(onClick = onPremium, enabled = enabled && entitlement != PremiumEntitlement.UNKNOWN) {
+                Text(stringResource(if (entitlement == PremiumEntitlement.UNKNOWN)
+                    CoreResourcesR.string.premium_access_checking else CoreResourcesR.string.premium_access_explore))
             }
         }
     }

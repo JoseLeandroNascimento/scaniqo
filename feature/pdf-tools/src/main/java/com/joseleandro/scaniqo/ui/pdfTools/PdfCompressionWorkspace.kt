@@ -77,6 +77,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
+import com.joseleandro.scaniqo.ui.ads.PremiumAdFreeButton
 import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfCompressionLevel
@@ -154,6 +155,7 @@ internal fun PdfCompressionWorkspace(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center)
+                    if (showsVideo && completedId == null) PremiumAdFreeButton()
                 }
             }
         },

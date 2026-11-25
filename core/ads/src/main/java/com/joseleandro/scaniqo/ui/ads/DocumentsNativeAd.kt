@@ -79,7 +79,11 @@ fun rememberDocumentsNativeAds(
     val ads = remember(unitId, count, state.requestGeneration, lifecycleOwner, lifecycleGeneration) {
         mutableStateMapOf<Int, NativeAd>()
     }
+    val requestGeneration = state.requestGeneration
     DisposableEffect(ads) {
+        fun canRequestAd() = adManager.state.value.let {
+            it.displayAdsAllowed && it.requestGeneration == requestGeneration
+        }
         val mainHandler = Handler(Looper.getMainLooper())
         val expirationCallbacks = mutableListOf<Runnable>()
         var released = false
@@ -96,6 +100,7 @@ fun rememberDocumentsNativeAds(
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         repeat(count) { slot ->
+            if (!canRequestAd()) return@repeat
             val request = NativeAdRequest.Builder(unitId, listOf(NativeAd.NativeAdType.NATIVE)).build()
             try {
                 NativeAdLoader.load(
@@ -103,7 +108,7 @@ fun rememberDocumentsNativeAds(
                     object : NativeAdLoaderCallback {
                         override fun onNativeAdLoaded(nativeAd: NativeAd) {
                             mainHandler.post {
-                                if (released) {
+                                if (released || !canRequestAd()) {
                                     nativeAd.destroy()
                                 } else {
                                     ads.put(slot, nativeAd)?.destroy()

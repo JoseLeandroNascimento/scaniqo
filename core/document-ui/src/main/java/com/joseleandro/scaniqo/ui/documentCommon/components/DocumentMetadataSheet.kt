@@ -52,6 +52,7 @@ import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.TagIcon
 import com.joseleandro.scaniqo.domain.model.TagModel
 import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
+import com.joseleandro.scaniqo.ui.ads.ToolAdRewardHint
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMetadataUiState
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentNameError
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
@@ -247,11 +248,8 @@ private fun DocumentMetadataContent(
             }
         }
 
-        if (saveShowsVideo) Text(
-            text = stringResource(CoreResourcesR.string.tool_ad_reward_hint),
+        if (saveShowsVideo) ToolAdRewardHint(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(top = 12.dp),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Button(
             onClick = {

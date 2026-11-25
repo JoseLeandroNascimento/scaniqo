@@ -119,8 +119,12 @@ private fun DisplayBannerAd(
         // These constraints already exclude horizontal safe insets and our padding.
         val widthDp = maxWidth.value.toInt()
         if (widthDp < 320) return@BoxWithConstraints
-        key(placement, widthDp, orientation, unitId, state.requestGeneration, lifecycleGeneration) {
-            ActiveBanner(unitId = unitId, widthDp = widthDp, editor = editor)
+        val requestGeneration = state.requestGeneration
+        key(placement, widthDp, orientation, unitId, requestGeneration, lifecycleGeneration) {
+            ActiveBanner(
+                unitId = unitId, widthDp = widthDp, editor = editor,
+                manager = adManager, requestGeneration = requestGeneration,
+            )
         }
     }
 }
@@ -131,6 +135,8 @@ private fun ActiveBanner(
     unitId: String,
     widthDp: Int,
     editor: Boolean,
+    manager: AdMobManager,
+    requestGeneration: Int,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -158,11 +164,18 @@ private fun ActiveBanner(
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
-        adView.loadAd(
+        fun canRequestAd() = manager.state.value.let {
+            it.displayAdsAllowed && it.requestGeneration == requestGeneration
+        }
+        if (!canRequestAd()) release()
+        else adView.loadAd(
             BannerAdRequest.Builder(unitId, adSize).build(),
             object : AdLoadCallback<BannerAd> {
                 override fun onAdLoaded(ad: BannerAd) {
-                    mainHandler.post { if (!released) loaded = true }
+                    mainHandler.post {
+                        if (!released && canRequestAd()) loaded = true
+                        else { loaded = false; release() }
+                    }
                 }
 
                 override fun onAdFailedToLoad(adError: LoadAdError) {

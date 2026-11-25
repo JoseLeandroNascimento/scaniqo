@@ -8,7 +8,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val adsModule = module {
-    single { AdMobManager(androidContext()) }
-    single<ToolAdAccessPolicy> { ToolAdAccessStore(androidContext()) }
+    single { AdMobManager(androidContext(), get()) }
+    single<ToolAdAccessPolicy> { ToolAdAccessStore(androidContext(), get()) }
     single { RewardedAdManager(get(), get()) }
 }

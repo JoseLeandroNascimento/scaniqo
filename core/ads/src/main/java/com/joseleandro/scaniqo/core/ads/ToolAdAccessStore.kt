@@ -2,12 +2,13 @@ package com.joseleandro.scaniqo.core.ads
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 
 enum class RewardedTool {
     COMPRESSION, EXTRACT_PAGES, PDF_TO_IMAGES, SIGNATURE, FILL_PAGE, IMPORT_PDF, MERGE_PDFS,
 }
 
-enum class ToolAdAccess { REWARDED, AD_REQUIRED }
+enum class ToolAdAccess { PREMIUM, REWARDED, AD_REQUIRED }
 
 /** A reservation issued and accepted by the same [ToolAdAccessPolicy] instance. */
 class ToolAdPermit(
@@ -26,10 +27,13 @@ interface ToolAdAccessPolicy {
 }
 
 /**
- * Each successful tool operation uses one earned video credit, including the first operation.
- * Failed, cancelled or interrupted work keeps its credit until a result is delivered.
+ * Free tool operations use an earned video credit when an ad is available.
+ * Premium operations never consume credits. Failed, cancelled or interrupted work keeps its credit.
  */
-class ToolAdAccessStore(context: Context) : ToolAdAccessPolicy {
+class ToolAdAccessStore(
+    context: Context,
+    private val premiumRepository: PremiumEntitlementRepository,
+) : ToolAdAccessPolicy {
     private val preferences = context.applicationContext
         .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         .also { migrateCompressionPreferences(context.applicationContext, it) }
@@ -46,7 +50,11 @@ class ToolAdAccessStore(context: Context) : ToolAdAccessPolicy {
 
     @Synchronized
     override fun access(tool: RewardedTool): ToolAdAccess =
-        if (rewardIds[tool] != null) ToolAdAccess.REWARDED else ToolAdAccess.AD_REQUIRED
+        when {
+            premiumRepository.entitlement.value.isPremium -> ToolAdAccess.PREMIUM
+            rewardIds[tool] != null -> ToolAdAccess.REWARDED
+            else -> ToolAdAccess.AD_REQUIRED
+        }
 
     @Synchronized
     override fun acquire(
@@ -60,14 +68,17 @@ class ToolAdAccessStore(context: Context) : ToolAdAccessPolicy {
         }
         val access = access(tool)
         if (access == ToolAdAccess.AD_REQUIRED && !adUnavailable) return null
-        return ToolAdPermit(tool, operationId, access, rewardIds[tool]).also { reservation = it }
+        val rewardId = rewardIds[tool].takeIf { access == ToolAdAccess.REWARDED }
+        return ToolAdPermit(tool, operationId, access, rewardId).also { reservation = it }
     }
 
     @Synchronized
     override fun finish(permit: ToolAdPermit, success: Boolean) {
         if (reservation !== permit) return
         reservation = null
-        if (!success || permit.origin != ToolAdAccess.REWARDED) return
+        if (!success || permit.origin != ToolAdAccess.REWARDED ||
+            premiumRepository.entitlement.value.isPremium
+        ) return
         if (rewardIds[permit.tool] == permit.rewardId) {
             rewardIds[permit.tool] = null
             preferences.edit().remove(rewardKey(permit.tool)).apply()

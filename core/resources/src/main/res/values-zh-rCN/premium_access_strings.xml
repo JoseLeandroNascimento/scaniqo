@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_active">Premium 已启用</string>
+    <string name="premium_access_offer_summary">无广告、无需观看视频即可使用工具，并支持自动备份。只需购买一次。</string>
+    <string name="premium_access_active_summary">您的权益已解锁。查看购买和恢复选项。</string>
+    <string name="premium_access_explore">了解 Premium</string>
+    <string name="premium_access_automatic">Premium 自动备份</string>
+    <string name="premium_access_automatic_body">无需每次手动启动备份，即可在 Drive 中保留副本。手动备份和恢复仍然免费。</string>
+    <string name="premium_access_processing">Premium 高级处理</string>
+    <string name="premium_access_processing_body">为支持的滤镜使用硬件加速。</string>
+    <string name="premium_access_checking">正在检查 Premium 权限…</string>
+</resources>

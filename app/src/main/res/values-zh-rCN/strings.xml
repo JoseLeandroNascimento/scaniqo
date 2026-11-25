@@ -4,4 +4,5 @@
     <string name="menu_import_pdf">导入 PDF</string>
     <string name="menu_tags">标签</string>
     <string name="menu_signatures">签名</string>
+    <string name="menu_premium_caption">无广告，更自由。</string>
 </resources>

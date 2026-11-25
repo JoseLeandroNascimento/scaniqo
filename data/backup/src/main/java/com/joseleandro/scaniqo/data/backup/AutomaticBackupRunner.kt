@@ -9,6 +9,7 @@ import com.joseleandro.scaniqo.domain.model.DriveBackupException
 import com.joseleandro.scaniqo.domain.repository.BackupSettingsRepository
 import com.joseleandro.scaniqo.domain.repository.DocumentBackupRepository
 import com.joseleandro.scaniqo.domain.repository.DriveBackupRemote
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -34,6 +35,7 @@ class AutomaticBackupRunner(
     private val fingerprint: BackupFingerprint,
     private val gate: BackupOperationGate,
     private val archives: BackupArchiveStore,
+    private val premium: PremiumEntitlementRepository,
     private val now: () -> Long = System::currentTimeMillis,
 ) {
     suspend fun run(
@@ -45,6 +47,14 @@ class AutomaticBackupRunner(
         if (!saved.automaticEnabled || email.isNullOrBlank() || saved.needsAuthorization) {
             return@withLock AutomaticBackupOutcome.COMPLETED
         }
+        try {
+            withTimeoutOrNull(30_000L) { premium.refresh() }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            // A verified offline entitlement can still allow the scheduled operation.
+        }
+        if (!premium.entitlement.value.isPremium) return@withLock AutomaticBackupOutcome.COMPLETED
         gate.automaticRunning.value = true
         var archive: File? = null
         var issuedToken: String? = null
@@ -158,7 +168,8 @@ class AutomaticBackupRunner(
     }
 
     private fun isStillEnabled(email: String): Boolean = settings.settings.value.let {
-        it.automaticEnabled && !it.needsAuthorization && it.accountEmail.equals(email, ignoreCase = true)
+        premium.entitlement.value.isPremium && it.automaticEnabled && !it.needsAuthorization &&
+            it.accountEmail.equals(email, ignoreCase = true)
     }
 
     private suspend fun recordFailure(

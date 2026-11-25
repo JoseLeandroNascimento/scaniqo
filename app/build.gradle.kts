@@ -20,6 +20,11 @@ val productionBannerUnitId = productionAdUnit("scaniqo.admob.bannerUnitId")
 val productionEditorBannerUnitId = productionAdUnit("scaniqo.admob.editorBannerUnitId")
 val productionDocumentsNativeUnitId = productionAdUnit("scaniqo.admob.documentsNativeUnitId")
 val productionToolsRewardedUnitId = productionAdUnit("scaniqo.admob.toolsRewardedUnitId")
+val playLicenseKey = providers.gradleProperty("scaniqo.play.licenseKey")
+    .orElse("").get().replace(Regex("\\s"), "")
+require(playLicenseKey.isEmpty() || Regex("[A-Za-z0-9+/=]+").matches(playLicenseKey)) {
+    "scaniqo.play.licenseKey must contain only the Base64 public licensing key from Play Console."
+}
 
 android {
     namespace = "com.joseleandro.scaniqo"
@@ -31,8 +36,9 @@ android {
         applicationId = "com.joseleandro.scaniqo"
         minSdk = 24
         targetSdk = 37
-        versionCode = 3
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.5"
+        resValue("string", "scaniqo_play_license_key", playLicenseKey)
         resValue("string", "admob_app_id", "ca-app-pub-7067924995647630~4025082822")
         resValue("string", "admob_banner_unit_id", productionBannerUnitId)
         resValue("string", "admob_editor_banner_unit_id", productionEditorBannerUnitId)
@@ -109,6 +115,8 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:security"))
     implementation(project(":core:ads"))
+    implementation(project(":core:billing"))
+    implementation(project(":feature:premium"))
     implementation(project(":core:document-ui"))
     implementation(project(":data:documents"))
     implementation(project(":data:pdf"))

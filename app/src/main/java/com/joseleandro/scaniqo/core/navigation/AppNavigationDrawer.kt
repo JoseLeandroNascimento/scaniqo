@@ -5,7 +5,9 @@ import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,16 +27,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,17 +53,17 @@ internal fun AppNavigationDrawer(
     onClose: () -> Unit,
     onImportPdf: () -> Unit,
     onNavigate: (AppRoute) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ModalDrawerSheet(
-        modifier = Modifier.widthIn(max = 320.dp).fillMaxHeight(),
+        modifier = modifier.widthIn(max = 320.dp).fillMaxHeight(),
         drawerContainerColor = MaterialTheme.colorScheme.surface,
         drawerTonalElevation = 0.dp,
     ) {
-        // A lista inteira rola para acomodar fontes ampliadas e janelas menores.
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.weight(1f).fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
+                .padding(bottom = 16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth()
@@ -132,6 +138,68 @@ internal fun AppNavigationDrawer(
                     AppRoute.PdfPreferences, AppRoute.DriveBackup, AppRoute.PasswordSettings,
                     AppRoute.LanguageSettings),
                 onClick = { onNavigate(AppRoute.Settings) },
+            )
+        }
+        DrawerPremiumCard(
+            onClick = { onNavigate(AppRoute.Premium) },
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
+                .semantics { selected = currentRoute == AppRoute.Premium },
+        )
+    }
+}
+
+@Composable
+private fun DrawerPremiumCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = MaterialTheme.colorScheme
+    Surface(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        color = colors.primaryContainer,
+        contentColor = colors.onPrimaryContainer,
+        border = BorderStroke(1.dp, colors.onPrimaryContainer.copy(alpha = .08f)),
+    ) {
+        Row(
+            modifier = Modifier
+                .background(Brush.linearGradient(listOf(colors.primaryContainer, colors.secondaryContainer)))
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier.size(40.dp)
+                    .background(colors.onPrimaryContainer.copy(alpha = .07f), RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painterResource(CoreResourcesR.drawable.ic_tag_star),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    stringResource(CoreResourcesR.string.premium_access_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    stringResource(R.string.menu_premium_caption),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.onPrimaryContainer.copy(alpha = .8f),
+                )
+            }
+            Icon(
+                painterResource(CoreResourcesR.drawable.arrow_back_24px),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp).rotate(180f),
             )
         }
     }

@@ -4,4 +4,5 @@
     <string name="menu_import_pdf">Importar PDF</string>
     <string name="menu_tags">Etiquetas</string>
     <string name="menu_signatures">Firmas</string>
+    <string name="menu_premium_caption">Sin anuncios. Más libertad.</string>
 </resources>

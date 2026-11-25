@@ -16,6 +16,23 @@ class NavigationViewModelTest {
     private val viewModel = NavigationViewModel(SavedStateHandle())
 
     @Test
+    fun premiumCanRestoreItsStackAndReturnToTheInvokingTool() {
+        viewModel.navigateTo(AppRoute.Tools)
+        val tool = AppRoute.PdfUtilityTool(PdfUtility.COMPRESS_PDF)
+        viewModel.navigateTo(tool)
+        viewModel.navigateTo(AppRoute.Premium)
+        viewModel.navigateTo(AppRoute.Premium)
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        val restored = Json.decodeFromString(serializer, Json.encodeToString(
+            serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+        ))
+
+        assertEquals(listOf(AppRoute.Documents, AppRoute.Tools, tool, AppRoute.Premium), restored.toList())
+        viewModel.goBack()
+        assertEquals(tool, viewModel.backStack.last())
+    }
+
+    @Test
     fun documentsIsTheInitialDestinationAndCannotBeRemoved() {
         assertEquals(listOf(AppRoute.Documents), viewModel.backStack)
 

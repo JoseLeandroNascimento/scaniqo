@@ -17,6 +17,7 @@ import com.joseleandro.scaniqo.domain.repository.BackupSettingsRepository
 import com.joseleandro.scaniqo.domain.repository.DocumentBackupRepository
 import com.joseleandro.scaniqo.domain.repository.DocumentRepository
 import com.joseleandro.scaniqo.domain.repository.DriveBackupRemote
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import com.joseleandro.scaniqo.ui.backup.effect.DriveBackupEffect
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupPhase
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupProblem
@@ -52,6 +53,7 @@ class DriveBackupViewModel(
     private val fingerprint: BackupFingerprint,
     private val archives: BackupArchiveStore,
     private val historyRepository: BackupHistoryRepository,
+    private val premiumRepository: PremiumEntitlementRepository,
 ) : ViewModel() {
     private val state = MutableStateFlow(
         DriveBackupUiState(
@@ -61,6 +63,7 @@ class DriveBackupViewModel(
         )
     )
     val uiState = state.asStateFlow()
+    val entitlement = premiumRepository.entitlement
     private val channel = Channel<DriveBackupEffect>(Channel.UNLIMITED)
     val effects = channel.receiveAsFlow()
     private val connectionErrorChannel = Channel<DriveBackupProblem>(Channel.CONFLATED)
@@ -504,6 +507,7 @@ class DriveBackupViewModel(
     }
 
     fun setAutomaticEnabled(enabled: Boolean) {
+        if (enabled && !entitlement.value.isPremium) return
         if (enabled && (state.value.accountEmail == null || state.value.settings.needsAuthorization)) {
             state.update {
                 it.copy(
@@ -513,7 +517,9 @@ class DriveBackupViewModel(
             }
             return
         }
-        updateSettings { it.copy(automaticEnabled = enabled, lastAutomaticProblem = null) }
+        updateSettings {
+            it.copy(automaticEnabled = enabled && entitlement.value.isPremium, lastAutomaticProblem = null)
+        }
     }
 
     fun setFrequency(frequency: BackupFrequency) = updateSettings { it.copy(frequency = frequency) }

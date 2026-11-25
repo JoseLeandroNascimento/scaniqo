@@ -32,6 +32,8 @@ include(
     ":core:designsystem",
     ":core:security",
     ":core:ads",
+    ":core:billing",
+    ":feature:premium",
     ":core:document-ui",
     ":core:testing",
     ":data:documents",

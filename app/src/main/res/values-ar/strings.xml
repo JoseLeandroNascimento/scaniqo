@@ -4,4 +4,5 @@
     <string name="menu_import_pdf">استيراد PDF</string>
     <string name="menu_tags">الوسوم</string>
     <string name="menu_signatures">التوقيعات</string>
+    <string name="menu_premium_caption">بلا إعلانات. حرية أكبر.</string>
 </resources>

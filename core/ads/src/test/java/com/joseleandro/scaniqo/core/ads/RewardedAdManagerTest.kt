@@ -2,6 +2,7 @@ package com.joseleandro.scaniqo.core.ads
 
 import android.app.Activity
 import android.app.Application
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
@@ -420,6 +421,81 @@ class RewardedAdManagerTest {
         assertEquals(List(4) { RewardedTool.COMPRESSION }, fixture.rewardedTools)
     }
 
+    @Test
+    fun unknownAndPremiumNeverRequestRewardedAds() = runTest {
+        val fixture = Fixture(this)
+        listOf(PremiumEntitlement.UNKNOWN, PremiumEntitlement.PREMIUM).forEach { entitlement ->
+            fixture.ads.value = READY.copy(entitlement = entitlement)
+            fixture.manager.prepare()
+            runCurrent()
+            assertTrue(fixture.loader.requests.isEmpty())
+        }
+        fixture.ads.value = READY
+        fixture.manager.prepare()
+        assertEquals(1, fixture.loader.requests.size)
+    }
+
+    @Test
+    fun upgradingDestroysCachedVideoAndRevocationAllowsAFreshRequest() = runTest {
+        val fixture = Fixture(this)
+        val ad = fixture.load()
+        fixture.ads.value = READY.copy(entitlement = PremiumEntitlement.PREMIUM, requestGeneration = 1)
+        runCurrent()
+        assertEquals(1, ad.destroyCount)
+        assertEquals(RewardedAdStatus.IDLE, fixture.status)
+        fixture.manager.prepare()
+        assertEquals(1, fixture.loader.requests.size)
+        fixture.ads.value = READY.copy(requestGeneration = 2)
+        runCurrent()
+        fixture.manager.prepare()
+        val fresh = fixture.loader.complete()
+        runCurrent()
+        assertEquals(2, fixture.loader.requests.size)
+        assertEquals(0, fresh.destroyCount)
+        assertEquals(RewardedAdStatus.READY, fixture.status)
+    }
+
+    @Test
+    fun upgradingDiscardsInflightVideoWhenItArrivesLate() = runTest {
+        val fixture = Fixture(this)
+        fixture.manager.prepare()
+        fixture.ads.value = READY.copy(entitlement = PremiumEntitlement.PREMIUM)
+        runCurrent()
+        val late = fixture.loader.complete()
+        runCurrent()
+        assertEquals(1, late.destroyCount)
+        assertEquals(0, late.showCount)
+        assertEquals(RewardedAdStatus.IDLE, fixture.status)
+    }
+
+    @Test
+    fun showRechecksPremiumBeforeTheStateObserverRuns() = runTest {
+        val fixture = Fixture(this)
+        val ad = fixture.load()
+        fixture.ads.value = READY.copy(entitlement = PremiumEntitlement.PREMIUM)
+        assertFalse(fixture.manager.show(fixture.activity, REQUEST_ID, RewardedTool.COMPRESSION))
+        assertEquals(0, ad.showCount)
+        assertEquals(1, ad.destroyCount)
+        assertEquals(0, fixture.rewards)
+    }
+
+    @Test
+    fun finishingAnAlreadyOpenVideoDoesNotRestoreAdsAfterPremiumActivation() = runTest {
+        val fixture = Fixture(this)
+        val ad = fixture.load()
+        fixture.manager.show(fixture.activity, REQUEST_ID, RewardedTool.COMPRESSION)
+        fixture.ads.value = fixture.ads.value.copy(entitlement = PremiumEntitlement.PREMIUM)
+        runCurrent()
+        ad.earn()
+        ad.dismiss()
+        runCurrent()
+        assertFalse(fixture.ads.value.displayAdsAllowed)
+        assertFalse(fixture.ads.value.rewardedAdsAllowed)
+        assertEquals(1, ad.destroyCount)
+        fixture.manager.prepare()
+        assertEquals(1, fixture.loader.requests.size)
+    }
+
     private class Fixture(private val test: TestScope) {
         val ads = MutableStateFlow(READY)
         val loader = FakeLoader()
@@ -504,7 +580,7 @@ class RewardedAdManagerTest {
     }
 
     private companion object {
-        val READY = AdMobState(sdkReady = true, canRequestAds = true)
+        val READY = AdMobState(sdkReady = true, canRequestAds = true, entitlement = PremiumEntitlement.FREE)
         const val TEST_UNIT = "ca-app-pub-3940256099942544/5224354917"
         const val REQUEST_ID = "strong-compression-request"
     }

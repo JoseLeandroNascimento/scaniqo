@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/ads" />
+            <option value="$PROJECT_DIR$/core/billing" />
             <option value="$PROJECT_DIR$/core/common" />
             <option value="$PROJECT_DIR$/core/designsystem" />
             <option value="$PROJECT_DIR$/core/document-ui" />
@@ -44,6 +45,7 @@
             <option value="$PROJECT_DIR$/feature/merge" />
             <option value="$PROJECT_DIR$/feature/onboarding" />
             <option value="$PROJECT_DIR$/feature/pdf-tools" />
+            <option value="$PROJECT_DIR$/feature/premium" />
             <option value="$PROJECT_DIR$/feature/settings" />
             <option value="$PROJECT_DIR$/feature/signatures" />
           </set>

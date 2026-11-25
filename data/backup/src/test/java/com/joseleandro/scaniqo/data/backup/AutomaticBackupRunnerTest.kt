@@ -19,6 +19,8 @@ import com.joseleandro.scaniqo.domain.repository.BackupSettingsRepository
 import com.joseleandro.scaniqo.domain.repository.DocumentBackupRepository
 import com.joseleandro.scaniqo.domain.repository.DocumentRepository
 import com.joseleandro.scaniqo.domain.repository.DriveBackupRemote
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import java.io.File
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -555,6 +557,95 @@ class AutomaticBackupRunnerTest {
         assertNull(h.settings.settings.value.lastSnapshotFingerprint)
     }
 
+    @Test fun freeAndUnknownEntitlementsStopBeforeDriveAuthorization() = runTest {
+        listOf(PremiumEntitlement.FREE, PremiumEntitlement.UNKNOWN).forEach { entitlement ->
+            val h = Harness(this)
+            h.premium.entitlement.value = entitlement
+            assertEquals(AutomaticBackupOutcome.COMPLETED, h.runner.run(0))
+            assertEquals(1, h.premium.refreshCalls)
+            assertEquals(0, h.authorizationCalls)
+            assertEquals(0, h.remote.lists)
+            assertEquals(0, h.remote.uploads)
+            assertEquals(0, h.backups.creations)
+            assertFalse(h.gate.automaticRunning.value)
+            assertFalse(h.gate.mutex.isLocked)
+        }
+    }
+
+    @Test fun revocationDiscoveredByRefreshStopsBeforeDriveAuthorization() = runTest {
+        val h = Harness(this)
+        h.premium.onRefresh = { h.premium.entitlement.value = PremiumEntitlement.FREE }
+        assertEquals(AutomaticBackupOutcome.COMPLETED, h.runner.run(0))
+        assertEquals(1, h.premium.refreshCalls)
+        assertEquals(0, h.authorizationCalls)
+        assertEquals(0, h.remote.uploads)
+        assertEquals(0, h.backups.creations)
+    }
+
+    @Test fun revocationDuringAuthorizationStopsBeforeCreatingAnArchive() = runTest {
+        val h = Harness(this)
+        h.onAuthorize = { h.premium.entitlement.value = PremiumEntitlement.FREE }
+        assertEquals(AutomaticBackupOutcome.COMPLETED, h.runner.run(0))
+        assertEquals(1, h.authorizationCalls)
+        assertEquals(0, h.remote.lists)
+        assertEquals(0, h.backups.creations)
+        assertEquals(0, h.remote.uploads)
+        assertFalse(h.gate.automaticRunning.value)
+        assertFalse(h.gate.mutex.isLocked)
+    }
+
+    @Test fun revocationDuringPreparationDiscardsArchiveBeforeUpload() = runTest {
+        val h = Harness(this)
+        h.backups.onCreate = { h.premium.entitlement.value = PremiumEntitlement.FREE }
+        assertEquals(AutomaticBackupOutcome.COMPLETED, h.runner.run(0))
+        assertEquals(1, h.backups.creations)
+        assertEquals(1, h.authorizationCalls)
+        assertEquals(0, h.remote.uploads)
+        assertEquals(listOf(requireNotNull(h.backups.lastArchive)), h.backups.discarded)
+        assertFalse(h.backups.lastArchive!!.exists())
+        assertNull(h.settings.settings.value.lastBackupAt)
+        assertNull(h.settings.settings.value.lastSnapshotFingerprint)
+        assertFalse(h.gate.automaticRunning.value)
+        assertFalse(h.gate.mutex.isLocked)
+    }
+
+    @Test fun offlineRefreshKeepsVerifiedPremiumButDoesNotGrantFreeUsersAccess() = runTest {
+        val premium = Harness(this)
+        premium.premium.onRefresh = { throw java.io.IOException("Offline") }
+        assertEquals(AutomaticBackupOutcome.COMPLETED, premium.runner.run(0))
+        assertEquals(1, premium.remote.uploads)
+        assertFalse(premium.backups.lastArchive!!.exists())
+
+        val free = Harness(this)
+        free.premium.entitlement.value = PremiumEntitlement.FREE
+        free.premium.onRefresh = { throw java.io.IOException("Offline") }
+        assertEquals(AutomaticBackupOutcome.COMPLETED, free.runner.run(0))
+        assertEquals(0, free.authorizationCalls)
+        assertEquals(0, free.remote.uploads)
+    }
+
+    @Test fun premiumRefreshTimeoutDoesNotLeaveUnknownBackupRunning() = runTest {
+        val h = Harness(this)
+        h.premium.entitlement.value = PremiumEntitlement.UNKNOWN
+        h.premium.onRefresh = { awaitCancellation() }
+        assertEquals(AutomaticBackupOutcome.COMPLETED, h.runner.run(0))
+        assertEquals(30_000L, testScheduler.currentTime)
+        assertEquals(0, h.authorizationCalls)
+        assertEquals(0, h.backups.creations)
+        assertFalse(h.gate.automaticRunning.value)
+        assertFalse(h.gate.mutex.isLocked)
+    }
+
+    private class FakePremium : PremiumEntitlementRepository {
+        override val entitlement = MutableStateFlow(PremiumEntitlement.PREMIUM)
+        var refreshCalls = 0
+        var onRefresh: suspend () -> Unit = {}
+        override suspend fun refresh() {
+            refreshCalls++
+            onRefresh()
+        }
+    }
+
     private class FakeHistory : BackupHistoryRepository {
         override val entries = MutableStateFlow<Map<String, List<BackupHistoryEntry>>>(emptyMap())
         private val deleted = mutableMapOf<String, MutableSet<String>>()
@@ -584,6 +675,7 @@ class AutomaticBackupRunnerTest {
             ))
         }
         val settings = FakeSettings()
+        val premium = FakePremium()
         val backups = FakeBackups(directory)
         val remote = FakeRemote(directory)
         val gate = BackupOperationGate()
@@ -624,7 +716,7 @@ class AutomaticBackupRunnerTest {
                     invalidatedToken = accessToken
                 }
             },
-            fingerprint, gate, archives, now = { 5_000L },
+            fingerprint, gate, archives, premium, now = { 5_000L },
         )
     }
 

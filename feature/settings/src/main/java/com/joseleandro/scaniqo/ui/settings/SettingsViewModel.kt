@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joseleandro.scaniqo.domain.model.*
 import com.joseleandro.scaniqo.domain.repository.AppSettingsRepository
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +23,12 @@ sealed interface SettingsChange {
     data object RestoreDefaults : SettingsChange
 }
 
-class SettingsViewModel(private val repository: AppSettingsRepository) : ViewModel() {
+class SettingsViewModel(
+    private val repository: AppSettingsRepository,
+    private val premiumRepository: PremiumEntitlementRepository,
+) : ViewModel() {
     val settings = repository.settings
+    val entitlement = premiumRepository.entitlement
     private val failure = MutableStateFlow(false)
     val saveError = failure.asStateFlow()
 
@@ -46,7 +51,9 @@ class SettingsViewModel(private val repository: AppSettingsRepository) : ViewMod
                         is SettingsChange.Palette -> current.copy(colorTheme = change.value)
                         is SettingsChange.Quality -> current.copy(exportQuality = change.value)
                         is SettingsChange.Ocr -> current.copy(ocrEnabled = change.value)
-                        is SettingsChange.AdvancedProcessing -> current.copy(advancedProcessingEnabled = change.value)
+                        is SettingsChange.AdvancedProcessing -> current.copy(
+                            advancedProcessingEnabled = change.value && entitlement.value.isPremium,
+                        )
                         is SettingsChange.Numbering -> current.copy(pageNumbers = change.value)
                         is SettingsChange.ImageFormat -> current.copy(imageFormat = change.value)
                         is SettingsChange.Compression -> current.copy(compressionLevel = change.value)

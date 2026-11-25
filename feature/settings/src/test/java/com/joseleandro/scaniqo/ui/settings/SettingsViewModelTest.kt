@@ -3,6 +3,8 @@ package com.joseleandro.scaniqo.ui.settings
 import androidx.lifecycle.ViewModelStore
 import com.joseleandro.scaniqo.domain.model.*
 import com.joseleandro.scaniqo.domain.repository.AppSettingsRepository
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,11 +21,15 @@ class SettingsViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val repository = FakeSettings()
     private val store = ViewModelStore()
+    private val premium = object : PremiumEntitlementRepository {
+        override val entitlement = MutableStateFlow(PremiumEntitlement.PREMIUM)
+        override suspend fun refresh() = Unit
+    }
     private lateinit var model: SettingsViewModel
 
     @Before fun setup() {
         Dispatchers.setMain(dispatcher)
-        model = SettingsViewModel(repository)
+        model = SettingsViewModel(repository, premium)
         store.put("settings", model)
     }
     @After fun teardown() {
@@ -105,6 +111,38 @@ class SettingsViewModelTest {
         assertEquals(PdfImageFormat.PNG, model.settings.value.imageFormat)
         model.dismissError()
         assertFalse(model.saveError.value)
+    }
+
+    @Test fun freeAndUnknownAccessCannotEnableAdvancedProcessing() = runTest(dispatcher) {
+        for (access in listOf(PremiumEntitlement.FREE, PremiumEntitlement.UNKNOWN)) {
+            premium.entitlement.value = access
+            model.change(SettingsChange.AdvancedProcessing(true))
+            advanceUntilIdle()
+            assertFalse(model.settings.value.advancedProcessingEnabled)
+        }
+        premium.entitlement.value = PremiumEntitlement.PREMIUM
+        model.change(SettingsChange.AdvancedProcessing(true))
+        advanceUntilIdle()
+        assertTrue(model.settings.value.advancedProcessingEnabled)
+    }
+
+    @Test fun revocationDuringAQueuedWriteCannotEnableAdvancedProcessing() = runTest(dispatcher) {
+        val gate = CompletableDeferred<Unit>()
+        repository.gate = gate
+        model.change(SettingsChange.AdvancedProcessing(true))
+        runCurrent()
+        premium.entitlement.value = PremiumEntitlement.FREE
+        gate.complete(Unit)
+        advanceUntilIdle()
+        assertFalse(model.settings.value.advancedProcessingEnabled)
+    }
+
+    @Test fun disablingAdvancedProcessingRemainsAvailableAfterRevocation() = runTest(dispatcher) {
+        repository.value.value = AppSettings(advancedProcessingEnabled = true)
+        premium.entitlement.value = PremiumEntitlement.FREE
+        model.change(SettingsChange.AdvancedProcessing(false))
+        advanceUntilIdle()
+        assertFalse(model.settings.value.advancedProcessingEnabled)
     }
 
     private class FakeSettings : AppSettingsRepository {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_active">Premium مفعّل</string>
+    <string name="premium_access_offer_summary">بلا إعلانات، وأدوات دون مشاهدة فيديو، ونسخ احتياطي تلقائي. شراء لمرة واحدة.</string>
+    <string name="premium_access_active_summary">مزاياك متاحة. عرض الشراء وخيارات الاستعادة.</string>
+    <string name="premium_access_explore">اكتشف Premium</string>
+    <string name="premium_access_automatic">نسخ احتياطي تلقائي مع Premium</string>
+    <string name="premium_access_automatic_body">احتفظ بنسخة في Drive دون بدء كل نسخة احتياطية بنفسك. يظل النسخ اليدوي والاستعادة مجانيين.</string>
+    <string name="premium_access_processing">معالجة متقدمة مع Premium</string>
+    <string name="premium_access_processing_body">استخدم تسريع الأجهزة للفلاتر المدعومة.</string>
+    <string name="premium_access_checking">جارٍ التحقق من الوصول إلى Premium…</string>
+</resources>

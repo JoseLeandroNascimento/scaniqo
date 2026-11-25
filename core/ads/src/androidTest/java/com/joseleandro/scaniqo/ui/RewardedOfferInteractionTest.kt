@@ -1,6 +1,9 @@
 package com.joseleandro.scaniqo.ui
 
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
+import com.joseleandro.scaniqo.core.ads.R as AdsR
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
+import com.joseleandro.scaniqo.ui.ads.LocalOpenPremium
 
 import android.app.Activity
 import androidx.compose.foundation.layout.Column
@@ -100,7 +103,7 @@ class RewardedOfferInteractionTest {
     @Test
     fun noConsentOrInventoryAppliesWithoutWaitingForAnAd() {
         val environment = FakeEnvironment(RewardedAdStatus.UNAVAILABLE).apply {
-            adsState.value = AdMobState(sdkReady = true, canRequestAds = false)
+            adsState.value = AdMobState(sdkReady = true, canRequestAds = false, entitlement = PremiumEntitlement.FREE)
         }
         val applications = mutableListOf<Boolean>()
         compose.setContent { TestAction(environment, onApply = applications::add) }
@@ -321,6 +324,77 @@ class RewardedOfferInteractionTest {
         compose.runOnIdle { assertEquals(1, environment.shows) }
     }
 
+    @Test
+    fun premiumActivationImmediatelyRemovesTheVideoOfferWithoutResumingTheScreen() {
+        val environment = FakeEnvironment()
+        val applications = mutableListOf<Boolean>()
+        compose.setContent { TestAction(environment, onApply = applications::add) }
+        compose.onNodeWithText(text(CoreResourcesR.string.tool_ad_watch_apply)).assertIsDisplayed()
+        compose.runOnIdle {
+            environment.adsState.value = environment.adsState.value.copy(entitlement = PremiumEntitlement.PREMIUM)
+        }
+        compose.onNodeWithText(APPLY).assertIsDisplayed()
+        compose.onNodeWithText(text(CoreResourcesR.string.tool_ad_reward_hint)).assertDoesNotExist()
+        compose.onNodeWithText(APPLY).performClick()
+        compose.runOnIdle {
+            assertFalse(action.showsVideo)
+            assertEquals(0, environment.shows)
+            assertEquals(listOf(false), applications)
+        }
+    }
+
+    @Test
+    fun premiumRevocationRestoresTheVideoOfferOnTheSameScreen() {
+        val environment = FakeEnvironment().apply {
+            adsState.value = adsState.value.copy(entitlement = PremiumEntitlement.PREMIUM)
+            loadImmediately = true
+        }
+        compose.setContent { TestAction(environment, onApply = {}) }
+        compose.onNodeWithText(APPLY).assertIsDisplayed()
+        compose.runOnIdle {
+            environment.adsState.value = environment.adsState.value.copy(entitlement = PremiumEntitlement.FREE)
+        }
+        compose.onNodeWithText(text(CoreResourcesR.string.tool_ad_watch_apply)).assertIsDisplayed()
+        compose.runOnIdle { assertTrue(action.showsVideo) }
+    }
+
+    @Test
+    fun aPreviouslyDisplayedVideoActionRechecksPremiumAtClickTime() {
+        val environment = FakeEnvironment()
+        val applications = mutableListOf<Boolean>()
+        compose.setContent { TestAction(environment, onApply = applications::add) }
+        compose.runOnIdle {
+            val displayedAction = action.onClick
+            environment.adsState.value = environment.adsState.value.copy(entitlement = PremiumEntitlement.PREMIUM)
+            displayedAction()
+        }
+        compose.runOnIdle {
+            assertEquals(0, environment.shows)
+            assertEquals(listOf(false), applications)
+        }
+    }
+
+    @Test
+    fun premiumButtonOpensOnlyTheOfferAndDisappearsWhenPremiumActivates() {
+        val environment = FakeEnvironment()
+        val applications = mutableListOf<Boolean>()
+        var openedOffers = 0
+        compose.setContent {
+            CompositionLocalProvider(LocalOpenPremium provides { openedOffers++ }) {
+                TestAction(environment, onApply = applications::add)
+            }
+        }
+        compose.onNodeWithText(text(AdsR.string.ads_premium_ad_free)).performClick()
+        compose.runOnIdle {
+            assertEquals(1, openedOffers)
+            assertEquals(0, environment.shows)
+            assertTrue(applications.isEmpty())
+            environment.adsState.value = environment.adsState.value.copy(entitlement = PremiumEntitlement.PREMIUM)
+        }
+        compose.onNodeWithText(text(AdsR.string.ads_premium_ad_free)).assertDoesNotExist()
+        compose.onNodeWithText(text(CoreResourcesR.string.tool_ad_reward_hint)).assertDoesNotExist()
+    }
+
     @Composable
     private fun TestAction(
         environment: FakeEnvironment,
@@ -359,7 +433,7 @@ class RewardedOfferInteractionTest {
     }
 
     private class FakeEnvironment(status: RewardedAdStatus = RewardedAdStatus.READY) : ToolAdActionEnvironment {
-        override val adsState = MutableStateFlow(AdMobState(sdkReady = true, canRequestAds = true))
+        override val adsState = MutableStateFlow(AdMobState(sdkReady = true, canRequestAds = true, entitlement = PremiumEntitlement.FREE))
         override val videoState = MutableStateFlow(RewardedAdUiState(status))
         var grantedAccess = ToolAdAccess.AD_REQUIRED
         var shows = 0
@@ -369,7 +443,8 @@ class RewardedOfferInteractionTest {
         private var requestId: String? = null
         private var requestedTool = RewardedTool.COMPRESSION
 
-        override fun access(tool: RewardedTool) = grantedAccess
+        override fun access(tool: RewardedTool) =
+            if (adsState.value.entitlement.isPremium) ToolAdAccess.PREMIUM else grantedAccess
         override fun hasAdUnit() = true
         override fun prepare() {
             prepares++

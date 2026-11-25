@@ -1,0 +1,122 @@
+SCANIQO PREMIUM — CONFIGURAÇÃO GOOGLE PLAY
+========================================
+Produto: scaniqo_premium
+Tipo: produto único INAPP, não consumível, compra única.
+Pacote: com.joseleandro.scaniqo
+Versão preparada: versionCode 5 / versionName 1.0.5.
+
+BENEFÍCIOS IMPLEMENTADOS
+- Remoção de banners, anúncios nativos e vídeos recompensados.
+- Ferramentas com acesso direto, preservando créditos de vídeos já obtidos.
+- Backup automático no Google Drive (conexão/autorização do Drive continuam necessárias).
+- Opção de processamento avançado de filtros compatíveis, com fallback CPU.
+  A disponibilidade e o ganho dependem do dispositivo; não acelera o motor OCR.
+- Digitalização, leitura, edição básica, OCR, exportação básica, backup manual e
+  restauração permanecem disponíveis na versão gratuita.
+
+CONFIGURAR ANTES DE VENDER
+1. Confirme o perfil de pagamentos vinculado à conta de desenvolvedor.
+2. Em Monetização / Configuração de monetização / Licenciamento, copie a chave
+   pública RSA/Base64 deste aplicativo (não a chave OAuth, SHA-1 de assinatura,
+   chave de API ou credencial de conta de serviço).
+3. Adicione ao gradle.properties LOCAL DO USUÁRIO, fora do repositório:
+   scaniqo.play.licenseKey=CHAVE_PUBLICA_BASE64
+   O build remove espaços/quebras e gera o recurso scaniqo_play_license_key.
+   A chave é pública; a chave privada de assinatura/conta de serviço NUNCA deve
+   entrar no APK. Não há valor de exemplo capaz de habilitar compras.
+4. Gere um Android App Bundle de release ASSINADO com a chave de upload do app
+   (Android Studio > Generate Signed App Bundle / APK).
+   A tarefa :app:bundleRelease produz um AAB, mas este projeto não contém
+   signingConfig de release. O AAB gerado pela tarefa, sozinho, não é assinado.
+5. Envie o AAB para uma faixa de teste interno. O Manifest contém
+   com.android.vending.BILLING e a dependência Play Billing.
+   Se precisar enviar primeiro sem chave para liberar o catálogo, o app mostrará
+   compras indisponíveis. Ao reenviar a versão configurada, aumente versionCode.
+6. Cadastre o ID EXATO scaniqo_premium como produto único, não consumível.
+   Configure nome, descrição, preço, países e uma opção de COMPRA ativa.
+   Não use opção de aluguel ou pré-venda para este benefício permanente.
+   O app consulta a oferta de compra elegível de menor preço retornada pela Play.
+   Não há preço, desconto, mensalidade ou avaliação fictícios no aplicativo.
+7. Ative o produto/opção e adicione os usuários em Teste de licença E na faixa
+   de teste interno. Instale pela Play Store com a conta de teste correta.
+   Um usuário apenas na faixa interna, sem teste de licença, pode ser cobrado.
+8. Execute a matriz abaixo antes da publicação pública. Configurações do catálogo
+   podem demorar a se propagar.
+
+DIAGNÓSTICO DE PREÇO INDISPONÍVEL
+- Em 24/11/2026, o APK instalado pela Play no aparelho de teste ainda era
+  versionCode 4 / versionName 1.0.4. O recurso scaniqo_play_license_key estava
+  vazio nesse APK. Esse estado interrompe a consulta antes de conectar à loja.
+- Alterar a chave local ou versionCode no projeto não atualiza o app já instalado.
+  Gere um NOVO AAB assinado, envie e disponibilize a nova versão na faixa de teste;
+  depois atualize o app pela Play com a conta que aceitou participar dessa faixa.
+- Confira a versão instalada antes de repetir o teste. Não use um AAB antigo
+  da pasta app/release: ele pode ter sido gerado antes da configuração da chave.
+- Os novos builds registram as operações da loja na tag ScaniqoBilling, incluindo
+  responseCode, debugMessage e status de produto não retornado. PRODUCT_NOT_FOUND
+  e NO_ELIGIBLE_OFFER são motivos distintos; não indicam necessariamente falha
+  de rede. Os logs não serializam compras, tokens ou recibos.
+
+COMO O ACESSO É VALIDADO
+- Um BillingClient singleton consulta compras no início/retorno do app e ao
+  restaurar; nenhuma compra é iniciada sem toque explícito na tela.
+- Só libera Premium para PURCHASED, com assinatura RSA válida do recibo original,
+  pacote/produto/token esperados. Pagamento pendente não libera.
+- Confirma entrega com acknowledgePurchase; não consome o produto.
+- Falhas de confirmação são repetidas em segundo plano no processo e em novas
+  consultas. O usuário precisa retornar ao app se a confirmação não terminar;
+  a Play pode reembolsar compras não confirmadas dentro de três dias.
+- Recibos confirmados ficam no diretório noBackup do app e são revalidados.
+  Há tolerância offline de até sete dias desde a última consulta válida.
+- Uma consulta bem-sucedida sem a compra remove o acesso local (ex.: revogação
+  ou mudança de conta). Falha de rede não apaga um recibo ainda válido.
+- A conta de compra é a conta Google Play; não depende da conta conectada ao Drive.
+- Restaurar consulta a Play; não há botão, flag local ou modo debug que conceda
+  Premium sem recibo validado.
+
+LIMITE DA IMPLEMENTAÇÃO LOCAL
+Esta versão valida assinatura e confirma a compra no dispositivo. Não existe
+backend publicado, conta de serviço configurada, Google Play Developer API nem
+RTDN. Portanto não há verificação servidor-a-servidor, notificação instantânea
+de reembolso ou confirmação garantida enquanto o app permanece fechado.
+Para maior proteção contra adulteração e confirmação independente do app,
+migre verificação/acknowledgement para um backend autenticado usando a Google
+Play Developer API e notificações RTDN. Nunca coloque a credencial do servidor
+no aplicativo. O cache offline pode manter acesso até expirar ou até uma consulta
+autoritativa detectar a revogação.
+
+VALIDAÇÃO LOCAL REALIZADA
+- Testes unitários dos módulos alterados aprovados, incluindo assinatura de
+  recibos, compra pendente, restauração, revogação, anúncios e backup gratuito.
+- 29 testes do app (navegação, recursos traduzidos e layouts) aprovados.
+- 35 testes instrumentados aprovados no Samsung SM-A135M / Android 14.
+- Prévia da oferta em tema claro, escuro e texto ampliado conferida.
+- App instalado: menu Premium, aviso de compra indisponível e retorno aos
+  documentos verificados. Nenhuma compra real foi realizada.
+- O teste completo de cobrança/restauração pela Play ainda depende da chave
+  pública, produto ativo e instalação pela faixa de teste com testador de licença.
+
+MATRIZ DE TESTE NA PLAY CONSOLE
+- Produto indisponível, chave ausente e rede indisponível: feedback, sem cobrança.
+- Compra aprovada: benefícios imediatos, todos os formatos de anúncio removidos.
+- Cancelar checkout: continua grátis, sem erro genérico enganoso.
+- Pagamento pendente: mensagem clara, sem benefícios e sem nova cobrança.
+- Pagamento pendente aprovado depois: retorno/consulta ativa Premium.
+- Pagamento recusado/cancelado: permanece grátis.
+- Matar/reabrir o processo, reinstalar, trocar de aparelho: restaurar pela mesma
+  conta Play, sem cobrar de novo.
+- Falha de acknowledgement: recuperação ao abrir novamente; validar confirmação
+  na Play antes do prazo.
+- Reembolso COM REVOGAÇÃO: consulta bem-sucedida remove acesso e pausa backup
+  automático/processamento avançado, preservando preferências e documentos.
+- Conta sem compra: opção gratuita, anúncios conforme consentimento.
+- Premium offline: acesso dentro da tolerância; depois exige nova validação.
+- Não gastar créditos de vídeo existentes ao usar uma ferramenta com Premium.
+- Backup manual/restauração gratuitos, inclusive depois de uma revogação.
+- Texto ampliado, tema escuro, botão Voltar e retorno à ferramenta de origem.
+
+DOCUMENTAÇÃO OFICIAL
+https://developer.android.com/google/play/billing/getting-ready
+https://developer.android.com/google/play/billing/integrate
+https://developer.android.com/google/play/billing/security
+https://developer.android.com/google/play/billing/test

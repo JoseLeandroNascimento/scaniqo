@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_active">Premium активен</string>
+    <string name="premium_access_offer_summary">Без рекламы, инструменты без просмотра видео и автоматические копии. Одна покупка.</string>
+    <string name="premium_access_active_summary">Ваши преимущества доступны. Покупка и восстановление доступа.</string>
+    <string name="premium_access_explore">Узнать о Premium</string>
+    <string name="premium_access_automatic">Автокопирование с Premium</string>
+    <string name="premium_access_automatic_body">Храните копию на Диске без ручного запуска каждой копии. Ручное копирование и восстановление остаются бесплатными.</string>
+    <string name="premium_access_processing">Расширенная обработка с Premium</string>
+    <string name="premium_access_processing_body">Используйте аппаратное ускорение для поддерживаемых фильтров.</string>
+    <string name="premium_access_checking">Проверяем доступ к Premium…</string>
+</resources>

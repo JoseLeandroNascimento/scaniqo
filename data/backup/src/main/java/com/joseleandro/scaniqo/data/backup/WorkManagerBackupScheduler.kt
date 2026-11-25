@@ -11,13 +11,19 @@ import androidx.work.WorkManager
 import com.joseleandro.scaniqo.domain.model.BackupFrequency
 import com.joseleandro.scaniqo.domain.model.BackupSettings
 import com.joseleandro.scaniqo.domain.repository.BackupScheduler
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import java.util.concurrent.TimeUnit
 
-class WorkManagerBackupScheduler(context: Context) : BackupScheduler {
+class WorkManagerBackupScheduler(
+    context: Context,
+    private val premium: PremiumEntitlementRepository,
+) : BackupScheduler {
     private val workManager = WorkManager.getInstance(context.applicationContext)
 
     override fun schedule(settings: BackupSettings) {
-        if (!settings.automaticEnabled || settings.accountEmail.isNullOrBlank() || settings.needsAuthorization) {
+        if (!premium.entitlement.value.isPremium || !settings.automaticEnabled ||
+            settings.accountEmail.isNullOrBlank() || settings.needsAuthorization
+        ) {
             cancel()
             return
         }

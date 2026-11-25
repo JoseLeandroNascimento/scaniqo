@@ -21,6 +21,8 @@ import com.joseleandro.scaniqo.domain.model.DriveBackupException
 import com.joseleandro.scaniqo.domain.model.PreparedDocumentBackup
 import com.joseleandro.scaniqo.domain.repository.DocumentBackupRepository
 import com.joseleandro.scaniqo.domain.repository.DriveBackupRemote
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import com.joseleandro.scaniqo.ui.backup.effect.DriveBackupEffect
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupPhase
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupProblem
@@ -64,9 +66,10 @@ class DriveBackupViewModelTest {
     private val history = FakeHistory()
     private val archives = BackupArchiveStore(remote, history)
     private val fingerprint = FakeBackupFingerprint()
+    private val premium = FakePremium()
     private val viewModel by lazy {
         DriveBackupViewModel(local, remote, documents, preferences, scheduler, gate,
-            fingerprint, archives, history).also { store.put("backup", it) }
+            fingerprint, archives, history, premium).also { store.put("backup", it) }
     }
 
     @Before
@@ -1459,6 +1462,76 @@ class DriveBackupViewModelTest {
         runCurrent()
         assertNull(viewModel.uiState.value.problem)
         assertFalse(viewModel.uiState.value.isBusy)
+    }
+
+    @Test
+    fun freeAndUnknownUsersCannotEnableAutomaticBackupWithAConnectedAccount() = runTest(dispatcher) {
+        start()
+        connectAccount()
+        val scheduledBefore = scheduler.scheduled.size
+        listOf(PremiumEntitlement.FREE, PremiumEntitlement.UNKNOWN).forEach { entitlement ->
+            premium.entitlement.value = entitlement
+            viewModel.setAutomaticEnabled(true)
+            runCurrent()
+            assertFalse(preferences.settings.value.automaticEnabled)
+            assertEquals(scheduledBefore, scheduler.scheduled.size)
+            assertEquals(entitlement, viewModel.entitlement.value)
+        }
+    }
+
+    @Test
+    fun revocationBeforeSettingsCommitPreventsEnablingAutomaticBackup() = runTest(dispatcher) {
+        start()
+        connectAccount()
+        preferences.updateGate = CompletableDeferred()
+        viewModel.setAutomaticEnabled(true)
+        runCurrent()
+        assertTrue(viewModel.uiState.value.isSavingSettings)
+        premium.entitlement.value = PremiumEntitlement.FREE
+        preferences.updateGate!!.complete(Unit)
+        runCurrent()
+        assertFalse(preferences.settings.value.automaticEnabled)
+        assertFalse(scheduler.scheduled.last().automaticEnabled)
+        assertFalse(viewModel.uiState.value.isSavingSettings)
+    }
+
+    @Test
+    fun automaticBackupCanBeDisabledAfterPremiumRevocation() = runTest(dispatcher) {
+        start()
+        connectAccount()
+        viewModel.setAutomaticEnabled(true)
+        runCurrent()
+        assertTrue(preferences.settings.value.automaticEnabled)
+        premium.entitlement.value = PremiumEntitlement.FREE
+        viewModel.setAutomaticEnabled(false)
+        runCurrent()
+        assertFalse(preferences.settings.value.automaticEnabled)
+        assertFalse(scheduler.scheduled.last().automaticEnabled)
+        assertNull(viewModel.uiState.value.problem)
+    }
+
+    @Test
+    fun manualBackupRemainsAvailableWithoutPremium() = runTest(dispatcher) {
+        premium.entitlement.value = PremiumEntitlement.FREE
+        start()
+        connectAccount()
+        viewModel.backup()
+        viewModel.authorized(authorizationId(), "free-manual-token")
+        runCurrent()
+
+        assertEquals(1, local.createCalls)
+        assertEquals("free-manual-token", remote.uploads.single().token)
+        assertEquals(remote.uploaded, viewModel.uiState.value.currentBackup)
+        assertEquals(2, viewModel.uiState.value.backedUpCount)
+        assertEquals(listOf(local.prepared.file), local.discarded)
+        assertFalse(preferences.settings.value.automaticEnabled)
+        assertFalse(viewModel.uiState.value.isBusy)
+        assertNull(viewModel.uiState.value.problem)
+    }
+
+    private class FakePremium : PremiumEntitlementRepository {
+        override val entitlement = MutableStateFlow(PremiumEntitlement.PREMIUM)
+        override suspend fun refresh() = Unit
     }
 
     private fun DriveBackupEntry.historyEntry() = BackupHistoryEntry(id, name, modifiedTimeMillis, sizeBytes)

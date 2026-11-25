@@ -3,6 +3,7 @@ package com.joseleandro.scaniqo.data.pdf
 import android.content.Context
 import com.joseleandro.scaniqo.domain.model.AppSettings
 import com.joseleandro.scaniqo.domain.repository.AppSettingsRepository
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -50,10 +51,12 @@ class AndroidPdfEditorRepository(
     private val documentFileStore: DocumentFileStore,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val settingsRepository: AppSettingsRepository? = null,
+    private val premiumRepository: PremiumEntitlementRepository? = null,
 ) : PdfEditorRepository {
     private val files = PdfWorkspaceFiles(context)
     private val imageFilterProcessor = PdfImageFilterProcessor(advancedProcessingEnabled = {
-        settingsRepository?.settings?.value?.advancedProcessingEnabled == true
+        settingsRepository?.settings?.value?.advancedProcessingEnabled == true &&
+            premiumRepository?.entitlement?.value?.isPremium == true
     })
     private val composer = PdfBoxComposer(files, imageFilterProcessor)
     private val filterThumbnailRenderer = PdfFilterThumbnailRenderer(files, composer)

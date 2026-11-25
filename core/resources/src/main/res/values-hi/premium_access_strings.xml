@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_active">Premium सक्रिय है</string>
+    <string name="premium_access_offer_summary">बिना विज्ञापन, वीडियो देखे बिना टूल और अपने आप बैकअप। एक बार खरीदें।</string>
+    <string name="premium_access_active_summary">आपके लाभ उपलब्ध हैं। खरीदारी और बहाली के विकल्प देखें।</string>
+    <string name="premium_access_explore">Premium के बारे में जानें</string>
+    <string name="premium_access_automatic">Premium के साथ अपने आप बैकअप</string>
+    <string name="premium_access_automatic_body">हर बार बैकअप शुरू किए बिना Drive में एक कॉपी रखें। मैन्युअल बैकअप और बहाली मुफ़्त रहेंगी।</string>
+    <string name="premium_access_processing">Premium के साथ उन्नत प्रोसेसिंग</string>
+    <string name="premium_access_processing_body">समर्थित फ़िल्टर के लिए हार्डवेयर एक्सेलरेशन इस्तेमाल करें।</string>
+    <string name="premium_access_checking">Premium ऐक्सेस की जाँच हो रही है…</string>
+</resources>

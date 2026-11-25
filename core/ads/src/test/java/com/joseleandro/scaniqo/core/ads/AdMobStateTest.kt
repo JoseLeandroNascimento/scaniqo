@@ -1,5 +1,6 @@
 package com.joseleandro.scaniqo.core.ads
 
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -64,7 +65,26 @@ class AdMobStateTest {
         assertTrue(READY.copy(rewardedAdShowing = false).displayAdsAllowed)
     }
 
+    @Test
+    fun unknownAndPremiumBlockAllAdsEvenWhenSdkAndConsentAreReady() {
+        listOf(PremiumEntitlement.UNKNOWN, PremiumEntitlement.PREMIUM).forEach { entitlement ->
+            val state = READY.copy(entitlement = entitlement)
+            assertFalse(state.displayAdsAllowed)
+            assertFalse(state.rewardedAdsAllowed)
+        }
+    }
+
+    @Test
+    fun premiumKeepsRequiredPrivacyOptionsAvailableAndRevocationRestoresAds() {
+        val premium = READY.copy(entitlement = PremiumEntitlement.PREMIUM, privacyOptionsRequired = true)
+        assertTrue(premium.privacyOptionsRequired)
+        assertFalse(premium.displayAdsAllowed)
+        val revoked = premium.copy(entitlement = PremiumEntitlement.FREE)
+        assertTrue(revoked.displayAdsAllowed)
+        assertTrue(revoked.rewardedAdsAllowed)
+    }
+
     private companion object {
-        val READY = AdMobState(sdkReady = true, canRequestAds = true)
+        val READY = AdMobState(sdkReady = true, canRequestAds = true, entitlement = PremiumEntitlement.FREE)
     }
 }

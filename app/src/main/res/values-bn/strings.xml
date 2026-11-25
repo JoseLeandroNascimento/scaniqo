@@ -4,4 +4,5 @@
     <string name="menu_import_pdf">PDF আমদানি করুন</string>
     <string name="menu_tags">ট্যাগ</string>
     <string name="menu_signatures">স্বাক্ষর</string>
+    <string name="menu_premium_caption">বিজ্ঞাপন নেই। আরও স্বাধীনতা।</string>
 </resources>

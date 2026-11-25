@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.domain.model.*
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
 import com.joseleandro.scaniqo.ui.components.DialogActions
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import com.joseleandro.scaniqo.ui.theme.personalizedColorScheme
@@ -59,6 +60,7 @@ fun SettingsRoute(
     onTutorial: () -> Unit = {},
     onLanguage: () -> Unit = {},
     viewModel: SettingsViewModel = koinViewModel(),
+    onPremium: () -> Unit = {},
 ) {
     val ads: AdMobManager = koinInject()
     val adsState by ads.state.collectAsStateWithLifecycle()
@@ -66,6 +68,7 @@ fun SettingsRoute(
     val scope = rememberCoroutineScope()
     val privacyError = stringResource(R.string.ads_privacy_error)
     val preferences by viewModel.settings.collectAsStateWithLifecycle()
+    val entitlement by viewModel.entitlement.collectAsStateWithLifecycle()
     val failed by viewModel.saveError.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val failureText = stringResource(R.string.settings_save_error)
@@ -79,6 +82,8 @@ fun SettingsRoute(
         onPersonalization, onPdf, onBackup, onPasswords, snackbarHost = { SnackbarHost(snackbar) },
         onTutorial = onTutorial,
         onLanguage = onLanguage,
+        premiumEntitlement = entitlement,
+        onPremium = onPremium,
         showAdsPrivacyOptions = adsState.privacyOptionsRequired,
         adsPrivacyOptionsEnabled = activity != null && !adsState.privacyFormOpen && !adsState.consentUpdating,
         onAdsPrivacyOptions = {
@@ -108,6 +113,8 @@ internal fun SettingsScreen(
     onAdsPrivacyOptions: () -> Unit = {},
     onTutorial: () -> Unit = {},
     onLanguage: () -> Unit = {},
+    premiumEntitlement: PremiumEntitlement = PremiumEntitlement.FREE,
+    onPremium: () -> Unit = {},
 ) {
     var restore by rememberSaveable { mutableStateOf(false) }
     Scaffold(
@@ -136,6 +143,7 @@ internal fun SettingsScreen(
             ) {
                 when (section) {
                     SettingsSection.HOME -> {
+                        item { PremiumSettingsEntry(premiumEntitlement, onPremium) }
                         item { PersonalizationEntry(preferences, onPersonalization) }
                         item {
                             SettingsGroup(stringResource(R.string.localization_title)) {
@@ -210,12 +218,23 @@ internal fun SettingsScreen(
                     SettingsSection.PDF -> {
                         item {
                             SettingsGroup(stringResource(R.string.settings_performance)) {
-                                SettingsToggle(
-                                    CoreResourcesR.drawable.ic_symbol_memory,
-                                    stringResource(R.string.settings_advanced_processing),
-                                    stringResource(R.string.settings_advanced_processing_body),
-                                    preferences.advancedProcessingEnabled,
-                                ) { onChange(SettingsChange.AdvancedProcessing(it)) }
+                                if (premiumEntitlement.isPremium) {
+                                    SettingsToggle(
+                                        CoreResourcesR.drawable.ic_symbol_memory,
+                                        stringResource(R.string.settings_advanced_processing),
+                                        stringResource(R.string.settings_advanced_processing_body),
+                                        preferences.advancedProcessingEnabled,
+                                    ) { onChange(SettingsChange.AdvancedProcessing(it)) }
+                                } else {
+                                    SettingsDestination(
+                                        CoreResourcesR.drawable.ic_symbol_memory,
+                                        stringResource(CoreResourcesR.string.premium_access_processing),
+                                        stringResource(if (premiumEntitlement == PremiumEntitlement.UNKNOWN)
+                                            CoreResourcesR.string.premium_access_checking
+                                        else CoreResourcesR.string.premium_access_processing_body),
+                                        onPremium,
+                                    )
+                                }
                             }
                         }
                         item {
@@ -371,6 +390,46 @@ private fun SettingIcon(@DrawableRes icon: Int) {
     Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.secondaryContainer) {
         Icon(painterResource(icon), null, Modifier.padding(10.dp).size(22.dp),
             tint = MaterialTheme.colorScheme.onSecondaryContainer)
+    }
+}
+
+@Composable
+private fun PremiumSettingsEntry(
+    entitlement: PremiumEntitlement,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+    ) {
+        Row(
+            Modifier.padding(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(painterResource(CoreResourcesR.drawable.ic_tag_star), null, Modifier.size(32.dp))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    stringResource(if (entitlement.isPremium) CoreResourcesR.string.premium_access_active
+                        else CoreResourcesR.string.premium_access_title),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Text(
+                    stringResource(when (entitlement) {
+                        PremiumEntitlement.UNKNOWN -> CoreResourcesR.string.premium_access_checking
+                        PremiumEntitlement.FREE -> CoreResourcesR.string.premium_access_offer_summary
+                        PremiumEntitlement.PREMIUM -> CoreResourcesR.string.premium_access_active_summary
+                    }),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Icon(painterResource(CoreResourcesR.drawable.arrow_back_24px), null,
+                Modifier.size(20.dp).rotate(180f))
+        }
     }
 }
 

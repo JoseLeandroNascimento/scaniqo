@@ -30,6 +30,11 @@ import com.joseleandro.scaniqo.ui.branding.systemAnimationScale
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.DEFAULT_ARGS_KEY
+import androidx.lifecycle.lifecycleScope
+import com.joseleandro.scaniqo.core.billing.PlayBillingManager
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.joseleandro.scaniqo.domain.model.AppThemeMode
@@ -43,6 +48,7 @@ import com.joseleandro.scaniqo.widget.WidgetUpdater
 import com.joseleandro.scaniqo.widget.parseWidgetIntent
 
 class MainActivity : AppCompatActivity() {
+    private val premium: PlayBillingManager by inject()
     private var launchContentReady by mutableStateOf(false)
     private val widgetLaunchViewModel: WidgetLaunchViewModel by viewModels(
         extrasProducer = {
@@ -70,8 +76,11 @@ class MainActivity : AppCompatActivity() {
             val ads: AdMobManager = koinInject()
             val onboarding: OnboardingViewModel = koinViewModel()
             val onboardingCompleted by onboarding.completed.collectAsStateWithLifecycle()
-            LaunchedEffect(launchContentReady, onboardingCompleted) {
-                if (launchContentReady && onboardingCompleted) ads.gatherConsent(this@MainActivity)
+            val adState by ads.state.collectAsStateWithLifecycle()
+            LaunchedEffect(launchContentReady, onboardingCompleted, adState.entitlement) {
+                if (launchContentReady && onboardingCompleted &&
+                    adState.entitlement == PremiumEntitlement.FREE
+                ) ads.gatherConsent(this@MainActivity)
             }
             val repository: AppSettingsRepository = koinInject()
             val preferences by repository.settings.collectAsStateWithLifecycle()
@@ -108,6 +117,11 @@ class MainActivity : AppCompatActivity() {
         ScaniqoSplashController(this, splash, animateLaunch, animationScale) {
             launchContentReady = true
         }.install()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch { premium.refreshAfterHostResume() }
     }
 
     override fun onLocalesChanged(locales: LocaleListCompat) {

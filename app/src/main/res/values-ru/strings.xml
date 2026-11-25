@@ -4,4 +4,5 @@
     <string name="menu_import_pdf">Импорт PDF</string>
     <string name="menu_tags">Метки</string>
     <string name="menu_signatures">Подписи</string>
+    <string name="menu_premium_caption">Без рекламы. Больше свободы.</string>
 </resources>

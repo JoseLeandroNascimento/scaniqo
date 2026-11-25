@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_active">Premium সক্রিয়</string>
+    <string name="premium_access_offer_summary">বিজ্ঞাপন ছাড়া, ভিডিও ছাড়া টুল এবং স্বয়ংক্রিয় ব্যাকআপ। একবার কিনুন।</string>
+    <string name="premium_access_active_summary">আপনার সুবিধাগুলি চালু হয়েছে। কেনাকাটা ও পুনরুদ্ধারের বিকল্প দেখুন।</string>
+    <string name="premium_access_explore">Premium সম্পর্কে জানুন</string>
+    <string name="premium_access_automatic">Premium দিয়ে স্বয়ংক্রিয় ব্যাকআপ</string>
+    <string name="premium_access_automatic_body">প্রতিবার ব্যাকআপ শুরু না করেই Drive-এ একটি কপি রাখুন। ম্যানুয়াল ব্যাকআপ ও পুনরুদ্ধার বিনামূল্যেই থাকবে।</string>
+    <string name="premium_access_processing">Premium দিয়ে উন্নত প্রসেসিং</string>
+    <string name="premium_access_processing_body">সমর্থিত ফিল্টারের জন্য হার্ডওয়্যার অ্যাক্সেলারেশন ব্যবহার করুন।</string>
+    <string name="premium_access_checking">Premium অ্যাক্সেস পরীক্ষা করা হচ্ছে…</string>
+</resources>

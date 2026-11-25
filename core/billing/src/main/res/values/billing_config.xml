@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Overridden by the application from its local Play licensing property. -->
+    <string name="scaniqo_play_license_key" translatable="false"></string>
+</resources>

@@ -20,6 +20,7 @@ internal fun SettingsDestination(
     onBackup: () -> Unit = {},
     onPasswords: () -> Unit = {},
     onLanguage: () -> Unit = {},
+    onPremium: () -> Unit = {},
 ) {
     var tutorialVisible by rememberSaveable { mutableStateOf(false) }
     if (tutorialVisible) {
@@ -34,6 +35,7 @@ internal fun SettingsDestination(
             onBackup = onBackup,
             onPasswords = onPasswords,
             onLanguage = onLanguage,
+            onPremium = onPremium,
             onTutorial = { tutorialVisible = true },
         )
     }

@@ -24,11 +24,11 @@ val backupDataModule = module {
     single<BackupSettingsRepository> { AndroidBackupSettingsRepository(androidContext()) }
     single<BackupHistoryRepository> { AndroidBackupHistoryRepository(androidContext()) }
     single { BackupArchiveStore(get(), get()) }
-    single<BackupScheduler> { WorkManagerBackupScheduler(androidContext()) }
+    single<BackupScheduler> { WorkManagerBackupScheduler(androidContext(), get()) }
     single<BackupAuthorizationProvider> { GoogleBackupAuthorizationProvider(androidContext()) }
     single { BackupOperationGate() }
     single<BackupFingerprint> { BackupSnapshotFingerprint(get()) }
-    single { AutomaticBackupRunner(get(), get(), get(), get(), get(), get(), get()) }
+    single { AutomaticBackupRunner(get(), get(), get(), get(), get(), get(), get(), get()) }
     single<DocumentBackupRepository> { AndroidDocumentBackupRepository(androidContext(), get(), get()) }
     single<DriveBackupRemote> { GoogleDriveBackupRemote() }
 }

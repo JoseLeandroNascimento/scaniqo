@@ -30,8 +30,10 @@ import org.koin.compose.viewmodel.koinViewModel
 fun DriveBackupRoute(
     onBack: () -> Unit,
     viewModel: DriveBackupViewModel = koinViewModel(),
+    onPremium: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val entitlement by viewModel.entitlement.collectAsStateWithLifecycle()
     val toast = rememberAppToastState()
     val resources = LocalResources.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -57,6 +59,8 @@ fun DriveBackupRoute(
     BackHandler(onBack = leave)
     DriveBackupScreen(
         state = state,
+        premiumEntitlement = entitlement,
+        onPremium = onPremium,
         onBack = leave,
         onConnect = {
             toast.dismiss()

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_title" translatable="false">Scaniqo Premium</string>
+    <string name="premium_access_active">Premium ativo</string>
+    <string name="premium_access_offer_summary">Sem anúncios, ferramentas sem vídeos e backup automático. Uma única compra.</string>
+    <string name="premium_access_active_summary">Seus benefícios estão liberados. Ver compra e restauração.</string>
+    <string name="premium_access_explore">Conhecer o Premium</string>
+    <string name="premium_access_automatic">Backup automático com Premium</string>
+    <string name="premium_access_automatic_body">Mantenha uma cópia no Drive sem precisar iniciar cada backup. Backup manual e restauração continuam gratuitos.</string>
+    <string name="premium_access_processing">Processamento avançado com Premium</string>
+    <string name="premium_access_processing_body">Use a aceleração de hardware nos filtros compatíveis.</string>
+    <string name="premium_access_checking">Verificando acesso ao Premium…</string>
+</resources>

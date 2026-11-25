@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
+import com.joseleandro.scaniqo.ui.ads.ToolAdRewardHint
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfCompressionLevel
 import com.joseleandro.scaniqo.domain.model.PdfImageFormat
@@ -183,11 +184,8 @@ internal fun PdfUtilityWorkspace(
                             },
                         )
                     }
-                    if (showsVideo && !hasSelectionDraft) Text(
-                        stringResource(CoreResourcesR.string.tool_ad_reward_hint),
+                    if (showsVideo && !hasSelectionDraft) ToolAdRewardHint(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     if (hasSelectionDraft) TextButton(
                         onClick = { onPageSelection(pageSelection.cancel(pageCount)) },

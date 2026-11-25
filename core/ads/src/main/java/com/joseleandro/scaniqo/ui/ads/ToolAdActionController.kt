@@ -94,7 +94,7 @@ internal fun rememberToolAdAction(
             environment.releasePendingAd()
         }
     }
-    val access = remember(environment, tool, gate, video.completion, active, accessRevision) {
+    val access = remember(environment, tool, gate, video.completion, active, accessRevision, ads.entitlement) {
         tool?.let(environment::access)
     }
     val requiresAd = access == ToolAdAccess.AD_REQUIRED

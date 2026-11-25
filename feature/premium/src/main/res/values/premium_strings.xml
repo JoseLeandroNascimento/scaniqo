@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_brand" translatable="false">Scaniqo Premium</string>
+    <string name="premium_close">Fechar</string>
+    <string name="premium_one_time">Compra única</string>
+    <string name="premium_active_badge">PREMIUM ATIVO</string>
+    <string name="premium_success_heading">Tudo pronto para criar.</string>
+    <string name="premium_heading">Seu tempo vale mais.</string>
+    <string name="premium_success_intro">Seus benefícios estão prontos. Agora é com você.</string>
+    <string name="premium_intro">Do papel ao PDF pronto, com mais liberdade e menos interrupções.</string>
+    <string name="premium_workflow">Digitalize. Edite. Guarde.</string>
+    <string name="premium_benefits_title">Tudo o que vem com o Premium</string>
+    <string name="premium_ads_title">Seu app, sem anúncios</string>
+    <string name="premium_ads_body">Leia, organize e edite sem banners nem outros anúncios.</string>
+    <string name="premium_tools_title">Ferramentas sem assistir a vídeos</string>
+    <string name="premium_tools_body">Comprima, extraia páginas, converta PDF em imagens, assine, preencha, importe e mescle sem vídeos de anúncios.</string>
+    <string name="premium_backup_title">Backups automáticos no Drive</string>
+    <string name="premium_backup_body">Mantenha uma cópia dos seus documentos sem precisar iniciar cada backup.</string>
+    <string name="premium_hardware_title">Processamento avançado</string>
+    <string name="premium_hardware_body">Ative filtros acelerados por hardware em aparelhos compatíveis. O desempenho varia conforme o dispositivo.</string>
+    <string name="premium_free_note">A digitalização, o OCR e o backup manual continuam gratuitos.</string>
+    <string name="premium_continue_free">Continuar com a versão gratuita</string>
+    <string name="premium_no_subscription">Sem assinatura ou mensalidade.</string>
+    <string name="premium_price_loading">Consultando preço no Google Play…</string>
+    <string name="premium_price_unavailable">Preço indisponível no momento</string>
+    <string name="premium_buy">Liberar Premium</string>
+    <string name="premium_retry">Tentar novamente</string>
+    <string name="premium_check_purchase">Verificar compra</string>
+    <string name="premium_start">Aproveitar Premium</string>
+    <string name="premium_processing">Aguarde…</string>
+    <string name="premium_payment_note">Pagamento pelo Google Play. Confira o valor final antes de confirmar.</string>
+    <string name="premium_restore">Restaurar compra</string>
+    <string name="premium_active_title">Seu Premium está ativo</string>
+    <string name="premium_active_body">Tudo pronto. Seus benefícios já estão disponíveis neste app.</string>
+    <string name="premium_pending_title">Pagamento pendente</string>
+    <string name="premium_activation_pending">Sua compra foi recebida. Estamos concluindo a ativação do Premium.</string>
+    <string name="premium_pending_body">O Google Play ainda está processando o pagamento. O Premium será ativado após a confirmação.</string>
+    <string name="premium_purchasing_title">Conclua a compra no Google Play</string>
+    <string name="premium_purchasing_body">Volte para cá depois de confirmar. O Premium será ativado quando a compra for validada.</string>
+    <string name="premium_unavailable_title">Compra indisponível no momento</string>
+    <string name="premium_unavailable_body">Não foi possível oferecer o Premium agora. Continue usando a versão gratuita e tente mais tarde.</string>
+    <string name="premium_confirmation_title">Precisamos confirmar sua compra</string>
+    <string name="premium_verification_failed">Não foi possível confirmar sua compra agora. Tente restaurá-la antes de comprar novamente.</string>
+    <string name="premium_store_unavailable">Não foi possível acessar o Google Play. Confira se a Play Store está disponível e tente novamente.</string>
+    <string name="premium_network_error">Confira sua conexão e tente novamente.</string>
+    <string name="premium_cancelled">Compra cancelada. Você pode continuar com a versão gratuita.</string>
+    <string name="premium_no_purchase">Não encontramos uma compra Premium nesta conta do Google Play.</string>
+    <string name="premium_purchase_failed">Não foi possível concluir a compra. Tente novamente.</string>
+    <string name="premium_error_title">Não foi possível concluir</string>
+</resources>

@@ -2,6 +2,9 @@ package com.joseleandro.scaniqo.core.ads
 
 import android.app.Application
 import android.content.Context
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlement
+import com.joseleandro.scaniqo.domain.repository.PremiumEntitlementRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -16,6 +19,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28], application = Application::class, manifest = Config.NONE)
 class ToolAdAccessStoreTest {
+    private val premium = FakePremiumRepository()
     private val context get() = RuntimeEnvironment.getApplication()
     private val preferences
         get() = context.getSharedPreferences(ToolAdAccessStore.PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -369,7 +373,91 @@ class ToolAdAccessStoreTest {
         assertEquals(ToolAdAccess.REWARDED, restored.access(RewardedTool.EXTRACT_PAGES))
     }
 
-    private fun store() = ToolAdAccessStore(context)
+    @Test
+    fun premiumAllowsEveryToolRepeatedlyWithoutConsumingAnAdReward() {
+        val store = store()
+        premium.entitlement.value = PremiumEntitlement.PREMIUM
+        repeat(3) { index ->
+            RewardedTool.entries.forEach { tool ->
+                assertEquals(ToolAdAccess.PREMIUM, store.access(tool))
+                val permit = requireNotNull(store.acquire(tool, "premium-" + index + tool.name))
+                assertEquals(ToolAdAccess.PREMIUM, permit.origin)
+                assertNull(permit.rewardId)
+                store.finish(permit, success = true)
+            }
+        }
+        premium.entitlement.value = PremiumEntitlement.FREE
+        RewardedTool.entries.forEach { tool ->
+            assertEquals(ToolAdAccess.AD_REQUIRED, store.access(tool))
+            assertNull(store.acquire(tool, "free-" + tool.name))
+        }
+    }
+
+    @Test
+    fun premiumUsePreservesEarnedCreditUntilFreeUseSucceeds() {
+        val store = store()
+        store.grantReward(C, "earned")
+        premium.entitlement.value = PremiumEntitlement.PREMIUM
+        val permit = requireNotNull(store.acquire(C, "premium"))
+        assertNull(permit.rewardId)
+        store.finish(permit, success = true)
+        premium.entitlement.value = PremiumEntitlement.FREE
+        assertEquals(ToolAdAccess.REWARDED, store.access(C))
+        store.finish(requireNotNull(store.acquire(C, "free")), success = true)
+        assertEquals(ToolAdAccess.AD_REQUIRED, store.access(C))
+    }
+
+    @Test
+    fun upgradingDuringRewardedOperationPreservesItsReservedCredit() {
+        val store = store()
+        store.grantReward(C, "earned")
+        val permit = requireNotNull(store.acquire(C, "started-free"))
+        assertEquals(ToolAdAccess.REWARDED, permit.origin)
+        premium.entitlement.value = PremiumEntitlement.PREMIUM
+        store.finish(permit, success = true)
+        premium.entitlement.value = PremiumEntitlement.FREE
+        assertEquals(ToolAdAccess.REWARDED, store().access(C))
+    }
+
+    @Test
+    fun revokingPremiumDuringAnOperationDoesNotConsumeAnUnrelatedReward() {
+        val store = store()
+        store.grantReward(C, "earned")
+        premium.entitlement.value = PremiumEntitlement.PREMIUM
+        val permit = requireNotNull(store.acquire(C, "started-premium"))
+        premium.entitlement.value = PremiumEntitlement.FREE
+        store.finish(permit, success = true)
+        assertEquals(ToolAdAccess.REWARDED, store.access(C))
+    }
+
+    @Test
+    fun premiumStillReservesOnlyOneOperationAtATime() {
+        val store = store()
+        premium.entitlement.value = PremiumEntitlement.PREMIUM
+        val permit = requireNotNull(store.acquire(C, "first"))
+        assertSame(permit, store.acquire(C, "first"))
+        assertNull(store.acquire(RewardedTool.IMPORT_PDF, "second"))
+        premium.entitlement.value = PremiumEntitlement.FREE
+        store.finish(permit, success = false)
+        assertNull(store.acquire(C, "after-revocation"))
+    }
+
+    @Test
+    fun unresolvedEntitlementDoesNotInventPremiumAccessOrCredits() {
+        premium.entitlement.value = PremiumEntitlement.UNKNOWN
+        val store = store()
+        assertEquals(ToolAdAccess.AD_REQUIRED, store.access(C))
+        assertNull(store.acquire(C, "before-check"))
+        premium.entitlement.value = PremiumEntitlement.FREE
+        assertEquals(ToolAdAccess.AD_REQUIRED, store.access(C))
+    }
+
+    private fun store() = ToolAdAccessStore(context, premium)
+
+    private class FakePremiumRepository : PremiumEntitlementRepository {
+        override val entitlement = MutableStateFlow(PremiumEntitlement.FREE)
+        override suspend fun refresh() = Unit
+    }
 
     private companion object {
         val C = RewardedTool.COMPRESSION

@@ -17,5 +17,6 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.kotlinx.coroutines.android)
     implementation(project(":core:designsystem"))
+    implementation(project(":core:domain"))
     implementation(project(":core:resources"))
 }

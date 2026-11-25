@@ -19,6 +19,8 @@ val pdfDataModule = module {
     single<PdfUtilityRepository> { AndroidPdfUtilityRepository(androidContext()) }
     single<PdfCertificateRepository> { AndroidPdfCertificateRepository(androidContext()) }
     single<PdfEditorRepository> {
-        AndroidPdfEditorRepository(androidContext(), get(), get(), settingsRepository = get())
+        AndroidPdfEditorRepository(
+            androidContext(), get(), get(), settingsRepository = get(), premiumRepository = get(),
+        )
     }
 }

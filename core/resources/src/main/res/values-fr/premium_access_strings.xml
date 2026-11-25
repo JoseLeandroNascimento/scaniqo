@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="premium_access_active">Premium actif</string>
+    <string name="premium_access_offer_summary">Sans publicité, des outils sans vidéos et des sauvegardes automatiques. Un seul achat.</string>
+    <string name="premium_access_active_summary">Vos avantages sont débloqués. Voir l’achat et la restauration.</string>
+    <string name="premium_access_explore">Découvrir Premium</string>
+    <string name="premium_access_automatic">Sauvegardes automatiques avec Premium</string>
+    <string name="premium_access_automatic_body">Gardez une copie dans Drive sans lancer chaque sauvegarde. La sauvegarde manuelle et la restauration restent gratuites.</string>
+    <string name="premium_access_processing">Traitement avancé avec Premium</string>
+    <string name="premium_access_processing_body">Utilisez l’accélération matérielle pour les filtres compatibles.</string>
+    <string name="premium_access_checking">Vérification de l’accès Premium…</string>
+</resources>

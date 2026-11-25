@@ -4,6 +4,7 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanner
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.joseleandro.scaniqo.core.ads.di.adsModule
+import com.joseleandro.scaniqo.core.billing.di.billingModule
 import com.joseleandro.scaniqo.core.localization.LocalizedNames
 import com.joseleandro.scaniqo.core.navigation.NavigationViewModel
 import com.joseleandro.scaniqo.core.security.di.securityModule
@@ -32,6 +33,7 @@ val appModule = module {
         preferencesDataModule,
         signaturesDataModule,
         backupDataModule,
+        billingModule,
         adsModule,
         securityModule,
         documentActionsModule,

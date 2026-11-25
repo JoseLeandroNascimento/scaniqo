@@ -2,4 +2,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="ads_label">विज्ञापन</string>
     <string name="ads_preview_label">बैनर का पूर्वावलोकन</string>
+    <string name="ads_premium_ad_free">Premium के साथ बिना विज्ञापनों के इस्तेमाल करें</string>
 </resources>
