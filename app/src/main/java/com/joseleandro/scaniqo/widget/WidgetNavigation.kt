@@ -38,6 +38,6 @@ internal fun dispatchWidgetDestination(
         WidgetAction.SEARCH -> navigate(AppRoute.DocumentSearch)
         WidgetAction.MERGE -> navigate(AppRoute.DocumentMerge())
         WidgetAction.LIBRARY -> navigate(AppRoute.Documents)
-        WidgetAction.OPEN_DOCUMENT -> navigate(AppRoute.DocumentViewer(checkNotNull(destination.documentId)))
+        WidgetAction.OPEN_DOCUMENT -> navigate(AppRoute.DocumentReader(checkNotNull(destination.documentId)))
     }
 }

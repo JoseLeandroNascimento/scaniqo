@@ -171,7 +171,7 @@ internal fun SignatureImageFlowScreen(
                         enabled = !busy,
                         modifier = Modifier.align(Alignment.CenterHorizontally).testTag("signature_image_revise"),
                     ) {
-                        Icon(painterResource(if (editor.fromCamera) CoreResourcesR.drawable.ic_document_scan else CoreResourcesR.drawable.ic_signature_crop), null,
+                        Icon(painterResource(if (editor.fromCamera) CoreResourcesR.drawable.ic_symbol_photo_camera else CoreResourcesR.drawable.ic_signature_crop), null,
                             Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(stringResource(if (editor.fromCamera) R.string.signature_import_retake else R.string.signature_import_adjust_crop))

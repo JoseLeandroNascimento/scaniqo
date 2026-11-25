@@ -99,7 +99,7 @@ fun DocumentSignaturePicker(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
-                            Icon(painterResource(CoreResourcesR.drawable.ic_tool_signature), null, Modifier.size(24.dp))
+                            Icon(painterResource(CoreResourcesR.drawable.ic_symbol_draw), null, Modifier.size(24.dp))
                             Column(Modifier.weight(1f)) {
                                 Text(document.name, style = MaterialTheme.typography.titleSmall)
                                 Text(pluralStringResource(CoreResourcesR.plurals.document_page_count, document.pageCount, document.pageCount),

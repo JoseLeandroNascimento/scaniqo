@@ -240,7 +240,7 @@ private fun DocumentPageImage(
                 if (compact) {
                     IconButton(onClick = { retry++ }) {
                         Icon(
-                            painter = painterResource(CoreResourcesR.drawable.ic_tag_receipt),
+                            painter = painterResource(CoreResourcesR.drawable.ic_symbol_refresh),
                             contentDescription = retryDescription,
                             tint = Color(0xFF495461),
                         )

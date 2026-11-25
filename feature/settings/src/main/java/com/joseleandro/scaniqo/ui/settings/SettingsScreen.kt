@@ -139,14 +139,14 @@ internal fun SettingsScreen(
                         item { PersonalizationEntry(preferences, onPersonalization) }
                         item {
                             SettingsGroup(stringResource(R.string.localization_title)) {
-                                SettingsDestination(R.drawable.ic_settings_device, stringResource(R.string.localization_language),
+                                SettingsDestination(CoreResourcesR.drawable.ic_symbol_translate, stringResource(R.string.localization_language),
                                     currentLanguageSummary(), onLanguage)
                             }
                         }
                         item {
                             SettingsGroup(stringResource(R.string.settings_pdf_export)) {
                                 SettingsDestination(
-                                    CoreResourcesR.drawable.ic_tool_quality, stringResource(R.string.settings_pdf_defaults),
+                                    CoreResourcesR.drawable.ic_symbol_picture_as_pdf, stringResource(R.string.settings_pdf_defaults),
                                     stringResource(R.string.settings_pdf_summary, stringResource(preferences.exportQuality.title()),
                                         preferences.imageFormat.name), onPdf,
                                 )
@@ -163,7 +163,7 @@ internal fun SettingsScreen(
                         }
                         item {
                             SettingsGroup(stringResource(R.string.settings_tutorial_group)) {
-                                SettingsDestination(CoreResourcesR.drawable.ic_document_search, stringResource(R.string.settings_tutorial_replay),
+                                SettingsDestination(CoreResourcesR.drawable.ic_symbol_auto_stories, stringResource(R.string.settings_tutorial_replay),
                                     stringResource(R.string.settings_tutorial_summary), onTutorial)
                             }
                         }
@@ -173,14 +173,14 @@ internal fun SettingsScreen(
                                 enabled = adsPrivacyOptionsEnabled,
                                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                             ) {
-                                Icon(painterResource(CoreResourcesR.drawable.ic_tool_lock), null, Modifier.size(18.dp))
+                                Icon(painterResource(CoreResourcesR.drawable.ic_symbol_privacy_tip), null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
                                 Text(stringResource(R.string.ads_privacy_options), textAlign = TextAlign.Center)
                             }
                         }
                         item {
                             TextButton(onClick = { restore = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                                Icon(painterResource(CoreResourcesR.drawable.ic_document_undo), null, Modifier.size(18.dp))
+                                Icon(painterResource(CoreResourcesR.drawable.ic_symbol_settings_backup_restore), null, Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
                                 Text(stringResource(R.string.settings_restore), textAlign = TextAlign.Center)
                             }
@@ -209,6 +209,16 @@ internal fun SettingsScreen(
                     }
                     SettingsSection.PDF -> {
                         item {
+                            SettingsGroup(stringResource(R.string.settings_performance)) {
+                                SettingsToggle(
+                                    CoreResourcesR.drawable.ic_symbol_memory,
+                                    stringResource(R.string.settings_advanced_processing),
+                                    stringResource(R.string.settings_advanced_processing_body),
+                                    preferences.advancedProcessingEnabled,
+                                ) { onChange(SettingsChange.AdvancedProcessing(it)) }
+                            }
+                        }
+                        item {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                 SectionTitle(stringResource(R.string.settings_quality))
                                 Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -224,7 +234,7 @@ internal fun SettingsScreen(
                         }
                         item {
                             SettingsGroup(stringResource(R.string.settings_pdf_defaults)) {
-                                SettingsToggle(CoreResourcesR.drawable.ic_document_search, stringResource(R.string.settings_ocr),
+                                SettingsToggle(CoreResourcesR.drawable.ic_symbol_text_snippet, stringResource(R.string.settings_ocr),
                                     stringResource(R.string.settings_ocr_body), preferences.ocrEnabled) { onChange(SettingsChange.Ocr(it)) }
                                 SettingsDivider()
                                 SettingsToggle(R.drawable.ic_overlay_number, stringResource(R.string.settings_numbering),
@@ -269,7 +279,7 @@ internal fun SettingsScreen(
     }
     if (restore) AlertDialog(
         onDismissRequest = { restore = false },
-        icon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_undo), null) },
+        icon = { Icon(painterResource(CoreResourcesR.drawable.ic_symbol_settings_backup_restore), null) },
         title = { Text(stringResource(R.string.settings_restore_title)) },
         text = { Text(stringResource(R.string.settings_restore_body)) },
         confirmButton = {
@@ -476,9 +486,9 @@ private fun QualityChoice(value: PdfExportQuality, selected: Boolean, onClick: (
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             Icon(painterResource(when (value) {
-                PdfExportQuality.HIGH_QUALITY -> CoreResourcesR.drawable.ic_tag_star
-                PdfExportQuality.BALANCED -> CoreResourcesR.drawable.ic_tool_quality
-                PdfExportQuality.SMALL -> CoreResourcesR.drawable.ic_tool_compress
+                PdfExportQuality.HIGH_QUALITY -> CoreResourcesR.drawable.ic_symbol_high_quality
+                PdfExportQuality.BALANCED -> CoreResourcesR.drawable.ic_symbol_balance
+                PdfExportQuality.SMALL -> CoreResourcesR.drawable.ic_symbol_compress
             }), null, tint = MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(stringResource(value.title()), style = MaterialTheme.typography.titleSmall)

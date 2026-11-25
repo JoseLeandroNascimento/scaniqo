@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reader_edit_document">编辑文档</string>
+    <string name="reader_loading">正在打开文档…</string>
+    <string name="reader_load_error">无法打开文档</string>
+</resources>

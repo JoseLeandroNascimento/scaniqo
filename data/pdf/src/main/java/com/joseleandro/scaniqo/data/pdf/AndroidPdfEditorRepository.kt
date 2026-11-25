@@ -52,7 +52,10 @@ class AndroidPdfEditorRepository(
     private val settingsRepository: AppSettingsRepository? = null,
 ) : PdfEditorRepository {
     private val files = PdfWorkspaceFiles(context)
-    private val composer = PdfBoxComposer(files)
+    private val imageFilterProcessor = PdfImageFilterProcessor(advancedProcessingEnabled = {
+        settingsRepository?.settings?.value?.advancedProcessingEnabled == true
+    })
+    private val composer = PdfBoxComposer(files, imageFilterProcessor)
     private val filterThumbnailRenderer = PdfFilterThumbnailRenderer(files, composer)
     private val previews = PdfPreviewSnapshotCache()
     private val finalSnapshots = mutableMapOf<String, PdfFinalExportSnapshot>()

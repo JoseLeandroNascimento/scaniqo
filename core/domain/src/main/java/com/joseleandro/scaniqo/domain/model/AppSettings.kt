@@ -3,7 +3,7 @@ package com.joseleandro.scaniqo.domain.model
 enum class AppThemeMode { SYSTEM, LIGHT, DARK }
 enum class AppColorTheme { ORIGINAL, OCEAN, FOREST, LAVENDER, ROSE, SUNSET }
 
-/** Preferências de novas operações; um projeto salvo conserva suas próprias opções. */
+/** Preferências do aplicativo; um projeto salvo conserva suas próprias opções de exportação. */
 data class AppSettings(
     val themeMode: AppThemeMode = AppThemeMode.SYSTEM,
     val colorTheme: AppColorTheme = AppColorTheme.ORIGINAL,
@@ -12,4 +12,5 @@ data class AppSettings(
     val pageNumbers: Boolean = false,
     val imageFormat: PdfImageFormat = PdfImageFormat.JPEG,
     val compressionLevel: PdfCompressionLevel = PdfCompressionLevel.BALANCED,
+    val advancedProcessingEnabled: Boolean = false,
 )

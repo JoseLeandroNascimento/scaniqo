@@ -26,6 +26,18 @@ client secret ou refresh token. Não acrescente segredos ao repositório.
 Erro de configuração do OAuth (código 10) normalmente indica pacote/certificado,
 projeto ou consentimento configurados incorretamente.
 
+DIAGNÓSTICO DA CONEXÃO
+- O retorno da autorização é interpretado mesmo quando a Activity informa
+  cancelamento, pois o Intent pode conter o erro real do Google.
+- Falhas mostram um aviso e um cartão persistente com a opção de tentar novamente.
+  Cancelamento sem outro motivo também informa que a autorização não foi concluída.
+- No Logcat, filtre pela tag DriveAuthorization. O registro inclui a categoria
+  e o statusCode do Google, sem tokens, e-mail ou conteúdo bruto da resposta.
+  Código 10: conferir OAuth/pacote/certificado; 7 ou 15: rede/tempo esgotado;
+  16: autorização cancelada. Sem código, o Google não forneceu um ApiException.
+- Esses códigos não confirmam sozinhos o estado do projeto no Google Cloud.
+  Confira o cadastro OAuth, a API habilitada e a audiência nos passos acima.
+
 FLUXO DISPONÍVEL
 - Novos backups usam o formato v2: somente PDFs finais salvos, com nomes legíveis
   na raiz do ZIP, e um manifesto mínimo de nomes, datas, páginas, proteção,

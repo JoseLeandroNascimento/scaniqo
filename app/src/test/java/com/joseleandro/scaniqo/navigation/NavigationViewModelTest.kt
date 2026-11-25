@@ -27,13 +27,13 @@ class NavigationViewModelTest {
     @Test
     fun openingASearchResultReturnsToSearchAndItsStackCanBeRestored() {
         viewModel.navigateTo(AppRoute.DocumentSearch)
-        viewModel.navigateTo(AppRoute.DocumentViewer(7, initialPageNumber = 4))
+        viewModel.navigateTo(AppRoute.DocumentReader(7, initialPageNumber = 4))
         val serializer = NavBackStackSerializer(AppRoute.serializer())
         val stack = NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray())
         val restored = Json.decodeFromString(serializer, Json.encodeToString(serializer, stack))
 
         assertEquals(
-            listOf(AppRoute.Documents, AppRoute.DocumentSearch, AppRoute.DocumentViewer(7, initialPageNumber = 4)),
+            listOf(AppRoute.Documents, AppRoute.DocumentSearch, AppRoute.DocumentReader(7, initialPageNumber = 4)),
             restored.toList(),
         )
         viewModel.goBack()
@@ -43,17 +43,40 @@ class NavigationViewModelTest {
     }
 
     @Test
-    fun returningFromAnEditorPreservesTheSearchDestinationAndItsPage() {
-        val viewer = AppRoute.DocumentViewer(7, initialPageNumber = 4)
+    fun returningFromAnEditorPreservesTheReaderAndSearchPage() {
+        val reader = AppRoute.DocumentReader(7, initialPageNumber = 4)
+        val editor = AppRoute.DocumentViewer(7, initialPageNumber = 6)
         viewModel.navigateTo(AppRoute.DocumentSearch)
-        viewModel.navigateTo(viewer)
+        viewModel.navigateTo(reader)
+        viewModel.navigateTo(editor)
         viewModel.navigateTo(AppRoute.DocumentEditorTool(7, DocumentTool.FORMS))
 
         viewModel.goBack()
-
-        assertEquals(viewer, viewModel.backStack.last())
+        assertEquals(editor, viewModel.backStack.last())
+        viewModel.goBack()
+        assertEquals(reader, viewModel.backStack.last())
         viewModel.goBack()
         assertEquals(AppRoute.DocumentSearch, viewModel.backStack.last())
+    }
+
+    @Test
+    fun readerAndEditorRemainDistinctAfterRestoringALargeDocumentId() {
+        val documentId = Long.MAX_VALUE - 3
+        val reader = AppRoute.DocumentReader(documentId)
+        val editor = AppRoute.DocumentViewer(documentId, initialPageNumber = 2)
+        viewModel.navigateTo(reader)
+        viewModel.navigateTo(reader)
+        viewModel.navigateTo(editor)
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        val restored = Json.decodeFromString(serializer, Json.encodeToString(
+            serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+        ))
+
+        assertEquals(listOf(AppRoute.Documents, reader, editor), restored.toList())
+        viewModel.goBack()
+        assertEquals(reader, viewModel.backStack.last())
+        viewModel.goBack()
+        assertEquals(listOf(AppRoute.Documents), viewModel.backStack)
     }
 
     @Test

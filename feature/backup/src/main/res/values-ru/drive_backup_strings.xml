@@ -40,6 +40,7 @@
     <string name="backup_cancelling">Безопасная отмена…</string>
     <string name="backup_keep_open">Не закрывайте этот экран до завершения. Выход отменяет операцию.</string>
     <string name="backup_error_auth">Не удалось авторизоваться в Google Drive. Подключитесь заново.</string>
+    <string name="backup_error_auth_canceled">Подключение к Google Drive не завершено. Авторизация была отменена или окно Google было закрыто. Повторите попытку и завершите авторизацию.</string>
     <string name="backup_error_configuration">Google не распознал эту версию приложения. Обновите приложение или обратитесь в поддержку.</string>
     <string name="backup_error_permission">Разрешите доступ к файлам Scaniqo для продолжения.</string>
     <string name="backup_error_network">Не удалось подключиться. Проверьте интернет и повторите попытку.</string>

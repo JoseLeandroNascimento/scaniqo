@@ -243,7 +243,7 @@ fun DocumentMergeSelectionContent(
                                     )
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.merge_motion_device)) },
-                                        leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_import), null, Modifier.size(20.dp)) },
+                                        leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_symbol_file_open), null, Modifier.size(20.dp)) },
                                         enabled = controlsEnabled,
                                         onClick = { sourceMenu = false; onPickFiles() },
                                     )
@@ -312,7 +312,7 @@ fun DocumentMergeSelectionContent(
                 ) {
                     val showVideo = actionShowsVideo && selected.size >= minimumSelection
                     if (!showVideo) {
-                        Icon(painterResource(CoreResourcesR.drawable.ic_tool_merge), null, Modifier.size(20.dp))
+                        Icon(painterResource(CoreResourcesR.drawable.ic_symbol_merge), null, Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
                     }
                     ToolAdActionContent(

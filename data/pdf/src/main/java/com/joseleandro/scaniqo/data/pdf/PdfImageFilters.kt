@@ -24,7 +24,8 @@ internal object PdfImageFilters {
         filter: PdfImageFilter,
         width: Int,
         height: Int,
-        intensity: Float = 1f
+        intensity: Float = 1f,
+        acceleration: PdfFilterAcceleration? = null,
     ) {
         currentCoroutineContext().ensureActive()
         require(width >= 0 && height >= 0 && width.toLong() * height == pixels.size.toLong()) {
@@ -32,6 +33,7 @@ internal object PdfImageFilters {
         }
         require(intensity.isFinite() && intensity in 0f..1f) { "Intensidade inválida." }
         if (filter == PdfImageFilter.ORIGINAL || pixels.isEmpty() || intensity == 0f) return
+        if (acceleration?.tryApply(pixels, filter, width, height, intensity) == true) return
         // Filtros pontuais misturam a intensidade no próprio pixel, sem duplicar a página inteira.
         if (filter == PdfImageFilter.AUTO || filter == PdfImageFilter.GRAYSCALE ||
             filter == PdfImageFilter.BLACK_WHITE) {
@@ -48,11 +50,15 @@ internal object PdfImageFilters {
             PdfImageFilter.AUTO, PdfImageFilter.GRAYSCALE, PdfImageFilter.BLACK_WHITE ->
                 adjustTones(pixels, filter)
             PdfImageFilter.ENHANCE -> {
-                removeIsolatedNoise(pixels, width, height)
-                smoothPreservingEdges(pixels, width, height)
+                if (acceleration?.tryApply(pixels, PdfImageFilter.DENOISE, width, height, 1f) != true) {
+                    removeIsolatedNoise(pixels, width, height)
+                    smoothPreservingEdges(pixels, width, height)
+                }
                 normalizeLighting(pixels, width, height, shadowOnly = true)
                 adjustTones(pixels, PdfImageFilter.AUTO)
-                sharpen(pixels, width, height)
+                if (acceleration?.tryApply(pixels, PdfImageFilter.SHARPEN, width, height, 1f) != true) {
+                    sharpen(pixels, width, height)
+                }
             }
             PdfImageFilter.SHADOW_REMOVAL ->
                 normalizeLighting(pixels, width, height, shadowOnly = true)

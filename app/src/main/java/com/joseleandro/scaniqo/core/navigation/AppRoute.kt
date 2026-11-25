@@ -37,6 +37,13 @@ sealed interface AppRoute : NavKey {
     data object DocumentSearch : AppRoute
 
     @Serializable
+    @SerialName("document_reader")
+    data class DocumentReader(
+        val documentId: Long,
+        val initialPageNumber: Int? = null,
+    ) : AppRoute
+
+    @Serializable
     @SerialName("document_viewer")
     data class DocumentViewer(
         val documentId: Long,

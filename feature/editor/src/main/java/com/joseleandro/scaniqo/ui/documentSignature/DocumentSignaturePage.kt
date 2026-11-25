@@ -124,7 +124,7 @@ internal fun DocumentSignaturePage(
                     enabled = state.canEdit && draft == null,
                 ) {
                     Icon(
-                        painterResource(CoreResourcesR.drawable.ic_tool_signature),
+                        painterResource(CoreResourcesR.drawable.ic_symbol_layers),
                         stringResource(R.string.signature_page_elements, page.signatures.size),
                     )
                 }

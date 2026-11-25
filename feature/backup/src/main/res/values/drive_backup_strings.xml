@@ -40,6 +40,7 @@
     <string name="backup_cancelling">Canceling safely…</string>
     <string name="backup_keep_open">Keep this screen open until complete. Leaving it cancels the operation.</string>
     <string name="backup_error_auth">Could not authorize Google Drive. Connect again.</string>
+    <string name="backup_error_auth_canceled">The connection to Google Drive was not completed. Authorization was canceled or the Google window was closed. Try again and complete authorization.</string>
     <string name="backup_error_configuration">Google could not recognize this app version. Update the app or contact support.</string>
     <string name="backup_error_permission">Authorize access to Scaniqo files to continue.</string>
     <string name="backup_error_network">Could not connect. Check your internet connection and try again.</string>

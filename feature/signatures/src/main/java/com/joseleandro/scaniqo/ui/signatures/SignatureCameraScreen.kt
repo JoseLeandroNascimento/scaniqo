@@ -574,7 +574,7 @@ private fun SignatureCameraCapture(
                     .testTag("signature_camera_capture"),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
             ) {
-                Icon(painterResource(CoreResourcesR.drawable.ic_document_scan), contentDescription = null)
+                Icon(painterResource(CoreResourcesR.drawable.ic_symbol_photo_camera), contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text(stringResource(R.string.signature_scan_capture_now), textAlign = TextAlign.Center)
             }

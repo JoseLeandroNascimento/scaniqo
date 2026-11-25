@@ -1,0 +1,58 @@
+Ícones do Scaniqo
+
+Origem dos novos recursos: Google Material Symbols.
+Catálogo: https://fonts.google.com/icons
+Guia e licença Apache 2.0: https://developers.google.com/fonts/docs/material_symbols
+Fontes oficiais: https://github.com/google/material-design-icons
+
+Importados como VectorDrawable XML pelo downloader de Material Symbols do Android Studio.
+Configuração: opsz,wght,FILL,GRAD,ROND@24,400,0,0,100.
+Os arquivos ic_symbol_*.xml mantêm o código fornecido pelo downloader.
+Local: core/resources/src/main/res/drawable. Sem pacote adicional ou download em runtime.
+
+Critérios
+- A mesma ação usa o mesmo símbolo no editor, biblioteca, ferramentas e widgets.
+- Buscar é lupa; reconhecer texto é text_snippet; capturar foto é photo_camera.
+- Importar arquivo é file_open; baixar e compartilhar mantêm seus símbolos existentes.
+- Desfazer edição, restaurar backup, restaurar da lixeira e restaurar padrões são ações distintas.
+- Menus usam três pontos; alças de arraste ficam reservadas à reordenação.
+- Ícones decorativos usam o texto do controle como descrição acessível.
+- Marca do app, etiquetas e ícones convencionais já adequados foram preservados.
+
+Novos símbolos e aplicação
+memory: processamento avançado
+translate: idioma
+picture_as_pdf: preferências de PDF
+auto_stories: tutorial
+privacy_tip: privacidade
+settings_backup_restore: restaurar configurações
+text_snippet: texto pesquisável / OCR
+high_quality: qualidade máxima ao salvar
+balance: qualidade equilibrada
+restore_page: restaurar backup
+cloud_done: backup atual no Drive
+history: backups anteriores
+expand_more: expandir/recolher detalhes
+transform: ajustes de layout
+auto_fix_high: melhoria da qualidade da imagem
+branding_watermark: marca d'água
+opacity: opacidade
+file_copy: repetir elemento em outras páginas
+bookmark_add: guardar texto reutilizável
+layers: lista de elementos/assinaturas
+swap_horiz: substituir assinatura ou documento de origem
+refresh: tentar carregar novamente
+file_open: importar arquivo
+merge: mesclar PDFs
+content_cut: extrair páginas
+photo_library: PDF para imagens
+compress: compactar arquivo
+edit_document: editor de PDF
+draw: assinar / desenhar assinatura
+edit_note: preencher documento
+restore_from_trash: restaurar documento da lixeira
+delete_forever: exclusão definitiva
+photo_camera: capturar/refazer fotografia
+
+A ilustração de prévia dos widgets para launchers antigos permanece um vetor próprio,
+com o desenho de importação atualizado para diferenciar importação de download.

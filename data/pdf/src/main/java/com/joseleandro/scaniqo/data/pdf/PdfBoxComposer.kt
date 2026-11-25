@@ -39,9 +39,12 @@ import kotlinx.coroutines.ensureActive
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
+internal class PdfBoxComposer(
+    private val files: PdfWorkspaceFiles,
+    private val imageFilterProcessor: PdfImageFilterProcessor = PdfImageFilterProcessor(),
+) {
     private val nativeContentCache = PdfNativeContentCache()
-    private val interactiveRenderer = PdfInteractivePageRenderer()
+    private val interactiveRenderer = PdfInteractivePageRenderer(imageFilterProcessor)
     private val pageCaches = mutableMapOf<String, PdfPreviewPageCache>()
     private val exportRasterCaches = mutableMapOf<String, PdfPreviewPageCache>()
 
@@ -220,7 +223,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
             native.sourceWidth, native.sourceHeight, renderArea, visible, maxSide,
         )
         val effective = effectivePreviewPage(spec, source)
-        return PdfFilteredPageRenderer(mapOf(spec.sourceUri to source)).use { renderer ->
+        return PdfFilteredPageRenderer(mapOf(spec.sourceUri to source), imageFilterProcessor).use { renderer ->
             renderer.render(spec.sourceUri, spec.sourcePageIndex, effective.layout, renderSide,
                 captureBounds = native.captureBounds).use { rendered ->
                 currentCoroutineContext().ensureActive()
@@ -392,7 +395,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
             val expectedPages = final?.visual?.pages?.size ?: reusable?.key?.pages?.size
             val reusedIndices = contentIndices.takeIf { previous?.numberOfPages == expectedPages }
             val previousPages = previous?.let { PdfPageIndex(it, currentCoroutineContext()) }
-            val rasterizer = PdfFilteredPageRenderer(sourceFiles).also { filteredPages = it }
+            val rasterizer = PdfFilteredPageRenderer(sourceFiles, imageFilterProcessor).also { filteredPages = it }
             PDDocument(memory()).use { output ->
                 val importer = LayerUtility(output)
                 val pageCopier = PdfReadyPageCopier(output)
@@ -642,7 +645,7 @@ internal class PdfBoxComposer(private val files: PdfWorkspaceFiles) {
                 }
             }
             PdfOcrTextLayer(output).use { ocr ->
-                PdfFilteredPageRenderer(mapOf("ocr" to scratch)).use { renderer ->
+                PdfFilteredPageRenderer(mapOf("ocr" to scratch), imageFilterProcessor).use { renderer ->
                     for ((temporaryIndex, outputIndex) in pageIndices.withIndex()) {
                         currentCoroutineContext().ensureActive()
                         renderer.render("ocr", temporaryIndex, maxSide = 2400).use { rendered ->

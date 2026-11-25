@@ -60,7 +60,7 @@ internal fun DocumentQuickTools(
         ) {
             item(key = "import") {
                 QuickToolCard(
-                    CoreResourcesR.drawable.ic_document_import, CoreResourcesR.string.quick_tools_import,
+                    CoreResourcesR.drawable.ic_symbol_file_open, CoreResourcesR.string.quick_tools_import,
                     CoreResourcesR.string.quick_tools_import_hint, enabled, onImport,
                     modifier = Modifier.width(cardWidth),
                     container = if (dark) Color(0xFF173D58) else Color(0xFFDCEEFF),
@@ -69,7 +69,7 @@ internal fun DocumentQuickTools(
             }
             item(key = "merge") {
                 QuickToolCard(
-                    CoreResourcesR.drawable.ic_tool_merge, CoreResourcesR.string.quick_tools_merge,
+                    CoreResourcesR.drawable.ic_symbol_merge, CoreResourcesR.string.quick_tools_merge,
                     CoreResourcesR.string.quick_tools_merge_hint, enabled, onMerge,
                     modifier = Modifier.width(cardWidth),
                     container = if (dark) Color(0xFF42345E) else Color(0xFFEDE4FF),
@@ -78,7 +78,7 @@ internal fun DocumentQuickTools(
             }
             item(key = "sign") {
                 QuickToolCard(
-                    CoreResourcesR.drawable.ic_tool_signature, CoreResourcesR.string.quick_tools_sign,
+                    CoreResourcesR.drawable.ic_symbol_draw, CoreResourcesR.string.quick_tools_sign,
                     CoreResourcesR.string.quick_tools_sign_hint, enabled, onSign,
                     modifier = Modifier.width(cardWidth),
                     container = if (dark) Color(0xFF21483E) else Color(0xFFDDF3E9),

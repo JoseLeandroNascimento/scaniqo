@@ -367,7 +367,7 @@ private fun CompressionSource(
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             if (enabled) Icon(
-                painterResource(if (document == null) CoreResourcesR.drawable.add_24px else CoreResourcesR.drawable.edit_24px),
+                painterResource(if (document == null) CoreResourcesR.drawable.add_24px else CoreResourcesR.drawable.ic_symbol_swap_horiz),
                 stringResource(R.string.utility_change_pdf), Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.primary,
             )

@@ -70,14 +70,14 @@ internal enum class CatalogTool(
     @StringRes val title: Int, @StringRes val hint: Int, @DrawableRes val icon: Int,
     val group: ToolGroup, val accent: Color,
 ) {
-    IMPORT(CoreResourcesR.string.quick_tools_import, CoreResourcesR.string.quick_tools_import_hint, CoreResourcesR.drawable.ic_document_import, ToolGroup.ORGANIZE, Color(0xFF396E9A)),
-    MERGE(CoreResourcesR.string.quick_tools_merge, CoreResourcesR.string.quick_tools_merge_hint, CoreResourcesR.drawable.ic_tool_merge, ToolGroup.ORGANIZE, Color(0xFF74549B)),
-    EXTRACT(R.string.tools_hub_split, R.string.tools_hub_split_hint, R.drawable.ic_tool_extract, ToolGroup.ORGANIZE, Color(0xFFAA632B)),
-    PDF_IMAGES(R.string.tools_hub_pdf_images, R.string.tools_hub_pdf_images_hint, R.drawable.ic_tool_export_images, ToolGroup.CONVERT, Color(0xFF9F5358)),
-    COMPRESS(CoreResourcesR.string.tool_catalog_compress, R.string.tool_catalog_compress_hint, CoreResourcesR.drawable.ic_tool_compress, ToolGroup.ORGANIZE, Color(0xFF277F73)),
-    EDITOR(R.string.tools_hub_editor, R.string.tools_hub_editor_hint, CoreResourcesR.drawable.ic_tool_pdf_edit, ToolGroup.EDIT, Color(0xFF376B8E)),
-    SIGN(CoreResourcesR.string.quick_tools_sign, CoreResourcesR.string.quick_tools_sign_hint, CoreResourcesR.drawable.ic_tool_signature, ToolGroup.FILL, Color(0xFF735A91)),
-    FILL_PAGE(R.string.tool_catalog_fill_page, R.string.tool_catalog_fill_hint, CoreResourcesR.drawable.ic_tool_fill_page, ToolGroup.FILL, Color(0xFF387E88)),
+    IMPORT(CoreResourcesR.string.quick_tools_import, CoreResourcesR.string.quick_tools_import_hint, CoreResourcesR.drawable.ic_symbol_file_open, ToolGroup.ORGANIZE, Color(0xFF396E9A)),
+    MERGE(CoreResourcesR.string.quick_tools_merge, CoreResourcesR.string.quick_tools_merge_hint, CoreResourcesR.drawable.ic_symbol_merge, ToolGroup.ORGANIZE, Color(0xFF74549B)),
+    EXTRACT(R.string.tools_hub_split, R.string.tools_hub_split_hint, CoreResourcesR.drawable.ic_symbol_content_cut, ToolGroup.ORGANIZE, Color(0xFFAA632B)),
+    PDF_IMAGES(R.string.tools_hub_pdf_images, R.string.tools_hub_pdf_images_hint, CoreResourcesR.drawable.ic_symbol_photo_library, ToolGroup.CONVERT, Color(0xFF9F5358)),
+    COMPRESS(CoreResourcesR.string.tool_catalog_compress, R.string.tool_catalog_compress_hint, CoreResourcesR.drawable.ic_symbol_compress, ToolGroup.ORGANIZE, Color(0xFF277F73)),
+    EDITOR(R.string.tools_hub_editor, R.string.tools_hub_editor_hint, CoreResourcesR.drawable.ic_symbol_edit_document, ToolGroup.EDIT, Color(0xFF376B8E)),
+    SIGN(CoreResourcesR.string.quick_tools_sign, CoreResourcesR.string.quick_tools_sign_hint, CoreResourcesR.drawable.ic_symbol_draw, ToolGroup.FILL, Color(0xFF735A91)),
+    FILL_PAGE(R.string.tool_catalog_fill_page, R.string.tool_catalog_fill_hint, CoreResourcesR.drawable.ic_symbol_edit_note, ToolGroup.FILL, Color(0xFF387E88)),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

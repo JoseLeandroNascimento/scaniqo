@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reader_edit_document">Редактировать документ</string>
+    <string name="reader_loading">Открытие документа…</string>
+    <string name="reader_load_error">Не удалось открыть документ</string>
+</resources>

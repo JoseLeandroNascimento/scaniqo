@@ -20,6 +20,7 @@ class AdaptiveLayoutTest {
         assertTrue(showNavigationRail(840, AppRoute.Settings))
         assertFalse(showNavigationRail(599, AppRoute.LanguageSettings))
         assertTrue(showNavigationRail(600, AppRoute.LanguageSettings))
+        assertFalse(showNavigationRail(1200, AppRoute.DocumentReader(1)))
         assertFalse(showNavigationRail(1200, AppRoute.DocumentViewer(1)))
         assertFalse(showNavigationRail(1200, AppRoute.DocumentSignature(1)))
     }

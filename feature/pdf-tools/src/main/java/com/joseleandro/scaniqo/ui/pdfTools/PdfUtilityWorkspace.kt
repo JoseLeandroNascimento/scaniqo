@@ -284,7 +284,7 @@ private fun WorkspaceSource(document: DocumentModel?, enabled: Boolean, onChoose
             horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             if (document != null) DocumentThumbnail(document, Modifier.width(48.dp).aspectRatio(595f / 842f)
                 .clip(MaterialTheme.shapes.small))
-            else Icon(painterResource(CoreResourcesR.drawable.ic_document_import), null,
+            else Icon(painterResource(CoreResourcesR.drawable.ic_symbol_file_open), null,
                 Modifier.size(40.dp), tint = MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(document?.name ?: stringResource(R.string.utility_select_pdf),

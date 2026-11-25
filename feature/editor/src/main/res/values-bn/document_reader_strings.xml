@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reader_edit_document">নথি সম্পাদনা করুন</string>
+    <string name="reader_loading">নথি খোলা হচ্ছে…</string>
+    <string name="reader_load_error">নথি খোলা যায়নি</string>
+</resources>

@@ -75,7 +75,7 @@ internal fun DocumentSignatureContextToolbar(
         )
         DocumentSelectionToolbarAction(
             label = stringResource(R.string.signature_context_replace),
-            icon = CoreResourcesR.drawable.ic_document_import,
+            icon = CoreResourcesR.drawable.ic_symbol_swap_horiz,
             enabled = enabled,
             onClick = onReplace,
             modifier = Modifier.testTag("signature_action_replace"),

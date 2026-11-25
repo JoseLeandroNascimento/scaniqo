@@ -40,6 +40,7 @@
     <string name="backup_cancelling">正在安全取消…</string>
     <string name="backup_keep_open">请保持此页面打开，直到操作完成。离开此页面会取消操作。</string>
     <string name="backup_error_auth">无法授权 Google Drive，请重新连接。</string>
+    <string name="backup_error_auth_canceled">未能完成与 Google Drive 的连接。授权已取消或 Google 窗口已关闭。请重试并完成授权。</string>
     <string name="backup_error_configuration">Google 无法识别此应用版本。请更新应用或联系支持人员。</string>
     <string name="backup_error_permission">请授权访问 Scaniqo 文件以继续。</string>
     <string name="backup_error_network">无法连接，请检查网络并重试。</string>

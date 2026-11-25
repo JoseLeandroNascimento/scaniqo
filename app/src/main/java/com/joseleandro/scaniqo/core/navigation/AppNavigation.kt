@@ -43,6 +43,8 @@ import com.joseleandro.scaniqo.widget.canOpenWidgetDestination
 import com.joseleandro.scaniqo.widget.dispatchWidgetDestination
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentToolsViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerRoute
+import com.joseleandro.scaniqo.ui.documentEditor.DocumentReaderRoute
+import com.joseleandro.scaniqo.ui.documentEditor.DocumentReaderViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentEditorToolRoute
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.platform.DocumentToolsHandler
@@ -76,6 +78,7 @@ internal fun AppNavigation(
     documentsViewModel: DocumentsViewModel = koinViewModel(),
     actionsViewModel: DocumentActionsViewModel = koinViewModel(),
     viewerViewModel: DocumentViewerViewModel = koinViewModel(),
+    readerViewModel: DocumentReaderViewModel = koinViewModel(),
     toolsViewModel: DocumentToolsViewModel = koinViewModel(),
     importViewModel: PdfImportViewModel = koinViewModel(),
     mergeViewModel: DocumentQuickMergeViewModel = koinViewModel(),
@@ -266,7 +269,7 @@ internal fun AppNavigation(
                         onAllTools = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.Tools) },
                         onMergePdfs = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.DocumentMerge()) },
                         onSignDocument = { if (canStartDocumentAction) showSignaturePicker = true },
-                        onOpenDocument = { viewModel.navigateTo(AppRoute.DocumentViewer(it)) },
+                        onOpenDocument = { viewModel.navigateTo(AppRoute.DocumentReader(it)) },
                         adsEnabled = currentRoute == AppRoute.Documents && canStartDocumentAction &&
                             !showSignaturePicker && drawerState.currentValue == DrawerValue.Closed &&
                             drawerState.targetValue == DrawerValue.Closed,
@@ -328,7 +331,7 @@ internal fun AppNavigation(
                             utilityImportedDocumentId = null
                             utilityImportedTool = null
                         },
-                        onOpenDocument = { id -> viewModel.navigateTo(AppRoute.DocumentViewer(id)) },
+                        onOpenDocument = { id -> viewModel.navigateTo(AppRoute.DocumentReader(id)) },
                     )
                 }
                 entry<AppRoute.DocumentCertificates> { DocumentCertificatesRoute(onBack = viewModel::goBack) }
@@ -336,8 +339,23 @@ internal fun AppNavigation(
                     DocumentSearchRoute(
                         onBack = viewModel::goBack,
                         onOpenDocument = { documentId, pageNumber ->
-                            viewModel.navigateTo(AppRoute.DocumentViewer(documentId, pageNumber))
+                            viewModel.navigateTo(AppRoute.DocumentReader(documentId, pageNumber))
                         },
+                    )
+                }
+                entry<AppRoute.DocumentReader> { route ->
+                    DocumentReaderRoute(
+                        documentId = route.documentId,
+                        initialPageNumber = route.initialPageNumber,
+                        isActive = currentRoute == route,
+                        viewModel = viewerViewModel,
+                        readerViewModel = readerViewModel,
+                        actionsViewModel = actionsViewModel,
+                        onNavigationBack = viewModel::goBack,
+                        onEdit = { pageNumber ->
+                            viewModel.navigateTo(AppRoute.DocumentViewer(route.documentId, pageNumber))
+                        },
+                        onNavigatePasswordSettings = { viewModel.navigateTo(AppRoute.PasswordSettings) },
                     )
                 }
                 entry<AppRoute.DocumentViewer> { route ->
@@ -381,7 +399,7 @@ internal fun AppNavigation(
                         mergeViewModel = mergeViewModel,
                         isActive = currentRoute == route,
                         onRetryDocuments = { documentsViewModel.onEvent(DocumentsEvent.RetryLoad) },
-                        onOpenDocument = { id -> viewModel.navigateTo(AppRoute.DocumentViewer(id)) },
+                        onOpenDocument = { id -> viewModel.navigateTo(AppRoute.DocumentReader(id)) },
                         onBack = viewModel::goBack,
                     )
                 }

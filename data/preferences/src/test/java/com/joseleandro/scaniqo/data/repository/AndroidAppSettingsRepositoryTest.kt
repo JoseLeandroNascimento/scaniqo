@@ -47,12 +47,25 @@ class AndroidAppSettingsRepositoryTest {
         assertEquals(expected, AndroidAppSettingsRepository(context).settings.value)
     }
 
+    @Test fun advancedProcessingCanBeDisabledWithoutChangingOtherPreferences() = runTest {
+        val repository = AndroidAppSettingsRepository(context)
+        val original = customizedSettings()
+        repository.update { original }
+
+        repository.update { it.copy(advancedProcessingEnabled = false) }
+
+        val expected = original.copy(advancedProcessingEnabled = false)
+        assertEquals(expected, repository.settings.value)
+        assertEquals(expected, AndroidAppSettingsRepository(context).settings.value)
+    }
+
     @Test fun unknownEnumNamesAndWrongStoredTypesFallBackPerPreference() {
         check(preferences.edit()
             .putInt("theme_mode", 3)
             .putString("color_theme", "future_theme")
             .putString("export_quality", "obsolete_quality")
             .putString("ocr_enabled", "true")
+            .putString("advanced_processing_enabled", "true")
             .putInt("page_numbers", 1)
             .putFloat("image_format", 1f)
             .putString("compression_level", "unsupported")
@@ -66,6 +79,7 @@ class AndroidAppSettingsRepositoryTest {
             .putString("color_theme", "missing_palette")
             .putString("export_quality", PdfExportQuality.SMALL.name)
             .putBoolean("ocr_enabled", true)
+            .putBoolean("advanced_processing_enabled", true)
             .putBoolean("page_numbers", true)
             .putString("image_format", PdfImageFormat.PNG.name)
             .putString("compression_level", PdfCompressionLevel.STRONG.name)
@@ -147,6 +161,7 @@ class AndroidAppSettingsRepositoryTest {
         colorTheme = AppColorTheme.LAVENDER,
         exportQuality = PdfExportQuality.SMALL,
         ocrEnabled = true,
+        advancedProcessingEnabled = true,
         pageNumbers = true,
         imageFormat = PdfImageFormat.PNG,
         compressionLevel = PdfCompressionLevel.STRONG,

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_performance">কর্মক্ষমতা</string>
+    <string name="settings_advanced_processing">উন্নত প্রক্রিয়াকরণ</string>
+    <string name="settings_advanced_processing_body">সমর্থিত কাজের জন্য হার্ডওয়্যার অ্যাক্সিলারেশন ব্যবহার করে। ডিভাইস অনুযায়ী কর্মক্ষমতা পরিবর্তিত হয়।</string>
     <string name="settings_personalization">ব্যক্তিগতকরণ</string>
     <string name="settings_personalization_body">Scaniqo সাজান আপনার মতো</string>
     <string name="settings_appearance">চেহারা</string>

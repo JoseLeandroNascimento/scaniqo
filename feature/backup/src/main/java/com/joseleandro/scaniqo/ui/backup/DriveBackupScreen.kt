@@ -475,7 +475,7 @@ private fun BackupHeroCard(
                     enabled = enabled && !state.isSavingSettings,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                 ) {
-                    Icon(painterResource(CoreResourcesR.drawable.ic_document_download), null, Modifier.size(20.dp))
+                    Icon(painterResource(CoreResourcesR.drawable.ic_symbol_restore_page), null, Modifier.size(20.dp))
                     Text(
                         stringResource(R.string.backup_restore_latest),
                         Modifier.padding(start = 8.dp),
@@ -840,7 +840,7 @@ private fun BackupTimelineEntry(
             contentColor = if (isCurrent) colors.onSecondaryContainer else colors.onSurfaceVariant,
         ) {
             Icon(
-                painterResource(if (isCurrent) CoreResourcesR.drawable.ic_tag_star else CoreResourcesR.drawable.ic_tag_document),
+                painterResource(if (isCurrent) CoreResourcesR.drawable.ic_symbol_cloud_done else CoreResourcesR.drawable.ic_symbol_history),
                 null, Modifier.padding(8.dp).size(16.dp),
             )
         }
@@ -915,6 +915,7 @@ private fun DriveBackupPhase.label(): Int = when (this) {
 
 internal fun DriveBackupProblem.messageResource(): Int = when (this) {
     DriveBackupProblem.AUTHORIZATION -> R.string.backup_error_auth
+    DriveBackupProblem.AUTHORIZATION_CANCELED -> R.string.backup_error_auth_canceled
     DriveBackupProblem.CONFIGURATION -> R.string.backup_error_configuration
     DriveBackupProblem.API_DISABLED -> R.string.backup_error_api_disabled
     DriveBackupProblem.ACCESS_BLOCKED -> R.string.backup_error_access_blocked
@@ -1041,6 +1042,18 @@ private fun BackupHistoryEmptySheetPreview() {
 @Composable
 private fun DriveBackupDisconnectedPreview() {
     ScaniqoTheme { DriveBackupScreen(DriveBackupUiState(localDocumentCount = 12), {}, {}, {}, {}, {}, {}) }
+}
+
+@Preview(name = "Backup · autorização cancelada", widthDp = 390, heightDp = 850, locale = "pt-rBR")
+@Preview(name = "Autorização cancelada · fonte grande", widthDp = 320, heightDp = 900, fontScale = 1.3f, locale = "pt-rBR")
+@Composable
+private fun DriveBackupAuthorizationCanceledPreview() {
+    ScaniqoTheme {
+        DriveBackupScreen(
+            DriveBackupUiState(localDocumentCount = 12, problem = DriveBackupProblem.AUTHORIZATION_CANCELED),
+            {}, {}, {}, {}, {}, {},
+        )
+    }
 }
 
 @Preview(name = "Backup · erro", widthDp = 390, heightDp = 850, locale = "pt-rBR")

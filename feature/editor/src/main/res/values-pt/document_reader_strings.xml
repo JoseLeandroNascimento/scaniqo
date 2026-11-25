@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reader_edit_document">Editar documento</string>
+    <string name="reader_loading">Abrindo documento…</string>
+    <string name="reader_load_error">Não foi possível abrir o documento</string>
+</resources>

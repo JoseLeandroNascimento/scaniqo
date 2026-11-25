@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_performance">性能</string>
+    <string name="settings_advanced_processing">高级处理</string>
+    <string name="settings_advanced_processing_body">对支持的操作使用硬件加速。性能因设备而异。</string>
     <string name="settings_personalization">个性化</string>
     <string name="settings_personalization_body">让 Scaniqo 更符合您的风格</string>
     <string name="settings_appearance">外观</string>

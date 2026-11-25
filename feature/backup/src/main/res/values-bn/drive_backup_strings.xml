@@ -40,6 +40,7 @@
     <string name="backup_cancelling">নিরাপদে বাতিল হচ্ছে…</string>
     <string name="backup_keep_open">সম্পূর্ণ হওয়া পর্যন্ত এই স্ক্রিন খোলা রাখুন। চলে গেলে কাজটি বাতিল হবে।</string>
     <string name="backup_error_auth">Google Drive-এর অনুমতি পাওয়া যায়নি। আবার সংযুক্ত করুন।</string>
+    <string name="backup_error_auth_canceled">Google Drive-এর সঙ্গে সংযোগ সম্পূর্ণ হয়নি। অনুমোদন বাতিল করা হয়েছে বা Google-এর উইন্ডো বন্ধ করা হয়েছে। আবার চেষ্টা করুন এবং অনুমোদন সম্পূর্ণ করুন।</string>
     <string name="backup_error_configuration">Google অ্যাপের এই সংস্করণ চিনতে পারেনি। অ্যাপ আপডেট করুন বা সহায়তার সঙ্গে যোগাযোগ করুন।</string>
     <string name="backup_error_permission">চালিয়ে যেতে Scaniqo-এর ফাইলে প্রবেশের অনুমতি দিন।</string>
     <string name="backup_error_network">সংযুক্ত হওয়া যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।</string>

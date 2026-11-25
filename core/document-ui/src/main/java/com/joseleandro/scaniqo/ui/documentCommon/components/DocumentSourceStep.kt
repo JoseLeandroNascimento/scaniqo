@@ -232,7 +232,7 @@ fun DocumentSourceOrigins(
                 SourceOriginCard(
                     title = stringResource(R.string.merge_source_device),
                     hint = stringResource(R.string.tool_source_device_hint),
-                    icon = CoreResourcesR.drawable.ic_document_import,
+                    icon = CoreResourcesR.drawable.ic_symbol_file_open,
                     enabled = enabled,
                     compact = true,
                     onClick = onPickDevice,
@@ -252,7 +252,7 @@ fun DocumentSourceOrigins(
                 SourceOriginCard(
                     title = stringResource(R.string.merge_source_device),
                     hint = stringResource(R.string.tool_source_device_hint),
-                    icon = CoreResourcesR.drawable.ic_document_import,
+                    icon = CoreResourcesR.drawable.ic_symbol_file_open,
                     enabled = enabled,
                     compact = false,
                     onClick = onPickDevice,

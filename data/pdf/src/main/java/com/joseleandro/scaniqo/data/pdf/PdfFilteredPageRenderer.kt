@@ -13,7 +13,10 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
 /** Renderização limitada a uma página por vez; também atende análise e OCR locais. */
-internal class PdfFilteredPageRenderer(private val sourceFiles: Map<String, File>) : Closeable {
+internal class PdfFilteredPageRenderer(
+    private val sourceFiles: Map<String, File>,
+    private val imageFilterProcessor: PdfImageFilterProcessor = PdfImageFilterProcessor(),
+) : Closeable {
     private val renderers = mutableMapOf<String, PdfRenderer>()
 
     suspend fun render(
@@ -53,7 +56,7 @@ internal class PdfFilteredPageRenderer(private val sourceFiles: Map<String, File
                         pixels, width, height, layout.backgroundMask, layout.crop, captureBounds = captureBounds,
                     )
                     val corrected = PdfImageCorrections.apply(isolated, width, height, layout)
-                    PdfImageFilters.apply(corrected, layout.imageFilter, width, height, layout.filterIntensity)
+                    imageFilterProcessor.apply(corrected, layout.imageFilter, width, height, layout.filterIntensity)
                     bitmap.setPixels(corrected, 0, width, 0, 0, width, height)
                 }
                 FilteredPage(bitmap, viewport.width, viewport.height)

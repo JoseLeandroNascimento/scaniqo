@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reader_edit_document">Edit dokumen</string>
+    <string name="reader_loading">Membuka dokumen…</string>
+    <string name="reader_load_error">Tidak dapat membuka dokumen</string>
+</resources>

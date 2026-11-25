@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_performance">प्रदर्शन</string>
+    <string name="settings_advanced_processing">उन्नत प्रोसेसिंग</string>
+    <string name="settings_advanced_processing_body">समर्थित कार्यों के लिए हार्डवेयर त्वरण का उपयोग करता है। प्रदर्शन डिवाइस के अनुसार बदलता है।</string>
     <string name="settings_personalization">पसंद के अनुसार</string>
     <string name="settings_personalization_body">Scaniqo को अपनी पसंद का रूप दें</string>
     <string name="settings_appearance">रूप</string>

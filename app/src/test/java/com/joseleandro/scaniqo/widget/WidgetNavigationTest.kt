@@ -39,7 +39,7 @@ class WidgetNavigationTest {
             WidgetAction.SEARCH to AppRoute.DocumentSearch,
             WidgetAction.MERGE to AppRoute.DocumentMerge(),
             WidgetAction.LIBRARY to AppRoute.Documents,
-            WidgetAction.OPEN_DOCUMENT to AppRoute.DocumentViewer(57),
+            WidgetAction.OPEN_DOCUMENT to AppRoute.DocumentReader(57),
         )
         expected.forEach { (action, route) ->
             val actual = mutableListOf<AppRoute>()

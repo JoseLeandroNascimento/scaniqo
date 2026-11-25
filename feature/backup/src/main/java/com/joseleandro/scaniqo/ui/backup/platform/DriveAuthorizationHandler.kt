@@ -1,7 +1,7 @@
 package com.joseleandro.scaniqo.ui.backup.platform
 
 import android.accounts.Account
-import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,18 +15,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
-import com.google.android.gms.auth.api.identity.AuthorizationResult
 import com.google.android.gms.auth.api.identity.ClearTokenRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.RevokeAccessRequest
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Scope
 import com.joseleandro.scaniqo.ui.backup.DriveBackupViewModel
 import com.joseleandro.scaniqo.ui.backup.effect.DriveBackupEffect
 import com.joseleandro.scaniqo.ui.backup.state.DriveBackupProblem
-
-private const val DRIVE_FILE_SCOPE = "https://www.googleapis.com/auth/drive.file"
 
 private class AuthorizationUiLifetime {
     var active = true
@@ -44,30 +39,25 @@ internal fun DriveAuthorizationHandler(viewModel: DriveBackupViewModel) {
         onDispose { lifetime.active = false }
     }
 
-    fun complete(requestId: Long, result: AuthorizationResult) {
-        val token = result.accessToken
-        if (DRIVE_FILE_SCOPE !in result.grantedScopes || token.isNullOrBlank()) {
-            viewModel.authorizationFailed(requestId, DriveBackupProblem.PERMISSION)
-        } else viewModel.authorized(requestId, token)
+    fun complete(requestId: Long, outcome: DriveAuthorizationOutcome) {
+        if (!lifetime.active || !viewModel.isAwaitingAuthorization(requestId)) return
+        when (outcome) {
+            is DriveAuthorizationOutcome.Authorized -> viewModel.authorized(requestId, outcome.token)
+            is DriveAuthorizationOutcome.Failed -> {
+                Log.w("DriveAuthorization", "Authorization failed: ${outcome.problem}; statusCode=${outcome.statusCode}")
+                viewModel.authorizationFailed(requestId, outcome.problem)
+            }
+        }
     }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
         val requestId = launchedRequest
         launchedRequest = -1L
         if (!viewModel.isAwaitingAuthorization(requestId)) return@rememberLauncherForActivityResult
-        val data = result.data
-        when {
-            data?.hasExtra(ActivityResultContracts.StartIntentSenderForResult.EXTRA_SEND_INTENT_EXCEPTION) == true ->
-                viewModel.authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION)
-            result.resultCode == Activity.RESULT_CANCELED -> viewModel.authorizationFailed(requestId)
-            result.resultCode != Activity.RESULT_OK || data == null ->
-                viewModel.authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION)
-            else -> try {
-                complete(requestId, client.getAuthorizationResultFromIntent(data))
-            } catch (error: Exception) {
-                viewModel.authorizationFailed(requestId, authorizationProblem(error))
-            }
-        }
+        complete(
+            requestId,
+            resolveDriveAuthorizationResult(result.resultCode, result.data, client::getAuthorizationResultFromIntent),
+        )
     }
 
     fun authorize(requestId: Long) {
@@ -98,18 +88,22 @@ internal fun DriveAuthorizationHandler(viewModel: DriveBackupViewModel) {
                             launcher.launch(IntentSenderRequest.Builder(intent.intentSender).build())
                         } catch (error: Exception) {
                             launchedRequest = -1L
-                            viewModel.authorizationFailed(requestId, authorizationProblem(error))
+                            complete(requestId, authorizationFailure(error))
                         }
-                    } else complete(requestId, result)
+                    } else complete(requestId, authorizationOutcome(result))
                 }
                 .addOnFailureListener { error ->
                     if (!lifetime.active) return@addOnFailureListener
                     if (lifetime.inFlight == requestId) lifetime.inFlight = null
-                    viewModel.authorizationFailed(requestId, authorizationProblem(error))
+                    complete(requestId, authorizationFailure(error))
+                }
+                .addOnCanceledListener {
+                    if (lifetime.inFlight == requestId) lifetime.inFlight = null
+                    complete(requestId, DriveAuthorizationOutcome.Failed(DriveBackupProblem.AUTHORIZATION_CANCELED))
                 }
         } catch (error: Exception) {
             lifetime.inFlight = null
-            viewModel.authorizationFailed(requestId, authorizationProblem(error))
+            complete(requestId, authorizationFailure(error))
         }
     }
 
@@ -140,11 +134,4 @@ internal fun DriveAuthorizationHandler(viewModel: DriveBackupViewModel) {
             }
         }
     }
-}
-
-private fun authorizationProblem(error: Exception): DriveBackupProblem? = when ((error as? ApiException)?.statusCode) {
-    CommonStatusCodes.CANCELED -> null
-    CommonStatusCodes.DEVELOPER_ERROR -> DriveBackupProblem.CONFIGURATION
-    CommonStatusCodes.NETWORK_ERROR -> DriveBackupProblem.NETWORK
-    else -> DriveBackupProblem.AUTHORIZATION
 }

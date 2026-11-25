@@ -40,6 +40,7 @@
     <string name="backup_cancelling">Annulation sécurisée…</string>
     <string name="backup_keep_open">Gardez cet écran ouvert jusqu’à la fin. Le quitter annule l’opération.</string>
     <string name="backup_error_auth">Impossible d’autoriser Google Drive. Reconnectez-vous.</string>
+    <string name="backup_error_auth_canceled">La connexion à Google Drive n’a pas été finalisée. L’autorisation a été annulée ou la fenêtre Google a été fermée. Réessayez et terminez l’autorisation.</string>
     <string name="backup_error_configuration">Google n’a pas reconnu cette version de l’application. Mettez-la à jour ou contactez l’assistance.</string>
     <string name="backup_error_permission">Autorisez l’accès aux fichiers de Scaniqo pour continuer.</string>
     <string name="backup_error_network">Impossible de se connecter. Vérifiez votre connexion Internet et réessayez.</string>

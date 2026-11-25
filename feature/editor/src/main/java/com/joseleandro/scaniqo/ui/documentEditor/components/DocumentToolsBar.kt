@@ -237,16 +237,16 @@ private fun DocumentToolButton(
                 Icon(
                     painterResource(
                         when (tool) {
-                            DocumentTool.LAYOUT -> CoreResourcesR.drawable.ic_tool_adjust
+                            DocumentTool.LAYOUT -> CoreResourcesR.drawable.ic_symbol_transform
                             DocumentTool.FILTERS -> R.drawable.ic_tool_filters
-                                                    DocumentTool.QUALITY -> CoreResourcesR.drawable.ic_tool_quality
+                            DocumentTool.QUALITY -> CoreResourcesR.drawable.ic_symbol_auto_fix_high
                             DocumentTool.PAGES -> CoreResourcesR.drawable.ic_tool_pages
-                            DocumentTool.MERGE -> CoreResourcesR.drawable.ic_tool_merge
-                            DocumentTool.SIGNATURES -> CoreResourcesR.drawable.ic_tool_signature
+                            DocumentTool.MERGE -> CoreResourcesR.drawable.ic_symbol_merge
+                            DocumentTool.SIGNATURES -> CoreResourcesR.drawable.ic_symbol_draw
                             DocumentTool.PROTECTION -> CoreResourcesR.drawable.ic_tool_lock
-                            DocumentTool.FORMS -> CoreResourcesR.drawable.ic_tool_fill_page
+                            DocumentTool.FORMS -> CoreResourcesR.drawable.ic_symbol_edit_note
                             DocumentTool.ANNOTATIONS -> CoreResourcesR.drawable.ic_tool_adjust
-                            DocumentTool.WATERMARK -> R.drawable.ic_tool_watermark
+                            DocumentTool.WATERMARK -> CoreResourcesR.drawable.ic_symbol_branding_watermark
                             DocumentTool.REDACTION -> CoreResourcesR.drawable.ic_tool_lock
                         },
                     ),

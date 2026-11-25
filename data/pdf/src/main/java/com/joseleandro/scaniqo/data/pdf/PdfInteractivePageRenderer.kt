@@ -11,7 +11,9 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
 /** Quatro fontes pequenas evitam decodificar o PDF novamente a cada movimento de um controle. */
-internal class PdfInteractivePageRenderer {
+internal class PdfInteractivePageRenderer(
+    private val imageFilterProcessor: PdfImageFilterProcessor = PdfImageFilterProcessor(),
+) {
     private data class Key(val source: PdfSourceStamp, val pageIndex: Int, val crop: PdfCropBounds?)
     private val originals = LinkedHashMap<Key, PdfFilteredPageRenderer.FilteredPage>(4, .75f, true)
 
@@ -55,7 +57,7 @@ internal class PdfInteractivePageRenderer {
                     pixels, width, height, layout.backgroundMask, layout.crop, captureBounds = captureBounds,
                 )
                 val corrected = PdfImageCorrections.apply(isolated, width, height, layout)
-                PdfImageFilters.apply(corrected, layout.imageFilter, width, height, layout.filterIntensity)
+                imageFilterProcessor.apply(corrected, layout.imageFilter, width, height, layout.filterIntensity)
                 bitmap.setPixels(corrected, 0, width, 0, 0, width, height)
             }
             currentCoroutineContext().ensureActive()

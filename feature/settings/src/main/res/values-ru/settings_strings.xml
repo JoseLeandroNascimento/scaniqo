@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_performance">Производительность</string>
+    <string name="settings_advanced_processing">Расширенная обработка</string>
+    <string name="settings_advanced_processing_body">Использует аппаратное ускорение для поддерживаемых операций. Производительность зависит от устройства.</string>
     <string name="settings_personalization">Персонализация</string>
     <string name="settings_personalization_body">Настройте Scaniqo под себя</string>
     <string name="settings_appearance">Внешний вид</string>

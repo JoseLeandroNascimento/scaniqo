@@ -69,9 +69,9 @@ class QuickActionsWidgetReceiver : GlanceAppWidgetReceiver() {
 
 private val quickWidgetActions = listOf(
     Triple(WidgetAction.SCAN, R.string.widget_scan, CoreResourcesR.drawable.ic_document_scan),
-    Triple(WidgetAction.IMPORT, R.string.widget_import, CoreResourcesR.drawable.ic_document_import),
+    Triple(WidgetAction.IMPORT, R.string.widget_import, CoreResourcesR.drawable.ic_symbol_file_open),
     Triple(WidgetAction.SEARCH, R.string.widget_search, CoreResourcesR.drawable.ic_document_search),
-    Triple(WidgetAction.MERGE, R.string.widget_merge, CoreResourcesR.drawable.ic_document_merge),
+    Triple(WidgetAction.MERGE, R.string.widget_merge, CoreResourcesR.drawable.ic_symbol_merge),
 )
 
 @Composable

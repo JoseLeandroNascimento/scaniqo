@@ -116,9 +116,47 @@ class DriveBackupViewModelTest {
         assertEquals(DriveBackupPhase.IDLE, viewModel.uiState.value.phase)
         assertFalse(viewModel.isAwaitingAuthorization(id))
         assertNull(viewModel.uiState.value.accountEmail)
-        assertNull(viewModel.uiState.value.problem)
+        assertEquals(DriveBackupProblem.AUTHORIZATION_CANCELED, viewModel.uiState.value.problem)
         assertTrue(remote.accountTokens.isEmpty())
-        assertTrue(receivedConnectionErrors.isEmpty())
+        assertEquals(listOf(DriveBackupProblem.AUTHORIZATION_CANCELED), receivedConnectionErrors)
+    }
+
+    @Test
+    fun cancelledAuthorizationCanBeRetriedWithoutReusingItsResult() = runTest(dispatcher) {
+        start()
+        collectConnectionErrors()
+        viewModel.connect()
+        val canceledId = authorizationId()
+        viewModel.authorizationFailed(canceledId)
+        runCurrent()
+
+        viewModel.connect()
+        val retryId = authorizationId()
+        assertTrue(retryId > canceledId)
+        assertNull(viewModel.uiState.value.problem)
+        viewModel.authorized(canceledId, "late-token")
+        viewModel.authorized(retryId, "retry-token")
+        runCurrent()
+
+        assertEquals(listOf("retry-token"), remote.accountTokens)
+        assertEquals(remote.email, viewModel.uiState.value.accountEmail)
+        assertNull(viewModel.uiState.value.problem)
+        assertEquals(listOf(DriveBackupProblem.AUTHORIZATION_CANCELED), receivedConnectionErrors)
+    }
+
+    @Test
+    fun cancelledAuthorizationFeedbackWaitsForTheScreenToResume() = runTest(dispatcher) {
+        start()
+        viewModel.connect()
+        viewModel.authorizationFailed(authorizationId())
+        runCurrent()
+
+        assertFalse(viewModel.uiState.value.isBusy)
+        assertEquals(DriveBackupProblem.AUTHORIZATION_CANCELED, viewModel.uiState.value.problem)
+        collectConnectionErrors()
+        runCurrent()
+
+        assertEquals(listOf(DriveBackupProblem.AUTHORIZATION_CANCELED), receivedConnectionErrors)
     }
 
     @Test

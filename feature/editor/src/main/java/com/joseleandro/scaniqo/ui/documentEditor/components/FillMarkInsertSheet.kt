@@ -43,7 +43,7 @@ internal fun FillMarkInsertSheet(
                 R.string.overlay_saved_values, CoreResourcesR.drawable.ic_tag_person, enabled, onSavedValues, "fill_insert_saved",
             )
             if (hasElements) FillInsertAction(
-                R.string.overlay_elements, CoreResourcesR.drawable.ic_tool_pages, enabled, onElements, "fill_select_element",
+                R.string.overlay_elements, CoreResourcesR.drawable.ic_symbol_layers, enabled, onElements, "fill_select_element",
             )
         }
     }

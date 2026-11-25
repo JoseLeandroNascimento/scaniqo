@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
@@ -145,8 +146,8 @@ internal fun PasswordVersionNotice() {
         TextButton(onClick = { expanded = !expanded }, contentPadding = PaddingValues(horizontal = 0.dp)) {
             Text(stringResource(R.string.password_ui_versions_details))
             Icon(
-                painterResource(if (expanded) CoreResourcesR.drawable.ic_toast_close else CoreResourcesR.drawable.ic_toast_info),
-                null, Modifier.padding(start = 8.dp).size(16.dp),
+                painterResource(CoreResourcesR.drawable.ic_symbol_expand_more),
+                null, Modifier.padding(start = 8.dp).size(16.dp).rotate(if (expanded) 180f else 0f),
             )
         }
         if (expanded) Text(

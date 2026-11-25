@@ -200,7 +200,7 @@ private fun MergeChosenSourceRow(
                     color = MaterialTheme.colorScheme.primaryContainer,
                 ) {
                     Icon(
-                        painterResource(CoreResourcesR.drawable.ic_document_import),
+                        painterResource(CoreResourcesR.drawable.ic_symbol_file_open),
                         contentDescription = null,
                         modifier = Modifier.padding(12.dp).size(24.dp),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,

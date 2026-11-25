@@ -43,6 +43,7 @@ class AndroidAppSettingsRepository(context: Context) : AppSettingsRepository {
                 .putString("color_theme", next.colorTheme.name)
                 .putString("export_quality", next.exportQuality.name)
                 .putBoolean("ocr_enabled", next.ocrEnabled)
+                .putBoolean("advanced_processing_enabled", next.advancedProcessingEnabled)
                 .putBoolean("page_numbers", next.pageNumbers)
                 .putString("image_format", next.imageFormat.name)
                 .putString("compression_level", next.compressionLevel.name)
@@ -57,6 +58,7 @@ class AndroidAppSettingsRepository(context: Context) : AppSettingsRepository {
         colorTheme = preferences.enum("color_theme", AppColorTheme.ORIGINAL),
         exportQuality = preferences.enum("export_quality", PdfExportQuality.HIGH_QUALITY),
         ocrEnabled = preferences.boolean("ocr_enabled"),
+        advancedProcessingEnabled = preferences.boolean("advanced_processing_enabled"),
         pageNumbers = preferences.boolean("page_numbers"),
         imageFormat = preferences.enum("image_format", PdfImageFormat.JPEG),
         compressionLevel = preferences.enum("compression_level", PdfCompressionLevel.BALANCED),

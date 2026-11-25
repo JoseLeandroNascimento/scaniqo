@@ -40,6 +40,7 @@
     <string name="backup_cancelling">جارٍ الإلغاء بأمان…</string>
     <string name="backup_keep_open">أبقِ هذه الشاشة مفتوحة حتى الاكتمال. مغادرتها تلغي العملية.</string>
     <string name="backup_error_auth">تعذر منح إذن Google Drive. أعد الاتصال.</string>
+    <string name="backup_error_auth_canceled">لم يكتمل الاتصال بـ Google Drive. أُلغي منح الإذن أو أُغلقت نافذة Google. حاول مجددًا وأكمل منح الإذن.</string>
     <string name="backup_error_configuration">لم يتعرف Google على إصدار التطبيق هذا. حدّث التطبيق أو تواصل مع الدعم.</string>
     <string name="backup_error_permission">اسمح بالوصول إلى ملفات Scaniqo للمتابعة.</string>
     <string name="backup_error_network">تعذر الاتصال. تحقق من اتصال الإنترنت وأعد المحاولة.</string>

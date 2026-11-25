@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reader_edit_document">दस्तावेज़ संपादित करें</string>
+    <string name="reader_loading">दस्तावेज़ खोला जा रहा है…</string>
+    <string name="reader_load_error">दस्तावेज़ नहीं खोला जा सका</string>
+</resources>

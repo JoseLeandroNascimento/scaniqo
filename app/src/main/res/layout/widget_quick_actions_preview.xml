@@ -39,7 +39,7 @@
             android:orientation="vertical"
             android:padding="6dp">
             <ImageView android:layout_width="24dp" android:layout_height="24dp"
-                android:src="@drawable/ic_document_import" android:tint="@color/widget_action_text"
+                android:src="@drawable/ic_symbol_file_open" android:tint="@color/widget_action_text"
                 android:contentDescription="@null" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:layout_marginTop="4dp" android:gravity="center" android:maxLines="1"
@@ -75,7 +75,7 @@
             android:orientation="vertical"
             android:padding="6dp">
             <ImageView android:layout_width="24dp" android:layout_height="24dp"
-                android:src="@drawable/ic_document_merge" android:tint="@color/widget_action_text"
+                android:src="@drawable/ic_symbol_merge" android:tint="@color/widget_action_text"
                 android:contentDescription="@null" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:layout_marginTop="4dp" android:gravity="center" android:maxLines="1"

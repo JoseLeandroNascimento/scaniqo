@@ -626,7 +626,7 @@ fun PdfUtilityRoute(
                 Text(stringResource(R.string.utility_select_pdf), style = MaterialTheme.typography.titleLarge)
                 OutlinedButton(onClick = { pickingDocument = false; onImport() },
                     enabled = !state.busy && !externalPicker && !importBusy, modifier = Modifier.fillMaxWidth()) {
-                    Icon(painterResource(CoreResourcesR.drawable.ic_document_import), null, Modifier.padding(end = 8.dp).size(20.dp))
+                    Icon(painterResource(CoreResourcesR.drawable.ic_symbol_file_open), null, Modifier.padding(end = 8.dp).size(20.dp))
                     Text(stringResource(R.string.utility_workspace_import_device))
                 }
                 OutlinedTextField(query, { query = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reader_edit_document">تعديل المستند</string>
+    <string name="reader_loading">جارٍ فتح المستند…</string>
+    <string name="reader_load_error">تعذّر فتح المستند</string>
+</resources>

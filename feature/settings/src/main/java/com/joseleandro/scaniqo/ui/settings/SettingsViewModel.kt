@@ -15,6 +15,7 @@ sealed interface SettingsChange {
     data class Palette(val value: AppColorTheme) : SettingsChange
     data class Quality(val value: PdfExportQuality) : SettingsChange
     data class Ocr(val value: Boolean) : SettingsChange
+    data class AdvancedProcessing(val value: Boolean) : SettingsChange
     data class Numbering(val value: Boolean) : SettingsChange
     data class ImageFormat(val value: PdfImageFormat) : SettingsChange
     data class Compression(val value: PdfCompressionLevel) : SettingsChange
@@ -45,6 +46,7 @@ class SettingsViewModel(private val repository: AppSettingsRepository) : ViewMod
                         is SettingsChange.Palette -> current.copy(colorTheme = change.value)
                         is SettingsChange.Quality -> current.copy(exportQuality = change.value)
                         is SettingsChange.Ocr -> current.copy(ocrEnabled = change.value)
+                        is SettingsChange.AdvancedProcessing -> current.copy(advancedProcessingEnabled = change.value)
                         is SettingsChange.Numbering -> current.copy(pageNumbers = change.value)
                         is SettingsChange.ImageFormat -> current.copy(imageFormat = change.value)
                         is SettingsChange.Compression -> current.copy(compressionLevel = change.value)

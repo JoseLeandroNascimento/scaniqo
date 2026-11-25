@@ -107,7 +107,7 @@ fun SignaturesScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { viewModel.onEvent(SignaturesEvent.Create) },
-                icon = { Icon(painterResource(CoreResourcesR.drawable.edit_24px), null) },
+                icon = { Icon(painterResource(CoreResourcesR.drawable.ic_symbol_draw), null) },
                 text = { Text(stringResource(CoreResourcesR.string.runtime_new_signature)) },
             )
         },

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_performance">Performance</string>
+    <string name="settings_advanced_processing">Advanced processing</string>
+    <string name="settings_advanced_processing_body">Uses hardware acceleration for supported operations. Performance varies by device.</string>
     <string name="settings_personalization">Personalization</string>
     <string name="settings_personalization_body">Make Scaniqo your own</string>
     <string name="settings_appearance">Appearance</string>

@@ -94,7 +94,7 @@ internal fun AppNavigationDrawer(
             )
             DrawerDestination(
                 label = stringResource(R.string.menu_import_pdf),
-                icon = CoreResourcesR.drawable.ic_document_import,
+                icon = CoreResourcesR.drawable.ic_symbol_file_open,
                 onClick = onImportPdf,
             )
             DrawerDestination(
@@ -115,7 +115,7 @@ internal fun AppNavigationDrawer(
             )
             DrawerDestination(
                 label = stringResource(R.string.menu_signatures),
-                icon = CoreResourcesR.drawable.ic_tool_signature,
+                icon = CoreResourcesR.drawable.ic_symbol_draw,
                 selected = currentRoute == AppRoute.Signatures,
                 onClick = { onNavigate(AppRoute.Signatures) },
             )

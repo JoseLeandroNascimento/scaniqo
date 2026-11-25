@@ -40,6 +40,7 @@
     <string name="backup_cancelling">सुरक्षित रूप से रद्द हो रहा है…</string>
     <string name="backup_keep_open">पूरा होने तक यह स्क्रीन खुली रखें। यहाँ से जाने पर काम रद्द हो जाएगा।</string>
     <string name="backup_error_auth">Google Drive की अनुमति नहीं मिल सकी। फिर से कनेक्ट करें।</string>
+    <string name="backup_error_auth_canceled">Google Drive से कनेक्शन पूरा नहीं हुआ। अनुमति देने की प्रक्रिया रद्द कर दी गई या Google की विंडो बंद कर दी गई। फिर से कोशिश करें और अनुमति देने की प्रक्रिया पूरी करें।</string>
     <string name="backup_error_configuration">Google इस ऐप संस्करण को पहचान नहीं सका। ऐप अपडेट करें या सहायता से संपर्क करें।</string>
     <string name="backup_error_permission">आगे बढ़ने के लिए Scaniqo की फ़ाइलों तक पहुँच की अनुमति दें।</string>
     <string name="backup_error_network">कनेक्ट नहीं हो सका। इंटरनेट जाँचें और फिर कोशिश करें।</string>

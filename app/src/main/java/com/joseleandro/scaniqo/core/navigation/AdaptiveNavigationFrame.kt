@@ -80,7 +80,7 @@ private fun AppNavigationRail(
         Triple(AppRoute.Documents, CoreResourcesR.string.documents_title, CoreResourcesR.drawable.ic_tool_pages),
         Triple(AppRoute.Tools, CoreResourcesR.string.tools_hub_title, CoreResourcesR.drawable.ic_tag_tools),
         Triple(AppRoute.Tags, R.string.menu_tags, CoreResourcesR.drawable.ic_tag_label),
-        Triple(AppRoute.Signatures, R.string.menu_signatures, CoreResourcesR.drawable.ic_tool_signature),
+        Triple(AppRoute.Signatures, R.string.menu_signatures, CoreResourcesR.drawable.ic_symbol_draw),
         Triple(AppRoute.Trash, CoreResourcesR.string.trash_title, CoreResourcesR.drawable.delete_24px),
         Triple(AppRoute.Settings, CoreResourcesR.string.settings_title, R.drawable.ic_settings),
     )
@@ -99,7 +99,7 @@ private fun AppNavigationRail(
                 modifier = Modifier.padding(horizontal = 28.dp, vertical = 8.dp),
             ) {
                 Icon(
-                    painterResource(CoreResourcesR.drawable.ic_document_import),
+                    painterResource(CoreResourcesR.drawable.ic_symbol_file_open),
                     stringResource(R.string.menu_import_pdf),
                 )
             }

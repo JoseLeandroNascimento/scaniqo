@@ -286,7 +286,7 @@ private val SignatureInput.label: Int get() = when (this) {
 }
 
 private val SignatureInput.icon: Int get() = when (this) {
-    SignatureInput.DRAW -> CoreResourcesR.drawable.ic_tool_signature
+    SignatureInput.DRAW -> CoreResourcesR.drawable.ic_symbol_draw
     SignatureInput.TYPE -> CoreResourcesR.drawable.ic_fill_text
     SignatureInput.IMAGE -> CoreResourcesR.drawable.ic_tag_photo
     SignatureInput.SCAN -> CoreResourcesR.drawable.ic_document_scan

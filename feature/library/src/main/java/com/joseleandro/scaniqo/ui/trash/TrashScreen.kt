@@ -192,7 +192,7 @@ internal fun TrashScreen(
                                 ),
                             ) {
                                 Icon(
-                                    painterResource(CoreResourcesR.drawable.delete_24px),
+                                    painterResource(CoreResourcesR.drawable.ic_symbol_delete_forever),
                                     contentDescription = null,
                                     modifier = Modifier.size(20.dp),
                                 )
@@ -271,7 +271,7 @@ internal fun TrashScreen(
             onDismissRequest = onDismissClearAll,
             icon = {
                 Icon(
-                    painterResource(CoreResourcesR.drawable.delete_24px),
+                    painterResource(CoreResourcesR.drawable.ic_symbol_delete_forever),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
                 )
@@ -319,7 +319,7 @@ internal fun TrashScreen(
             onDismissRequest = onDismissDeletion,
             icon = {
                 Icon(
-                    painterResource(CoreResourcesR.drawable.delete_24px),
+                    painterResource(CoreResourcesR.drawable.ic_symbol_delete_forever),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
                 )
@@ -533,7 +533,7 @@ private fun TrashRestoreButton(
         if (restoring) {
             CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
         } else {
-            Icon(painterResource(CoreResourcesR.drawable.ic_document_undo), contentDescription = null)
+            Icon(painterResource(CoreResourcesR.drawable.ic_symbol_restore_from_trash), contentDescription = null)
         }
         Spacer(Modifier.width(8.dp))
         Text(if (restoring) stringResource(R.string.trash_restoring) else stringResource(R.string.trash_restore))
@@ -555,7 +555,7 @@ private fun TrashDeleteButton(
         val color = if (enabled) MaterialTheme.colorScheme.error
             else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         Icon(
-            painterResource(CoreResourcesR.drawable.delete_24px),
+            painterResource(CoreResourcesR.drawable.ic_symbol_delete_forever),
             contentDescription = null,
             modifier = Modifier.size(20.dp),
             tint = color,

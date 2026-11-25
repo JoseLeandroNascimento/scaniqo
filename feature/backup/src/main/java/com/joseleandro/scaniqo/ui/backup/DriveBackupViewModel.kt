@@ -53,11 +53,13 @@ class DriveBackupViewModel(
     private val archives: BackupArchiveStore,
     private val historyRepository: BackupHistoryRepository,
 ) : ViewModel() {
-    private val state = MutableStateFlow(DriveBackupUiState(
-        settings = preferences.settings.value,
-        history = historyFor(preferences.settings.value.accountEmail),
-        accountEmail = preferences.settings.value.takeUnless { it.needsAuthorization }?.accountEmail,
-    ))
+    private val state = MutableStateFlow(
+        DriveBackupUiState(
+            settings = preferences.settings.value,
+            history = historyFor(preferences.settings.value.accountEmail),
+            accountEmail = preferences.settings.value.takeUnless { it.needsAuthorization }?.accountEmail,
+        )
+    )
     val uiState = state.asStateFlow()
     private val channel = Channel<DriveBackupEffect>(Channel.UNLIMITED)
     val effects = channel.receiveAsFlow()
@@ -82,26 +84,51 @@ class DriveBackupViewModel(
     init {
         viewModelScope.launch {
             documents.observeDocuments().catch {
-                state.update { it.copy(localDocumentCount = null, problem = DriveBackupProblem.LOCAL_STORAGE, backupUnchanged = false) }
+                state.update {
+                    it.copy(
+                        localDocumentCount = null,
+                        problem = DriveBackupProblem.LOCAL_STORAGE,
+                        backupUnchanged = false
+                    )
+                }
             }.collect { list ->
-                state.update { it.copy(localDocumentCount = list.size, localSizeBytes = list.sumOf { document -> document.sizeBytes }, backupUnchanged = false) }
+                state.update {
+                    it.copy(
+                        localDocumentCount = list.size,
+                        localSizeBytes = list.sumOf { document -> document.sizeBytes },
+                        backupUnchanged = false
+                    )
+                }
             }
         }
         viewModelScope.launch {
-            combine(preferences.settings, historyRepository.entries, archives.currentBackups) { settings, history, current ->
+            combine(
+                preferences.settings,
+                historyRepository.entries,
+                archives.currentBackups
+            ) { settings, history, current ->
                 val account = settings.accountEmail?.trim()?.lowercase(Locale.ROOT)
                 Triple(settings, history[account].orEmpty(), current[account])
             }.collect { (settings, history, current) ->
-                state.update { it.copy(
-                    settings = settings,
-                    accountEmail = settings.takeUnless { it.needsAuthorization }?.accountEmail,
-                    currentBackup = current.takeUnless { settings.needsAuthorization },
-                    history = history,
-                ) }
+                state.update {
+                    it.copy(
+                        settings = settings,
+                        accountEmail = settings.takeUnless { it.needsAuthorization }?.accountEmail,
+                        currentBackup = current.takeUnless { settings.needsAuthorization },
+                        history = history,
+                    )
+                }
             }
         }
         viewModelScope.launch {
-            gate.automaticRunning.collect { running -> state.update { it.copy(automaticRunning = running, backupUnchanged = it.backupUnchanged && !running) } }
+            gate.automaticRunning.collect { running ->
+                state.update {
+                    it.copy(
+                        automaticRunning = running,
+                        backupUnchanged = it.backupUnchanged && !running
+                    )
+                }
+            }
         }
     }
 
@@ -142,13 +169,21 @@ class DriveBackupViewModel(
     fun deleteHistory(entry: BackupHistoryEntry) {
         val email = preferences.settings.value.accountEmail ?: return
         if (state.value.isBusy || state.value.isSavingSettings || gate.automaticRunning.value ||
-            entry !in historyFor(email)) return
+            entry !in historyFor(email)
+        ) return
         lastAction = Action.DeleteHistory(email, entry)
         val id = ++generation
-        state.update { it.copy(
-            phase = DriveBackupPhase.DELETING, problem = null, progress = null,
-            backedUpCount = null, backupUnchanged = false, restoredCount = null, deletedBackup = false,
-        ) }
+        state.update {
+            it.copy(
+                phase = DriveBackupPhase.DELETING,
+                problem = null,
+                progress = null,
+                backedUpCount = null,
+                backupUnchanged = false,
+                restoredCount = null,
+                deletedBackup = false,
+            )
+        }
         job = viewModelScope.launch {
             gate.mutex.withLock {
                 try {
@@ -175,7 +210,17 @@ class DriveBackupViewModel(
         lastAction = action
         silentAuthorization = silent
         val id = ++generation
-        state.update { it.copy(phase = DriveBackupPhase.AUTHORIZING, problem = null, progress = null, backedUpCount = null, backupUnchanged = false, restoredCount = null, deletedBackup = false) }
+        state.update {
+            it.copy(
+                phase = DriveBackupPhase.AUTHORIZING,
+                problem = null,
+                progress = null,
+                backedUpCount = null,
+                backupUnchanged = false,
+                restoredCount = null,
+                deletedBackup = false
+            )
+        }
         channel.trySend(DriveBackupEffect.Authorize(id))
     }
 
@@ -190,11 +235,21 @@ class DriveBackupViewModel(
     fun isAwaitingAuthorization(requestId: Long): Boolean =
         requestId == generation && pending != null && state.value.phase == DriveBackupPhase.AUTHORIZING
 
-    fun authorizationFailed(requestId: Long, problem: DriveBackupProblem? = null) {
+    fun authorizationFailed(
+        requestId: Long,
+        problem: DriveBackupProblem = DriveBackupProblem.AUTHORIZATION_CANCELED
+    ) {
         if (!isAwaitingAuthorization(requestId)) return
         pending = null
-        state.update { it.copy(phase = DriveBackupPhase.IDLE, problem = problem, progress = null, backupUnchanged = false) }
-        problem?.let { connectionErrorChannel.trySend(it) }
+        state.update {
+            it.copy(
+                phase = DriveBackupPhase.IDLE,
+                problem = problem,
+                progress = null,
+                backupUnchanged = false
+            )
+        }
+        connectionErrorChannel.trySend(problem)
         if (problem == DriveBackupProblem.AUTHORIZATION || problem == DriveBackupProblem.PERMISSION) {
             viewModelScope.launch {
                 runCatching { preferences.update { it.copy(needsAuthorization = it.accountEmail != null) } }
@@ -204,7 +259,9 @@ class DriveBackupViewModel(
 
     fun authorized(requestId: Long, token: String) {
         if (!isAwaitingAuthorization(requestId)) return
-        if (token.isBlank()) { authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION); return }
+        if (token.isBlank()) {
+            authorizationFailed(requestId, DriveBackupProblem.AUTHORIZATION); return
+        }
         val action = pending ?: return
         pending = null
         val expectedAccount = preferences.settings.value.accountEmail
@@ -216,34 +273,77 @@ class DriveBackupViewModel(
                     val email = remote.accountEmail(token)?.takeIf { it.isNotBlank() }
                         ?: throw DriveBackupException.Remote()
                     currentCoroutineContext().ensureActive()
-                    if (expectedAccount != null && !expectedAccount.equals(email, ignoreCase = true)) {
+                    if (expectedAccount != null && !expectedAccount.equals(
+                            email,
+                            ignoreCase = true
+                        )
+                    ) {
                         scheduler.cancel()
                         preferences.update { it.withoutAccount() }
-                        state.update { it.copy(accountEmail = null, currentBackup = null, history = emptyList(),
-                            hasLoadedBackups = false, problem = DriveBackupProblem.ACCOUNT_CHANGED) }
+                        state.update {
+                            it.copy(
+                                accountEmail = null,
+                                currentBackup = null,
+                                history = emptyList(),
+                                hasLoadedBackups = false,
+                                problem = DriveBackupProblem.ACCOUNT_CHANGED
+                            )
+                        }
                         connectionErrorChannel.trySend(DriveBackupProblem.ACCOUNT_CHANGED)
                         return@withLock
                     }
                     preferences.update { it.copy(accountEmail = email, needsAuthorization = false) }
-                    state.update { it.copy(accountEmail = email, settings = preferences.settings.value, history = historyFor(email)) }
+                    state.update {
+                        it.copy(
+                            accountEmail = email,
+                            settings = preferences.settings.value,
+                            history = historyFor(email)
+                        )
+                    }
                     when (action) {
                         Action.Connect -> {
                             val current = archives.synchronize(token, email)
                             currentCoroutineContext().ensureActive()
                             preferences.update { it.copy(lastAutomaticProblem = null) }
                             scheduler.schedule(preferences.settings.value)
-                            state.update { it.copy(currentBackup = current, history = historyFor(email), hasLoadedBackups = true) }
+                            state.update {
+                                it.copy(
+                                    currentBackup = current,
+                                    history = historyFor(email),
+                                    hasLoadedBackups = true
+                                )
+                            }
                         }
+
                         Action.Backup -> {
                             val current = archives.synchronize(token, email)
                             currentCoroutineContext().ensureActive()
-                            state.update { it.copy(currentBackup = current, history = historyFor(email), hasLoadedBackups = true) }
+                            state.update {
+                                it.copy(
+                                    currentBackup = current,
+                                    history = historyFor(email),
+                                    hasLoadedBackups = true
+                                )
+                            }
                             state.update { it.copy(phase = DriveBackupPhase.PREPARING) }
                             val snapshot = fingerprint.current() ?: return@withLock
                             val saved = preferences.settings.value
-                            if (current != null && matchesBackupSnapshot(snapshot, current, saved, fingerprint, local, remote, token)) {
+                            if (current != null && matchesBackupSnapshot(
+                                    snapshot,
+                                    current,
+                                    saved,
+                                    fingerprint,
+                                    local,
+                                    remote,
+                                    token
+                                )
+                            ) {
                                 preferences.update { settings ->
-                                    if (settings.accountEmail.equals(email, ignoreCase = true)) settings.copy(
+                                    if (settings.accountEmail.equals(
+                                            email,
+                                            ignoreCase = true
+                                        )
+                                    ) settings.copy(
                                         lastBackupId = current.id,
                                         lastBackupAt = current.modifiedTimeMillis,
                                         lastBackupBytes = current.sizeBytes,
@@ -256,19 +356,39 @@ class DriveBackupViewModel(
                                 return@withLock
                             }
                             val prepared = local.createBackup {
-                                updateProgress(it.completedDocuments.toLong(), it.totalDocuments.toLong())
+                                updateProgress(
+                                    it.completedDocuments.toLong(),
+                                    it.totalDocuments.toLong()
+                                )
                             }
                             temporary = prepared.file
                             check(snapshot == fingerprint.current()) { "Os PDFs mudaram durante a preparação do backup." }
                             currentCoroutineContext().ensureActive()
-                            state.update { it.copy(phase = DriveBackupPhase.UPLOADING, progress = 0f) }
-                            val name = "Scaniqo-" + SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ROOT).format(Date()) + ".zip"
+                            state.update {
+                                it.copy(
+                                    phase = DriveBackupPhase.UPLOADING,
+                                    progress = 0f
+                                )
+                            }
+                            val name = "Scaniqo-" + SimpleDateFormat(
+                                "yyyy-MM-dd_HH-mm-ss",
+                                Locale.ROOT
+                            ).format(Date()) + ".zip"
                             archives.upload(
-                                token, email, prepared.file, name, prepared.documentCount, ::updateProgress,
+                                token,
+                                email,
+                                prepared.file,
+                                name,
+                                prepared.documentCount,
+                                ::updateProgress,
                                 onUploaded = { uploaded ->
                                     lastAction = Action.Connect
                                     preferences.update { current ->
-                                        if (current.accountEmail.equals(email, ignoreCase = true)) current.copy(
+                                        if (current.accountEmail.equals(
+                                                email,
+                                                ignoreCase = true
+                                            )
+                                        ) current.copy(
                                             lastBackupId = uploaded.id,
                                             lastBackupAt = uploaded.modifiedTimeMillis,
                                             lastBackupBytes = uploaded.sizeBytes,
@@ -277,35 +397,64 @@ class DriveBackupViewModel(
                                             lastAutomaticProblem = null,
                                         ) else current
                                     }
-                                    if (preferences.settings.value.accountEmail.equals(email, ignoreCase = true)) {
-                                        state.update { it.copy(
-                                            currentBackup = uploaded, history = historyFor(email), hasLoadedBackups = true,
-                                            backedUpCount = prepared.documentCount,
-                                        ) }
+                                    if (preferences.settings.value.accountEmail.equals(
+                                            email,
+                                            ignoreCase = true
+                                        )
+                                    ) {
+                                        state.update {
+                                            it.copy(
+                                                currentBackup = uploaded,
+                                                history = historyFor(email),
+                                                hasLoadedBackups = true,
+                                                backedUpCount = prepared.documentCount,
+                                            )
+                                        }
                                     }
                                 },
                             )
                         }
+
                         is Action.Restore -> {
                             val current = archives.loadCurrent(token, email)
                             currentCoroutineContext().ensureActive()
-                            state.update { it.copy(currentBackup = current, history = historyFor(email), hasLoadedBackups = true) }
+                            state.update {
+                                it.copy(
+                                    currentBackup = current,
+                                    history = historyFor(email),
+                                    hasLoadedBackups = true
+                                )
+                            }
                             if (current != action.entry) {
                                 lastAction = Action.Connect
                                 throw DriveBackupException.Remote()
                             }
-                            state.update { it.copy(phase = DriveBackupPhase.DOWNLOADING, progress = 0f) }
+                            state.update {
+                                it.copy(
+                                    phase = DriveBackupPhase.DOWNLOADING,
+                                    progress = 0f
+                                )
+                            }
                             val file = local.createRestoreFile()
                             temporary = file
                             remote.download(token, action.entry, file, ::updateProgress)
                             currentCoroutineContext().ensureActive()
-                            state.update { it.copy(phase = DriveBackupPhase.RESTORING, progress = null) }
+                            state.update {
+                                it.copy(
+                                    phase = DriveBackupPhase.RESTORING,
+                                    progress = null
+                                )
+                            }
                             val restored = local.restoreBackup(file) {
-                                updateProgress(it.completedDocuments.toLong(), it.totalDocuments.toLong())
+                                updateProgress(
+                                    it.completedDocuments.toLong(),
+                                    it.totalDocuments.toLong()
+                                )
                             }
                             // A transação local já foi concluída. Não converter sucesso em cancelamento.
                             state.update { it.copy(restoredCount = restored.documentCount) }
                         }
+
                         is Action.DeleteHistory -> Unit
                     }
                 } catch (cancelled: CancellationException) {
@@ -318,24 +467,50 @@ class DriveBackupViewModel(
                         withContext(NonCancellable) {
                             runCatching { preferences.update { it.copy(needsAuthorization = it.accountEmail != null) } }
                         }
-                        state.update { it.copy(accountEmail = null, currentBackup = null, hasLoadedBackups = false) }
+                        state.update {
+                            it.copy(
+                                accountEmail = null,
+                                currentBackup = null,
+                                hasLoadedBackups = false
+                            )
+                        }
                     }
                     state.update { it.copy(problem = problem, backupUnchanged = false) }
-                    if (state.value.phase == DriveBackupPhase.CONNECTING) connectionErrorChannel.trySend(problem)
+                    if (state.value.phase == DriveBackupPhase.CONNECTING) connectionErrorChannel.trySend(
+                        problem
+                    )
                 } finally {
-                    temporary?.let { file -> withContext(NonCancellable) { runCatching { local.discard(file) } } }
+                    temporary?.let { file ->
+                        withContext(NonCancellable) {
+                            runCatching {
+                                local.discard(
+                                    file
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
         // Também executa se o job for cancelado antes de começar seu corpo.
         job?.invokeOnCompletion {
-            if (requestId == generation) state.update { it.copy(phase = DriveBackupPhase.IDLE, progress = null) }
+            if (requestId == generation) state.update {
+                it.copy(
+                    phase = DriveBackupPhase.IDLE,
+                    progress = null
+                )
+            }
         }
     }
 
     fun setAutomaticEnabled(enabled: Boolean) {
         if (enabled && (state.value.accountEmail == null || state.value.settings.needsAuthorization)) {
-            state.update { it.copy(problem = DriveBackupProblem.AUTHORIZATION, backupUnchanged = false) }
+            state.update {
+                it.copy(
+                    problem = DriveBackupProblem.AUTHORIZATION,
+                    backupUnchanged = false
+                )
+            }
             return
         }
         updateSettings { it.copy(automaticEnabled = enabled, lastAutomaticProblem = null) }
@@ -367,10 +542,20 @@ class DriveBackupViewModel(
     fun disconnect() {
         val email = preferences.settings.value.accountEmail ?: return
         if (state.value.isBusy || state.value.isSavingSettings || gate.automaticRunning.value ||
-            !gate.mutex.tryLock(disconnectOwner)) return
+            !gate.mutex.tryLock(disconnectOwner)
+        ) return
         disconnectLocked = true
         val id = ++generation
-        state.update { it.copy(phase = DriveBackupPhase.DISCONNECTING, problem = null, backedUpCount = null, backupUnchanged = false, restoredCount = null, deletedBackup = false) }
+        state.update {
+            it.copy(
+                phase = DriveBackupPhase.DISCONNECTING,
+                problem = null,
+                backedUpCount = null,
+                backupUnchanged = false,
+                restoredCount = null,
+                deletedBackup = false
+            )
+        }
         job = viewModelScope.launch {
             try {
                 preferences.update { it.copy(automaticEnabled = false) }
@@ -381,7 +566,12 @@ class DriveBackupViewModel(
                 throw cancelled
             } catch (_: Exception) {
                 releaseDisconnectLock()
-                state.update { it.copy(phase = DriveBackupPhase.IDLE, problem = DriveBackupProblem.LOCAL_STORAGE) }
+                state.update {
+                    it.copy(
+                        phase = DriveBackupPhase.IDLE,
+                        problem = DriveBackupProblem.LOCAL_STORAGE
+                    )
+                }
             }
         }
     }
@@ -390,21 +580,34 @@ class DriveBackupViewModel(
         if (requestId != generation || state.value.phase != DriveBackupPhase.DISCONNECTING) return
         if (!success) {
             releaseDisconnectLock()
-            state.update { it.copy(phase = DriveBackupPhase.IDLE, problem = DriveBackupProblem.AUTHORIZATION) }
+            state.update {
+                it.copy(
+                    phase = DriveBackupPhase.IDLE,
+                    problem = DriveBackupProblem.AUTHORIZATION
+                )
+            }
             return
         }
         job = viewModelScope.launch {
             try {
                 preferences.update { it.withoutAccount() }
                 scheduler.cancel()
-                state.update { DriveBackupUiState(
-                    localDocumentCount = it.localDocumentCount, localSizeBytes = it.localSizeBytes,
-                    settings = preferences.settings.value,
-                ) }
+                state.update {
+                    DriveBackupUiState(
+                        localDocumentCount = it.localDocumentCount,
+                        localSizeBytes = it.localSizeBytes,
+                        settings = preferences.settings.value,
+                    )
+                }
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
-                state.update { it.copy(phase = DriveBackupPhase.IDLE, problem = DriveBackupProblem.LOCAL_STORAGE) }
+                state.update {
+                    it.copy(
+                        phase = DriveBackupPhase.IDLE,
+                        problem = DriveBackupProblem.LOCAL_STORAGE
+                    )
+                }
             } finally {
                 releaseDisconnectLock()
             }
@@ -415,7 +618,8 @@ class DriveBackupViewModel(
         // A gravação do histórico e a revogação precisam terminar antes de liberar outras ações.
         if (state.value.phase == DriveBackupPhase.DELETING ||
             state.value.phase == DriveBackupPhase.DISCONNECTING ||
-            state.value.phase == DriveBackupPhase.CANCELLING) return
+            state.value.phase == DriveBackupPhase.CANCELLING
+        ) return
         if (lastAction is Action.DeleteHistory) lastAction = Action.Connect
         pending = null
         val running = job
@@ -444,7 +648,12 @@ class DriveBackupViewModel(
         historyRepository.entries.value[email?.trim()?.lowercase(Locale.ROOT)].orEmpty()
 
     private fun updateProgress(done: Long, total: Long) {
-        state.update { it.copy(progress = if (total > 0) (done.toDouble() / total).toFloat().coerceIn(0f, 1f) else null) }
+        state.update {
+            it.copy(
+                progress = if (total > 0) (done.toDouble() / total).toFloat()
+                    .coerceIn(0f, 1f) else null
+            )
+        }
     }
 }
 

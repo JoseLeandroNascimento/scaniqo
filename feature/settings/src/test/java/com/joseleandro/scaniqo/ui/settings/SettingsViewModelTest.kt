@@ -51,6 +51,7 @@ class SettingsViewModelTest {
         repository.value.value = AppSettings(
             exportQuality = PdfExportQuality.BALANCED, ocrEnabled = true, pageNumbers = true,
             imageFormat = PdfImageFormat.PNG, compressionLevel = PdfCompressionLevel.STRONG,
+            advancedProcessingEnabled = true,
         )
         val original = repository.value.value
         model.change(SettingsChange.Mode(AppThemeMode.LIGHT))
@@ -58,6 +59,40 @@ class SettingsViewModelTest {
         advanceUntilIdle()
         assertEquals(original.copy(themeMode = AppThemeMode.LIGHT, colorTheme = AppColorTheme.FOREST),
             model.settings.value)
+    }
+
+    @Test fun advancedProcessingChangesOnlyItsOwnPreferenceAndCanBeDisabled() = runTest(dispatcher) {
+        repository.value.value = AppSettings(
+            themeMode = AppThemeMode.DARK,
+            colorTheme = AppColorTheme.ROSE,
+            exportQuality = PdfExportQuality.SMALL,
+            ocrEnabled = true,
+            pageNumbers = true,
+            imageFormat = PdfImageFormat.PNG,
+            compressionLevel = PdfCompressionLevel.STRONG,
+        )
+        val original = repository.value.value
+
+        model.change(SettingsChange.AdvancedProcessing(true))
+        advanceUntilIdle()
+
+        assertEquals(original.copy(advancedProcessingEnabled = true), model.settings.value)
+
+        model.change(SettingsChange.AdvancedProcessing(false))
+        advanceUntilIdle()
+
+        assertEquals(original, model.settings.value)
+    }
+
+    @Test fun restoringDefaultsDisablesAdvancedProcessing() = runTest(dispatcher) {
+        model.change(SettingsChange.AdvancedProcessing(true))
+        advanceUntilIdle()
+        assertTrue(model.settings.value.advancedProcessingEnabled)
+
+        model.change(SettingsChange.RestoreDefaults)
+        advanceUntilIdle()
+
+        assertEquals(AppSettings(), model.settings.value)
     }
 
     @Test fun failureIsReportedAndDoesNotStopLaterPreferenceChanges() = runTest(dispatcher) {

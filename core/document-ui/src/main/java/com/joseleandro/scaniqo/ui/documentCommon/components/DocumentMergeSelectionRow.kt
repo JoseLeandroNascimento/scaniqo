@@ -109,8 +109,8 @@ internal fun DocumentMergeSelectionRow(
             Box {
                 IconButton(onClick = { menuExpanded = true }, enabled = enabled) {
                     Icon(
-                        painterResource(CoreResourcesR.drawable.ic_document_drag),
-                        stringResource(R.string.merge_selection_drag_handle, bidiArgument(item.name), index + 1, count),
+                        painterResource(CoreResourcesR.drawable.more_vert_24px),
+                        stringResource(CoreResourcesR.string.document_actions, bidiArgument(item.name)),
                         Modifier.size(20.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -118,11 +118,13 @@ internal fun DocumentMergeSelectionRow(
                 DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.merge_move_up)) },
+                        leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_move_up), null, Modifier.size(18.dp)) },
                         enabled = enabled && index > 0,
                         onClick = { menuExpanded = false; onMove(index - 1) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.merge_move_down)) },
+                        leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_move_down), null, Modifier.size(18.dp)) },
                         enabled = enabled && index < count - 1,
                         onClick = { menuExpanded = false; onMove(index + 1) },
                     )

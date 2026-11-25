@@ -40,6 +40,7 @@
     <string name="backup_cancelling">Membatalkan dengan aman…</string>
     <string name="backup_keep_open">Biarkan layar ini terbuka hingga selesai. Meninggalkannya akan membatalkan operasi.</string>
     <string name="backup_error_auth">Google Drive tidak dapat diotorisasi. Hubungkan kembali.</string>
+    <string name="backup_error_auth_canceled">Koneksi ke Google Drive belum selesai. Otorisasi dibatalkan atau jendela Google ditutup. Coba lagi dan selesaikan otorisasi.</string>
     <string name="backup_error_configuration">Google tidak mengenali versi aplikasi ini. Perbarui aplikasi atau hubungi dukungan.</string>
     <string name="backup_error_permission">Izinkan akses ke berkas Scaniqo untuk melanjutkan.</string>
     <string name="backup_error_network">Tidak dapat terhubung. Periksa internet dan coba lagi.</string>

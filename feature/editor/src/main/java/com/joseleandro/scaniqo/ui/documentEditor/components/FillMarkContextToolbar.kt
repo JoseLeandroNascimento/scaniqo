@@ -103,15 +103,15 @@ internal fun FillMarkContextToolbar(
                     FillContextMenuItem(R.string.fill_v3_text_box, CoreResourcesR.drawable.ic_fill_text, enabled,
                         onClick = { run { onProperty(FillMarkProperty.BOX) } }, tag = "fill_action_box")
                 }
-                FillContextMenuItem(R.string.fill_property_opacity, R.drawable.ic_tool_watermark, enabled,
+                FillContextMenuItem(R.string.fill_property_opacity, CoreResourcesR.drawable.ic_symbol_opacity, enabled,
                     onClick = { run { onProperty(FillMarkProperty.OPACITY) } }, tag = "fill_action_opacity")
                 FillContextMenuItem(R.string.fill_property_transform, CoreResourcesR.drawable.ic_layout_position, enabled,
                     onClick = { run { onProperty(FillMarkProperty.TRANSFORM) } }, tag = "fill_action_transform")
-                if (pageCount > 1) FillContextMenuItem(R.string.fill_v3_repeat_pages, R.drawable.ic_fill_duplicate, enabled,
+                if (pageCount > 1) FillContextMenuItem(R.string.fill_v3_repeat_pages, CoreResourcesR.drawable.ic_symbol_file_copy, enabled,
                     onClick = { run { onProperty(FillMarkProperty.SCOPE) } }, tag = "fill_action_scope")
                 FillContextMenuItem(R.string.fill_v4_duplicate, R.drawable.ic_fill_duplicate, enabled && canDuplicate,
                     onClick = { run(onDuplicate) }, tag = "fill_action_duplicate")
-                if (isText && canSaveValue) FillContextMenuItem(R.string.overlay_save_value, CoreResourcesR.drawable.ic_document_download,
+                if (isText && canSaveValue) FillContextMenuItem(R.string.overlay_save_value, CoreResourcesR.drawable.ic_symbol_bookmark_add,
                     enabled, onClick = { run(onSaveValue) }, tag = "fill_action_save")
                 FillContextMenuItem(R.string.fill_property_revert, CoreResourcesR.drawable.ic_document_undo,
                     enabled && canReset, onClick = { run(onReset) }, tag = "fill_action_revert")
