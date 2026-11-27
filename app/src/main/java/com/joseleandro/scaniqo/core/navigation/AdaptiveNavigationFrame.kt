@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,9 +27,12 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -131,14 +135,17 @@ private fun AppNavigationRail(
         AppRoute.DriveBackup, AppRoute.PasswordSettings, AppRoute.LanguageSettings,
     )
     NavigationRail(
-        modifier = modifier.width(104.dp).fillMaxHeight(),
+        modifier = modifier.width(104.dp).fillMaxHeight().testTag("navigation_rail"),
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+        Column(
+            modifier = Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             IconButton(
                 onClick = onImportPdf,
                 enabled = enabled,
-                modifier = Modifier.padding(horizontal = 28.dp, vertical = 8.dp),
+                modifier = Modifier.padding(vertical = 8.dp).testTag("navigation_rail_import"),
             ) {
                 Icon(
                     painterResource(CoreResourcesR.drawable.ic_symbol_file_open),
@@ -151,9 +158,24 @@ private fun AppNavigationRail(
                     selected = currentRoute == route || (route == AppRoute.Settings && settingsSelected),
                     onClick = { onNavigate(route) },
                     enabled = enabled,
-                    icon = { Icon(painterResource(iconRes), null, Modifier.size(24.dp)) },
-                    label = { Text(label, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-                    modifier = Modifier.padding(vertical = 4.dp),
+                    icon = {
+                        Icon(
+                            painterResource(iconRes),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp).testTag("navigation_rail_icon"),
+                        )
+                    },
+                    label = {
+                        Text(
+                            label,
+                            modifier = Modifier.padding(horizontal = 8.dp).testTag("navigation_rail_label"),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                        .testTag("navigation_rail_item"),
                 )
             }
         }
@@ -164,6 +186,9 @@ private fun AppNavigationRail(
 @Preview(name = "Navegação tablet retrato", widthDp = 800, heightDp = 1100, locale = "pt-rBR")
 @Preview(name = "Navegação tablet paisagem", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
 @Preview(name = "Janela baixa", widthDp = 900, heightDp = 400, locale = "pt-rBR", fontScale = 1.5f)
+@Preview(name = "Menu lateral paisagem", widthDp = 960, heightDp = 600, locale = "en")
+@Preview(name = "Menu lateral fonte ampliada", widthDp = 800, heightDp = 1100, locale = "pt-rBR", fontScale = 2f)
+@Preview(name = "Menu lateral árabe", widthDp = 800, heightDp = 1100, locale = "ar", fontScale = 1.5f)
 @Composable
 private fun AdaptiveNavigationFramePreview() {
     ScaniqoTheme {

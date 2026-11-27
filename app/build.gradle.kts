@@ -155,6 +155,8 @@ dependencies {
     implementation(libs.mlkit.document.scanner)
     implementation(libs.pdfbox.android)
 
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric) {
         exclude(group = "org.bouncycastle", module = "bcprov-jdk18on")

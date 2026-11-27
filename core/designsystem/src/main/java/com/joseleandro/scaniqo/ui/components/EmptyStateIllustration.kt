@@ -1,15 +1,13 @@
 package com.joseleandro.scaniqo.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +46,9 @@ internal fun EmptyStateArtwork(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
-    if (illustration == EmptyStateIllustration.DOCUMENTS) {
+    if (illustration == EmptyStateIllustration.DOCUMENTS ||
+        illustration == EmptyStateIllustration.FILTERED_DOCUMENTS
+    ) {
         DocumentEmptyArtwork(modifier)
         return
     }
@@ -59,15 +59,8 @@ internal fun EmptyStateArtwork(
             drawOval(colors.secondaryContainer.copy(alpha = .45f), Offset(15f, 13f), Size(130f, 89f))
             drawOval(colors.onSurface.copy(alpha = .06f), Offset(29f, 96f), Size(102f, 6f))
             when (illustration) {
-                EmptyStateIllustration.DOCUMENTS -> Unit
-                EmptyStateIllustration.FILTERED_DOCUMENTS -> {
-                    folderBack(colors)
-                    paper(48f, 18f, 55f, 64f, colors)
-                    folderFront(colors)
-                    rotate(-18f, Offset(115f, 66f)) {
-                        tag(96f, 48f, colors.tertiaryContainer, colors.onTertiaryContainer)
-                    }
-                }
+                EmptyStateIllustration.DOCUMENTS,
+                EmptyStateIllustration.FILTERED_DOCUMENTS -> Unit
                 EmptyStateIllustration.TAGS -> {
                     rotate(-20f, Offset(65f, 59f)) {
                         tag(38f, 22f, colors.secondaryContainer, colors.onSecondaryContainer, 1.2f)
@@ -170,41 +163,23 @@ internal fun EmptyStateArtwork(
 private fun DocumentEmptyArtwork(modifier: Modifier = Modifier) {
     val colors = MaterialTheme.colorScheme
     Box(
-        modifier.size(width = 160.dp, height = 112.dp).clearAndSetSemantics {},
+        modifier = modifier.size(width = 160.dp, height = 112.dp).clearAndSetSemantics {},
         contentAlignment = Alignment.Center,
     ) {
         Surface(
-            modifier = Modifier.offset(x = (-10).dp).rotate(-10f).size(68.dp, 88.dp),
-            shape = RoundedCornerShape(14.dp),
-            color = colors.secondaryContainer.copy(alpha = .7f),
-        ) {}
-        Surface(
-            modifier = Modifier.offset(x = 7.dp, y = (-2).dp).size(68.dp, 88.dp),
-            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier.size(96.dp),
+            shape = CircleShape,
             color = colors.surface,
             border = BorderStroke(1.dp, colors.outlineVariant),
-            shadowElevation = 2.dp,
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    painterResource(CoreResourcesR.drawable.ic_tag_document),
+                    painter = painterResource(CoreResourcesR.drawable.ic_tool_pages),
                     contentDescription = null,
-                    modifier = Modifier.size(36.dp),
+                    modifier = Modifier.size(48.dp),
                     tint = colors.primary,
                 )
             }
-        }
-        Surface(
-            modifier = Modifier.offset(x = 38.dp, y = 33.dp).size(32.dp),
-            color = colors.primary,
-            contentColor = colors.onPrimary,
-            shape = CircleShape,
-        ) {
-            Icon(
-                painterResource(CoreResourcesR.drawable.add_24px),
-                contentDescription = null,
-                modifier = Modifier.padding(6.dp),
-            )
         }
     }
 }
@@ -231,22 +206,6 @@ private fun DrawScope.paper(x: Float, y: Float, width: Float, height: Float, col
             Offset(x + 12f, lineY), Offset(x + width - if (index == 2) 22f else 12f, lineY),
             2.5f, StrokeCap.Round)
     }
-}
-
-private fun DrawScope.folderBack(colors: ColorScheme) {
-    drawPath(Path().apply {
-        moveTo(27f, 33f); lineTo(58f, 33f); lineTo(68f, 43f)
-        lineTo(126f, 43f); lineTo(126f, 91f); lineTo(27f, 91f); close()
-    }, colors.primary.copy(alpha = .25f))
-}
-
-private fun DrawScope.folderFront(colors: ColorScheme) {
-    val folder = Path().apply {
-        moveTo(22f, 51f); lineTo(133f, 51f); lineTo(122f, 95f)
-        lineTo(34f, 95f); close()
-    }
-    drawPath(folder, colors.secondaryContainer)
-    drawPath(folder, colors.onSecondaryContainer.copy(alpha = .7f), style = Stroke(2f, join = StrokeJoin.Round))
 }
 
 private fun DrawScope.tag(x: Float, y: Float, fill: Color, outline: Color, scale: Float = 1f) {
@@ -276,6 +235,20 @@ private fun DrawScope.checkBadge(x: Float, y: Float, colors: ColorScheme) {
     drawPath(Path().apply {
         moveTo(x - 6f, y); lineTo(x - 1f, y + 5f); lineTo(x + 7f, y - 5f)
     }, colors.onTertiaryContainer, style = Stroke(2.5f, cap = StrokeCap.Round, join = StrokeJoin.Round))
+}
+
+@Preview(name = "Documentos vazios claro", widthDp = 160, heightDp = 112)
+@Preview(
+    name = "Documentos vazios escuro",
+    widthDp = 160,
+    heightDp = 112,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun DocumentEmptyArtworkPreview() {
+    ScaniqoTheme {
+        Surface { DocumentEmptyArtwork() }
+    }
 }
 
 @Preview(name = "Ilustrações por contexto", widthDp = 360, heightDp = 600)
