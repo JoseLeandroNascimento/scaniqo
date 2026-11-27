@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">保存</string>
+    <string name="tag_unavailable">此标签已不可用。</string>
+    <string name="trash_actions">回收站选项</string>
+    <string name="trash_restore_all">全部恢复</string>
+    <string name="trash_restored_all">文档已恢复到文档库</string>
+    <string name="trash_restore_all_error">部分文档无法恢复，仍在回收站中。请重试。</string>
+    <string name="trash_information">信息</string>
+</resources>

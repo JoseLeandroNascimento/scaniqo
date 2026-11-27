@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
 import com.joseleandro.scaniqo.ui.components.DialogActions
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
@@ -112,7 +112,9 @@ fun SignaturesScreen(
             )
         },
     ) { padding ->
-        LazyVerticalGrid(
+        if (state.isLoading) {
+            SignaturesLoading(Modifier.fillMaxSize().padding(padding))
+        } else LazyVerticalGrid(
             columns = GridCells.Adaptive(280.dp),
             modifier = Modifier.fillMaxSize().padding(padding),
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 104.dp),
@@ -120,7 +122,6 @@ fun SignaturesScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             when {
-                state.isLoading -> item(span = { GridItemSpan(maxLineSpan) }) { CircularProgressIndicator(Modifier.padding(24.dp)) }
                 state.loadError -> item(span = { GridItemSpan(maxLineSpan) }) {
                     Column {
                         Text(stringResource(CoreResourcesR.string.runtime_signatures_load_error))
@@ -168,6 +169,21 @@ fun SignaturesScreen(
                 )
             },
         )
+    }
+}
+
+@Composable
+private fun SignaturesLoading(modifier: Modifier = Modifier) {
+    ScaniqoLoadingIndicator(modifier)
+}
+
+@Preview(name = "Carregando assinaturas", widthDp = 390, heightDp = 700, locale = "pt-rBR")
+@Preview(name = "Carregando assinaturas tablet", widthDp = 1280, heightDp = 720, locale = "pt-rBR")
+@Preview(name = "Carregando assinaturas escuro", widthDp = 390, heightDp = 700, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SignaturesLoadingPreview() {
+    ScaniqoTheme {
+        Surface { SignaturesLoading(Modifier.fillMaxSize()) }
     }
 }
 

@@ -41,8 +41,8 @@
     <string name="tools_signature_down">স্বাক্ষর নিচে সরান</string>
     <string name="tools_discard_title">পরিবর্তন বাদ দেবেন?</string>
     <string name="tools_discard_body">এই সম্পাদনার পরিবর্তন PDF-এ এখনও সংরক্ষিত হয়নি।</string>
-    <string name="tools_keep_editing">সম্পাদনা চালিয়ে যান</string>
-    <string name="tools_discard">বাদ দিয়ে বের হন</string>
+    <string name="tools_keep_editing">চালিয়ে যান</string>
+    <string name="tools_discard">বাদ দিন</string>
     <string name="tools_cleanup_error">এডিটর নিরাপদে বন্ধ করা যায়নি। আবার চেষ্টা করুন।</string>
     <string name="tools_export_save_first">ডাউনলোড বা শেয়ারের আগে পরিবর্তন সংরক্ষণ করুন।</string>
     <string name="tools_recovery_description">এই PDF-এর পাসওয়ার্ড ভল্টে নেই। প্রবেশাধিকার পুনরুদ্ধারে ফাইলের মূল পাসওয়ার্ড ব্যবহার করুন।</string>

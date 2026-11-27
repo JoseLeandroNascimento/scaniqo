@@ -294,15 +294,61 @@ class PdfImportViewModelTest {
         assertNull(documents.created.single().draft.thumbnailUri)
     }
 
+    @Test fun externalEncryptedPdfPromptsRetriesAndImportsWithoutGlobalPasswordSetup() = runTest(dispatcher) {
+        editor.requiredPassword = "external-secret"
+        assertFalse(vault.state.value.isConfigured)
+        viewModel.chooseFile()
+        viewModel.fileSelected("content://external/encrypted")
+        runCurrent()
+        assertTrue(viewModel.uiState.value.needsPassword)
+        assertNull(viewModel.uiState.value.error)
+        viewModel.submitPassword("incorrect")
+        runCurrent()
+        assertTrue(viewModel.uiState.value.needsPassword)
+        assertNotNull(viewModel.uiState.value.error)
+        assertTrue(vault.state.value.availableDocumentKeys.isEmpty())
+        viewModel.submitPassword("external-secret")
+        runCurrent()
+        val prepared = requireNotNull(viewModel.uiState.value.pending)
+        val key = requireNotNull(prepared.scan.protectionKeyId)
+        assertTrue(key.startsWith("pdf-password:"))
+        assertFalse(viewModel.uiState.value.needsPassword)
+        assertFalse(viewModel.uiState.value.needsUnlock)
+        assertFalse(vault.state.value.isConfigured)
+        assertTrue(vault.isPasswordAvailable(key))
+        assertFalse(saved.keys().any { saved.get<Any?>(it) == "external-secret" })
+        vault.withPassword(key) { assertEquals("external-secret", it) }
+    }
+
+    @Test fun cancellingPasswordPromptAllowsANewFileAndDoesNotKeepCredentials() = runTest(dispatcher) {
+        editor.requiredPassword = "external-secret"
+        viewModel.chooseFile()
+        viewModel.fileSelected("content://external/encrypted")
+        runCurrent()
+        viewModel.submitPassword("incorrect")
+        runCurrent()
+        viewModel.cancel()
+        assertFalse(viewModel.uiState.value.isActive)
+        assertTrue(vault.state.value.availableDocumentKeys.isEmpty())
+        editor.requiredPassword = null
+        viewModel.chooseFile()
+        viewModel.fileSelected("content://external/plain")
+        runCurrent()
+        assertNotNull(viewModel.uiState.value.pending)
+        assertFalse(viewModel.uiState.value.needsPassword)
+    }
+
     private class FakeEditor : PdfEditorRepository {
         var scan = ScannedDocument("file:///owned/import.pdf", 3, 10, 4096, "file:///owned/preview.jpg")
         var failure: Exception? = null
         var completionGate: CompletableDeferred<Unit>? = null
+        var requiredPassword: String? = null
         val imported = mutableListOf<String>()
         override suspend fun importPdf(uri: String, password: String?, protectionKeyId: String?): ScannedDocument {
             imported += uri
             failure?.let { throw it }
-            val prepared = scan
+            if (requiredPassword != null && password != requiredPassword) throw PdfPasswordRequiredException()
+            val prepared = if (requiredPassword != null) scan.copy(protectionKeyId = protectionKeyId, thumbnailUri = null) else scan
             val gate = completionGate
             if (gate != null) withContext(NonCancellable) { gate.await() }
             return prepared

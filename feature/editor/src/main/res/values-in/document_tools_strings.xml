@@ -41,8 +41,8 @@
     <string name="tools_signature_down">Pindahkan tanda tangan ke bawah</string>
     <string name="tools_discard_title">Buang perubahan?</string>
     <string name="tools_discard_body">Perubahan pengeditan ini belum disimpan ke PDF.</string>
-    <string name="tools_keep_editing">Lanjutkan mengedit</string>
-    <string name="tools_discard">Buang dan keluar</string>
+    <string name="tools_keep_editing">Lanjutkan</string>
+    <string name="tools_discard">Buang</string>
     <string name="tools_cleanup_error">Editor tidak dapat ditutup dengan aman. Coba lagi.</string>
     <string name="tools_export_save_first">Simpan perubahan sebelum mengunduh atau membagikan.</string>
     <string name="tools_recovery_description">Kata sandi PDF ini tidak tersedia di brankas. Gunakan kata sandi asli berkas untuk memulihkan akses.</string>

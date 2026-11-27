@@ -3,6 +3,7 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import com.joseleandro.scaniqo.feature.editor.R
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
@@ -18,6 +19,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -43,6 +47,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -50,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -57,6 +63,8 @@ import com.joseleandro.scaniqo.domain.model.PdfImageFilter
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPageThumbnail
 import com.joseleandro.scaniqo.ui.documentEditor.model.documentFilterChoices
 import com.joseleandro.scaniqo.ui.documentEditor.util.titleResource
+import com.joseleandro.scaniqo.ui.theme.DocumentPaperColors
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
@@ -107,49 +115,91 @@ internal fun DocumentFilterThumbnails(
         horizontalArrangement = Arrangement.spacedBy(if (compact) 10.dp else 12.dp),
     ) {
         items(documentFilterChoices, key = { it }) { filter ->
-            val selected = filter == selectedFilter
-            Surface(
-                modifier = Modifier
-                    .width(if (compact) 108.dp else 124.dp)
-                    .clip(shape = MaterialTheme.shapes.medium)
-                    .selectable(selected, enabled = enabled, role = Role.RadioButton, onClick = { onSelect(filter) }),
-                shape = MaterialTheme.shapes.medium,
-                color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
-                contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
-                border = BorderStroke(
-                    if (selected) 2.dp else .5.dp,
-                    if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
-                ),
-            ) {
-                Column(Modifier.padding(if (compact) 6.dp else 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(Modifier.fillMaxWidth().height(if (compact) 52.dp else 94.dp)) {
-                        FilterThumbnailImage(thumbnails[filter], loading, Modifier.fillMaxSize())
-                        if (selected) {
-                            Surface(
-                                modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).size(22.dp),
-                                color = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
-                                shape = CircleShape,
-                            ) {
-                                Icon(painterResource(CoreResourcesR.drawable.ic_check_24), null, Modifier.padding(3.dp))
-                            }
-                        }
-                    }
-                    Box(
-                        // O card inteiro recebe o toque; o rótulo não precisa reservar outro alvo de 48 dp.
-                        modifier = Modifier.fillMaxWidth()
-                            .heightIn(min = if (compact) 36.dp else 48.dp)
-                            .padding(top = if (compact) 4.dp else 8.dp, bottom = if (compact) 0.dp else 4.dp),
-                        contentAlignment = Alignment.Center,
+            DocumentFilterThumbnail(
+                filter, thumbnails, selectedFilter, loading, enabled, onSelect, compact,
+                Modifier.width(if (compact) 108.dp else 124.dp),
+            )
+        }
+    }
+}
+
+
+@Composable
+internal fun DocumentFilterGrid(
+    thumbnails: Map<PdfImageFilter, String>,
+    selectedFilter: PdfImageFilter?,
+    loading: Boolean,
+    enabled: Boolean,
+    onSelect: (PdfImageFilter) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(if (LocalDensity.current.fontScale > 1.5f) 192.dp else 128.dp),
+        modifier = modifier.fillMaxWidth().selectableGroup(),
+        contentPadding = PaddingValues(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        items(documentFilterChoices, key = { it }) { filter ->
+            DocumentFilterThumbnail(
+                filter, thumbnails, selectedFilter, loading, enabled, onSelect,
+                compact = false, modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun DocumentFilterThumbnail(
+    filter: PdfImageFilter,
+    thumbnails: Map<PdfImageFilter, String>,
+    selectedFilter: PdfImageFilter?,
+    loading: Boolean,
+    enabled: Boolean,
+    onSelect: (PdfImageFilter) -> Unit,
+    compact: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val selected = filter == selectedFilter
+    Surface(
+        modifier = modifier
+            .clip(shape = MaterialTheme.shapes.medium)
+            .selectable(selected, enabled = enabled, role = Role.RadioButton, onClick = { onSelect(filter) }),
+        shape = MaterialTheme.shapes.medium,
+        color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
+        contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+        border = BorderStroke(
+            if (selected) 2.dp else .5.dp,
+            if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+        ),
+    ) {
+        Column(Modifier.padding(if (compact) 6.dp else 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(Modifier.fillMaxWidth().height(if (compact) 52.dp else 94.dp)) {
+                FilterThumbnailImage(thumbnails[filter], loading, Modifier.fillMaxSize())
+                if (selected) {
+                    Surface(
+                        modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).size(22.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        shape = CircleShape,
                     ) {
-                        Text(
-                            stringResource(filter.titleResource()),
-                            style = MaterialTheme.typography.labelSmall,
-                            textAlign = TextAlign.Center,
-                            minLines = if (compact) 2 else 1,
-                        )
+                        Icon(painterResource(CoreResourcesR.drawable.ic_check_24), null, Modifier.padding(3.dp))
                     }
                 }
+            }
+            Box(
+                // O card inteiro recebe o toque; o rótulo não precisa reservar outro alvo de 48 dp.
+                modifier = Modifier.fillMaxWidth()
+                    .heightIn(min = if (compact) 36.dp else 48.dp)
+                    .padding(top = if (compact) 4.dp else 8.dp, bottom = if (compact) 0.dp else 4.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    stringResource(filter.titleResource()),
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    minLines = if (compact) 2 else 1,
+                )
             }
         }
     }
@@ -188,7 +238,7 @@ private fun FilterThumbnailImage(uri: String?, loading: Boolean, modifier: Modif
         }
         // O bitmap entregue pertence ao Compose e será liberado quando sair da composição.
     }
-    Surface(modifier, color = Color.White, shape = MaterialTheme.shapes.small) {
+    Surface(modifier, color = DocumentPaperColors.background, shape = MaterialTheme.shapes.small) {
         Box(contentAlignment = Alignment.Center) {
             when (val image = imageState) {
                 is FilterImageState.Ready -> Image(
@@ -197,24 +247,52 @@ private fun FilterThumbnailImage(uri: String?, loading: Boolean, modifier: Modif
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxSize(),
                 )
-                FilterImageState.Loading -> if (uri != null || loading) {
-                    CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                } else {
-                    ThumbnailUnavailable()
-                }
-                FilterImageState.Error -> ThumbnailUnavailable()
+                FilterImageState.Loading -> FilterThumbnailFeedback(loading = uri != null || loading)
+                FilterImageState.Error -> FilterThumbnailFeedback(loading = false)
             }
         }
     }
 }
 
 @Composable
-private fun ThumbnailUnavailable() {
-    Text(
-        stringResource(R.string.filter_preview_thumbnail_error),
-        Modifier.padding(8.dp),
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center,
-    )
+private fun FilterThumbnailFeedback(loading: Boolean) {
+    if (loading) {
+        CircularProgressIndicator(
+            Modifier.size(20.dp),
+            color = DocumentPaperColors.indicator,
+            strokeWidth = 2.dp,
+        )
+    } else {
+        Text(
+            stringResource(R.string.filter_preview_thumbnail_error),
+            Modifier.padding(8.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = DocumentPaperColors.supportingText,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Preview(name = "Filtros — feedback claro", widthDp = 320, locale = "pt-rBR")
+@Preview(name = "Filtros — feedback escuro", widthDp = 320, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Filtros — feedback fonte 2", widthDp = 320, locale = "pt-rBR", fontScale = 2f)
+@Composable
+private fun FilterThumbnailFeedbackPreview() {
+    ScaniqoTheme {
+        Surface {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                listOf(true, false).forEach { loading ->
+                    Surface(
+                        Modifier.fillMaxWidth().heightIn(min = 94.dp),
+                        color = DocumentPaperColors.background,
+                        shape = MaterialTheme.shapes.small,
+                    ) {
+                        Box(Modifier.padding(8.dp), contentAlignment = Alignment.Center) {
+                            FilterThumbnailFeedback(loading)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">Guardar</string>
+    <string name="tag_unavailable">Esta etiqueta ya no está disponible.</string>
+    <string name="trash_actions">Opciones de la papelera</string>
+    <string name="trash_restore_all">Restaurar todo</string>
+    <string name="trash_restored_all">Documentos restaurados en la biblioteca</string>
+    <string name="trash_restore_all_error">No se pudieron restaurar algunos documentos. Siguen en la papelera. Inténtalo de nuevo.</string>
+    <string name="trash_information">Información</string>
+</resources>

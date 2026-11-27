@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">حفظ</string>
+    <string name="tag_unavailable">لم يعد هذا التصنيف متاحًا.</string>
+    <string name="trash_actions">خيارات المهملات</string>
+    <string name="trash_restore_all">استعادة الكل</string>
+    <string name="trash_restored_all">تمت استعادة المستندات إلى المكتبة</string>
+    <string name="trash_restore_all_error">تعذرت استعادة بعض المستندات. ما زالت في المهملات. حاول مرة أخرى.</string>
+    <string name="trash_information">معلومات</string>
+</resources>

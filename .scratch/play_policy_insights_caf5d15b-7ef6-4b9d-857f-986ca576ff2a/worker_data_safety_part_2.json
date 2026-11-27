@@ -1,0 +1,45 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "policy_id": "data_safety_section",
+      "is_transferred": true,
+      "user_initiated": true,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "App functionality: optional Premium purchase, ownership verification and acknowledgement",
+      "linked_to_user": true,
+      "severity": "SUGGESTION",
+      "psl_constant": "PURCHASE_HISTORY",
+      "issue_summary": "User-Initiated Collection: standard Play Billing purchase token; declaration applicability review",
+      "files_involved": [
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/ads/src/main/java/com/joseleandro/scaniqo/core/ads/ToolAdAccessStore.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/billing/src/main/java/com/joseleandro/scaniqo/core/billing/AndroidPlayBillingGateway.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/billing/src/main/java/com/joseleandro/scaniqo/core/billing/PlayBillingDiagnostics.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/billing/src/main/java/com/joseleandro/scaniqo/core/billing/PlayBillingManager.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/billing/src/main/java/com/joseleandro/scaniqo/core/billing/PlayReceiptStore.kt"
+      ],
+      "evidence": "ToolAdAccessStore.kt:43-46 stores ad reward receipts only in SharedPreferences. AndroidPlayBillingGateway.kt:170-178 receives signed Play purchase metadata; :128-129 passes the purchase token to BillingClient.acknowledgePurchase. PlayBillingManager.kt:96-104 launches checkout only after an explicit UI tap, while :205-206 and retries can acknowledge an already initiated purchase later. PlayReceiptStore.kt:36-38 keeps receipts in noBackupFilesDir. PlayBillingDiagnostics.kt:21-22 excludes token/receipt values from diagnostics; AndroidPlayBillingGateway.kt:165-166 uses local Log only. No developer-server purchase-history upload appears in these sources.",
+      "recommendation": "Review whether purchase-token acknowledgement within the standard Google Play payment flow requires a purchase-history declaration for this release; do not infer credit-card collection or a backend upload. Official guidance distinguishes payment-provider data from purchase history: https://support.google.com/googleplay/android-developer/answer/10787469 . This is an informational classification review, not evidence of a disclosure violation."
+    },
+    {
+      "policy_id": "data_safety_section",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false,
+      "severity": "SUGGESTION",
+      "psl_constant": "RACE_ETHNICITY",
+      "issue_summary": "Data Safety Compliant (Local-Only): false positive substring matches",
+      "files_involved": [
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/billing/src/main/java/com/joseleandro/scaniqo/core/billing/PlayBillingManager.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/billing/src/main/java/com/joseleandro/scaniqo/core/billing/PlayReceiptStore.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/domain/src/main/java/com/joseleandro/scaniqo/domain/model/PdfCheckmarkGeometry.kt"
+      ],
+      "evidence": "PlayBillingManager.kt:176 and :248 and PlayReceiptStore.kt:21-26 use grace in an offline receipt expiration window. PdfCheckmarkGeometry.kt:10 declares trace for drawing checkmark geometry. These are substring matches for race, with no race or ethnicity data.",
+      "recommendation": "Do not declare race or ethnicity from these false positives."
+    }
+  ]
+}

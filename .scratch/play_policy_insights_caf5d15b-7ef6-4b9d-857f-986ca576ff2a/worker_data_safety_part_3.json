@@ -1,0 +1,51 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "policy_id": "data_safety_section",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false,
+      "severity": "SUGGESTION",
+      "psl_constant": "MUSIC",
+      "issue_summary": "Data Safety Compliant (Local-Only): false positive text and UI geometry matches",
+      "files_involved": [
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/common/src/main/res/values-in/runtime_strings.xml",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/backup/src/main/res/values-in/drive_backup_strings.xml",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/editor/src/main/java/com/joseleandro/scaniqo/ui/documentEditor/components/DocumentLayoutSizeVisuals.kt"
+      ],
+      "evidence": "runtime_strings.xml:3 and drive_backup_strings.xml:17 contain Indonesian kosong, meaning empty; song is only a substring. DocumentLayoutSizeVisuals.kt:36 and :74 refer to a visual slider track. No music file source or transfer is present.",
+      "recommendation": "Do not declare music based on these matches."
+    },
+    {
+      "policy_id": "data_safety_section",
+      "is_transferred": true,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "DISCLOSED",
+      "purpose": "App functionality: optional manual and scheduled cloud backup/restore; user-initiated PDF export/sharing",
+      "linked_to_user": true,
+      "severity": "IMPORTANT",
+      "psl_constant": "FILES_AND_DOCS",
+      "issue_summary": "Background Transfer (Disclosure Claimed): optional Google Drive PDF backup; explicit sharing also present",
+      "files_involved": [
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/document-ui/src/main/java/com/joseleandro/scaniqo/ui/documentCommon/platform/DocumentActionsHandler.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/document-ui/src/main/java/com/joseleandro/scaniqo/ui/documentCommon/DocumentActionsViewModel.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/editor/src/main/java/com/joseleandro/scaniqo/ui/documentEditor/platform/DocumentToolsHandler.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/library/src/main/java/com/joseleandro/scaniqo/ui/documents/platform/PdfImportHandler.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/data/backup/src/main/java/com/joseleandro/scaniqo/data/backup/GoogleDriveBackupRemote.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/data/backup/src/main/java/com/joseleandro/scaniqo/data/backup/AutomaticBackupRunner.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/data/backup/src/main/java/com/joseleandro/scaniqo/data/backup/WorkManagerBackupScheduler.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/data/backup/src/main/java/com/joseleandro/scaniqo/data/backup/AndroidBackupSettingsRepository.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/backup/src/main/java/com/joseleandro/scaniqo/ui/backup/DriveBackupScreen.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/backup/src/main/java/com/joseleandro/scaniqo/ui/backup/DriveBackupViewModel.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/backup/src/main/res/values-pt/drive_backup_strings.xml"
+      ],
+      "evidence": "DocumentToolsHandler.kt:57-62 and :78 and PdfImportHandler.kt:48-60 and :69 only import user-selected PDFs. DocumentActionsViewModel.kt:200 and :463-469 explicitly trigger share; DocumentActionsHandler.kt:75-85 sends a PDF URI/title to the Android chooser, a user-initiated sharing path. Separately GoogleDriveBackupRemote.kt:65-131 writes ZIP metadata and archive bytes via HTTPS upload endpoint at :402. AutomaticBackupRunner.kt:46-48 requires automaticEnabled, an authorized account, and later Premium entitlement before creating and uploading a backup at :100-108. AndroidBackupSettingsRepository.kt:49 defaults automaticEnabled to false; WorkManagerBackupScheduler.kt:24-34 gates scheduling on opt-in. DriveBackupScreen.kt:649-654 exposes the Backup automático switch; DriveBackupViewModel.kt:509-523 saves that choice before scheduling. Visible backup intro says 'Guarde seus PDFs no Drive e leve com você.'; backup scope text explains only saved PDFs, and background status explains continued operation after leaving the screen. This supports opt-in disclosed background backup, not a proven policy violation.",
+      "recommendation": "Treat files/documents as optional collection for Google Drive backup/app functionality unless a specific applicable exception is confirmed. User-triggered Android share-sheet transfers can use the user-initiated sharing exception. Confirm the release's Data Safety answers include scheduled Drive uploads and do not describe the app as wholly local-only."
+    }
+  ]
+}

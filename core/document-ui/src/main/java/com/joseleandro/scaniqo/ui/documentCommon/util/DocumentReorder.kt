@@ -1,11 +1,17 @@
 package com.joseleandro.scaniqo.ui.documentCommon.util
 
+import kotlin.math.roundToInt
+
 /** Remove e insere no índice final; mover 1 → 10 significa ocupar a décima posição. */
 fun moveDocumentOrder(order: List<String>, itemId: String, targetIndex: Int): List<String> {
     val currentIndex = order.indexOf(itemId)
     if (currentIndex < 0 || targetIndex !in order.indices || currentIndex == targetIndex) return order
     return order.toMutableList().apply { add(targetIndex, removeAt(currentIndex)) }
 }
+
+/** Limita apenas a prévia; o centro real do gesto continua acionando a rolagem nas bordas. */
+fun documentDragPreviewTop(centerY: Float, itemHeight: Int, viewportHeight: Int): Int =
+    (centerY - itemHeight / 2f).roundToInt().coerceIn(0, (viewportHeight - itemHeight).coerceAtLeast(0))
 
 /** Velocidade em pixels/segundo, gradual nas bordas e limitada fora da lista. */
 fun documentDragScrollSpeed(

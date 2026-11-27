@@ -341,6 +341,30 @@ class DocumentMergeCoordinatorTest {
         assertEquals(1, fixture.history.size)
     }
 
+    @Test fun returningFromPickerToDocumentPasswordSessionRequestsPdfPasswordAndResumesMerge() = runTest {
+        val fixture = Fixture(this)
+        fixture.protectedDestination = true
+        val key = "pdf-password:destination"
+        fixture.workspace = fixture.workspace.copy(protectionKeyId = key)
+        fixture.passwords.state.value = PasswordVaultState(availableDocumentKeys = setOf(key))
+        fixture.coordinator.launchPicker(1)
+        assertEquals(DocumentToolsEffect.LaunchPdfMergePicker, fixture.effects.last())
+        fixture.passwords.state.value = PasswordVaultState()
+        fixture.locked = true
+        fixture.coordinator.onWorkspaceLocked()
+        fixture.coordinator.acceptSelection(listOf("content://external/plain"))
+        assertEquals(DocumentMergeUiState.AwaitingUnlock, fixture.phase)
+        assertEquals(DocumentToolsEffect.NeedDocumentPassword, fixture.effects.last())
+        assertEquals(0, fixture.appendCalls)
+        fixture.passwords.state.value = PasswordVaultState(availableDocumentKeys = setOf(key))
+        fixture.locked = false
+        assertTrue(fixture.coordinator.resumeAfterUnlock())
+        advanceUntilIdle()
+        assertEquals(1, fixture.appendCalls)
+        assertEquals(1, fixture.history.size)
+        assertEquals(DocumentMergeUiState.Idle, fixture.phase)
+    }
+
     private class Fixture(scope: CoroutineScope) {
         val document = DocumentModel(
             id = 1, name = "Destino", pdfUri = "file:///destination.pdf", pageCount = 2,
@@ -356,6 +380,10 @@ class DocumentMergeCoordinatorTest {
         var session = 1L
         var locked = false
         var protectedDestination = false
+            set(value) {
+                field = value
+                workspace = workspace.copy(isProtected = value, protectionKeyId = if (value) "destination-key" else null)
+            }
         var phase: DocumentMergeUiState = DocumentMergeUiState.Idle
         var selectedPageId: String? = null
         var appendCalls = 0

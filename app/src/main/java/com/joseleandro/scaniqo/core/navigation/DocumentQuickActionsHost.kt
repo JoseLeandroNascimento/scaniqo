@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -145,6 +146,7 @@ fun DocumentQuickActionsHost(
                             } else prompt.name
                             Text(stringResource(R.string.quick_merge_password, bidiArgument(documentName)))
                             OutlinedTextField(
+                                shape = ScaniqoFieldDefaults.shape,
                                 value = password, onValueChange = { password = it },
                                 label = { Text(stringResource(R.string.quick_merge_password_label)) },
                                 modifier = Modifier.fillMaxWidth(),

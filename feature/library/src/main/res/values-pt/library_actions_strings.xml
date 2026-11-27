@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">Salvar</string>
+    <string name="tag_unavailable">Esta tag não está mais disponível.</string>
+    <string name="trash_actions">Opções da lixeira</string>
+    <string name="trash_restore_all">Restaurar todos</string>
+    <string name="trash_restored_all">Documentos restaurados para a biblioteca</string>
+    <string name="trash_restore_all_error">Não foi possível restaurar alguns documentos. Eles continuam na lixeira. Tente novamente.</string>
+    <string name="trash_information">Informações</string>
+</resources>

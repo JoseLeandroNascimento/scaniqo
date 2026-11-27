@@ -17,8 +17,8 @@
     <string name="signature_crop">Pangkas</string>
     <string name="signature_cancel_title">Buang posisi ini?</string>
     <string name="signature_cancel_body">Tanda tangan ini belum diterapkan. Perubahan lain pada dokumen tetap dipertahankan.</string>
-    <string name="signature_cancel_confirm">Buang tanda tangan</string>
-    <string name="signature_keep_editing">Lanjutkan menyesuaikan</string>
+    <string name="signature_cancel_confirm">Buang</string>
+    <string name="signature_keep_editing">Lanjutkan</string>
     <string name="signature_back">Kembali ke editor</string>
     <string name="signature_edit_placed">Edit tanda tangan %1$d</string>
     <string name="signature_retry">Coba lagi</string>

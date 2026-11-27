@@ -10,6 +10,7 @@ data class TagsUiState(
     val isLoading: Boolean = true,
     val loadError: Boolean = false,
     val editor: TagEditorUiState? = null,
+    val editorTagNotFound: Boolean = false,
     val pendingDeletion: TagModel? = null,
     val isDeleting: Boolean = false,
     val message: TagsMessage? = null,

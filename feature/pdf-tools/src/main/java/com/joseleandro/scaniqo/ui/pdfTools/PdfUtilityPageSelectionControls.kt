@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -141,6 +142,7 @@ private fun PageRangeEditor(
         }
         if (state.advanced) {
             OutlinedTextField(
+                shape = ScaniqoFieldDefaults.shape,
                 value = state.draft, onValueChange = { onChange(state.edit(it)) },
                 modifier = Modifier.fillMaxWidth(), enabled = enabled,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr),
@@ -156,6 +158,7 @@ private fun PageRangeEditor(
         } else {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
+                    shape = ScaniqoFieldDefaults.shape,
                     value = state.from,
                     onValueChange = { value ->
                         if (value.length <= pageCount.toString().length && value.all { Character.digit(it, 10) >= 0 })
@@ -168,6 +171,7 @@ private fun PageRangeEditor(
                     isError = state.attemptedRange && rangeError != null,
                 )
                 OutlinedTextField(
+                    shape = ScaniqoFieldDefaults.shape,
                     value = state.until,
                     onValueChange = { value ->
                         if (value.length <= pageCount.toString().length && value.all { Character.digit(it, 10) >= 0 })

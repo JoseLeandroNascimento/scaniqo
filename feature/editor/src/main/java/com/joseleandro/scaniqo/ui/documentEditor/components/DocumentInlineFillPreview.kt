@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.joseleandro.scaniqo.feature.editor.R
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
@@ -21,6 +19,9 @@ import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 /** O tamanho reduzido representa o espaço disponível acima do teclado aberto. */
+@Preview(name = "Preencher — tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Preencher — janela dividida", widthDp = 600, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Preencher — tablet fonte ampliada", widthDp = 1280, heightDp = 800, fontScale = 2f, locale = "pt-rBR")
 @Preview(name = "Preencher — digitando", widthDp = 360, heightDp = 400, locale = "pt-rBR")
 @Preview(name = "Preencher — digitando compacto", widthDp = 320, heightDp = 360, fontScale = 1.5f, locale = "pt-rBR")
 @Composable
@@ -45,11 +46,7 @@ private fun DocumentInlineFillPreview() {
                     canUndo = true, onUndo = {},
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                 )
-                DocumentEditorPrimaryActions(
-                    insertLabel = stringResource(R.string.fill_context_insert),
-                    doneLabel = stringResource(R.string.editor_tool_done),
-                    onInsert = {}, onDone = {}, enabled = true,
-                )
+                DocumentFillMarkActions(onInsert = {}, onDone = {}, enabled = true)
             }
         }
     }

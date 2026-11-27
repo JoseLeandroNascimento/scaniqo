@@ -63,6 +63,89 @@ class TagsViewModelTest {
     }
 
     @Test
+    fun editorDestinationWaitsForLoadAndDoesNotOverwriteDraftOnRefresh() = runTest(dispatcher) {
+        repository.tags.value = listOf(receipt)
+        viewModel.initializeEditor(receipt.id)
+        assertNull(viewModel.uiState.value.editor)
+        assertFalse(viewModel.uiState.value.editorTagNotFound)
+        runCurrent()
+        viewModel.initializeEditor(receipt.id)
+        assertEquals(receipt.name, viewModel.uiState.value.editor?.name)
+        assertEquals(receipt.id, viewModel.uiState.value.editor?.id)
+
+        viewModel.onEvent(TagsEvent.NameChanged("Unsaved draft"))
+        repository.tags.value = listOf(receipt.copy(name = "External update"))
+        runCurrent()
+        viewModel.initializeEditor(receipt.id)
+        assertEquals("Unsaved draft", viewModel.uiState.value.editor?.name)
+    }
+
+    @Test
+    fun unknownEditorDestinationDoesNotSilentlyCreateANewTag() = runTest(dispatcher) {
+        repository.tags.value = listOf(receipt)
+        viewModel.initializeEditor(999L)
+        assertFalse(viewModel.uiState.value.editorTagNotFound)
+        runCurrent()
+        // A loaded list alone does not mean the requested tag was checked yet.
+        assertFalse(viewModel.uiState.value.editorTagNotFound)
+        viewModel.initializeEditor(999L)
+        assertNull(viewModel.uiState.value.editor)
+        assertTrue(viewModel.uiState.value.editorTagNotFound)
+        viewModel.onEvent(TagsEvent.SaveTag)
+        runCurrent()
+        assertEquals(listOf(receipt), repository.tags.value)
+    }
+
+    @Test
+    fun newEditorDestinationStartsWithoutWaitingForTheTagList() = runTest(dispatcher) {
+        viewModel.initializeEditor(null)
+        assertTrue(viewModel.uiState.value.isLoading)
+        assertFalse(viewModel.uiState.value.editorTagNotFound)
+        assertEquals("", viewModel.uiState.value.editor?.name)
+        assertNull(viewModel.uiState.value.editor?.id)
+        viewModel.onEvent(TagsEvent.NameChanged("New draft"))
+        runCurrent()
+        viewModel.initializeEditor(null)
+        assertEquals("New draft", viewModel.uiState.value.editor?.name)
+    }
+
+    @Test
+    fun newEditorOpensEvenWhenTheTagListCannotBeRead() = runTest(dispatcher) {
+        repository.loadFailure = IllegalStateException("Read failed")
+        viewModel
+        runCurrent()
+        assertTrue(viewModel.uiState.value.loadError)
+
+        viewModel.initializeEditor(null)
+
+        assertEquals("", viewModel.uiState.value.editor?.name)
+        assertNull(viewModel.uiState.value.editor?.id)
+        assertFalse(viewModel.uiState.value.editorTagNotFound)
+    }
+
+    @Test
+    fun editingWaitsForASuccessfulRetryBeforeLookingUpTheTag() = runTest(dispatcher) {
+        repository.loadFailure = IllegalStateException("Read failed")
+        viewModel.initializeEditor(receipt.id)
+        runCurrent()
+        viewModel.initializeEditor(receipt.id)
+        assertTrue(viewModel.uiState.value.loadError)
+        assertNull(viewModel.uiState.value.editor)
+        assertFalse(viewModel.uiState.value.editorTagNotFound)
+
+        repository.loadFailure = null
+        repository.tags.value = listOf(receipt)
+        viewModel.onEvent(TagsEvent.RetryLoad)
+        viewModel.initializeEditor(receipt.id)
+        assertNull(viewModel.uiState.value.editor)
+        runCurrent()
+        viewModel.initializeEditor(receipt.id)
+
+        assertEquals(receipt.id, viewModel.uiState.value.editor?.id)
+        assertFalse(viewModel.uiState.value.editorTagNotFound)
+    }
+
+    @Test
     fun loadingEndsWhenTheRepositoryEmitsTags() = runTest(dispatcher) {
         repository.tags.value = listOf(receipt)
         assertTrue(viewModel.uiState.value.isLoading)

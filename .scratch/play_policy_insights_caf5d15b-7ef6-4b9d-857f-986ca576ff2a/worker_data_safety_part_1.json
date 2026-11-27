@@ -1,0 +1,43 @@
+{
+  "domain": "Data Safety and Privacy",
+  "findings": [
+    {
+      "psl_constant": "PERSONAL_INFO_OTHER",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only): false positive keyword matches",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/app/src/main/java/com/joseleandro/scaniqo/ui/toolsHub/ToolsHubScreen.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/resources/src/main/res/values-pt/quality_tools_strings.xml",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/library/src/main/java/com/joseleandro/scaniqo/ui/documents/preview/DocumentsScreenPreview.kt"
+      ],
+      "evidence": "ToolsHubScreen.kt:374 and DocumentsScreenPreview.kt:24 contain Portuguese 'dobrável' in preview labels; quality_tools_strings.xml:35 contains 'dobra' for book-page curvature. The substring dob does not denote date of birth or other personal data.",
+      "recommendation": "Do not declare other personal information based on these matches.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    },
+    {
+      "psl_constant": "AUDIO",
+      "policy_id": "data_safety_section",
+      "issue_summary": "Data Safety Compliant (Local-Only): no audio collection in supplied sources",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/ads/src/main/java/com/joseleandro/scaniqo/core/ads/RewardedAdManager.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/ads/src/main/java/com/joseleandro/scaniqo/core/ads/ToolAdAccessStore.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/domain/src/main/java/com/joseleandro/scaniqo/domain/repository/BackupHistoryRepository.kt"
+      ],
+      "evidence": "RewardedAdManager.kt:190 calls recordAdShown with an ad identifier; ToolAdAccessStore.kt:89 implements it as Unit. BackupHistoryRepository.kt:10 records backup history entries and its delete documentation explicitly describes a local record. None of these record occurrences captures voice or sound.",
+      "recommendation": "Do not declare audio based on these false positive keyword matches; review advertising metadata separately.",
+      "is_transferred": false,
+      "user_initiated": false,
+      "is_third_party": false,
+      "prominent_disclosure_status": "EXEMPT",
+      "purpose": "Local functionality only",
+      "linked_to_user": false
+    }
+  ]
+}

@@ -15,9 +15,6 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
@@ -35,6 +32,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -572,7 +570,7 @@ private fun LayoutSizeControls(
                     onValueChange = { value ->
                         if (value.length <= 3 && value.all(Char::isDigit)) onScaleEntryChange(value)
                     },
-                    modifier = Modifier.size(width = 90.dp, height = 56.dp)
+                    modifier = Modifier.width(90.dp).heightIn(min = 56.dp)
                         .then(Modifier.focusRequester(scaleFocus)),
                     singleLine = true,
                     suffix = { Text("%") },
@@ -584,6 +582,7 @@ private fun LayoutSizeControls(
                     keyboardActions = androidx.compose.foundation.text.KeyboardActions(
                         onDone = { onCommitScaleEntry() },
                     ),
+                    shape = ScaniqoFieldDefaults.shape,
                 )
             }
             IconButton(
@@ -600,21 +599,14 @@ private fun LayoutSizeControls(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
         )
-        Row(
-            Modifier.fillMaxWidth().height(IntrinsicSize.Min).selectableGroup(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            LayoutSizePreset.entries.forEach { preset ->
-                LayoutSizePresetTile(
-                    preset = preset, selected = selectedPreset == preset, enabled = enabled,
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                    onClick = {
-                        onCancelScaleEntry()
-                        onChange(preset.apply(layout))
-                    },
-                )
-            }
-        }
+        LayoutSizePresets(
+            selectedPreset = selectedPreset,
+            enabled = enabled,
+            onSelect = { preset ->
+                onCancelScaleEntry()
+                onChange(preset.apply(layout))
+            },
+        )
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),

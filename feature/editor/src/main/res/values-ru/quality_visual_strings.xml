@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">Для печати и сохранения деталей.</string>
+    <string name="quality_visual_balanced_use">Для повседневного чтения и отправки.</string>
+    <string name="quality_visual_small_use">Для отправки файла меньшего размера.</string>
+    <string name="quality_visual_ocr_description">Находите слова на отсканированных страницах.</string>
+</resources>

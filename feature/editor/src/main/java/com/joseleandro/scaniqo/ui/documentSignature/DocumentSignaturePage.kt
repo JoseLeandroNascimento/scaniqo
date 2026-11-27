@@ -18,10 +18,9 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.CircularProgressIndicator
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -96,6 +95,7 @@ internal fun DocumentSignaturePage(
         DocumentSignatureViewportState()
     }
     var selectionIds by remember(page.id) { mutableStateOf(emptyList<String>()) }
+    val loadingLabel = stringResource(CoreResourcesR.string.signature_loading)
     val previousPageLabel = stringResource(R.string.signature_previous_page)
     val nextPageLabel = stringResource(R.string.signature_next_page)
     val preview = state.pagePreviews[page.id]
@@ -167,7 +167,9 @@ internal fun DocumentSignaturePage(
                     onClick = { onEvent(DocumentToolsEvent.RetryPagePreview(page.id)) },
                     modifier = Modifier.align(Alignment.Center),
                 ) { Text(stringResource(R.string.signature_retry)) }
-                else -> CircularProgressIndicator(Modifier.align(Alignment.Center).size(28.dp))
+                else -> ScaniqoLoadingIndicator(
+                    Modifier.align(Alignment.Center).semantics { contentDescription = loadingLabel },
+                )
             }
         }
     }

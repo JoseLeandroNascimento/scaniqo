@@ -1,0 +1,17 @@
+{
+  "domain": "User Account and Identity",
+  "findings": [
+    {
+      "policy_id": "login_credentials",
+      "issue_summary": "Document the optional Google Drive authorization flow for Play review; no Scaniqo account creation was found in the supplied account evidence.",
+      "severity": "SUGGESTION",
+      "files_involved": [
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/backup/src/main/java/com/joseleandro/scaniqo/ui/backup/platform/DriveAuthorizationHandler.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/feature/backup/src/main/java/com/joseleandro/scaniqo/ui/backup/platform/DriveAuthorizationResult.kt",
+        "C:/Users/leandro/Desktop/projetos/pessoais/projetos/Scaniqo/core/security/src/main/java/com/joseleandro/scaniqo/core/security/PasswordVault.kt"
+      ],
+      "evidence": "DriveAuthorizationHandler.kt:31-36 uses the official Google authorization client, requesting the drive.file scope at lines 69-73, and revokes that scope at lines 123-128. DriveAuthorizationResult.kt:11 defines drive.file scope; this is authorization to an existing Google account, not evidence of an app account registration. PasswordVault.kt uses local encrypted storage and Android Keystore, and deactivateGeneralPassword only changes the local vault. The uid pattern matches onboarding_guide/signature_camera_guidance resource names rather than user identifiers.",
+      "recommendation": "In App access, explain how reviewers reach and authorize the optional Drive backup feature and any premium restriction. Do not infer mandatory Scaniqo account-deletion or test-password requirements solely from Google Drive OAuth; assess the actual release's account-creation behavior."
+    }
+  ]
+}

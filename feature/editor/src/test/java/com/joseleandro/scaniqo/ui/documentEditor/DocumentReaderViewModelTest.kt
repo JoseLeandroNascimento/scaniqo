@@ -175,14 +175,46 @@ class DocumentReaderViewModelTest {
         assertEquals(1, repository.closed.size)
     }
 
+    @Test fun perDocumentPasswordPromptsWithoutVaultAndWrongPasswordCanBeRetriedOrCancelled() = runTest(dispatcher) {
+        passwords.state.value = PasswordVaultState()
+        val external = document.copy(protectionKeyId = "pdf-password:external")
+        repository.requiredPassword = "external-secret"
+        model.load(external)
+        runCurrent()
+        assertTrue(model.uiState.value.needsPassword)
+        assertTrue(repository.opened.isEmpty())
+        model.submitPassword("wrong")
+        runCurrent()
+        assertTrue(model.uiState.value.passwordIncorrect)
+        assertNull(model.uiState.value.readable)
+        assertTrue(passwords.state.value.availableDocumentKeys.isEmpty())
+        model.cancelPassword()
+        assertFalse(model.uiState.value.needsPassword)
+        assertTrue(model.uiState.value.isLocked)
+        model.requestPassword()
+        model.submitPassword("external-secret")
+        runCurrent()
+        assertFalse(model.uiState.value.needsPassword)
+        assertFalse(model.uiState.value.isLocked)
+        assertFalse(passwords.state.value.isConfigured)
+        assertEquals("private-1.pdf", model.uiState.value.readable?.pdfUri)
+        model.background()
+        runCurrent()
+        assertNull(model.uiState.value.readable)
+        assertTrue(model.uiState.value.recoveryRequired)
+        assertTrue(passwords.state.value.availableDocumentKeys.isEmpty())
+    }
+
     private class FakeReader : DocumentReaderRepository {
         val opened = mutableListOf<Pair<DocumentModel, String?>>()
         val closed = mutableListOf<ReadableDocument>()
         var failure: Exception? = null
         var gate: CompletableDeferred<Unit>? = null
+        var requiredPassword: String? = null
 
         override suspend fun open(document: DocumentModel, password: String?): ReadableDocument {
             opened += document to password
+            if (requiredPassword != null && password != requiredPassword) throw com.joseleandro.scaniqo.domain.model.PdfPasswordRequiredException()
             failure?.let { throw it }
             gate?.let { withContext(NonCancellable) { it.await() } }
             return if (document.isProtected) ReadableDocument(
@@ -198,14 +230,21 @@ class DocumentReaderViewModelTest {
         override val activeKeyId: String? = "original"
         var missingOriginal = false
         var lastKeyId: String? = null
-
-        override suspend fun <T> withPassword(keyId: String?, block: suspend (String) -> T): T {
-            if (!state.value.isUnlocked) throw PasswordVaultLockedException()
-            if (missingOriginal && keyId == "original") throw PasswordVersionMissingException()
-            lastKeyId = keyId
-            return block("secret")
+        private val documentPasswords = mutableMapOf<String, String>()
+        override suspend fun rememberDocumentPassword(password: String, keyId: String?): String {
+            val key = keyId ?: com.joseleandro.scaniqo.core.security.newDocumentPasswordKey()
+            documentPasswords[key] = password
+            state.value = state.value.copy(availableDocumentKeys = state.value.availableDocumentKeys + key)
+            return key
         }
 
-        override fun lock() { state.value = state.value.copy(isUnlocked = false) }
+        override suspend fun <T> withPassword(keyId: String?, block: suspend (String) -> T): T {
+            if (!isPasswordAvailable(keyId)) throw PasswordVaultLockedException()
+            if (missingOriginal && keyId == "original") throw PasswordVersionMissingException()
+            lastKeyId = keyId
+            return block(documentPasswords[keyId] ?: "secret")
+        }
+
+        override fun lock() { state.value = state.value.copy(isUnlocked = false, availableDocumentKeys = emptySet()); documentPasswords.clear() }
     }
 }

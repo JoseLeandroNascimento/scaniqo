@@ -55,7 +55,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -554,7 +554,7 @@ private fun SignatureCameraCapture(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        CircularProgressIndicator(Modifier.size(32.dp))
+                        ScaniqoLoadingIndicator()
                         Text(stringResource(
                             if (isCapturing || lifetime.completed) R.string.signature_camera_capturing
                             else R.string.signature_camera_starting,

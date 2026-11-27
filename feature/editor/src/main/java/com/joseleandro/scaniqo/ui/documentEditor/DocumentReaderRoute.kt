@@ -16,7 +16,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.ui.documentCommon.DocumentActionsViewModel
-import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentPasswordRecoveryDialog
+import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentPdfPasswordDialog
 import com.joseleandro.scaniqo.ui.security.PasswordUnlockHandler
 import org.koin.compose.koinInject
 
@@ -40,7 +40,6 @@ fun DocumentReaderRoute(
     val document = viewerState.document?.takeIf { it.id == documentId }
     val isLoading = viewerState.isLoading || viewerState.requestedDocumentId != documentId
     var unlockRequested by rememberSaveable(documentId) { mutableStateOf(false) }
-    var recoveryRequested by rememberSaveable(documentId) { mutableStateOf(false) }
     var documentWasLoaded by rememberSaveable(documentId) { mutableStateOf(false) }
     val active by rememberUpdatedState(isActive)
     val readerOwner = remember { Any() }
@@ -55,7 +54,6 @@ fun DocumentReaderRoute(
         } else {
             readerViewModel.deactivate(documentId, readerOwner)
             unlockRequested = false
-            recoveryRequested = false
         }
     }
     LaunchedEffect(document, isLoading, viewerState.loadError, isActive) {
@@ -92,7 +90,7 @@ fun DocumentReaderRoute(
         onNavigationBack = onNavigationBack,
         onEdit = onEdit,
         onUnlock = {
-            if (readerState.recoveryRequired) recoveryRequested = true
+            if (readerState.recoveryRequired) readerViewModel.requestPassword()
             else unlockRequested = true
         },
         modifier = modifier,
@@ -108,18 +106,12 @@ fun DocumentReaderRoute(
             onDismiss = { unlockRequested = false },
         )
     }
-    if (isActive && recoveryRequested) {
-        DocumentPasswordRecoveryDialog(
-            vault = vault,
-            onDismiss = { recoveryRequested = false },
-            onSettings = {
-                recoveryRequested = false
-                onNavigatePasswordSettings()
-            },
-            onRecovered = { _, keyId ->
-                recoveryRequested = false
-                readerViewModel.recover(keyId)
-            },
+    if (isActive && readerState.needsPassword) {
+        DocumentPdfPasswordDialog(
+            busy = readerState.isLoading,
+            incorrect = readerState.passwordIncorrect,
+            onSubmit = readerViewModel::submitPassword,
+            onDismiss = readerViewModel::cancelPassword,
         )
     }
 }

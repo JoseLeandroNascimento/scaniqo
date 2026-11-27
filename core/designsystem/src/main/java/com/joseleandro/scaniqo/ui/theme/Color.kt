@@ -79,10 +79,10 @@ internal object ScaniqoPalette {
     /**
      * Screen background.
      *
-     * Slightly gray to distinguish white cards
-     * from the background.
+     * Neutral background; soft outlines distinguish the white cards.
      */
-    val BackgroundLight = Color(0xFFF9FAFB)
+    val BackgroundLight = Color(0xFFFAFAFA)
+    val PaperOutline = Color(0xFFDDDDDD)
 
     /**
      * Main surfaces.
@@ -97,15 +97,15 @@ internal object ScaniqoPalette {
      * All colors are neutral and contain
      * no warm beige or brown undertones.
      */
-    val PaperLow = Color(0xFFE9EDF2)
+    val PaperLow = Color(0xFFFCFCFC)
 
-    val PaperContainer = Color(0xFFE5E9EF)
+    val PaperContainer = Color(0xFFF8F8F8)
 
-    val PaperHigh = Color(0xFFE0E6ED)
+    val PaperHigh = Color(0xFFF5F5F5)
 
-    val PaperHighest = Color(0xFFDCE3EB)
+    val PaperHighest = Color(0xFFF0F0F0)
 
-    val PaperDim = Color(0xFFDCE3EB)
+    val PaperDim = Color(0xFFECECEC)
 
 
     // ============================================================

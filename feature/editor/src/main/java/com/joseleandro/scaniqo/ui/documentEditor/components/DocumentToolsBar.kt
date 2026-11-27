@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
@@ -22,6 +23,8 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -47,12 +50,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -73,92 +78,154 @@ internal fun DocumentToolsBar(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
     enabled: Boolean,
+    modifier: Modifier = Modifier,
+    vertical: Boolean = false,
+    header: @Composable () -> Unit = {},
     onSave: (() -> Unit)? = null,
     saveShowsVideo: Boolean = false,
     saveInProgress: Boolean = false,
 ) {
-    // A superfície cobre também os insets; somente os controles respeitam a área segura.
+    val visibleTools = DocumentTool.entries.filterNot {
+        it == DocumentTool.ANNOTATIONS || it == DocumentTool.REDACTION || it == DocumentTool.WATERMARK
+    }
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
     ) {
-        Column(
-            modifier = Modifier.windowInsetsPadding(
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
-            ),
-        ) {
-            if (state.signatureDraft != null) {
-                DocumentSignatureControls(state, onEvent, enabled)
-            } else {
-                if (state.tool == DocumentTool.FILTERS) {
-                    DocumentFiltersBar(state, onEvent, enabled = enabled)
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                }
-                val toolsScroll = rememberLazyListState()
-                val rightToLeft = LocalLayoutDirection.current == LayoutDirection.Rtl
-                val edgeColor = MaterialTheme.colorScheme.surface
-                val arrowColor = MaterialTheme.colorScheme.onSurfaceVariant
-                // A indicação é desenhada sobre a faixa, sem interceptar toques ou arrastos.
-                LazyRow(
-                    state = toolsScroll,
-                    modifier = Modifier.fillMaxWidth().drawWithContent {
-                        drawContent()
-                        if (toolsScroll.canScrollBackward) {
-                            drawToolsOverflowIndicator(atLeft = !rightToLeft, edgeColor, arrowColor)
+        if (vertical) {
+            Column(Modifier.fillMaxSize()) {
+                if (state.tool == DocumentTool.FILTERS && state.signatureDraft == null) {
+                    DocumentFiltersBar(
+                        state, onEvent, enabled = enabled,
+                        vertical = true, modifier = Modifier.weight(1f),
+                    )
+                } else {
+                    Column(
+                        Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                    ) {
+                        header()
+                        if (state.signatureDraft != null) {
+                            DocumentSignatureControls(state, onEvent, enabled)
+                        } else {
+                            val columns = if (LocalDensity.current.fontScale > 1.5f) 1 else 2
+                            Column(
+                                Modifier.fillMaxWidth().padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                visibleTools.chunked(columns).forEach { row ->
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        row.forEach { tool ->
+                                            DocumentToolButton(
+                                                tool = tool,
+                                                selected = state.tool == tool,
+                                                enabled = state.canEdit && enabled,
+                                                onClick = { onEvent(DocumentToolsEvent.OpenTool(tool)) },
+                                                modifier = Modifier.weight(1f),
+                                                expanded = columns == 1,
+                                                wrapLabel = true,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        if (toolsScroll.canScrollForward) {
-                            drawToolsOverflowIndicator(atLeft = rightToLeft, edgeColor, arrowColor)
-                        }
-                    },
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    items(DocumentTool.entries.filterNot { it == DocumentTool.ANNOTATIONS || it == DocumentTool.REDACTION || it == DocumentTool.WATERMARK }, key = { it.name }) { tool ->
-                        DocumentToolButton(
-                            tool = tool,
-                            selected = state.tool == tool,
-                            enabled = state.canEdit && enabled,
-                            onClick = { onEvent(DocumentToolsEvent.OpenTool(tool)) },
-                        )
                     }
                 }
-                if (state.hasChanges || state.isSaving) {
-                    if (saveShowsVideo) ToolAdRewardHint(
-                        Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-                    )
-                    Button(
-                        onClick = onSave ?: { onEvent(DocumentToolsEvent.Save) },
-                        enabled = state.canEdit && enabled,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
-                            .heightIn(min = 48.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                // Primary actions stay outside the scrolling inspector, even in short windows.
+                if (state.signatureDraft == null) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    DocumentSaveAction(state, onEvent, enabled, onSave, saveShowsVideo, saveInProgress)
+                }
+            }
+        } else {
+            Column(
+                Modifier.windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+                ),
+            ) {
+                if (state.signatureDraft != null) {
+                    DocumentSignatureControls(state, onEvent, enabled)
+                } else {
+                    if (state.tool == DocumentTool.FILTERS) {
+                        DocumentFiltersBar(state, onEvent, enabled = enabled)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
+                    val toolsScroll = rememberLazyListState()
+                    val rightToLeft = LocalLayoutDirection.current == LayoutDirection.Rtl
+                    val edgeColor = MaterialTheme.colorScheme.surface
+                    val arrowColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    LazyRow(
+                        state = toolsScroll,
+                        modifier = Modifier.fillMaxWidth().drawWithContent {
+                            drawContent()
+                            if (toolsScroll.canScrollBackward) {
+                                drawToolsOverflowIndicator(atLeft = !rightToLeft, edgeColor, arrowColor)
+                            }
+                            if (toolsScroll.canScrollForward) {
+                                drawToolsOverflowIndicator(atLeft = rightToLeft, edgeColor, arrowColor)
+                            }
+                        },
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
                     ) {
-                        if (state.isSaving || saveInProgress) {
-                            CircularProgressIndicator(
-                                Modifier.padding(end = 8.dp).size(18.dp),
-                                strokeWidth = 2.dp,
-                            )
-                        } else if (!saveShowsVideo) {
-                            Icon(
-                                painterResource(CoreResourcesR.drawable.ic_check_24),
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = 8.dp).size(20.dp),
+                        items(visibleTools, key = { it.name }) { tool ->
+                            DocumentToolButton(
+                                tool = tool,
+                                selected = state.tool == tool,
+                                enabled = state.canEdit && enabled,
+                                onClick = { onEvent(DocumentToolsEvent.OpenTool(tool)) },
                             )
                         }
-                        ToolAdActionContent(
-                            isVideo = saveShowsVideo,
-                            label = stringResource(when {
-                                state.isSaving -> R.string.tools_saving
-                                saveShowsVideo -> CoreResourcesR.string.tool_ad_watch_save
-                                else -> R.string.tools_save
-                            }),
-                        )
+                    }
+                    if (state.hasChanges || state.isSaving) {
+                        DocumentSaveAction(state, onEvent, enabled, onSave, saveShowsVideo, saveInProgress)
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DocumentSaveAction(
+    state: DocumentToolsUiState,
+    onEvent: (DocumentToolsEvent) -> Unit,
+    enabled: Boolean,
+    onSave: (() -> Unit)?,
+    saveShowsVideo: Boolean,
+    saveInProgress: Boolean,
+) {
+    Column(
+        Modifier.fillMaxWidth().padding(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        if (saveShowsVideo && state.hasChanges) {
+            ToolAdRewardHint(Modifier.widthIn(max = 400.dp).fillMaxWidth().padding(bottom = 8.dp))
+        }
+        Button(
+            onClick = onSave ?: { onEvent(DocumentToolsEvent.Save) },
+            enabled = state.hasChanges && state.canEdit && enabled && !saveInProgress,
+            modifier = Modifier.widthIn(max = 400.dp).fillMaxWidth().heightIn(min = 48.dp),
+            shape = RoundedCornerShape(16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        ) {
+            if (state.isSaving || saveInProgress) {
+                CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
+            } else if (!saveShowsVideo) {
+                Icon(
+                    painterResource(CoreResourcesR.drawable.ic_check_24),
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 8.dp).size(20.dp),
+                )
+            }
+            ToolAdActionContent(
+                isVideo = saveShowsVideo,
+                label = stringResource(when {
+                    state.isSaving || saveInProgress -> R.string.tools_saving
+                    saveShowsVideo -> CoreResourcesR.string.tool_ad_watch_save
+                    else -> R.string.tools_save
+                }),
+            )
         }
     }
 }
@@ -200,6 +267,9 @@ private fun DocumentToolButton(
     selected: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    expanded: Boolean = false,
+    wrapLabel: Boolean = false,
 ) {
     val colors = MaterialTheme.colorScheme
     val selectedColor by animateColorAsState(
@@ -220,19 +290,15 @@ private fun DocumentToolButton(
     Surface(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier
+        modifier = modifier
             .widthIn(min = 72.dp)
-            .heightIn(min = 76.dp)
+            .heightIn(min = if (expanded) 52.dp else 76.dp)
             .semantics { this.selected = selected },
         shape = RoundedCornerShape(16.dp),
         color = selectedColor,
         contentColor = contentColor,
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-        ) {
+        val icon: @Composable () -> Unit = {
             Box(Modifier.size(width = 40.dp, height = 32.dp), contentAlignment = Alignment.Center) {
                 Icon(
                     painterResource(
@@ -257,11 +323,34 @@ private fun DocumentToolButton(
                     },
                 )
             }
-            Text(
-                text = stringResource(tool.titleRes()),
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 1,
-            )
+        }
+        if (expanded) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                icon()
+                Text(
+                    text = stringResource(tool.titleRes()),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+            ) {
+                icon()
+                Text(
+                    text = stringResource(tool.titleRes()),
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = if (wrapLabel) Int.MAX_VALUE else 1,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -403,6 +492,20 @@ private fun DocumentToolsBarPreviewContent(state: DocumentToolsUiState) {
         Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
             DocumentToolsBar(state, onEvent = {}, enabled = true)
         }
+    }
+}
+
+@Preview(name = "Painel tablet", widthDp = 320, heightDp = 640, locale = "pt-rBR")
+@Preview(name = "Painel tablet fonte ampliada", widthDp = 320, heightDp = 400, locale = "pt-rBR", fontScale = 1.5f)
+@Composable
+private fun DocumentToolsPanelPreview() {
+    ScaniqoTheme {
+        DocumentToolsBar(
+            state = previewToolState().copy(hasChanges = true),
+            onEvent = {},
+            enabled = true,
+            vertical = true,
+        )
     }
 }
 

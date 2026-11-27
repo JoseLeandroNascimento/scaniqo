@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">للطباعة والحفاظ على التفاصيل.</string>
+    <string name="quality_visual_balanced_use">للقراءة والمشاركة اليومية.</string>
+    <string name="quality_visual_small_use">لإرسال ملف أصغر حجمًا.</string>
+    <string name="quality_visual_ocr_description">اعثر على كلمات في الصفحات الممسوحة ضوئيًا.</string>
+</resources>

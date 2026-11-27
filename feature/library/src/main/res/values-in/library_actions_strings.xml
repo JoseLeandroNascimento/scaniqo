@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">Simpan</string>
+    <string name="tag_unavailable">Tag ini tidak lagi tersedia.</string>
+    <string name="trash_actions">Opsi sampah</string>
+    <string name="trash_restore_all">Pulihkan semua</string>
+    <string name="trash_restored_all">Dokumen dipulihkan ke pustaka</string>
+    <string name="trash_restore_all_error">Beberapa dokumen tidak dapat dipulihkan. Dokumen masih ada di sampah. Coba lagi.</string>
+    <string name="trash_information">Informasi</string>
+</resources>

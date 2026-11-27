@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">打印并保留图像细节。</string>
+    <string name="quality_visual_balanced_use">适合日常阅读和分享。</string>
+    <string name="quality_visual_small_use">发送体积更小的文件。</string>
+    <string name="quality_visual_ocr_description">查找扫描页面中的文字。</string>
+</resources>

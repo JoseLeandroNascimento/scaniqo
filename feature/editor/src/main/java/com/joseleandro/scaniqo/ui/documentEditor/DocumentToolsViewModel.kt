@@ -6,6 +6,8 @@ import com.joseleandro.scaniqo.core.ads.RewardedTool
 import com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy
 import com.joseleandro.scaniqo.core.ads.ToolAdPermit
 import com.joseleandro.scaniqo.core.security.PasswordAccess
+import com.joseleandro.scaniqo.core.security.PasswordPolicy
+import com.joseleandro.scaniqo.core.security.isDocumentPasswordKey
 import com.joseleandro.scaniqo.core.security.PasswordVaultRecoveryException
 import com.joseleandro.scaniqo.core.security.PasswordVersionMissingException
 import com.joseleandro.scaniqo.domain.model.DocumentModel
@@ -106,7 +108,6 @@ class DocumentToolsViewModel(
     private var analysisRevision = 0L
     private var sourceProtectionKeyId: String? = null
     private var session = 0L
-    private var pendingProtection: Boolean? = null
     private var pendingScans: List<String>? = null
     private val mergeCoordinator = DocumentMergeCoordinator(
         scope = viewModelScope,
@@ -172,9 +173,9 @@ class DocumentToolsViewModel(
         }
         viewModelScope.launch {
             passwords.state.collect { state ->
-                if (!state.isUnlocked && requiresAuthentication() && !uiState.value.isLocked) {
+                if (requiresAuthentication() && !hasSessionPassword() && !uiState.value.isLocked) {
                     lockWorkspace()
-                } else if (!state.isUnlocked && mergeCoordinator.hasProtectedSources && uiState.value.merge == DocumentMergeUiState.Merging) {
+                } else if (!state.isUnlocked && state.availableDocumentKeys.isEmpty() && mergeCoordinator.hasProtectedSources && uiState.value.merge == DocumentMergeUiState.Merging) {
                     mergeCoordinator.clear()
                     renderPreview()
                 }
@@ -201,7 +202,6 @@ class DocumentToolsViewModel(
         redoHistory.clear()
         cancelAnalysis(resumePreview = false)
         sourceProtectionKeyId = document.protectionKeyId
-        pendingProtection = null
         pendingScans = null
         mergeCoordinator.clear()
         mutableState.value = DocumentToolsUiState(
@@ -209,15 +209,18 @@ class DocumentToolsViewModel(
             signatures = current.signatures,
             savedFormValues = current.savedFormValues,
             canStoreFormValues = formValues != null,
-            isLocked = document.protectionKeyId != null && !passwords.state.value.isUnlocked,
+            isLocked = document.protectionKeyId != null && !passwords.isPasswordAvailable(document.protectionKeyId),
             recoveryRequired = document.protectionKeyId != null &&
-                (!passwords.state.value.isConfigured || passwords.state.value.recoveryRequired),
+                (isDocumentPasswordKey(document.protectionKeyId) || !passwords.state.value.isConfigured ||
+                    passwords.state.value.recoveryRequired),
+            needsPassword = isDocumentPasswordKey(document.protectionKeyId) &&
+                !passwords.isPasswordAvailable(document.protectionKeyId),
         )
         viewModelScope.launch {
             if (previous != null) runCatching { ioMutex.withLock { repository.discard(previous) } }
         }
-        if (uiState.value.recoveryRequired) {
-            mutableState.update { it.copy(isLocked = true) }
+        if (uiState.value.recoveryRequired && uiState.value.isLocked) {
+            mutableState.update { it.copy(needsPassword = true) }
         } else if (uiState.value.isLocked) {
             effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
         } else {
@@ -352,7 +355,7 @@ class DocumentToolsViewModel(
                     mutableState.update { it.copy(isScanning = false) }
                     if (uiState.value.isLocked) {
                         pendingScans = event.pageUris
-                        effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+                        requestPasswordUnlock()
                     } else appendScans(event.pageUris)
                 }
             }
@@ -376,32 +379,24 @@ class DocumentToolsViewModel(
             }
             is DocumentToolsEvent.SubmitMergePassword -> mergeCoordinator.submitPassword(event.password)
             is DocumentToolsEvent.SetProtection -> setProtection(event.enabled)
-            DocumentToolsEvent.Unlock -> effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+            is DocumentToolsEvent.SetDocumentPassword -> setDocumentPassword(event.password, event.confirmation)
+            is DocumentToolsEvent.SubmitDocumentPassword -> submitDocumentPassword(event.password)
+            DocumentToolsEvent.CancelDocumentPassword -> if (!uiState.value.isLoading) {
+                mutableState.update { it.copy(needsPassword = false, passwordIncorrect = false) }
+            }
+            DocumentToolsEvent.Unlock -> requestPasswordUnlock()
             DocumentToolsEvent.AuthenticationSucceeded -> unlock()
             DocumentToolsEvent.AuthenticationDismissed -> if (uiState.value.merge == DocumentMergeUiState.AwaitingUnlock) {
                 mergeCoordinator.clear()
                 if (!uiState.value.isLocked) renderPreview()
             }
-            DocumentToolsEvent.RequestPasswordRecovery -> effectChannel.trySend(DocumentToolsEffect.NeedDocumentPassword)
-            is DocumentToolsEvent.RecoverWithPassword -> {
-                val document = uiState.value.document ?: return
-                if (event.protectionKeyId == null) {
-                    effectChannel.trySend(DocumentToolsEffect.NavigatePasswordSettings)
-                } else if (!passwords.state.value.isUnlocked) {
-                    effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
-                } else {
-                    mutableState.update { it.copy(isLocked = false, recoveryRequired = false) }
-                    open(document, event.password, event.protectionKeyId)
-                }
-            }
+            DocumentToolsEvent.RequestPasswordRecovery -> mutableState.update { it.copy(needsPassword = true, passwordIncorrect = false) }
+            is DocumentToolsEvent.RecoverWithPassword -> submitDocumentPassword(event.password)
             DocumentToolsEvent.ManageSignatures -> if (canChange()) {
                 mutableState.update { it.copy(tool = null) }
                 effectChannel.trySend(DocumentToolsEffect.NavigateSignatures)
             }
-            DocumentToolsEvent.PasswordSettings -> {
-                mutableState.update { it.copy(tool = null) }
-                effectChannel.trySend(DocumentToolsEffect.NavigatePasswordSettings)
-            }
+            DocumentToolsEvent.PasswordSettings -> onEvent(DocumentToolsEvent.OpenTool(DocumentTool.PROTECTION))
             is DocumentToolsEvent.InsertSignature -> insertSignature(event.signatureId)
             is DocumentToolsEvent.EditSignature -> editSignature(event.pageId, event.placementId)
             is DocumentToolsEvent.ReplaceSignature -> replaceSignature(event.signatureId)
@@ -446,7 +441,7 @@ class DocumentToolsViewModel(
             DocumentToolsEvent.ConfirmDiscard -> close()
             DocumentToolsEvent.CancelDiscard -> mutableState.update { it.copy(confirmDiscard = false) }
             DocumentToolsEvent.Backgrounded -> when {
-                requiresAuthentication() -> lockWorkspace()
+                requiresAuthentication() -> { passwords.lock(); lockWorkspace() }
                 mergeCoordinator.hasSensitiveData -> {
                     // Sem cofre para retomar com autenticação, descarte toda credencial da mesclagem.
                     mergeCoordinator.clear()
@@ -459,9 +454,9 @@ class DocumentToolsViewModel(
     private fun open(document: DocumentModel, passwordOverride: String? = null, recoveryKeyId: String? = null) {
         if (uiState.value.isLoading) return
         val protectionKeyId = document.protectionKeyId
-        if (protectionKeyId != null && !passwords.state.value.isUnlocked) {
+        if (passwordOverride == null && protectionKeyId != null && !passwords.isPasswordAvailable(protectionKeyId)) {
             mutableState.update { it.copy(isLocked = true) }
-            effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+            requestPasswordUnlock()
             return
         }
         val openingSession = session
@@ -480,6 +475,9 @@ class DocumentToolsViewModel(
                     withContext(NonCancellable) { ioMutex.withLock { repository.discard(opened) } }
                     return@launch
                 }
+                if (passwordOverride != null) {
+                    passwords.rememberDocumentPassword(passwordOverride, document.protectionKeyId)
+                }
                 baseline = opened
                 if (recoveryKeyId != null) sourceProtectionKeyId = recoveryKeyId
                 val ready = if (recoveryKeyId != null) opened.copy(protectionKeyId = recoveryKeyId, isProtected = true) else opened
@@ -488,8 +486,9 @@ class DocumentToolsViewModel(
                         workspace = ready,
                         selectedPageId = ready.pages.firstOrNull()?.id,
                         isLoading = false,
-                        hasChanges = passwordOverride != null || ready != baseline,
-                        recoveryRequired = false,
+                        hasChanges = ready != baseline,
+                        recoveryRequired = false, isLocked = false,
+                        needsPassword = false, passwordIncorrect = false,
                     )
                 }
                 if (!uiState.value.isLocked) renderPreview()
@@ -501,7 +500,9 @@ class DocumentToolsViewModel(
                     val recovery = failure is PasswordVersionMissingException ||
                         failure is PasswordVaultRecoveryException || failure is PdfPasswordRequiredException
                     mutableState.update {
-                        it.copy(isLoading = false, loadError = true, recoveryRequired = recovery, isLocked = recovery || it.isLocked)
+                        it.copy(isLoading = false, loadError = !recovery, recoveryRequired = recovery,
+                            isLocked = recovery || it.isLocked, needsPassword = recovery,
+                            passwordIncorrect = passwordOverride != null && failure is PdfPasswordRequiredException)
                     }
                 }
             }
@@ -802,31 +803,89 @@ class DocumentToolsViewModel(
 
     private fun setProtection(enabled: Boolean) {
         if (!canChange()) return
-        if (!passwords.state.value.isConfigured || passwords.activeKeyId == null) {
-            pendingProtection = enabled
-            effectChannel.trySend(DocumentToolsEffect.NavigatePasswordSettings)
+        // Enabling requires an explicit password, never the legacy vault's active password.
+        if (enabled) {
+            mutableState.update { it.copy(tool = DocumentTool.PROTECTION) }
             return
         }
-        if (!passwords.state.value.isUnlocked) {
-            pendingProtection = enabled
-            effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+        change { it.copy(isProtected = false, protectionKeyId = null) }
+        mutableState.update { it.copy(protectionRevision = it.protectionRevision + 1) }
+    }
+
+    private fun setDocumentPassword(password: String, confirmation: String) {
+        if (!canChange() || password != confirmation || password.isBlank() ||
+            !PasswordPolicy.isValidDocument(password)) return
+        val operationSession = session
+        mutableState.update { it.copy(protectionError = false) }
+        viewModelScope.launch {
+            try {
+                val key = passwords.rememberDocumentPassword(password)
+                if (operationSession != session) { passwords.forgetDocumentPassword(key); return@launch }
+                change { it.copy(isProtected = true, protectionKeyId = key) }
+                mutableState.update { it.copy(protectionRevision = it.protectionRevision + 1) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (operationSession == session) mutableState.update { it.copy(protectionError = true) }
+            }
+        }
+    }
+
+    private fun sessionPasswordKey(): String? =
+        uiState.value.workspace?.protectionKeyId ?: sourceProtectionKeyId
+
+    private fun hasSessionPassword(): Boolean = passwords.isPasswordAvailable(sessionPasswordKey())
+
+    private fun requestPasswordUnlock() {
+        val key = sessionPasswordKey()
+        if (isDocumentPasswordKey(key) || !passwords.state.value.isConfigured ||
+            passwords.state.value.recoveryRequired || uiState.value.recoveryRequired) {
+            mutableState.update { it.copy(needsPassword = true, passwordIncorrect = false) }
+        } else effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+    }
+
+    private fun submitDocumentPassword(password: String) {
+        val state = uiState.value
+        val document = state.document ?: return
+        if (state.isLoading || password.isEmpty()) return
+        if (state.workspace == null) {
+            open(document, password)
             return
         }
-        change { workspace ->
-            workspace.copy(
-                isProtected = enabled,
-                protectionKeyId = if (enabled) workspace.protectionKeyId ?: passwords.activeKeyId else null,
-            )
+        val key = sessionPasswordKey() ?: return
+        val operationSession = session
+        mutableState.update { it.copy(isLoading = true, passwordIncorrect = false) }
+        viewModelScope.launch {
+            try {
+                // An unsaved new password can only be restored with the same value.
+                val matchesDraft = passwords.matchesDocumentPassword(key, password)
+                if (matchesDraft == false) throw PdfPasswordRequiredException()
+                if (matchesDraft == null) {
+                    val verification = ioMutex.withLock { repository.open(document, password) }
+                    withContext(NonCancellable) { ioMutex.withLock { repository.discard(verification) } }
+                }
+                if (operationSession != session) return@launch
+                passwords.rememberDocumentPassword(password, key)
+                mutableState.update { it.copy(isLoading = false, needsPassword = false,
+                    passwordIncorrect = false, recoveryRequired = false) }
+                unlock()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                if (operationSession == session) mutableState.update {
+                    it.copy(isLoading = false, needsPassword = true,
+                        passwordIncorrect = failure is PdfPasswordRequiredException)
+                }
+            }
         }
     }
 
     private fun unlock() {
-        if (!passwords.state.value.isUnlocked) return
-        mutableState.update { it.copy(isLocked = false, loadError = false) }
+        if (requiresAuthentication() && !hasSessionPassword()) return
+        mutableState.update { it.copy(isLocked = false, loadError = false, needsPassword = false) }
         if (uiState.value.workspace == null) {
             uiState.value.document?.let(::open)
         } else {
-            pendingProtection?.let { enabled -> pendingProtection = null; setProtection(enabled) }
             val scans = pendingScans
             pendingScans = null
             when {
@@ -1252,8 +1311,8 @@ class DocumentToolsViewModel(
         val state = uiState.value
         val workspace = state.workspace ?: return
         if (!state.canEdit || event.areas.isEmpty() || event.areas.any { !it.isValid() }) return
-        if (requiresAuthentication() && !passwords.state.value.isUnlocked) {
-            effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+        if (requiresAuthentication() && !hasSessionPassword()) {
+            requestPasswordUnlock()
             return
         }
         val operationSession = session
@@ -1328,14 +1387,11 @@ class DocumentToolsViewModel(
         val state = uiState.value
         val workspace = state.workspace ?: return false
         if (!state.canEdit || !state.hasChanges || state.signatureDraft != null) return false
-        if (requiresAuthentication() && !passwords.state.value.isUnlocked) {
-            effectChannel.trySend(DocumentToolsEffect.NeedUnlock)
+        if (requiresAuthentication() && !hasSessionPassword()) {
+            requestPasswordUnlock()
             return false
         }
-        if (workspace.isProtected && workspace.protectionKeyId == null && passwords.activeKeyId == null) {
-            effectChannel.trySend(DocumentToolsEffect.NavigatePasswordSettings)
-            return false
-        }
+        if (workspace.isProtected && workspace.protectionKeyId == null) return false
         val rewardedTool = pendingRewardedSaveTool()
         val permit = if (rewardedTool != null && adAccess != null) {
             adAccess.acquire(rewardedTool, UUID.randomUUID().toString(), adUnavailable) ?: return false
@@ -1350,7 +1406,7 @@ class DocumentToolsViewModel(
             try {
                 val saved = ioMutex.withLock {
                     if (workspace.isProtected) {
-                        val key = checkNotNull(workspace.protectionKeyId ?: passwords.activeKeyId)
+                        val key = checkNotNull(workspace.protectionKeyId)
                         passwords.withPassword(key) { password -> repository.save(workspace, password, key) }
                     } else if (state.document?.protectionKeyId != null) {
                         val key = checkNotNull(sourceProtectionKeyId)

@@ -16,6 +16,27 @@ import org.junit.Test
 
 class PdfProjectRecipeTest {
     @Test
+    fun legacyFieldMetadataUsesSavedPdfWithoutKeepingNativeFieldTypes() {
+        val json = Json { ignoreUnknownKeys = true }
+        val legacy = """{"pages":[{"id":"p","sourcePageIndex":0,"layout":{},"formFields":[{"id":"old","values":["Preenchido"],"unknownFutureProperty":true}]}]}"""
+        val decoded = PdfProjectRecipe.decodeForEditing(json, legacy)
+        assertEquals(true, decoded.useSavedDocumentAsSource)
+        val encoded = decoded.encodeForStorage(json).toString(Charsets.UTF_8)
+        assertEquals(false, encoded.contains("formFields"))
+        assertEquals(false, encoded.contains("useSavedDocumentAsSource"))
+    }
+
+    @Test
+    fun emptyLegacyFieldMetadataPreservesEditableOverlaysAndNormalSources() {
+        val json = Json { ignoreUnknownKeys = true }
+        val legacy = """{"pages":[{"id":"p","sourcePageIndex":2,"layout":{},"formFields":[],"overlays":[{"id":"note","kind":"TEXT","text":"Anotacao"}]}],"useSavedDocumentAsSource":true}"""
+        val decoded = PdfProjectRecipe.decodeForEditing(json, legacy)
+        assertEquals(false, decoded.useSavedDocumentAsSource)
+        assertEquals(2, decoded.pages.single().sourcePageIndex)
+        assertEquals("Anotacao", decoded.pages.single().overlays.single().text)
+    }
+
+    @Test
     fun editableOverlaysRoundTripAndOldRecipesDefaultToEmpty() {
         val overlay = PdfOverlay("note", PdfOverlayKind.TEXT, text = "Nome: José", x = .2f, opacity = .7f)
         val recipe = PdfProjectRecipe(pages = listOf(RecipePage("page", 0, PdfPageLayout(), overlays = listOf(overlay))))

@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal enum class TrashMessage { RESTORED, DELETED, RESTORE_ERROR, CLEARED }
+internal enum class TrashMessage { RESTORED, DELETED, RESTORE_ERROR, CLEARED, RESTORED_ALL, RESTORE_ALL_ERROR }
 
 internal data class TrashUiState(
     val documents: List<DocumentModel> = emptyList(),
@@ -27,9 +27,10 @@ internal data class TrashUiState(
     val pendingClearAll: Boolean = false,
     val pendingClearAllCount: Int = 0,
     val isClearingAll: Boolean = false,
+    val isRestoringAll: Boolean = false,
     val clearAllError: Boolean = false,
 ) {
-    val isBusy: Boolean get() = busyDocumentId != null || isClearingAll
+    val isBusy: Boolean get() = busyDocumentId != null || isClearingAll || isRestoringAll
 }
 
 class TrashViewModel(private val repository: DocumentRepository) : ViewModel() {
@@ -88,6 +89,35 @@ class TrashViewModel(private val repository: DocumentRepository) : ViewModel() {
                 state.update { it.copy(message = TrashMessage.RESTORE_ERROR) }
             } finally {
                 state.update { it.copy(busyDocumentId = null) }
+            }
+        }
+    }
+
+    internal fun restoreAll() {
+        val current = state.value
+        if (current.isBusy || current.isLoading || current.loadError ||
+            current.pendingDeletion != null || current.pendingClearAll || current.documents.isEmpty()) return
+        // Restore the current snapshot only. Newly trashed files are a separate user action.
+        val ids = current.documents.map { it.id }
+        state.update { it.copy(isRestoringAll = true, message = null) }
+        viewModelScope.launch {
+            var failed = false
+            try {
+                for (id in ids) {
+                    currentCoroutineContext().ensureActive()
+                    try {
+                        repository.restoreFromTrash(id)
+                    } catch (cancelled: CancellationException) {
+                        throw cancelled
+                    } catch (_: Exception) {
+                        failed = true
+                    }
+                }
+                state.update {
+                    it.copy(message = if (failed) TrashMessage.RESTORE_ALL_ERROR else TrashMessage.RESTORED_ALL)
+                }
+            } finally {
+                state.update { it.copy(isRestoringAll = false) }
             }
         }
     }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tags_edit_hint">Нажмите на тег, чтобы изменить его.</string>
+    <string name="tag_original_color">Исходный цвет</string>
+</resources>

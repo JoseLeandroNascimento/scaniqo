@@ -21,7 +21,7 @@ import com.joseleandro.scaniqo.core.security.PasswordVault
 import com.joseleandro.scaniqo.ui.documentCommon.platform.rememberDocumentScannerLauncher
 import com.joseleandro.scaniqo.ui.documentEditor.DocumentToolsViewModel
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentMergeDialogs
-import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentPasswordRecoveryDialog
+import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentPdfPasswordDialog
 import com.joseleandro.scaniqo.ui.documentEditor.effect.DocumentToolsEffect
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
@@ -54,7 +54,6 @@ fun DocumentToolsHandler(
     val editorToolApplied by rememberUpdatedState(onEditorToolApplied)
     val navigatePasswordSettings by rememberUpdatedState(onNavigatePasswordSettings)
     var unlockRequested by rememberSaveable { mutableStateOf(false) }
-    var recoveryRequested by rememberSaveable { mutableStateOf(false) }
     val mergePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         viewModel.onEvent(
             if (uris.isEmpty()) DocumentToolsEvent.MergePdfsCancelled
@@ -81,7 +80,7 @@ fun DocumentToolsHandler(
                         }
                     }
                     DocumentToolsEffect.NeedUnlock -> unlockRequested = true
-                    DocumentToolsEffect.NeedDocumentPassword -> recoveryRequested = true
+                    DocumentToolsEffect.NeedDocumentPassword -> viewModel.onEvent(DocumentToolsEvent.RequestPasswordRecovery)
                     DocumentToolsEffect.NavigateSignatures -> navigateSignatures()
                     is DocumentToolsEffect.NavigateSignatureEditor -> navigateSignatureEditor(effect.documentId)
                     is DocumentToolsEffect.NavigateMergeEditor -> navigateMergeEditor(effect.documentId)
@@ -102,21 +101,15 @@ fun DocumentToolsHandler(
         process.addObserver(observer)
         onDispose { process.removeObserver(observer) }
     }
-    if (!state.isLocked && !unlockRequested && !recoveryRequested) {
+    if (!state.isLocked && !unlockRequested && !state.needsPassword) {
         DocumentMergeDialogs(state, viewModel::onEvent)
     }
-    if (recoveryRequested) {
-        DocumentPasswordRecoveryDialog(
-            vault = vault,
-            onDismiss = { recoveryRequested = false },
-            onSettings = {
-                recoveryRequested = false
-                navigatePasswordSettings()
-            },
-            onRecovered = { password, keyId ->
-                recoveryRequested = false
-                viewModel.onEvent(DocumentToolsEvent.RecoverWithPassword(password, keyId))
-            },
+    if (state.needsPassword) {
+        DocumentPdfPasswordDialog(
+            busy = state.isLoading,
+            incorrect = state.passwordIncorrect,
+            onSubmit = { viewModel.onEvent(DocumentToolsEvent.SubmitDocumentPassword(it)) },
+            onDismiss = { viewModel.onEvent(DocumentToolsEvent.CancelDocumentPassword) },
         )
     }
     if (unlockRequested) {

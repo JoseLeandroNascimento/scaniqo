@@ -41,8 +41,8 @@
     <string name="tools_signature_down">हस्ताक्षर नीचे ले जाएँ</string>
     <string name="tools_discard_title">बदलाव छोड़ दें?</string>
     <string name="tools_discard_body">इस संपादन के बदलाव PDF में अभी नहीं सहेजे गए हैं।</string>
-    <string name="tools_keep_editing">संपादन जारी रखें</string>
-    <string name="tools_discard">बदलाव छोड़ें और बाहर जाएँ</string>
+    <string name="tools_keep_editing">जारी रखें</string>
+    <string name="tools_discard">छोड़ें</string>
     <string name="tools_cleanup_error">एडिटर सुरक्षित रूप से बंद नहीं हो सका। फिर से कोशिश करें।</string>
     <string name="tools_export_save_first">डाउनलोड या शेयर करने से पहले बदलाव सहेजें।</string>
     <string name="tools_recovery_description">इस PDF का पासवर्ड वॉल्ट में नहीं है। पहुँच वापस पाने के लिए फ़ाइल का मूल पासवर्ड इस्तेमाल करें।</string>

@@ -17,8 +17,8 @@
     <string name="signature_crop">কাটছাঁট করুন</string>
     <string name="signature_cancel_title">অবস্থান বাদ দেবেন?</string>
     <string name="signature_cancel_body">এই স্বাক্ষর এখনও প্রয়োগ হয়নি। নথির অন্য পরিবর্তনগুলো রাখা হবে।</string>
-    <string name="signature_cancel_confirm">স্বাক্ষর বাদ দিন</string>
-    <string name="signature_keep_editing">সমন্বয় চালিয়ে যান</string>
+    <string name="signature_cancel_confirm">বাদ দিন</string>
+    <string name="signature_keep_editing">চালিয়ে যান</string>
     <string name="signature_back">এডিটরে ফিরে যান</string>
     <string name="signature_edit_placed">স্বাক্ষর %1$d সম্পাদনা করুন</string>
     <string name="signature_retry">আবার চেষ্টা করুন</string>

@@ -41,8 +41,8 @@
     <string name="tools_signature_down">Déplacer la signature vers le bas</string>
     <string name="tools_discard_title">Abandonner les modifications ?</string>
     <string name="tools_discard_body">Les modifications de cette édition n’ont pas encore été enregistrées dans le PDF.</string>
-    <string name="tools_keep_editing">Continuer à modifier</string>
-    <string name="tools_discard">Abandonner et quitter</string>
+    <string name="tools_keep_editing">Continuer</string>
+    <string name="tools_discard">Abandonner</string>
     <string name="tools_cleanup_error">Impossible de fermer l’éditeur en toute sécurité. Réessayez.</string>
     <string name="tools_export_save_first">Enregistrez vos modifications avant de télécharger ou de partager.</string>
     <string name="tools_recovery_description">Le mot de passe de ce PDF n’est pas disponible dans le coffre. Utilisez le mot de passe d’origine du fichier pour rétablir l’accès.</string>

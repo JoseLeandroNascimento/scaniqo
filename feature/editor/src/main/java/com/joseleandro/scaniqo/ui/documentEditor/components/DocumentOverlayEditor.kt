@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -262,7 +263,7 @@ internal fun DocumentOverlayEditor(
             if (draft.kind in textKinds) {
                 OutlinedTextField(value = draft.text, onValueChange = { if (it.length <= 2000) update(draft.copy(text = it)) },
                     enabled = editable, label = { Text(stringResource(R.string.overlay_text)) },
-                    modifier = Modifier.fillMaxWidth(), minLines = 1, maxLines = 4)
+                    modifier = Modifier.fillMaxWidth(), minLines = 1, maxLines = 4, shape = ScaniqoFieldDefaults.shape)
                 Text(stringResource(R.string.overlay_font_size, draft.fontSize.toInt()), style = MaterialTheme.typography.labelMedium)
                 Slider(value = draft.fontSize, onValueChange = { update(draft.copy(fontSize = it)) },
                     valueRange = 6f..72f, enabled = editable)
@@ -338,7 +339,7 @@ internal fun DocumentOverlayEditor(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.overlay_save_value_hint))
                 OutlinedTextField(value = savedValueLabel, onValueChange = { if (it.length <= 60) savedValueLabel = it },
-                    label = { Text(stringResource(R.string.overlay_value_label)) }, singleLine = true)
+                    label = { Text(stringResource(R.string.overlay_value_label)) }, singleLine = true, shape = ScaniqoFieldDefaults.shape)
             }
         },
         confirmButton = {

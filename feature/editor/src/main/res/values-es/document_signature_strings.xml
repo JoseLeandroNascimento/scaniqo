@@ -17,8 +17,8 @@
     <string name="signature_crop">Recortar</string>
     <string name="signature_cancel_title">¿Descartar posicionamiento?</string>
     <string name="signature_cancel_body">Esta firma todavía no se aplicó. Se conservarán los demás cambios del documento.</string>
-    <string name="signature_cancel_confirm">Descartar firma</string>
-    <string name="signature_keep_editing">Seguir ajustando</string>
+    <string name="signature_cancel_confirm">Descartar</string>
+    <string name="signature_keep_editing">Continuar</string>
     <string name="signature_back">Volver al editor</string>
     <string name="signature_edit_placed">Editar firma %1$d</string>
     <string name="signature_retry">Reintentar</string>

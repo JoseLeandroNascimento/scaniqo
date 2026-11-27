@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.Color
  * Light theme:
  * - White surfaces
  * - Neutral gray containers
- * - Subtle contrasts
- * - Clean background
+ * - Soft container outlines
+ * - Neutral background
  *
  * Dark theme:
  * - Cool dark surfaces
@@ -86,7 +86,7 @@ internal val LightColorScheme = lightColorScheme(
 
     onSurface = ScaniqoPalette.TextDark,
 
-    surfaceVariant = ScaniqoPalette.NeutralVariant90,
+    surfaceVariant = ScaniqoPalette.PaperHighest,
 
     onSurfaceVariant = ScaniqoPalette.NeutralVariant30,
 
@@ -125,7 +125,7 @@ internal val LightColorScheme = lightColorScheme(
 
     outline = ScaniqoPalette.NeutralVariant50,
 
-    outlineVariant = ScaniqoPalette.NeutralVariant80,
+    outlineVariant = ScaniqoPalette.PaperOutline,
 
 
     // ------------------------------------------------------------

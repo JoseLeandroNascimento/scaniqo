@@ -56,6 +56,109 @@ class TrashViewModelTest {
         assertEquals(TrashMessage.RESTORED, viewModel.uiState.value.message)
     }
 
+    @Test fun restoreAllUsesSnapshotAndBlocksConcurrentMutations() = runTest(dispatcher) {
+        val second = document.copy(id = 8)
+        val newlyTrashed = document.copy(id = 9)
+        repository.trashedDocuments.value = listOf(document, second)
+        viewModel
+        runCurrent()
+        repository.writeGate = CompletableDeferred()
+        viewModel.restoreAll()
+        viewModel.restoreAll()
+        viewModel.restore(second.id)
+        viewModel.requestDeletion(second.id)
+        viewModel.requestClearAll()
+        runCurrent()
+        assertEquals(listOf(document.id), repository.restored)
+        assertTrue(viewModel.uiState.value.isRestoringAll)
+        assertTrue(viewModel.uiState.value.isBusy)
+        assertNull(viewModel.uiState.value.pendingDeletion)
+        assertFalse(viewModel.uiState.value.pendingClearAll)
+
+        repository.trashedDocuments.value += newlyTrashed
+        runCurrent()
+        repository.writeGate!!.complete(Unit)
+        runCurrent()
+        assertEquals(listOf(document.id, second.id), repository.restored)
+        assertEquals(listOf(newlyTrashed), repository.trashedDocuments.value)
+        assertFalse(viewModel.uiState.value.isBusy)
+        assertEquals(TrashMessage.RESTORED_ALL, viewModel.uiState.value.message)
+        assertTrue(repository.permanentlyDeleted.isEmpty())
+    }
+
+    @Test fun restoreAllContinuesAfterFailureAndRetryOnlyRestoresRemainingFiles() = runTest(dispatcher) {
+        val second = document.copy(id = 8)
+        val third = document.copy(id = 9)
+        repository.trashedDocuments.value = listOf(document, second, third)
+        val failures = mutableSetOf(second.id)
+        val attempted = mutableListOf<Long>()
+        val partialRepository = object : DocumentRepository by repository {
+            override suspend fun restoreFromTrash(id: Long) {
+                attempted += id
+                if (id in failures) throw IllegalStateException("storage")
+                repository.restoreFromTrash(id)
+            }
+        }
+        val model = TrashViewModel(partialRepository).also { store.put("restore_partial", it) }
+        runCurrent()
+        model.restoreAll()
+        runCurrent()
+        assertEquals(listOf(document.id, second.id, third.id), attempted)
+        assertEquals(listOf(second), repository.trashedDocuments.value)
+        assertEquals(TrashMessage.RESTORE_ALL_ERROR, model.uiState.value.message)
+        assertFalse(model.uiState.value.isBusy)
+
+        failures.clear()
+        model.restoreAll()
+        runCurrent()
+        assertEquals(listOf(document.id, second.id, third.id, second.id), attempted)
+        assertTrue(repository.trashedDocuments.value.isEmpty())
+        assertEquals(TrashMessage.RESTORED_ALL, model.uiState.value.message)
+    }
+
+    @Test fun restoreAllCancellationStopsBatchAndReleasesBusyState() = runTest(dispatcher) {
+        val second = document.copy(id = 8)
+        val third = document.copy(id = 9)
+        repository.trashedDocuments.value = listOf(document, second, third)
+        val attempted = mutableListOf<Long>()
+        val cancellingRepository = object : DocumentRepository by repository {
+            override suspend fun restoreFromTrash(id: Long) {
+                attempted += id
+                if (id == second.id) throw CancellationException("cancelled")
+                repository.restoreFromTrash(id)
+            }
+        }
+        val model = TrashViewModel(cancellingRepository).also { store.put("restore_cancelled", it) }
+        runCurrent()
+        model.restoreAll()
+        runCurrent()
+        assertEquals(listOf(document.id, second.id), attempted)
+        assertEquals(listOf(second, third), repository.trashedDocuments.value)
+        assertFalse(model.uiState.value.isBusy)
+        assertNull(model.uiState.value.message)
+    }
+
+    @Test fun restoreAllCannotRunBeforeLoadOnFailureOrWhileDeleteConfirmationIsOpen() = runTest(dispatcher) {
+        repository.loadFailure = IllegalStateException("database")
+        viewModel.restoreAll()
+        runCurrent()
+        viewModel.restoreAll()
+        assertTrue(repository.restored.isEmpty())
+
+        repository.loadFailure = null
+        viewModel.load()
+        runCurrent()
+        viewModel.requestClearAll()
+        viewModel.restoreAll()
+        runCurrent()
+        assertTrue(repository.restored.isEmpty())
+        viewModel.dismissClearAll()
+        viewModel.requestDeletion(document.id)
+        viewModel.restoreAll()
+        runCurrent()
+        assertTrue(repository.restored.isEmpty())
+    }
+
     @Test fun permanentDeletionRequiresConfirmationAndCanBeCancelled() = runTest(dispatcher) {
         viewModel
         runCurrent()

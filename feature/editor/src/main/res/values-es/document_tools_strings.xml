@@ -41,8 +41,8 @@
     <string name="tools_signature_down">Bajar firma</string>
     <string name="tools_discard_title">¿Descartar cambios?</string>
     <string name="tools_discard_body">Los cambios de esta edición todavía no se guardaron en el PDF.</string>
-    <string name="tools_keep_editing">Seguir editando</string>
-    <string name="tools_discard">Descartar y salir</string>
+    <string name="tools_keep_editing">Continuar</string>
+    <string name="tools_discard">Descartar</string>
     <string name="tools_cleanup_error">No se pudo cerrar el editor de forma segura. Reintenta.</string>
     <string name="tools_export_save_first">Guarda los cambios antes de descargar o compartir.</string>
     <string name="tools_recovery_description">La contraseña de este PDF no está disponible en la bóveda. Usa la contraseña original del archivo para recuperar el acceso.</string>

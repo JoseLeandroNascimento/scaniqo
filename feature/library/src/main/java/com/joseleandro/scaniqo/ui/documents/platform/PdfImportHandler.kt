@@ -23,7 +23,6 @@ import com.joseleandro.scaniqo.ui.documents.PdfImportViewModel
 import com.joseleandro.scaniqo.ui.documents.model.PdfImportDestination
 import com.joseleandro.scaniqo.ui.documents.components.PdfImportDialogs
 import com.joseleandro.scaniqo.ui.documents.effect.PdfImportEffect
-import com.joseleandro.scaniqo.ui.security.PasswordUnlockHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -41,7 +40,6 @@ fun PdfImportHandler(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedTagId by rememberUpdatedState(defaultTagId)
     val toolImported by rememberUpdatedState(onToolImported)
-    val vaultState by vault.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current
     var password by remember(state.needsPassword) { mutableStateOf("") }
@@ -98,28 +96,15 @@ fun PdfImportHandler(
     }
     if (!showDialogs || !state.isActive || (state.pending != null && state.destination == null) ||
         state.importedDocumentId != null) return
-    SecureWindow(enabled = state.needsPassword || state.needsUnlock)
-    if (state.needsUnlock) {
-        PasswordUnlockHandler(
-            vault = vault,
-            onUnlocked = viewModel::unlocked,
-            onDismiss = viewModel::unlockDismissed,
-        )
-    } else {
-        PdfImportDialogs(
-            state = state,
-            password = password,
-            isPasswordConfigured = vaultState.isConfigured,
-            onPasswordChange = { password = it },
-            onSubmitPassword = {
-                viewModel.submitPassword(password)
-                password = ""
-            },
-            onPasswordSettings = {
-                password = ""
-                onPasswordSettings()
-            },
-            onCancel = viewModel::cancel,
-        )
-    }
+    SecureWindow(enabled = state.needsPassword)
+    PdfImportDialogs(
+        state = state,
+        password = password,
+        onPasswordChange = { password = it },
+        onSubmitPassword = {
+            viewModel.submitPassword(password)
+            password = ""
+        },
+        onCancel = { password = ""; viewModel.cancel() },
+    )
 }

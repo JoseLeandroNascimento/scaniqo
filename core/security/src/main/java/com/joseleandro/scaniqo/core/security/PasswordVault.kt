@@ -40,14 +40,15 @@ class VaultAuthenticationRequest internal constructor(
 )
 
 /**
- * A chave de dados fica somente na sessão. As versões de senha permanecem cifradas,
- * inclusive quando uma senha geral nova substitui o padrão usado nas próximas proteções.
+ * Compatibility reader for encrypted legacy password versions. New document passwords
+ * belong only to the in-memory document session and never mutate the stored vault.
  */
 class PasswordVault(context: Context) : PasswordAccess {
     private val applicationContext = context.applicationContext
     private val storage = PasswordVaultStorage(applicationContext)
     private val keyStore = PasswordVaultKeyStore(applicationContext)
     private val session = PasswordSession(SystemClock::elapsedRealtime)
+    private val documentPasswords = DocumentPasswordSession(SystemClock::elapsedRealtime)
     private val mutex = Mutex()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val mutableState = MutableStateFlow(PasswordVaultState())
@@ -337,11 +338,15 @@ class PasswordVault(context: Context) : PasswordAccess {
         return addVersion(password, makeActive = true)
     }
 
-    suspend fun rememberDocumentPassword(password: String): String {
-        require(PasswordPolicy.isValidDocument(password))
-        loaded.await()
-        check(activeKeyId != null) { "Configure uma senha geral primeiro." }
-        return addVersion(password, makeActive = false)
+    override suspend fun rememberDocumentPassword(password: String, keyId: String?): String =
+        documentPasswords.remember(password, keyId).also { publishState() }
+
+    override fun matchesDocumentPassword(keyId: String, password: String): Boolean? =
+        documentPasswords.matches(keyId, password)
+
+    override fun forgetDocumentPassword(keyId: String) {
+        documentPasswords.forget(keyId)
+        publishState()
     }
 
     suspend fun deactivateGeneralPassword() {
@@ -349,6 +354,12 @@ class PasswordVault(context: Context) : PasswordAccess {
     }
 
     override suspend fun <T> withPassword(keyId: String?, block: suspend (String) -> T): T {
+        requireNotNull(keyId) { "A senha precisa pertencer a este documento." }
+        documentPasswords.copyPassword(keyId)?.let { bytes ->
+            return try { block(bytes.toString(Charsets.UTF_8)) }
+            finally { bytes.fill(0); publishState() }
+        }
+        if (isDocumentPasswordKey(keyId)) throw PasswordVersionMissingException()
         loaded.await()
         var passwordBytes: ByteArray? = null
         return try {
@@ -359,7 +370,7 @@ class PasswordVault(context: Context) : PasswordAccess {
                 try {
                     withContext(Dispatchers.IO) {
                         readPayload(current, key).use { payload ->
-                            val id = keyId ?: payload.activeKeyId
+                            val id = keyId
                             // A atribuição externa permite apagar o buffer mesmo se o retorno de IO for cancelado.
                             passwordBytes = payload.versions[id]?.copyOf()
                                 ?: throw PasswordVersionMissingException()
@@ -378,6 +389,7 @@ class PasswordVault(context: Context) : PasswordAccess {
     }
 
     override fun lock() {
+        documentPasswords.lock()
         session.lock()
         publishState()
     }
@@ -474,14 +486,15 @@ class PasswordVault(context: Context) : PasswordAccess {
 
     private fun publishState() {
         mutableState.update {
-            it.copy(isConfigured = activeKeyId != null, isUnlocked = session.isUnlocked())
+            it.copy(isConfigured = envelope != null, isUnlocked = session.isUnlocked(),
+                availableDocumentKeys = documentPasswords.availableKeys())
         }
     }
 
     private fun markRecoveryRequired() {
         session.lock()
         mutableState.value = PasswordVaultState(
-            isConfigured = activeKeyId != null,
+            isConfigured = envelope != null,
             recoveryRequired = true,
         )
     }

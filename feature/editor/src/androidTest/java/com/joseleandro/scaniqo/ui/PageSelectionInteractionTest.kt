@@ -6,6 +6,9 @@ import com.joseleandro.scaniqo.feature.editor.R
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -16,6 +19,7 @@ import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -53,6 +57,62 @@ class PageSelectionInteractionTest {
         compose.runOnIdle {
             assertEquals(listOf(DocumentToolsEvent.MovePageTo("page-2", 0)),
                 events.filterIsInstance<DocumentToolsEvent.MovePageTo>())
+        }
+    }
+
+    @Test fun draggedPageKeepsItsSizeAndRemainsInsideTheViewportAtBothEdges() {
+        val events = mutableListOf<DocumentToolsEvent>()
+        compose.setContent {
+            DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(DpSize(400.dp, 640.dp))) {
+                CompositionLocalProvider(LocalInspectionMode provides true) {
+                    ScaniqoTheme {
+                        DocumentPagesSheetContent(
+                            state = DocumentToolsUiState(
+                                workspace = PdfWorkspace(1, "drag-pages", "preview",
+                                    (1..8).map { PdfPageSpec("page-$it", "preview", it - 1) }),
+                                selectedPageId = "page-1",
+                            ),
+                            onEvent = { events += it },
+                        )
+                    }
+                }
+            }
+        }
+        val viewport = compose.onNodeWithTag("page_reorder_viewport")
+        val page = compose.onNodeWithText(text(R.string.pages_page, 1)).fetchSemanticsNode().boundsInRoot
+        val bounds = viewport.fetchSemanticsNode().boundsInRoot
+        compose.mainClock.autoAdvance = false
+        viewport.performTouchInput {
+            down(Offset(page.center.x - bounds.left, page.center.y - bounds.top))
+        }
+        compose.mainClock.advanceTimeBy(700)
+        viewport.performTouchInput { moveBy(Offset(0f, 24f), delayMillis = 32) }
+        compose.mainClock.advanceTimeBy(32)
+        val floating = compose.onNodeWithTag("page_reorder_drag_preview", useUnmergedTree = true)
+        floating.assertExists()
+        val original = floating.getUnclippedBoundsInRoot()
+        fun assertInside() {
+            val frame = viewport.getUnclippedBoundsInRoot()
+            val card = floating.getUnclippedBoundsInRoot()
+            assertTrue(card.left > frame.left)
+            assertTrue(card.right < frame.right)
+            assertTrue(card.top >= frame.top)
+            assertTrue(card.bottom <= frame.bottom)
+            assertEquals(original.right - original.left, card.right - card.left)
+            assertEquals(original.bottom - original.top, card.bottom - card.top)
+        }
+        assertInside()
+        viewport.performTouchInput { moveTo(Offset(center.x, -100f), delayMillis = 32) }
+        compose.mainClock.advanceTimeBy(32)
+        assertInside()
+        viewport.performTouchInput { moveTo(Offset(center.x, height + 100f), delayMillis = 32) }
+        compose.mainClock.advanceTimeBy(32)
+        assertInside()
+        viewport.performTouchInput { up() }
+        compose.mainClock.autoAdvance = true
+        floating.assertDoesNotExist()
+        compose.runOnIdle {
+            assertTrue(events.filterIsInstance<DocumentToolsEvent.ReorderPages>().size <= 1)
         }
     }
 

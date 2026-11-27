@@ -465,8 +465,9 @@ class DocumentActionsViewModel(
         updateState { it.copy(busyDocumentId = document.id, message = null) }
         viewModelScope.launch {
             try {
-                val uri = repository.prepareShare(document)
-                effectChannel.send(DocumentActionEffect.SharePdf(uri, pdfFileName(document.name)))
+                val currentDocument = checkNotNull(repository.findById(document.id))
+                val uri = repository.prepareShare(currentDocument)
+                effectChannel.send(DocumentActionEffect.SharePdf(uri, pdfFileName(currentDocument.name)))
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {

@@ -17,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
@@ -47,11 +47,15 @@ class EditorBannerInteractionTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
-    fun selectingAToolRemovesTheBannerWithoutRemovingToolControls() {
+    fun openingFiltersHidesBannerAndKeepsPanelControlsAccessible() {
         var tools by mutableStateOf(readyTools())
         compose.setContent {
             Viewer(tools = tools, onEvent = { event ->
-                if (event is DocumentToolsEvent.OpenTool) tools = tools.copy(tool = event.tool)
+                when (event) {
+                    is DocumentToolsEvent.OpenTool -> tools = tools.copy(tool = event.tool)
+                    DocumentToolsEvent.DismissTool -> tools = tools.copy(tool = null)
+                    else -> Unit
+                }
             })
         }
         val banner = compose.onNodeWithText(FAKE_BANNER)
@@ -63,9 +67,9 @@ class EditorBannerInteractionTest {
         )
         filters.performClick()
         banner.assertDoesNotExist()
-        filters.assertIsDisplayed().assertIsSelected()
-
-        compose.runOnIdle { tools = tools.copy(tool = null) }
+        // On tablets the filter panel replaces the tool launcher; its close action stays visible.
+        val close = compose.onNodeWithContentDescription(context.getString(R.string.filter_bar_close))
+        close.assertIsDisplayed().performClick()
         banner.assertIsDisplayed()
         compose.runOnIdle { tools = tools.copy(hasChanges = true) }
         banner.assertDoesNotExist()

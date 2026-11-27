@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">प्रिंट करने और बारीकियाँ बनाए रखने के लिए।</string>
+    <string name="quality_visual_balanced_use">रोज़ पढ़ने और शेयर करने के लिए।</string>
+    <string name="quality_visual_small_use">कम आकार की फ़ाइल भेजने के लिए।</string>
+    <string name="quality_visual_ocr_description">स्कैन किए गए पेजों में शब्द खोजें।</string>
+</resources>

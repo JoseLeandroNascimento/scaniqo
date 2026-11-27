@@ -5,6 +5,7 @@ import com.joseleandro.scaniqo.feature.library.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -74,11 +76,19 @@ fun DocumentsScreen(
     onAllTools: () -> Unit,
     modifier: Modifier = Modifier,
     adsEnabled: Boolean = false,
+    showNavigationMenu: Boolean = true,
 ) {
     val toastState = rememberDocumentToastState(actionsState.message) {
         onDocumentAction(DocumentActionEvent.DismissMessage)
     }
     val scanBusy = actionsState.isScanning || actionsState.isPreparingScan
+    val scanLabel = stringResource(
+        when {
+            actionsState.isPreparingScan -> CoreResourcesR.string.documents_preparing
+            actionsState.isScanning -> CoreResourcesR.string.documents_scanning
+            else -> R.string.documents_scan
+        },
+    )
     val actionsBusy = actionsState.isBusy
     val visibleDocuments = uiState.visibleDocuments
     val adPositions = DocumentAdPlacementPolicy.afterDocumentCounts(
@@ -107,8 +117,10 @@ fun DocumentsScreen(
             TopAppBar(
                 title = { Text(stringResource(CoreResourcesR.string.documents_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onOpenMenu, enabled = !actionsBusy) {
-                        Icon(painterResource(R.drawable.ic_app_menu), "Abrir menu")
+                    if (showNavigationMenu) {
+                        IconButton(onClick = onOpenMenu, enabled = !actionsBusy) {
+                            Icon(painterResource(R.drawable.ic_app_menu), "Abrir menu")
+                        }
                     }
                 },
                 actions = {
@@ -133,7 +145,10 @@ fun DocumentsScreen(
                 },
                 modifier = Modifier
                     .onSizeChanged { scanButtonHeight = with(density) { it.height.toDp() } }
-                    .semantics { if (actionsBusy) disabled() },
+                    .semantics {
+                        contentDescription = scanLabel
+                        if (actionsBusy) disabled()
+                    },
                 icon = {
                     if (scanBusy) {
                         CircularProgressIndicator(
@@ -147,17 +162,7 @@ fun DocumentsScreen(
                         )
                     }
                 },
-                text = {
-                    Text(
-                        stringResource(
-                            when {
-                                actionsState.isPreparingScan -> CoreResourcesR.string.documents_preparing
-                                actionsState.isScanning -> CoreResourcesR.string.documents_scanning
-                                else -> R.string.documents_scan
-                            },
-                        ),
-                    )
-                },
+                text = { Text(scanLabel) },
             )
         },
     ) { innerPadding ->
@@ -165,89 +170,101 @@ fun DocumentsScreen(
             modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding),
             contentAlignment = Alignment.TopCenter,
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(336.dp * density.fontScale.coerceAtLeast(1f)),
-                modifier = Modifier
-                    .widthIn(max = 1200.dp)
-                    .fillMaxSize()
-                    .padding(bottom = if (nativeAds.isNotEmpty()) scanButtonHeight + 32.dp else 0.dp),
-                contentPadding = PaddingValues(top = 8.dp, bottom = if (nativeAds.isNotEmpty()) 16.dp else scanButtonHeight + 48.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                item(key = "quick_tools", span = { GridItemSpan(maxLineSpan) }) {
-                    DocumentQuickTools(
-                        enabled = !actionsBusy && actionsState.editor == null && actionsState.pendingDeletion == null,
-                        onImport = onImportPdf,
-                        onMerge = onMergePdfs,
-                        onSign = onSignDocument,
-                        onAllTools = onAllTools,
-                    )
-                }
-                item(key = "filters", span = { GridItemSpan(maxLineSpan) }) {
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text(
-                            text = stringResource(R.string.documents_subtitle),
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            BoxWithConstraints(Modifier.widthIn(max = 1200.dp).fillMaxSize()) {
+                val usePreviewCards = maxWidth >= 600.dp && density.fontScale <= 1.5f
+                val horizontalPadding = if (maxWidth >= 600.dp) 24.dp else 16.dp
+                LazyVerticalGrid(
+                    columns = if (usePreviewCards) {
+                        GridCells.Adaptive(240.dp * density.fontScale.coerceAtLeast(1f))
+                    } else {
+                        GridCells.Adaptive(336.dp * density.fontScale.coerceAtLeast(1f))
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = if (nativeAds.isNotEmpty()) scanButtonHeight + 32.dp else 0.dp),
+                    contentPadding = PaddingValues(
+                        start = horizontalPadding,
+                        end = horizontalPadding,
+                        top = 16.dp,
+                        bottom = if (nativeAds.isNotEmpty()) 16.dp else scanButtonHeight + 48.dp,
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    item(key = "quick_tools", span = { GridItemSpan(maxLineSpan) }) {
+                        DocumentQuickTools(
+                            enabled = !actionsBusy && actionsState.editor == null && actionsState.pendingDeletion == null,
+                            onImport = onImportPdf,
+                            onMerge = onMergePdfs,
+                            onSign = onSignDocument,
+                            onAllTools = onAllTools,
+                            contentPadding = PaddingValues(0.dp),
                         )
-                        DocumentTagFilters(
-                            tags = uiState.tags,
-                            selectedTagId = uiState.selectedTagId,
-                            onSelect = { onEvent(DocumentsEvent.SelectTag(it)) },
-                        )
-                        if (!uiState.isLoading && !uiState.loadError) {
+                    }
+                    item(key = "filters", span = { GridItemSpan(maxLineSpan) }) {
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                             Text(
-                                text = pluralStringResource(
-                                    R.plurals.documents_count,
-                                    visibleDocuments.size,
-                                    visibleDocuments.size,
-                                ),
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                                style = MaterialTheme.typography.labelLarge,
+                                text = stringResource(R.string.documents_subtitle),
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
+                            DocumentTagFilters(
+                                tags = uiState.tags,
+                                selectedTagId = uiState.selectedTagId,
+                                onSelect = { onEvent(DocumentsEvent.SelectTag(it)) },
+                                contentPadding = PaddingValues(0.dp),
+                            )
+                            if (!uiState.isLoading && !uiState.loadError) {
+                                Text(
+                                    text = pluralStringResource(
+                                        R.plurals.documents_count,
+                                        visibleDocuments.size,
+                                        visibleDocuments.size,
+                                    ),
+                                    modifier = Modifier.padding(vertical = 4.dp),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
                     }
-                }
-                when {
-                    uiState.isLoading -> item(key = "loading", span = { GridItemSpan(maxLineSpan) }) {
-                        DocumentsLoading()
-                    }
+                    when {
+                        uiState.isLoading -> item(key = "loading", span = { GridItemSpan(maxLineSpan) }) {
+                            DocumentsLoading()
+                        }
 
-                    uiState.loadError -> item(key = "error", span = { GridItemSpan(maxLineSpan) }) {
-                        DocumentStatus(
-                            title = stringResource(CoreResourcesR.string.documents_error_title),
-                            description = stringResource(CoreResourcesR.string.documents_error_body),
-                            actionLabel = stringResource(CoreResourcesR.string.documents_retry),
-                            onAction = { onEvent(DocumentsEvent.RetryLoad) },
-                        )
-                    }
+                        uiState.loadError -> item(key = "error", span = { GridItemSpan(maxLineSpan) }) {
+                            DocumentStatus(
+                                title = stringResource(CoreResourcesR.string.documents_error_title),
+                                description = stringResource(CoreResourcesR.string.documents_error_body),
+                                actionLabel = stringResource(CoreResourcesR.string.documents_retry),
+                                onAction = { onEvent(DocumentsEvent.RetryLoad) },
+                            )
+                        }
 
-                    visibleDocuments.isEmpty() -> item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
-                        val filtered = uiState.selectedTagId != null
-                        ScaniqoEmptyState(
-                            title = stringResource(if (filtered) R.string.documents_filter_empty_title else R.string.documents_empty_title),
-                            description = stringResource(if (filtered) R.string.documents_filter_empty_body else R.string.documents_empty_body),
-                            illustration = if (filtered) EmptyStateIllustration.FILTERED_DOCUMENTS else EmptyStateIllustration.DOCUMENTS,
-                            actionLabel = if (filtered) stringResource(R.string.documents_clear_filter) else null,
-                            onAction = if (filtered) {
-                                { onEvent(DocumentsEvent.SelectTag(null)) }
-                            } else null,
-                        )
-                    }
+                        visibleDocuments.isEmpty() -> item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
+                            val filtered = uiState.selectedTagId != null
+                            ScaniqoEmptyState(
+                                title = stringResource(if (filtered) R.string.documents_filter_empty_title else R.string.documents_empty_title),
+                                description = stringResource(if (filtered) R.string.documents_filter_empty_body else R.string.documents_empty_body),
+                                illustration = if (filtered) EmptyStateIllustration.FILTERED_DOCUMENTS else EmptyStateIllustration.DOCUMENTS,
+                                actionLabel = if (filtered) stringResource(R.string.documents_clear_filter) else null,
+                                onAction = if (filtered) {
+                                    { onEvent(DocumentsEvent.SelectTag(null)) }
+                                } else null,
+                            )
+                        }
 
-                    else -> items(
-                        items = documentRows,
-                        key = DocumentListRow::key,
-                        span = { row ->
-                            GridItemSpan(if (row is DocumentListRow.NativeAdSlot) maxLineSpan else 1)
-                        },
-                    ) { row ->
-                        when (row) {
-                            is DocumentListRow.Document -> {
-                                val document = visibleDocuments[row.documentIndex]
-                                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        else -> items(
+                            items = documentRows,
+                            key = DocumentListRow::key,
+                            span = { row ->
+                                GridItemSpan(if (row is DocumentListRow.NativeAdSlot) maxLineSpan else 1)
+                            },
+                        ) { row ->
+                            when (row) {
+                                is DocumentListRow.Document -> {
+                                    val document = visibleDocuments[row.documentIndex]
                                     DocumentCard(
                                         document = document,
                                         tag = uiState.tagsById[document.tagId],
@@ -255,12 +272,13 @@ fun DocumentsScreen(
                                         actionsEnabled = !actionsBusy,
                                         onOpen = { if (!actionsBusy) onOpenDocument(document.id) },
                                         onEvent = onDocumentAction,
+                                        showLargePreview = usePreviewCards,
                                     )
                                 }
-                            }
 
-                            is DocumentListRow.NativeAdSlot -> nativeAds[row.slot]?.let { ad ->
-                                DocumentsNativeAd(ad = ad, modifier = Modifier.padding(horizontal = 16.dp))
+                                is DocumentListRow.NativeAdSlot -> nativeAds[row.slot]?.let { ad ->
+                                    DocumentsNativeAd(ad = ad)
+                                }
                             }
                         }
                     }

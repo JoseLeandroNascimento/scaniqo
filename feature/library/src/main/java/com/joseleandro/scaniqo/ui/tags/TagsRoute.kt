@@ -10,6 +10,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun TagsRoute(
     onNavigationBack: () -> Unit,
+    onCreateTag: () -> Unit,
+    onEditTag: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TagsViewModel = koinViewModel(),
 ) {
@@ -20,5 +22,7 @@ fun TagsRoute(
         modifier = modifier,
         uiState = uiState,
         onEvent = viewModel::onEvent,
+        onCreateTag = onCreateTag,
+        onEditTag = onEditTag,
     )
 }

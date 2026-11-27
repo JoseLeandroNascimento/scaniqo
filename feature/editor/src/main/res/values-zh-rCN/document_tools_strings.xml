@@ -41,8 +41,8 @@
     <string name="tools_signature_down">向下移动签名</string>
     <string name="tools_discard_title">放弃更改？</string>
     <string name="tools_discard_body">本次编辑的更改尚未保存到 PDF。</string>
-    <string name="tools_keep_editing">继续编辑</string>
-    <string name="tools_discard">放弃并退出</string>
+    <string name="tools_keep_editing">继续</string>
+    <string name="tools_discard">放弃</string>
     <string name="tools_cleanup_error">无法安全关闭编辑器，请重试。</string>
     <string name="tools_export_save_first">下载或分享前请先保存更改。</string>
     <string name="tools_recovery_description">密码库中没有此 PDF 的密码。请使用文件的原始密码恢复访问。</string>

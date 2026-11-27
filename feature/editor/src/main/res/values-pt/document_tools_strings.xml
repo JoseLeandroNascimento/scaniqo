@@ -41,8 +41,8 @@
     <string name="tools_signature_down">Mover assinatura para baixo</string>
     <string name="tools_discard_title">Descartar alterações?</string>
     <string name="tools_discard_body">As alterações desta edição ainda não foram salvas no PDF.</string>
-    <string name="tools_keep_editing">Continuar editando</string>
-    <string name="tools_discard">Descartar e sair</string>
+    <string name="tools_keep_editing">Continuar</string>
+    <string name="tools_discard">Descartar</string>
     <string name="tools_cleanup_error">Não foi possível fechar o editor com segurança. Tente novamente.</string>
     <string name="tools_export_save_first">Salve as alterações antes de baixar ou compartilhar.</string>
     <string name="tools_recovery_description">A senha deste PDF não está disponível no cofre. Use a senha original do arquivo para recuperar o acesso.</string>

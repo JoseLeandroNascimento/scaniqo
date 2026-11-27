@@ -135,7 +135,11 @@ internal fun DocumentFillMarkStage(
     var alignmentGuides by remember(page.id) { mutableStateOf<FillMarkAlignment?>(null) }
     val displayedDraft = gestureDraft ?: draft
     Column(modifier) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth()
+                .align(Alignment.CenterHorizontally).padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             IconButton(onClick = {
                 onNavigatePage(workspace.pages[state.selectedPageIndex - 1].id)
             }, enabled = state.canEdit && state.selectedPageIndex > 0) {

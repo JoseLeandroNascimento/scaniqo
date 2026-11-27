@@ -35,7 +35,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -54,6 +53,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
+import com.joseleandro.scaniqo.ui.documentCommon.components.PdfSelectionCard
+import com.joseleandro.scaniqo.ui.documentCommon.components.PdfSelectAction
+import com.joseleandro.scaniqo.ui.documentCommon.components.PdfSourceSelection
+import com.joseleandro.scaniqo.ui.documentCommon.components.pdfSelectionMetadata
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -467,23 +473,19 @@ fun PdfUtilityRoute(
                 PdfUtility.COMPRESS_PDF -> R.string.utility_workspace_compress_hint
             }), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (!imageTool) {
-                selected?.let { document ->
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        DocumentThumbnail(document, Modifier.size(48.dp, 68.dp).clip(MaterialTheme.shapes.small))
-                        Column(Modifier.weight(1f)) {
-                            Text(document.name, style = MaterialTheme.typography.titleMedium)
-                            Text(stringResource(R.string.utility_source_pages, document.pageCount), style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                }
-                OutlinedButton(onClick = { pickingDocument = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(if (selected == null) R.string.utility_select_pdf else R.string.utility_change_pdf))
-                }
+                PdfSourceSelection(
+                    document = selected,
+                    emptyTitle = stringResource(R.string.utility_select_pdf),
+                    emptyHint = stringResource(R.string.utility_workspace_choose_hint),
+                    changeLabel = stringResource(R.string.utility_change_pdf),
+                    onChoose = { pickingDocument = true },
+                    enabled = !state.busy,
+                )
                 if (selected?.isProtected == true && state.receipt == null) {
                     OutlinedTextField(password, { password = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,
                         enabled = !state.busy, label = { Text(stringResource(R.string.utility_password)) },
                         visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password))
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), shape = ScaniqoFieldDefaults.shape)
                     if (tool == PdfUtility.EXTRACT_PAGES) Text(stringResource(R.string.utility_password_note),
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
@@ -493,11 +495,11 @@ fun PdfUtilityRoute(
                     OutlinedTextField(pages, { pages = it }, Modifier.fillMaxWidth(), enabled = !state.busy,
                         textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr),
                         label = { Text(stringResource(CoreResourcesR.string.utility_pages)) }, singleLine = true,
-                        supportingText = { Text(stringResource(CoreResourcesR.string.utility_pages_hint)) })
+                        supportingText = { Text(stringResource(CoreResourcesR.string.utility_pages_hint)) }, shape = ScaniqoFieldDefaults.shape)
                     if (tool == PdfUtility.EXTRACT_PAGES) {
                         OutlinedTextField(name, { name = it.take(DOCUMENT_NAME_MAX_LENGTH) }, Modifier.fillMaxWidth(), enabled = !state.busy,
                             label = { Text(stringResource(R.string.utility_name)) }, singleLine = true,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr))
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr), shape = ScaniqoFieldDefaults.shape)
                         Button(onClick = { selected?.let { viewModel.extract(it.id, pages, name, password) } },
                             enabled = !state.busy && selected != null && name.isNotBlank() &&
                                 (selected.isProtected != true || password.isNotEmpty()), modifier = Modifier.fillMaxWidth()) {
@@ -561,7 +563,7 @@ fun PdfUtilityRoute(
                     }
                     OutlinedTextField(name, { name = it.take(DOCUMENT_NAME_MAX_LENGTH) }, Modifier.fillMaxWidth(), enabled = !state.busy,
                         label = { Text(stringResource(R.string.utility_name)) }, singleLine = true,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr))
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr), shape = ScaniqoFieldDefaults.shape)
                     Button(onClick = { viewModel.createFromImages(images, name, tool == PdfUtility.ID_CARD) },
                         enabled = !state.busy && name.isNotBlank() && images.isNotEmpty() &&
                             (tool != PdfUtility.ID_CARD || (images.size == 2 && images.all(String::isNotBlank))),
@@ -572,7 +574,7 @@ fun PdfUtilityRoute(
                     if (state.receipt == null) {
                         OutlinedTextField(receiptPage, { receiptPage = it.take(3) }, Modifier.fillMaxWidth(), enabled = !state.busy,
                             label = { Text(stringResource(R.string.utility_receipt_page)) }, singleLine = true,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr))
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr), shape = ScaniqoFieldDefaults.shape)
                         Button(onClick = { selected?.let { viewModel.readReceipt(it.id, receiptPage, password) } },
                             enabled = !state.busy && selected != null && (selected.isProtected != true || password.isNotEmpty()),
                             modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.utility_receipt_read)) }
@@ -583,19 +585,19 @@ fun PdfUtilityRoute(
                         OutlinedTextField(receipt.merchant, { viewModel.updateReceipt(receipt.copy(merchant = it)) },
                             Modifier.fillMaxWidth(), enabled = !state.busy,
                             textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
-                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_merchant)) })
+                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_merchant)) }, shape = ScaniqoFieldDefaults.shape)
                         OutlinedTextField(receipt.date, { viewModel.updateReceipt(receipt.copy(date = it)) },
                             Modifier.fillMaxWidth(), enabled = !state.busy,
                             textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
-                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_date)) })
+                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_date)) }, shape = ScaniqoFieldDefaults.shape)
                         OutlinedTextField(receipt.total, { viewModel.updateReceipt(receipt.copy(total = it)) },
                             Modifier.fillMaxWidth(), enabled = !state.busy,
                             textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
-                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_total)) })
+                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_total)) }, shape = ScaniqoFieldDefaults.shape)
                         OutlinedTextField(receipt.items, { viewModel.updateReceipt(receipt.copy(items = it)) },
                             Modifier.fillMaxWidth(), enabled = !state.busy, minLines = 3,
                             textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.ContentOrLtr),
-                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_items)) })
+                            label = { Text(stringResource(CoreResourcesR.string.utility_receipt_items)) }, shape = ScaniqoFieldDefaults.shape)
                         Text(stringResource(R.string.utility_receipt_source), style = MaterialTheme.typography.titleSmall)
                         Text(receipt.sourceText, style = MaterialTheme.typography.bodySmall.copy(textDirection = TextDirection.ContentOrLtr))
                         Text(stringResource(R.string.utility_receipt_csv_note), style = MaterialTheme.typography.bodySmall)
@@ -624,40 +626,38 @@ fun PdfUtilityRoute(
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(stringResource(R.string.utility_select_pdf), style = MaterialTheme.typography.titleLarge)
-                OutlinedButton(onClick = { pickingDocument = false; onImport() },
-                    enabled = !state.busy && !externalPicker && !importBusy, modifier = Modifier.fillMaxWidth()) {
-                    Icon(painterResource(CoreResourcesR.drawable.ic_symbol_file_open), null, Modifier.padding(end = 8.dp).size(20.dp))
-                    Text(stringResource(R.string.utility_workspace_import_device))
-                }
+                PdfSelectAction(
+                    title = stringResource(R.string.utility_workspace_import_device),
+                    hint = stringResource(com.joseleandro.scaniqo.core.documentui.R.string.tool_source_device_hint),
+                    onClick = { pickingDocument = false; onImport() },
+                    enabled = !state.busy && !externalPicker && !importBusy,
+                )
                 OutlinedTextField(query, { query = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,
                     label = { Text(stringResource(R.string.utility_workspace_search)) },
-                    leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_search), null) })
+                    leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_search), null) }, shape = ScaniqoFieldDefaults.shape)
                 if (visible.isEmpty()) Text(stringResource(if (state.documents.isEmpty())
                     R.string.utility_no_documents else R.string.utility_workspace_no_match))
                 LazyColumn(Modifier.fillMaxWidth().heightIn(max = 440.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(visible, key = { it.id }) { document ->
-                        Surface(
-                            onClick = { selectDocument(document) },
-                            enabled = !state.busy && !externalPicker && !importBusy,
-                            shape = MaterialTheme.shapes.medium,
-                            color = if (selectedId == document.id) MaterialTheme.colorScheme.secondaryContainer
-                                else MaterialTheme.colorScheme.surface,
-                        ) {
-                            Row(Modifier.fillMaxWidth().padding(12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalAlignment = Alignment.CenterVertically) {
-                                DocumentThumbnail(document, Modifier.size(40.dp, 56.dp).clip(MaterialTheme.shapes.extraSmall))
-                                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(document.name, style = MaterialTheme.typography.titleSmall)
-                                    Text(stringResource(R.string.utility_source_pages, document.pageCount),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                                if (selectedId == document.id) Icon(painterResource(CoreResourcesR.drawable.ic_check_24), null,
-                                    tint = MaterialTheme.colorScheme.primary)
-                            }
-                        }
+                        PdfSelectionCard(
+                            name = document.name,
+                            metadata = pdfSelectionMetadata(document.pageCount, document.sizeBytes),
+                            thumbnail = { DocumentThumbnail(document, it) },
+                            modifier = Modifier.selectable(
+                                selected = selectedId == document.id,
+                                enabled = !state.busy && !externalPicker && !importBusy,
+                                role = Role.RadioButton,
+                                onClick = { selectDocument(document) },
+                            ),
+                            selected = selectedId == document.id,
+                            trailing = {
+                                if (selectedId == document.id) Icon(
+                                    painterResource(CoreResourcesR.drawable.ic_check_24), null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            },
+                        )
                     }
                 }
             }

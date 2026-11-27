@@ -9,5 +9,7 @@ data class DocumentReaderUiState(
     val isLoading: Boolean = false,
     val isLocked: Boolean = false,
     val recoveryRequired: Boolean = false,
+    val needsPassword: Boolean = false,
+    val passwordIncorrect: Boolean = false,
     val loadError: Boolean = false,
 )

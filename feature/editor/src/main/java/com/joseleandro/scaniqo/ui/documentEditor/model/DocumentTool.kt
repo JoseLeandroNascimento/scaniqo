@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 enum class DocumentTool { LAYOUT, FILTERS, QUALITY, PAGES, MERGE, SIGNATURES, PROTECTION, FORMS, ANNOTATIONS, WATERMARK, REDACTION }
 
 val DocumentTool.hasEditorScreen: Boolean
-    get() = this in setOf(DocumentTool.LAYOUT, DocumentTool.PAGES,
+    get() = this in setOf(DocumentTool.LAYOUT, DocumentTool.PAGES, DocumentTool.QUALITY, DocumentTool.PROTECTION,
         DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION)

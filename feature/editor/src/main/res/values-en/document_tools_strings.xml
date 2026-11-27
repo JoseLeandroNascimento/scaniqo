@@ -41,8 +41,8 @@
     <string name="tools_signature_down">Move signature down</string>
     <string name="tools_discard_title">Discard changes?</string>
     <string name="tools_discard_body">The changes from this edit have not been saved to the PDF yet.</string>
-    <string name="tools_keep_editing">Keep editing</string>
-    <string name="tools_discard">Discard and exit</string>
+    <string name="tools_keep_editing">Continue</string>
+    <string name="tools_discard">Discard</string>
     <string name="tools_cleanup_error">Could not close the editor safely. Try again.</string>
     <string name="tools_export_save_first">Save your changes before downloading or sharing.</string>
     <string name="tools_recovery_description">The password for this PDF is not available in the vault. Use the original file password to recover access.</string>

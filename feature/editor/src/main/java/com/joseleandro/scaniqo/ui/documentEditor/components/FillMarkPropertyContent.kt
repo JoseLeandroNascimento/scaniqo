@@ -3,8 +3,6 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import com.joseleandro.scaniqo.feature.editor.R
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilterChip
@@ -36,16 +33,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import com.joseleandro.scaniqo.domain.model.PdfOverlayKind
 import com.joseleandro.scaniqo.domain.model.PdfTextVerticalAlignment
+import com.joseleandro.scaniqo.ui.components.ScaniqoOptionGrid
+import com.joseleandro.scaniqo.ui.components.ScaniqoColorOption
 
 @Composable
 internal fun FillMarkTypeSelector(
@@ -135,6 +132,7 @@ internal fun FillMarkSizePanel(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onConfirmNumericSize() }),
                 label = { Text(stringResource(R.string.fill_v3_points)) },
+                shape = ScaniqoFieldDefaults.shape,
             )
             FilledTonalButton(
                 onClick = { onUpdate(draft.withFillMarkFontSize(draft.fontSize + 1f)) },
@@ -213,33 +211,17 @@ internal fun FillMarkColorGrid(
     editable: Boolean,
     onSelectColor: (Int) -> Unit,
 ) {
-    colors.chunked(4).forEach { row ->
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            row.forEach { (color, label) ->
-                val borderWidth by animateDpAsState(
-                    if (selectedColor == color) 3.dp else 1.dp,
-                    animationSpec = tween(160), label = "fill color",
-                )
-                Surface(
-                    onClick = { onSelectColor(color) }, enabled = editable, shape = CircleShape,
-                    color = Color(color),
-                    border = BorderStroke(borderWidth, if (selectedColor == color)
-                        MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline),
-                    modifier = Modifier.size(48.dp).testTag("fill_color_option_${color.toUInt().toString(16)}").semantics {
-                        contentDescription = label
-                        selected = selectedColor == color
-                    },
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        if (selectedColor == color) Icon(
-                            painterResource(CoreResourcesR.drawable.ic_check_24), null,
-                            Modifier.size(18.dp).testTag("fill_color_selected_check"),
-                            tint = if (Color(color).compositeOver(MaterialTheme.colorScheme.surfaceContainerHigh).luminance() > .179f)
-                                Color.Black else Color.White,
-                        )
-                    }
-                }
-            }
+    ScaniqoOptionGrid {
+        colors.forEach { (color, label) ->
+            ScaniqoColorOption(
+                color = Color(color),
+                label = label,
+                selected = selectedColor == color,
+                enabled = editable,
+                onClick = { onSelectColor(color) },
+                modifier = Modifier.testTag("fill_color_option_${color.toUInt().toString(16)}"),
+                selectionIndicatorModifier = Modifier.testTag("fill_color_selected_check"),
+            )
         }
     }
 }

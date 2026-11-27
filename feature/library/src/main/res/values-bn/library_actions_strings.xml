@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">সেভ করুন</string>
+    <string name="tag_unavailable">এই ট্যাগটি আর উপলভ্য নেই।</string>
+    <string name="trash_actions">ট্র্যাশের বিকল্প</string>
+    <string name="trash_restore_all">সব পুনরুদ্ধার করুন</string>
+    <string name="trash_restored_all">ডকুমেন্টগুলি লাইব্রেরিতে পুনরুদ্ধার করা হয়েছে</string>
+    <string name="trash_restore_all_error">কিছু ডকুমেন্ট পুনরুদ্ধার করা যায়নি। সেগুলি এখনও ট্র্যাশে আছে। আবার চেষ্টা করুন।</string>
+    <string name="trash_information">তথ্য</string>
+</resources>

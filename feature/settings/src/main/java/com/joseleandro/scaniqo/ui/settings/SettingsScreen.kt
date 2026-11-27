@@ -164,9 +164,6 @@ internal fun SettingsScreen(
                             SettingsGroup(stringResource(R.string.settings_protection)) {
                                 SettingsDestination(CoreResourcesR.drawable.ic_cloud_backup, stringResource(CoreResourcesR.string.backup_title),
                                     stringResource(R.string.settings_backup_body), onBackup)
-                                SettingsDivider()
-                                SettingsDestination(CoreResourcesR.drawable.ic_tool_lock, stringResource(R.string.menu_pdf_password),
-                                    stringResource(R.string.settings_password_body), onPasswords)
                             }
                         }
                         item {
@@ -322,11 +319,14 @@ private fun <T> SettingsChoices(
         val gap = 12.dp
         val columns = ((maxWidth + gap) / (minimumItemWidth * fontScale + gap))
             .toInt().coerceIn(1, maxColumns)
+        val itemWidth = (maxWidth - gap * (columns - 1)) / columns
         Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(gap)) {
             choices.chunked(columns).forEach { row ->
-                Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                    row.forEach { choice -> content(choice, Modifier.weight(1f).fillMaxHeight()) }
-                    repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+                Row(
+                    Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),
+                ) {
+                    row.forEach { choice -> content(choice, Modifier.width(itemWidth).fillMaxHeight()) }
                 }
             }
         }
@@ -343,7 +343,8 @@ private fun SectionTitle(text: String) {
 private fun SettingsGroup(title: String, content: @Composable ColumnScope.() -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionTitle(title)
-        Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surface) {
+        Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
             Column(content = content)
         }
     }
@@ -495,8 +496,14 @@ private fun PaletteChoice(theme: AppColorTheme, selected: Boolean, onClick: () -
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(theme.title()), Modifier.weight(1f), style = MaterialTheme.typography.labelLarge)
-                if (selected) Icon(painterResource(CoreResourcesR.drawable.ic_check_24), stringResource(R.string.settings_selected),
-                    Modifier.size(18.dp), tint = MaterialTheme.colorScheme.primary)
+                Box(Modifier.size(18.dp), contentAlignment = Alignment.Center) {
+                    if (selected) Icon(
+                        painterResource(CoreResourcesR.drawable.ic_check_24),
+                        stringResource(R.string.settings_selected),
+                        Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
             }
         }
     }
@@ -541,7 +548,8 @@ private fun QualityChoice(value: PdfExportQuality, selected: Boolean, onClick: (
     Surface(Modifier.fillMaxWidth().selectable(selected, role = Role.RadioButton, onClick = onClick),
         shape = MaterialTheme.shapes.large,
         color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
-        border = if (selected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null) {
+        border = BorderStroke(if (selected) 2.dp else 1.dp,
+            if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             Icon(painterResource(when (value) {
@@ -573,7 +581,8 @@ private fun OptionCard(title: String, subtitle: String?, selected: Boolean, modi
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(title, style = MaterialTheme.typography.titleSmall)
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer
+                    else MaterialTheme.colorScheme.onSurfaceVariant)
             if (selected) Icon(painterResource(CoreResourcesR.drawable.ic_check_24), null, Modifier.size(18.dp),
                 tint = MaterialTheme.colorScheme.primary)
         }
@@ -619,4 +628,13 @@ private fun PersonalizationPreview() {
 @Composable
 private fun PdfSettingsPreview() {
     ScaniqoTheme { SettingsScreen(AppSettings(), SettingsSection.PDF, {}, {}) }
+}
+
+@Preview(name = "Preferências PDF Rose escuro", widthDp = 390, heightDp = 900, locale = "pt-rBR", fontScale = 1.5f)
+@Composable
+private fun PdfSettingsRoseDarkPreview() {
+    val settings = AppSettings(colorTheme = AppColorTheme.ROSE)
+    ScaniqoTheme(darkTheme = true, colorTheme = settings.colorTheme) {
+        SettingsScreen(settings, SettingsSection.PDF, {}, {})
+    }
 }

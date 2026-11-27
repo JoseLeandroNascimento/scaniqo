@@ -17,8 +17,8 @@
     <string name="signature_crop">क्रॉप करें</string>
     <string name="signature_cancel_title">यह स्थिति छोड़ दें?</string>
     <string name="signature_cancel_body">यह हस्ताक्षर अभी लागू नहीं हुआ है। दस्तावेज़ के अन्य बदलाव बने रहेंगे।</string>
-    <string name="signature_cancel_confirm">हस्ताक्षर छोड़ दें</string>
-    <string name="signature_keep_editing">समायोजन जारी रखें</string>
+    <string name="signature_cancel_confirm">छोड़ें</string>
+    <string name="signature_keep_editing">जारी रखें</string>
     <string name="signature_back">एडिटर पर वापस जाएँ</string>
     <string name="signature_edit_placed">हस्ताक्षर %1$d संपादित करें</string>
     <string name="signature_retry">फिर से कोशिश करें</string>

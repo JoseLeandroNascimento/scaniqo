@@ -17,8 +17,8 @@
     <string name="signature_crop">Обрезать</string>
     <string name="signature_cancel_title">Отменить размещение?</string>
     <string name="signature_cancel_body">Подпись ещё не применена. Остальные изменения документа сохранятся.</string>
-    <string name="signature_cancel_confirm">Отменить подпись</string>
-    <string name="signature_keep_editing">Продолжить настройку</string>
+    <string name="signature_cancel_confirm">Отменить</string>
+    <string name="signature_keep_editing">Продолжить</string>
     <string name="signature_back">Вернуться в редактор</string>
     <string name="signature_edit_placed">Изменить подпись %1$d</string>
     <string name="signature_retry">Повторить</string>

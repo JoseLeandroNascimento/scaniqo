@@ -1,6 +1,17 @@
 package com.joseleandro.scaniqo.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.painterResource
+import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +48,10 @@ internal fun EmptyStateArtwork(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
+    if (illustration == EmptyStateIllustration.DOCUMENTS) {
+        DocumentEmptyArtwork(modifier)
+        return
+    }
     Canvas(modifier.size(width = 160.dp, height = 112.dp).clearAndSetSemantics {}) {
         withTransform({
             scale(size.width / 160f, size.height / 112f, pivot = Offset.Zero)
@@ -44,13 +59,7 @@ internal fun EmptyStateArtwork(
             drawOval(colors.secondaryContainer.copy(alpha = .45f), Offset(15f, 13f), Size(130f, 89f))
             drawOval(colors.onSurface.copy(alpha = .06f), Offset(29f, 96f), Size(102f, 6f))
             when (illustration) {
-                EmptyStateIllustration.DOCUMENTS -> {
-                    folderBack(colors)
-                    paper(52f, 14f, 57f, 70f, colors)
-                    folderFront(colors)
-                    drawLine(colors.onSecondaryContainer, Offset(49f, 70f), Offset(80f, 70f), 3f, StrokeCap.Round)
-                    drawLine(colors.onSecondaryContainer.copy(alpha = .5f), Offset(49f, 80f), Offset(67f, 80f), 3f, StrokeCap.Round)
-                }
+                EmptyStateIllustration.DOCUMENTS -> Unit
                 EmptyStateIllustration.FILTERED_DOCUMENTS -> {
                     folderBack(colors)
                     paper(48f, 18f, 55f, 64f, colors)
@@ -153,6 +162,49 @@ internal fun EmptyStateArtwork(
                     drawCircle(colors.onTertiaryContainer, 2.5f, Offset(110f, 72f))
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DocumentEmptyArtwork(modifier: Modifier = Modifier) {
+    val colors = MaterialTheme.colorScheme
+    Box(
+        modifier.size(width = 160.dp, height = 112.dp).clearAndSetSemantics {},
+        contentAlignment = Alignment.Center,
+    ) {
+        Surface(
+            modifier = Modifier.offset(x = (-10).dp).rotate(-10f).size(68.dp, 88.dp),
+            shape = RoundedCornerShape(14.dp),
+            color = colors.secondaryContainer.copy(alpha = .7f),
+        ) {}
+        Surface(
+            modifier = Modifier.offset(x = 7.dp, y = (-2).dp).size(68.dp, 88.dp),
+            shape = RoundedCornerShape(14.dp),
+            color = colors.surface,
+            border = BorderStroke(1.dp, colors.outlineVariant),
+            shadowElevation = 2.dp,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    painterResource(CoreResourcesR.drawable.ic_tag_document),
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp),
+                    tint = colors.primary,
+                )
+            }
+        }
+        Surface(
+            modifier = Modifier.offset(x = 38.dp, y = 33.dp).size(32.dp),
+            color = colors.primary,
+            contentColor = colors.onPrimary,
+            shape = CircleShape,
+        ) {
+            Icon(
+                painterResource(CoreResourcesR.drawable.add_24px),
+                contentDescription = null,
+                modifier = Modifier.padding(6.dp),
+            )
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,6 +52,7 @@ internal fun DocumentFiltersBar(
     onEvent: (DocumentToolsEvent) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    vertical: Boolean = false,
 ) {
     val workspace = state.workspace ?: return
     val page = workspace.pages.getOrNull(state.selectedPageIndex) ?: return
@@ -77,7 +79,7 @@ internal fun DocumentFiltersBar(
         onDispose { currentEvent(DocumentToolsEvent.ClearFilterPreview) }
     }
     Surface(modifier = modifier.fillMaxWidth(), color = background) {
-        Column(Modifier.padding(bottom = 8.dp)) {
+        Column(if (vertical) Modifier.fillMaxSize() else Modifier.padding(bottom = 8.dp)) {
             Row(
                 Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -112,16 +114,27 @@ internal fun DocumentFiltersBar(
                     )
                 }
             }
-            DocumentFilterThumbnails(
-                thumbnails = thumbnails,
-                selectedFilter = state.globalImageFilter,
-                loading = isLoading,
-                enabled = canEdit,
-                onSelect = { onEvent(DocumentToolsEvent.SelectGlobalFilter(it)) },
-                compact = true,
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                fadeColor = background,
-            )
+            if (vertical) {
+                DocumentFilterGrid(
+                    thumbnails = thumbnails,
+                    selectedFilter = state.globalImageFilter,
+                    loading = isLoading,
+                    enabled = canEdit,
+                    onSelect = { onEvent(DocumentToolsEvent.SelectGlobalFilter(it)) },
+                    modifier = Modifier.weight(1f),
+                )
+            } else {
+                DocumentFilterThumbnails(
+                    thumbnails = thumbnails,
+                    selectedFilter = state.globalImageFilter,
+                    loading = isLoading,
+                    enabled = canEdit,
+                    onSelect = { onEvent(DocumentToolsEvent.SelectGlobalFilter(it)) },
+                    compact = true,
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    fadeColor = background,
+                )
+            }
             if (thumbnailsForPage && state.filterThumbnails.error) {
                 Row(
                     Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp),

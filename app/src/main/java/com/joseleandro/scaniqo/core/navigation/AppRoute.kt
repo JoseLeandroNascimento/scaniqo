@@ -70,6 +70,10 @@ sealed interface AppRoute : NavKey {
     data object Tags : AppRoute
 
     @Serializable
+    @SerialName("tag_editor")
+    data class TagEditor(val tagId: Long? = null) : AppRoute
+
+    @Serializable
     @SerialName("signatures")
     data object Signatures : AppRoute
 

@@ -840,16 +840,47 @@ class DocumentToolsViewModelTest {
         assertEquals(1, repository.previews.last().pages.first().signatures.size)
     }
 
-    @Test fun savingProtectionUsesVersionedPasswordAccess() = runTest(dispatcher) {
-        passwords.unlock()
+    @Test fun protectionRequiresExplicitDocumentPasswordAndNeverUsesTheGlobalDefault() = runTest(dispatcher) {
         viewModel.load(document)
         advanceUntilIdle()
         viewModel.onEvent(DocumentToolsEvent.SetProtection(true))
+        advanceUntilIdle()
+        assertFalse(viewModel.uiState.value.workspace!!.isProtected)
+        assertFalse(viewModel.uiState.value.hasChanges)
+        viewModel.onEvent(DocumentToolsEvent.SetDocumentPassword("document-specific", "different"))
+        advanceUntilIdle()
+        assertFalse(viewModel.uiState.value.workspace!!.isProtected)
+        viewModel.onEvent(DocumentToolsEvent.SetDocumentPassword("document-specific", "document-specific"))
+        advanceUntilIdle()
+        val key = requireNotNull(viewModel.uiState.value.workspace!!.protectionKeyId)
+        assertTrue(key.startsWith("pdf-password:"))
         viewModel.onEvent(DocumentToolsEvent.Save)
         advanceUntilIdle()
-        assertEquals("key-1", repository.lastSaveKey)
-        assertEquals("secret", repository.lastSavePassword)
-        assertTrue(passwords.requestedKeys.contains("key-1"))
+        assertEquals(key, repository.lastSaveKey)
+        assertEquals("document-specific", repository.lastSavePassword)
+        assertFalse(passwords.requestedKeys.contains("key-1"))
+        assertFalse(passwords.state.value.isUnlocked)
+    }
+
+    @Test fun newProtectionCanBeUnlockedAfterBackgroundOnlyWithItsExplicitPassword() = runTest(dispatcher) {
+        viewModel.load(document)
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.SetDocumentPassword("my-password", "my-password"))
+        advanceUntilIdle()
+        viewModel.onEvent(DocumentToolsEvent.Backgrounded)
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.isLocked)
+        viewModel.onEvent(DocumentToolsEvent.SubmitDocumentPassword("incorrect"))
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.passwordIncorrect)
+        assertTrue(viewModel.uiState.value.isLocked)
+        viewModel.onEvent(DocumentToolsEvent.SubmitDocumentPassword("my-password"))
+        advanceUntilIdle()
+        assertFalse(viewModel.uiState.value.isLocked)
+        assertFalse(viewModel.uiState.value.needsPassword)
+        viewModel.onEvent(DocumentToolsEvent.Save)
+        advanceUntilIdle()
+        assertEquals("my-password", repository.lastSavePassword)
     }
 
     @Test fun missingPasswordVersionOffersManualRecoveryWithoutOpeningPdf() = runTest(dispatcher) {
@@ -867,8 +898,8 @@ class DocumentToolsViewModelTest {
         advanceUntilIdle()
         assertEquals("original-password", repository.lastOpenPassword)
         assertFalse(viewModel.uiState.value.isLocked)
-        assertEquals("recovered-key", viewModel.uiState.value.workspace!!.protectionKeyId)
-        assertTrue(viewModel.uiState.value.hasChanges)
+        assertEquals("old-key", viewModel.uiState.value.workspace!!.protectionKeyId)
+        assertFalse(viewModel.uiState.value.hasChanges)
     }
 
     @Test fun confirmingUnchangedExistingSignatureRestoresItInPreview() = runTest(dispatcher) {
@@ -2448,10 +2479,18 @@ class DocumentToolsViewModelTest {
         var missingVersion = false
         var passwordsByKey = emptyMap<String, String>()
         fun unlock() { state.value = state.value.copy(isUnlocked = true) }
-        override fun lock() { state.value = state.value.copy(isUnlocked = false) }
+        override fun lock() { state.value = state.value.copy(isUnlocked = false, availableDocumentKeys = emptySet()) }
+        override suspend fun rememberDocumentPassword(password: String, keyId: String?): String {
+            val key = keyId ?: com.joseleandro.scaniqo.core.security.newDocumentPasswordKey()
+            passwordsByKey = passwordsByKey + (key to password)
+            state.value = state.value.copy(availableDocumentKeys = state.value.availableDocumentKeys + key)
+            return key
+        }
+        override fun matchesDocumentPassword(keyId: String, password: String): Boolean? =
+            passwordsByKey[keyId]?.let { it == password }
         override suspend fun <T> withPassword(keyId: String?, block: suspend (String) -> T): T {
-            if (!state.value.isUnlocked) throw PasswordVaultLockedException()
-            if (missingVersion) throw PasswordVersionMissingException()
+            if (!isPasswordAvailable(keyId)) throw PasswordVaultLockedException()
+            if (missingVersion && keyId !in state.value.availableDocumentKeys) throw PasswordVersionMissingException()
             requestedKeys += keyId
             return block(passwordsByKey[keyId] ?: "secret")
         }

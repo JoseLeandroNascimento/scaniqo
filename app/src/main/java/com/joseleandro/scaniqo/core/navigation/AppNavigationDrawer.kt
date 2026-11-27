@@ -11,12 +11,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +28,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Surface
@@ -38,7 +42,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
@@ -54,12 +61,10 @@ internal fun AppNavigationDrawer(
     onImportPdf: () -> Unit,
     onNavigate: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
+    permanent: Boolean = false,
+    navigationEnabled: Boolean = true,
 ) {
-    ModalDrawerSheet(
-        modifier = modifier.widthIn(max = 320.dp).fillMaxHeight(),
-        drawerContainerColor = MaterialTheme.colorScheme.surface,
-        drawerTonalElevation = 0.dp,
-    ) {
+    val drawerItems: @Composable ColumnScope.() -> Unit = {
         Column(
             modifier = Modifier.weight(1f).fillMaxWidth()
                 .verticalScroll(rememberScrollState())
@@ -93,17 +98,20 @@ internal fun AppNavigationDrawer(
                 )
             }
             DrawerDestination(
+                enabled = navigationEnabled,
                 label = stringResource(CoreResourcesR.string.documents_title),
                 icon = CoreResourcesR.drawable.ic_tool_pages,
                 selected = currentRoute == AppRoute.Documents,
                 onClick = onClose,
             )
             DrawerDestination(
+                enabled = navigationEnabled,
                 label = stringResource(R.string.menu_import_pdf),
                 icon = CoreResourcesR.drawable.ic_symbol_file_open,
                 onClick = onImportPdf,
             )
             DrawerDestination(
+                enabled = navigationEnabled,
                 label = stringResource(CoreResourcesR.string.tools_hub_title),
                 icon = CoreResourcesR.drawable.ic_tag_tools,
                 selected = currentRoute == AppRoute.Tools,
@@ -114,24 +122,28 @@ internal fun AppNavigationDrawer(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f),
             )
             DrawerDestination(
+                enabled = navigationEnabled,
                 label = stringResource(R.string.menu_tags),
                 icon = CoreResourcesR.drawable.ic_tag_label,
                 selected = currentRoute == AppRoute.Tags,
                 onClick = { onNavigate(AppRoute.Tags) },
             )
             DrawerDestination(
+                enabled = navigationEnabled,
                 label = stringResource(R.string.menu_signatures),
                 icon = CoreResourcesR.drawable.ic_symbol_draw,
                 selected = currentRoute == AppRoute.Signatures,
                 onClick = { onNavigate(AppRoute.Signatures) },
             )
             DrawerDestination(
+                enabled = navigationEnabled,
                 label = stringResource(CoreResourcesR.string.trash_title),
                 icon = CoreResourcesR.drawable.delete_24px,
                 selected = currentRoute == AppRoute.Trash,
                 onClick = { onNavigate(AppRoute.Trash) },
             )
             DrawerDestination(
+                enabled = navigationEnabled,
                 label = stringResource(CoreResourcesR.string.settings_title),
                 icon = R.drawable.ic_settings,
                 selected = currentRoute in setOf(AppRoute.Settings, AppRoute.Personalization,
@@ -143,8 +155,24 @@ internal fun AppNavigationDrawer(
         DrawerPremiumCard(
             onClick = { onNavigate(AppRoute.Premium) },
             modifier = Modifier.fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
-                .semantics { selected = currentRoute == AppRoute.Premium },
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+            selected = currentRoute == AppRoute.Premium,
+            enabled = navigationEnabled,
+        )
+    }
+    if (permanent) {
+        PermanentDrawerSheet(
+            modifier = modifier.width(280.dp).fillMaxHeight(),
+            drawerContainerColor = MaterialTheme.colorScheme.surface,
+            drawerTonalElevation = 0.dp,
+            content = drawerItems,
+        )
+    } else {
+        ModalDrawerSheet(
+            modifier = modifier.widthIn(max = 320.dp).fillMaxHeight(),
+            drawerContainerColor = MaterialTheme.colorScheme.surface,
+            drawerTonalElevation = 0.dp,
+            content = drawerItems,
         )
     }
 }
@@ -153,15 +181,20 @@ internal fun AppNavigationDrawer(
 private fun DrawerPremiumCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    selected: Boolean = false,
+    enabled: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
     Surface(
+        selected = selected,
         onClick = onClick,
-        modifier = modifier,
+        enabled = enabled,
+        modifier = modifier.semantics { role = Role.Tab },
         shape = RoundedCornerShape(24.dp),
         color = colors.primaryContainer,
-        contentColor = colors.onPrimaryContainer,
-        border = BorderStroke(1.dp, colors.onPrimaryContainer.copy(alpha = .08f)),
+        contentColor = colors.onPrimaryContainer.copy(alpha = if (enabled) 1f else .38f),
+        border = BorderStroke(if (selected) 2.dp else 1.dp,
+            if (selected) colors.primary else colors.onPrimaryContainer.copy(alpha = .08f)),
     ) {
         Row(
             modifier = Modifier
@@ -193,7 +226,7 @@ private fun DrawerPremiumCard(
                 Text(
                     stringResource(R.string.menu_premium_caption),
                     style = MaterialTheme.typography.bodySmall,
-                    color = colors.onPrimaryContainer.copy(alpha = .8f),
+                    color = colors.onPrimaryContainer.copy(alpha = if (enabled) 1f else .38f),
                 )
             }
             Icon(
@@ -210,32 +243,65 @@ private fun DrawerDestination(
     label: String,
     @DrawableRes icon: Int,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     selected: Boolean = false,
+    enabled: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
-    NavigationDrawerItem(
-        label = {
-            Text(
-                label,
-                modifier = Modifier.padding(vertical = 8.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
-            )
-        },
-        icon = { Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(24.dp)) },
-        selected = selected,
-        onClick = onClick,
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
-        shape = RoundedCornerShape(28.dp),
-        colors = NavigationDrawerItemDefaults.colors(
-            selectedContainerColor = colors.primary.copy(alpha = .10f),
-            selectedIconColor = colors.primary,
-            selectedTextColor = colors.primary,
-            unselectedContainerColor = Color.Transparent,
-            unselectedIconColor = colors.onSurfaceVariant,
-            unselectedTextColor = colors.onSurface,
-        ),
-    )
+    val disabledColor = colors.onSurface.copy(alpha = .38f)
+    val labelContent: @Composable () -> Unit = {
+        Text(
+            label,
+            modifier = Modifier.padding(vertical = 8.dp),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+            color = if (!enabled) disabledColor else if (selected) colors.primary else colors.onSurface,
+        )
+    }
+    val iconContent: @Composable () -> Unit = {
+        Icon(
+            painterResource(icon), contentDescription = null, modifier = Modifier.size(24.dp),
+            tint = if (!enabled) disabledColor else if (selected) colors.primary else colors.onSurfaceVariant,
+        )
+    }
+    val itemModifier = modifier.padding(horizontal = 12.dp, vertical = 2.dp)
+    if (enabled) {
+        NavigationDrawerItem(
+            label = labelContent,
+            icon = iconContent,
+            selected = selected,
+            onClick = onClick,
+            modifier = itemModifier,
+            shape = RoundedCornerShape(28.dp),
+            colors = NavigationDrawerItemDefaults.colors(
+                selectedContainerColor = colors.primary.copy(alpha = .10f),
+                selectedIconColor = colors.primary,
+                selectedTextColor = colors.primary,
+                unselectedContainerColor = Color.Transparent,
+                unselectedIconColor = colors.onSurfaceVariant,
+                unselectedTextColor = colors.onSurface,
+            ),
+        )
+    } else {
+        Surface(
+            modifier = itemModifier.semantics(mergeDescendants = true) {
+                role = Role.Tab
+                this.selected = selected
+                disabled()
+            }.heightIn(min = 56.dp).fillMaxWidth(),
+            shape = RoundedCornerShape(28.dp),
+            color = if (selected) colors.primary.copy(alpha = .10f) else Color.Transparent,
+        ) {
+            Row(
+                Modifier.padding(start = 16.dp, end = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                iconContent()
+                Box(Modifier.weight(1f)) { labelContent() }
+            }
+        }
+    }
 }
 
 @Preview(name = "Menu claro", widthDp = 320, heightDp = 700, locale = "pt-rBR")
@@ -251,6 +317,20 @@ private fun AppNavigationDrawerPreview() {
             onClose = {},
             onImportPdf = {},
             onNavigate = {},
+        )
+    }
+}
+
+@Preview(name = "Menu indisponível", widthDp = 320, heightDp = 700, locale = "pt-rBR")
+@Composable
+private fun AppNavigationDrawerDisabledPreview() {
+    ScaniqoTheme {
+        AppNavigationDrawer(
+            currentRoute = AppRoute.Premium,
+            onClose = {},
+            onImportPdf = {},
+            onNavigate = {},
+            navigationEnabled = false,
         )
     }
 }

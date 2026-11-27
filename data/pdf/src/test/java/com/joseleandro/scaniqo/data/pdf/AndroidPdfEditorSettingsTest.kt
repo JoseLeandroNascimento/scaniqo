@@ -72,6 +72,41 @@ class AndroidPdfEditorSettingsTest {
         createdProjects.forEach(File::deleteRecursively)
     }
 
+    @Test fun encryptedExternalPdfRequiresItsPasswordAndRetainsProtectionOnImport() = runTest {
+        val original = source("encrypted.pdf", "Private external document")
+        val secured = temporary.newFile("secured.pdf")
+        PDDocument.load(original.file).use { pdf ->
+            PdfProtection.apply(pdf, "external-document-password")
+            pdf.save(secured)
+        }
+        val securedBytes = secured.readBytes()
+        val sourceUri = Uri.fromFile(secured).toString()
+        for (password in listOf(null, "incorrect")) {
+            try {
+                repository.importPdf(sourceUri, password, "pdf-password:explicit")
+                fail("An encrypted PDF must request its own correct password.")
+            } catch (_: com.joseleandro.scaniqo.domain.model.PdfPasswordRequiredException) {
+                // This is the exact exception consumed by the import password prompt.
+            }
+        }
+        val scan = track(repository.importPdf(sourceUri, "external-document-password", "pdf-password:explicit"))
+        assertEquals("pdf-password:explicit", scan.protectionKeyId)
+        assertNull(scan.thumbnailUri)
+        assertArrayEquals(securedBytes, secured.readBytes())
+        for (file in listOf(localFile(scan.pdfUri), File(localFile(scan.pdfUri).parentFile, "sources.pdf"))) {
+            try {
+                PDDocument.load(file).use { fail("Persisted copies must remain encrypted.") }
+            } catch (_: com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException) { }
+            PDDocument.load(file, "external-document-password").use {
+                assertTrue(it.isEncrypted)
+                assertTrue(PDFTextStripper().getText(it).contains("Private external document"))
+            }
+        }
+        val workspace = repository.open(scan.model(), "external-document-password")
+        assertTrue(workspace.isProtected)
+        repository.discard(workspace)
+    }
+
     @Test fun importReadsCurrentDefaultsAndPersistsThemInTheEditableProject() = runTest {
         // A preferência muda depois da criação do repositório, antes da operação.
         preferences.settings.value = AppSettings(

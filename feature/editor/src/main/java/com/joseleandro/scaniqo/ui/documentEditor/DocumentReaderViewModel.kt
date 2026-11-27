@@ -3,6 +3,7 @@ package com.joseleandro.scaniqo.ui.documentEditor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joseleandro.scaniqo.core.security.PasswordAccess
+import com.joseleandro.scaniqo.core.security.isDocumentPasswordKey
 import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultRecoveryException
 import com.joseleandro.scaniqo.core.security.PasswordVersionMissingException
@@ -40,7 +41,9 @@ class DocumentReaderViewModel(
     init {
         viewModelScope.launch {
             passwords.state.collect { vault ->
-                if (!vault.isUnlocked && state.value.document?.isProtected == true) {
+                if (state.value.document?.isProtected == true &&
+                    !(state.value.isLoading && state.value.needsPassword) &&
+                    !passwords.isPasswordAvailable(recoveredKeyId ?: state.value.document?.protectionKeyId)) {
                     lock(vault.recoveryRequired || state.value.recoveryRequired)
                 }
             }
@@ -67,7 +70,20 @@ class DocumentReaderViewModel(
     }
 
     fun retry() {
-        state.value.document?.let(::open)
+        state.value.document?.let { open(it) }
+    }
+
+    fun requestPassword() {
+        state.update { it.copy(needsPassword = true, passwordIncorrect = false) }
+    }
+
+    fun cancelPassword() {
+        if (!state.value.isLoading) state.update { it.copy(needsPassword = false, passwordIncorrect = false) }
+    }
+
+    fun submitPassword(password: String) {
+        if (state.value.isLoading || password.isEmpty()) return
+        state.value.document?.let { open(it, password) }
     }
 
     /** A senha fica no cofre; somente a referência à versão recuperada pertence à sessão. */
@@ -97,38 +113,47 @@ class DocumentReaderViewModel(
         revision++
         readingJob?.cancel()
         state.update {
-            it.copy(readable = null, isLoading = false, isLocked = true, recoveryRequired = recoveryRequired)
+            it.copy(readable = null, isLoading = false, isLocked = true,
+                recoveryRequired = recoveryRequired || isDocumentPasswordKey(it.document?.protectionKeyId) ||
+                    !passwords.state.value.isConfigured)
         }
     }
 
-    private fun open(document: DocumentModel) {
+    private fun open(document: DocumentModel, suppliedPassword: String? = null) {
         val previous = readingJob
         previous?.cancel()
         val request = ++revision
-        if (document.isProtected && !passwords.state.value.isUnlocked) {
+        if (suppliedPassword == null && document.isProtected &&
+            !passwords.isPasswordAvailable(recoveredKeyId ?: document.protectionKeyId)) {
             state.value = DocumentReaderUiState(
                 document = document,
                 isLocked = true,
-                recoveryRequired = passwords.state.value.recoveryRequired || state.value.recoveryRequired,
+                recoveryRequired = isDocumentPasswordKey(document.protectionKeyId) ||
+                    !passwords.state.value.isConfigured || passwords.state.value.recoveryRequired || state.value.recoveryRequired,
+                needsPassword = isDocumentPasswordKey(document.protectionKeyId),
             )
             return
         }
-        state.value = DocumentReaderUiState(document = document, isLoading = true)
+        state.value = DocumentReaderUiState(document = document, isLoading = true, needsPassword = suppliedPassword != null)
         readingJob = viewModelScope.launch {
             var readable: ReadableDocument? = null
             try {
                 previous?.cancelAndJoin()
-                readable = if (document.isProtected) {
+                readable = if (suppliedPassword != null) repository.open(document, suppliedPassword)
+                else if (document.isProtected) {
                     passwords.withPassword(recoveredKeyId ?: document.protectionKeyId) { password ->
                         repository.open(document, password)
                     }
                 } else repository.open(document)
                 currentCoroutineContext().ensureActive()
-                if (request != revision || (document.isProtected && !passwords.state.value.isUnlocked)) {
-                    return@launch
-                }
+                if (request != revision) return@launch
+                if (suppliedPassword != null) {
+                    recoveredKeyId = passwords.rememberDocumentPassword(suppliedPassword, document.protectionKeyId)
+                } else if (document.isProtected &&
+                    !passwords.isPasswordAvailable(recoveredKeyId ?: document.protectionKeyId)) return@launch
                 state.update {
-                    it.copy(readable = readable, isLoading = false, isLocked = false, loadError = false)
+                    it.copy(readable = readable, isLoading = false, isLocked = false, loadError = false,
+                        needsPassword = false, passwordIncorrect = false)
                 }
                 // A coroutine é a única proprietária do temporário, inclusive durante cancelamento.
                 awaitCancellation()
@@ -145,6 +170,8 @@ class DocumentReaderViewModel(
                             isLoading = false,
                             isLocked = locked,
                             recoveryRequired = recovery,
+                            needsPassword = recovery || suppliedPassword != null,
+                            passwordIncorrect = suppliedPassword != null && failure is PdfPasswordRequiredException,
                             loadError = !locked,
                         )
                     }

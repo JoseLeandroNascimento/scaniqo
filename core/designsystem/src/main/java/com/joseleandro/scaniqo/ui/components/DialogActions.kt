@@ -4,37 +4,34 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.LayoutDirection
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 /**
  * Coloque no confirmButton do AlertDialog, sem um dismissButton separado.
- * A linha única mantém as duas ações lado a lado, inclusive com fonte ampliada.
+ * Segue a ordem do AlertDialog: confirmação no fim da linha, ou acima ao empilhar.
  */
 @Composable
 fun DialogActions(
@@ -42,41 +39,50 @@ fun DialogActions(
     onConfirm: () -> Unit,
     dismissText: String,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
     confirmEnabled: Boolean = true,
     dismissEnabled: Boolean = true,
     confirming: Boolean = false,
     destructive: Boolean = false,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        OutlinedButton(
-            onClick = onDismiss,
-            enabled = dismissEnabled,
-            modifier = Modifier.weight(1f).fillMaxHeight().heightIn(min = 48.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-            shape = MaterialTheme.shapes.medium,
+    val layoutDirection = LocalLayoutDirection.current
+    val actionDirection = if (layoutDirection == LayoutDirection.Ltr) LayoutDirection.Rtl else LayoutDirection.Ltr
+    CompositionLocalProvider(LocalLayoutDirection provides actionDirection) {
+        FlowRow(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            itemVerticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(dismissText, textAlign = TextAlign.Center)
-        }
-        Button(
-            onClick = onConfirm,
-            enabled = confirmEnabled,
-            modifier = Modifier.weight(1f).fillMaxHeight().heightIn(min = 48.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
-            shape = MaterialTheme.shapes.medium,
-            colors = if (destructive) ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError,
-            ) else ButtonDefaults.buttonColors(),
-        ) {
-            if (confirming) {
-                CircularProgressIndicator(Modifier.size(16.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
-                Spacer(Modifier.width(6.dp))
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                TextButton(
+                    onClick = onConfirm,
+                    enabled = confirmEnabled && !confirming,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                    contentPadding = ButtonDefaults.TextButtonContentPadding,
+                    colors = if (destructive) ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error,
+                    ) else ButtonDefaults.textButtonColors(),
+                ) {
+                    if (confirming) {
+                        CircularProgressIndicator(
+                            Modifier.size(16.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            strokeWidth = 2.dp,
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
+                    Text(confirmText, textAlign = TextAlign.Center)
+                }
+                TextButton(
+                    onClick = onDismiss,
+                    enabled = dismissEnabled,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                    contentPadding = ButtonDefaults.TextButtonContentPadding,
+                ) {
+                    Text(dismissText, textAlign = TextAlign.Center)
+                }
             }
-            Text(confirmText, textAlign = TextAlign.Center)
         }
     }
 }
@@ -92,8 +98,8 @@ private fun DialogActionsPreview() {
             text = { Text("As alterações ainda não foram salvas no documento.") },
             confirmButton = {
                 DialogActions(
-                    confirmText = "Descartar alterações", onConfirm = {},
-                    dismissText = "Continuar editando", onDismiss = {}, destructive = true,
+                    confirmText = "Descartar", onConfirm = {},
+                    dismissText = "Continuar", onDismiss = {}, destructive = true,
                 )
             },
         )

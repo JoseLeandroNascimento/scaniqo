@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">Save</string>
+    <string name="tag_unavailable">This tag is no longer available.</string>
+    <string name="trash_actions">Trash options</string>
+    <string name="trash_restore_all">Restore all</string>
+    <string name="trash_restored_all">Documents restored to library</string>
+    <string name="trash_restore_all_error">Some documents could not be restored. They are still in trash. Try again.</string>
+    <string name="trash_information">Information</string>
+</resources>

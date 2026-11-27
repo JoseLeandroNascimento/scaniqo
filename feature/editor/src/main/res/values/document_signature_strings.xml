@@ -17,8 +17,8 @@
     <string name="signature_crop">Crop</string>
     <string name="signature_cancel_title">Discard placement?</string>
     <string name="signature_cancel_body">This signature has not been applied yet. Other changes to the document will be kept.</string>
-    <string name="signature_cancel_confirm">Discard signature</string>
-    <string name="signature_keep_editing">Keep adjusting</string>
+    <string name="signature_cancel_confirm">Discard</string>
+    <string name="signature_keep_editing">Continue</string>
     <string name="signature_back">Back to editor</string>
     <string name="signature_edit_placed">Edit signature %1$d</string>
     <string name="signature_retry">Try again</string>

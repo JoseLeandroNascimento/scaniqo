@@ -27,7 +27,7 @@ fun personalizedColorScheme(theme: AppColorTheme, dark: Boolean): ColorScheme {
     val container = if (dark) palette.darkContainer else palette.container
     val onAccent = if (dark) Color(0xFF15191D) else Color.White
     val onContainer = if (dark) palette.container else Color(0xFF202027)
-    fun surface(value: Color) = lerp(value, palette.primary, if (dark) .055f else .025f)
+    fun surface(value: Color) = if (dark) lerp(value, palette.primary, .055f) else value
     return base.copy(
         primary = primary, onPrimary = onAccent,
         primaryContainer = container, onPrimaryContainer = onContainer,
@@ -36,6 +36,12 @@ fun personalizedColorScheme(theme: AppColorTheme, dark: Boolean): ColorScheme {
         tertiary = primary, onTertiary = onAccent,
         tertiaryContainer = container, onTertiaryContainer = onContainer,
         inversePrimary = if (dark) palette.primary else palette.pastel,
+        primaryFixed = palette.container, primaryFixedDim = palette.pastel,
+        onPrimaryFixed = Color(0xFF202027), onPrimaryFixedVariant = palette.darkContainer,
+        secondaryFixed = palette.container, secondaryFixedDim = palette.pastel,
+        onSecondaryFixed = Color(0xFF202027), onSecondaryFixedVariant = palette.darkContainer,
+        tertiaryFixed = palette.container, tertiaryFixedDim = palette.pastel,
+        onTertiaryFixed = Color(0xFF202027), onTertiaryFixedVariant = palette.darkContainer,
         surfaceTint = Color.Transparent,
         background = surface(base.background), surface = surface(base.surface),
         surfaceDim = surface(base.surfaceDim), surfaceBright = surface(base.surfaceBright),

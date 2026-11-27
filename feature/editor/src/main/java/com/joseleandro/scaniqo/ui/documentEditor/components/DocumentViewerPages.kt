@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
@@ -81,13 +82,18 @@ internal fun DocumentPreviewError(enabled: Boolean, onRetry: () -> Unit) {
 
 /** O arquivo salvo já pode ser lido enquanto as ferramentas preparam uma cópia de trabalho. */
 @Composable
-internal fun DocumentSavedPage(document: DocumentModel, pageIndex: Int) {
-    Box(Modifier
+internal fun DocumentSavedPage(
+    document: DocumentModel,
+    pageIndex: Int,
+    modifier: Modifier = Modifier,
+    maxPageWidth: Dp = 840.dp,
+) {
+    Box(modifier
         .fillMaxWidth()
         .padding(horizontal = 4.dp), contentAlignment = Alignment.Center) {
         Column(
             modifier = Modifier
-                .widthIn(max = 840.dp)
+                .widthIn(max = maxPageWidth)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {

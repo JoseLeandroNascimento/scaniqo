@@ -4,7 +4,11 @@ import com.joseleandro.scaniqo.domain.model.PdfExportQuality
 import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfOverlay
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
 
 /** A receita referencia somente arquivos relativos à pasta privada do documento. */
 @Serializable
@@ -14,9 +18,22 @@ internal data class PdfProjectRecipe(
     val showPageNumbers: Boolean = false,
     val exportQuality: PdfExportQuality = PdfExportQuality.HIGH_QUALITY,
     val ocrEnabled: Boolean = false,
+    /** Receitas do antigo preenchimento usam o resultado salvo como base visual imutável. */
+    @Transient val useSavedDocumentAsSource: Boolean = false,
 ) {
     companion object {
         const val MAX_BYTES = 4L * 1024 * 1024
+
+        fun decodeForEditing(json: Json, text: String): PdfProjectRecipe {
+            val element = json.parseToJsonElement(text)
+            // Não interpretamos nem reativamos campos antigos. Seus valores visíveis já estão no PDF final.
+            val legacyFields = ((element as? JsonObject)?.get("pages") as? JsonArray).orEmpty().any { page ->
+                ((page as? JsonObject)?.get("formFields") as? JsonArray)?.isNotEmpty() == true
+            }
+            return json.decodeFromJsonElement<PdfProjectRecipe>(element)
+                .copy(useSavedDocumentAsSource = legacyFields)
+                .also(PdfProjectRecipe::validate)
+        }
     }
 
     /** Recusa uma receita que o leitor não conseguiria restaurar, antes de adotar o novo arquivo. */

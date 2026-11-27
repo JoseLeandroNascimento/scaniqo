@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">Enregistrer</string>
+    <string name="tag_unavailable">Cette étiquette n’est plus disponible.</string>
+    <string name="trash_actions">Options de la corbeille</string>
+    <string name="trash_restore_all">Tout restaurer</string>
+    <string name="trash_restored_all">Documents restaurés dans la bibliothèque</string>
+    <string name="trash_restore_all_error">Certains documents n’ont pas pu être restaurés. Ils sont toujours dans la corbeille. Réessayez.</string>
+    <string name="trash_information">Informations</string>
+</resources>

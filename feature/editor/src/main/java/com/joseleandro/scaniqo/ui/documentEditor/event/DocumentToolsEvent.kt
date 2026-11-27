@@ -92,6 +92,9 @@ sealed interface DocumentToolsEvent {
     data class SubmitMergePassword(val password: String) : DocumentToolsEvent
     data object CancelMergePassword : DocumentToolsEvent
     data class SetProtection(val enabled: Boolean) : DocumentToolsEvent
+    data class SetDocumentPassword(val password: String, val confirmation: String) : DocumentToolsEvent
+    data class SubmitDocumentPassword(val password: String) : DocumentToolsEvent
+    data object CancelDocumentPassword : DocumentToolsEvent
     data object Unlock : DocumentToolsEvent
     data object AuthenticationSucceeded : DocumentToolsEvent
     data object AuthenticationDismissed : DocumentToolsEvent

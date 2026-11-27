@@ -1,0 +1,333 @@
+{
+    "APP_DIR": "C:\\Users\\leandro\\Desktop\\projetos\\pessoais\\projetos\\Scaniqo",
+    "APP_NAME": "app_name",
+    "PACKAGE_NAME": "com.joseleandro.scaniqo",
+    "REPO_ROOT": "C:\\Users\\leandro\\.android-studio\\skills\\play-policy-insights",
+    "TARGET_SDK": 37,
+    "TEMP_DIR": "C:\\Users\\leandro\\Desktop\\projetos\\pessoais\\projetos\\Scaniqo\\.scratch\\play_policy_insights_caf5d15b-7ef6-4b9d-857f-986ca576ff2a",
+    "data_sources": {
+        "ACCOUNT_DELETION": [
+            "core\\security\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\security\\PasswordVault.kt (Pattern: deactivate)",
+            "core\\security\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\security\\PasswordSettingsScreen.kt (Pattern: deactivate)",
+            "core\\security\\src\\main\\res\\values-ar\\password_strings.xml (Pattern: deactivate)"
+        ],
+        "AUDIO": [
+            "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\ads\\RewardedAdManager.kt (Pattern: record)",
+            "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\ads\\ToolAdAccessStore.kt (Pattern: record)",
+            "core\\domain\\src\\main\\java\\com\\joseleandro\\scaniqo\\domain\\repository\\BackupHistoryRepository.kt (Pattern: record)"
+        ],
+        "CREDIT_DEBIT_BANK_ACCOUNT_NUMBER": [
+            "feature\\editor\\src\\main\\res\\values-in\\quality_tools_strings.xml (Pattern: iban)"
+        ],
+        "CREDIT_SCORE": [
+            "core\\resources\\src\\main\\res\\values-es\\capture_editor_strings.xml (Pattern: fico)",
+            "core\\resources\\src\\main\\res\\values-pt\\capture_editor_strings.xml (Pattern: fico)",
+            "core\\security\\src\\main\\res\\values-pt\\password_strings.xml (Pattern: fico)"
+        ],
+        "EMAIL": [
+            "core\\domain\\src\\main\\java\\com\\joseleandro\\scaniqo\\domain\\model\\BackupSettings.kt (Pattern: accountEmail)",
+            "core\\domain\\src\\main\\java\\com\\joseleandro\\scaniqo\\domain\\repository\\BackupHistoryRepository.kt (Pattern: accountEmail)",
+            "core\\domain\\src\\main\\java\\com\\joseleandro\\scaniqo\\domain\\repository\\DriveBackupRemote.kt (Pattern: accountEmail)"
+        ],
+        "FILES_AND_DOCS": [
+            "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\platform\\DocumentActionsHandler.kt (Pattern: application/pdf)",
+            "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\platform\\DocumentToolsHandler.kt (Pattern: application/pdf)",
+            "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documents\\platform\\PdfImportHandler.kt (Pattern: application/pdf)"
+        ],
+        "IN_APP_SEARCH_HISTORY": [
+            "core\\resources\\src\\main\\res\\values-ar\\document_search_strings.xml (Pattern: search_query)",
+            "core\\resources\\src\\main\\res\\values-bn\\document_search_strings.xml (Pattern: search_query)",
+            "core\\resources\\src\\main\\res\\values-en\\document_search_strings.xml (Pattern: search_query)"
+        ],
+        "MEDIA": [
+            "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentSignature\\DocumentSignatureRoute.kt (Pattern: image/*)",
+            "feature\\pdf-tools\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\pdfTools\\PdfUtilityRoute.kt (Pattern: image/*)",
+            "feature\\signatures\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\signatures\\SignaturesScreen.kt (Pattern: image/*)"
+        ],
+        "MUSIC": [
+            "core\\common\\src\\main\\res\\values-in\\runtime_strings.xml (Pattern: song)",
+            "feature\\backup\\src\\main\\res\\values-in\\drive_backup_strings.xml (Pattern: song)",
+            "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentLayoutSizeVisuals.kt (Pattern: track)"
+        ],
+        "PERFORMANCE_DIAGNOSTICS": [
+            "core\\domain\\src\\main\\java\\com\\joseleandro\\scaniqo\\domain\\model\\PdfCheckmarkGeometry.kt (Pattern: trace)",
+            "core\\domain\\src\\main\\java\\com\\joseleandro\\scaniqo\\domain\\model\\PdfCrossmarkGeometry.kt (Pattern: trace)",
+            "data\\pdf\\src\\main\\java\\com\\joseleandro\\scaniqo\\data\\pdf\\PdfOverlayLayer.kt (Pattern: trace)"
+        ],
+        "PERSONAL_INFO_OTHER": [
+            "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\toolsHub\\ToolsHubScreen.kt (Pattern: dob)",
+            "core\\resources\\src\\main\\res\\values-pt\\quality_tools_strings.xml (Pattern: dob)",
+            "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documents\\preview\\DocumentsScreenPreview.kt (Pattern: dob)"
+        ],
+        "PHOTOS": [
+            "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentSignature\\DocumentSignatureRoute.kt (Pattern: image/*)",
+            "feature\\pdf-tools\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\pdfTools\\PdfUtilityRoute.kt (Pattern: image/*)",
+            "feature\\signatures\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\signatures\\SignatureCameraScreen.kt (Pattern: ImageCapture)"
+        ],
+        "PURCHASE_HISTORY": [
+            "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\ads\\ToolAdAccessStore.kt (Pattern: receipt)",
+            "core\\billing\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\billing\\AndroidPlayBillingGateway.kt (Pattern: purchaseToken)",
+            "core\\billing\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\billing\\PlayBillingDiagnostics.kt (Pattern: BillingClient)"
+        ],
+        "RACE_ETHNICITY": [
+            "core\\billing\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\billing\\PlayBillingManager.kt (Pattern: race)",
+            "core\\billing\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\billing\\PlayReceiptStore.kt (Pattern: race)",
+            "core\\domain\\src\\main\\java\\com\\joseleandro\\scaniqo\\domain\\model\\PdfCheckmarkGeometry.kt (Pattern: race)"
+        ],
+        "USER_ACCOUNT": [
+            "core\\resources\\src\\main\\res\\values-ar\\onboarding_strings.xml (Pattern: uid)",
+            "core\\resources\\src\\main\\res\\values-ar\\signature_camera_strings.xml (Pattern: uid)",
+            "core\\resources\\src\\main\\res\\values-bn\\onboarding_strings.xml (Pattern: uid)"
+        ],
+        "USER_GENERATED_CONTENT": [
+            "core\\resources\\src\\main\\res\\values-ar\\fill_mark_v3_strings.xml (Pattern: edit_text)",
+            "core\\resources\\src\\main\\res\\values-bn\\fill_mark_v3_strings.xml (Pattern: edit_text)",
+            "core\\resources\\src\\main\\res\\values-en\\fill_mark_v3_strings.xml (Pattern: edit_text)"
+        ]
+    },
+    "disclosure": [
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\MainActivity.kt (Pattern: Consent)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\ScaniqoApplication.kt (Pattern: collect)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\navigation\\AppNavigation.kt (Pattern: Dialog)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\navigation\\DocumentQuickActionsHost.kt (Pattern: AlertDialog)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\navigation\\FoldAwareAppContent.kt (Pattern: collect)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentMerge\\DocumentMergeDestination.kt (Pattern: collect)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\toolsHub\\ToolsHubScreen.kt (Pattern: collect)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\widget\\RecentDocumentsWidget.kt (Pattern: collect)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\widget\\WidgetUi.kt (Pattern: collect)",
+        "app\\src\\main\\java\\com\\joseleandro\\scaniqo\\widget\\WidgetUpdater.kt (Pattern: collect)",
+        "app\\src\\main\\res\\xml\\backup_rules.xml (Pattern: share)",
+        "app\\src\\main\\res\\xml\\data_extraction_rules.xml (Pattern: share)",
+        "app\\src\\main\\res\\xml\\document_file_paths.xml (Pattern: share)",
+        "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\ads\\AdMobManager.kt (Pattern: Consent)",
+        "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\ads\\RewardedAdManager.kt (Pattern: collect)",
+        "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\ads\\DocumentsNativeAd.kt (Pattern: collect)",
+        "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\ads\\ToolAdActionController.kt (Pattern: collect)",
+        "core\\ads\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\ads\\ToolsBannerAd.kt (Pattern: collect)",
+        "core\\designsystem\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\components\\DialogActions.kt (Pattern: AlertDialog)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\DocumentActionsViewModel.kt (Pattern: collect)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\components\\DocumentDeleteDialog.kt (Pattern: AlertDialog)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\components\\DocumentOverlays.kt (Pattern: Dialog)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\components\\DocumentPageJumpDialog.kt (Pattern: AlertDialog)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\components\\DocumentPreviewZoom.kt (Pattern: Dialog)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\components\\DocumentSourceStep.kt (Pattern: collect)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\feedback\\rememberDocumentToastState.kt (Pattern: share)",
+        "core\\document-ui\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\platform\\DocumentActionsHandler.kt (Pattern: collect)",
+        "core\\document-ui\\src\\main\\res\\values-ar\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-ar\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-bn\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-bn\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-en\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-en\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-es\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-es\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-fr\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-fr\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-hi\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-hi\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-in\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-in\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-pt\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-pt\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-ru\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-ru\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-zh-rCN\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values-zh-rCN\\document_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values\\document_platform_strings.xml (Pattern: share)",
+        "core\\document-ui\\src\\main\\res\\values\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-ar\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-ar\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-bn\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-bn\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-en\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-en\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-es\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-es\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-fr\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-fr\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-hi\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-hi\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-in\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-in\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-pt\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-pt\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-ru\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-ru\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-zh-rCN\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values-zh-rCN\\onboarding_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values\\document_strings.xml (Pattern: share)",
+        "core\\resources\\src\\main\\res\\values\\onboarding_strings.xml (Pattern: share)",
+        "core\\security\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\security\\SecureWindow.kt (Pattern: Dialog)",
+        "core\\security\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\security\\PasswordSettingsScreen.kt (Pattern: AlertDialog)",
+        "core\\security\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\security\\PasswordUnlockHandler.kt (Pattern: AlertDialog)",
+        "core\\testing\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCommon\\DocumentTestRepositories.kt (Pattern: share)",
+        "data\\backup\\src\\main\\java\\com\\joseleandro\\scaniqo\\data\\backup\\GoogleDriveBackupRemote.kt (Pattern: Accept)",
+        "data\\documents\\src\\main\\java\\com\\joseleandro\\scaniqo\\data\\local\\document\\DocumentFileStore.kt (Pattern: share)",
+        "feature\\backup\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\backup\\DriveBackupRoute.kt (Pattern: AlertDialog)",
+        "feature\\backup\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\backup\\DriveBackupScreen.kt (Pattern: AlertDialog)",
+        "feature\\backup\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\backup\\DriveBackupViewModel.kt (Pattern: collect)",
+        "feature\\backup\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\backup\\platform\\DriveAuthorizationHandler.kt (Pattern: collect)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\DocumentEditorToolRoute.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\DocumentReaderRoute.kt (Pattern: Dialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\DocumentReaderScreen.kt (Pattern: share)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\DocumentReaderViewModel.kt (Pattern: collect)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\DocumentToolsViewModel.kt (Pattern: collect)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\DocumentViewerRoute.kt (Pattern: collect)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\DocumentViewerViewModel.kt (Pattern: collect)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentFillMarkEditor.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentInteractiveToolEditor.kt (Pattern: Dialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentLayoutSheetContent.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentMergeDialogs.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentOverlayEditor.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentPagesSheetContent.kt (Pattern: Dialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentPasswordRecoveryDialog.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentToolPageScope.kt (Pattern: Dialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentToolsSheets.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\DocumentViewerTopBar.kt (Pattern: share)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\components\\FillMarkPropertyDialog.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentEditor\\platform\\DocumentToolsHandler.kt (Pattern: Dialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentSignature\\DocumentSignatureAdjustmentPanel.kt (Pattern: collect)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentSignature\\DocumentSignatureRoute.kt (Pattern: AlertDialog)",
+        "feature\\editor\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentSignature\\DocumentSignatureScreen.kt (Pattern: Dialog)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentSearch\\DocumentSearchRoute.kt (Pattern: collect)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentSearch\\DocumentSearchViewModel.kt (Pattern: collect)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documents\\DocumentsRoute.kt (Pattern: collect)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documents\\DocumentsViewModel.kt (Pattern: collect)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documents\\components\\DocumentCard.kt (Pattern: share)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documents\\components\\PdfImportDialogs.kt (Pattern: AlertDialog)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documents\\platform\\PdfImportHandler.kt (Pattern: Dialog)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\tags\\TagsRoute.kt (Pattern: collect)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\tags\\TagsScreen.kt (Pattern: AlertDialog)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\tags\\TagsViewModel.kt (Pattern: collect)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\trash\\TrashRoute.kt (Pattern: collect)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\trash\\TrashScreen.kt (Pattern: AlertDialog)",
+        "feature\\library\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\trash\\TrashViewModel.kt (Pattern: collect)",
+        "feature\\onboarding\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\onboarding\\OnboardingIllustration.kt (Pattern: collect)",
+        "feature\\onboarding\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\onboarding\\OnboardingRoute.kt (Pattern: collect)",
+        "feature\\onboarding\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\onboarding\\OnboardingScreen.kt (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-ar\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-bn\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-en\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-es\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-fr\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-hi\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-in\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-pt\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-ru\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values-zh-rCN\\onboarding_strings.xml (Pattern: share)",
+        "feature\\onboarding\\src\\main\\res\\values\\onboarding_strings.xml (Pattern: share)",
+        "feature\\pdf-tools\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\documentCertificates\\DocumentCertificatesRoute.kt (Pattern: collect)",
+        "feature\\pdf-tools\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\pdfTools\\PdfUtilityRoute.kt (Pattern: collect)",
+        "feature\\pdf-tools\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\pdfTools\\PdfUtilityViewModel.kt (Pattern: collect)",
+        "feature\\pdf-tools\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\pdfTools\\PdfUtilityWorkspace.kt (Pattern: Dialog)",
+        "feature\\pdf-tools\\src\\main\\res\\values-en\\utility_workspace_strings.xml (Pattern: privacy)",
+        "feature\\pdf-tools\\src\\main\\res\\values\\utility_workspace_strings.xml (Pattern: privacy)",
+        "feature\\premium\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\premium\\PremiumRoute.kt (Pattern: collect)",
+        "feature\\settings\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\settings\\SettingsScreen.kt (Pattern: AlertDialog)",
+        "feature\\settings\\src\\main\\res\\values-ar\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-bn\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-en\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-es\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-fr\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-hi\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-in\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-pt\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-ru\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values-zh-rCN\\ads_strings.xml (Pattern: privacy)",
+        "feature\\settings\\src\\main\\res\\values\\ads_strings.xml (Pattern: privacy)",
+        "feature\\signatures\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\signatures\\SignatureEditorScreen.kt (Pattern: AlertDialog)",
+        "feature\\signatures\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\signatures\\SignatureImageFlowScreen.kt (Pattern: Dialog)",
+        "feature\\signatures\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\signatures\\SignaturesScreen.kt (Pattern: AlertDialog)",
+        "feature\\signatures\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\signatures\\SignaturesViewModel.kt (Pattern: Dialog)",
+        "feature\\signatures\\src\\main\\java\\com\\joseleandro\\scaniqo\\ui\\signatures\\crop\\SignatureCropDialog.kt (Pattern: Dialog)"
+    ],
+    "foreground_service": [
+        "data\\backup\\src\\main\\java\\com\\joseleandro\\scaniqo\\data\\backup\\AutomaticBackupRunner.kt (Pattern: startForeground)",
+        "data\\backup\\src\\main\\java\\com\\joseleandro\\scaniqo\\data\\backup\\BackupForegroundNotification.kt (Pattern: FOREGROUND_SERVICE)"
+    ],
+    "found_urls": [],
+    "network_transmission": {
+        "-": [
+            "core\\billing\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\billing\\AndroidPlayBillingGateway.kt (Pattern: fetch)",
+            "core\\billing\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\billing\\PlayBillingDiagnostics.kt (Pattern: fetch)",
+            "core\\billing\\src\\main\\java\\com\\joseleandro\\scaniqo\\core\\billing\\PlayBillingGateway.kt (Pattern: fetch)"
+        ]
+    },
+    "requested_permissions": {
+        "PHOTOS": [
+            "android.permission.CAMERA"
+        ],
+        "VIDEOS": [
+            "android.permission.CAMERA"
+        ],
+        "foreground_service": [
+            "android.permission.FOREGROUND_SERVICE"
+        ]
+    },
+    "semantic_files": {
+        "CONFIG": [
+            "WidgetConfiguration.kt",
+            "locales_config.xml",
+            "AdMobConfiguration.kt",
+            "billing_config.xml"
+        ],
+        "LEGAL": [
+            "ic_symbol_privacy_tip.xml"
+        ],
+        "OTHER_AUDIO": [
+            "DocumentActionEffect.kt",
+            "DriveBackupEffect.kt",
+            "DocumentToolsEffect.kt",
+            "PdfImportEffect.kt"
+        ],
+        "PHOTOS": [
+            "ic_tool_export_images.xml",
+            "widget_quick_actions_preview_image.xml",
+            "widget_recent_documents_preview_image.xml",
+            "DocumentImageDecoder.kt",
+            "ic_symbol_photo_camera.xml",
+            "ic_symbol_photo_library.xml",
+            "ic_symbol_picture_as_pdf.xml",
+            "ic_tag_photo.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "PdfCompressionImageDecoder.kt",
+            "PdfImageBackgroundRemoval.kt",
+            "PdfImageCorrections.kt",
+            "PdfImageFilters.kt",
+            "PdfImageOptimizer.kt",
+            "PdfImageProcessing.kt",
+            "SignatureImagePipeline.kt",
+            "SignatureCameraFrameGeometry.kt",
+            "SignatureCameraScreen.kt",
+            "SignatureImage.kt",
+            "SignatureImageFlowScreen.kt",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml",
+            "signature_camera_strings.xml"
+        ],
+        "USER_ACCOUNT": [
+            "BackupAuthorizationProvider.kt",
+            "GoogleBackupAuthorizationProvider.kt",
+            "DriveAuthorizationHandler.kt",
+            "DriveAuthorizationResult.kt"
+        ]
+    }
+}

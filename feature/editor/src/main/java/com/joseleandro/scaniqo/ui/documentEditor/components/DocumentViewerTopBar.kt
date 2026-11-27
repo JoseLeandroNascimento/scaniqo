@@ -47,6 +47,7 @@ internal fun DocumentViewerTopBar(
     onToolsEvent: (DocumentToolsEvent) -> Unit,
     documentBusy: Boolean,
     isBusy: Boolean,
+    additionalActions: @Composable () -> Unit = {},
 ) {
     var showActions by remember(document?.id, isBusy, showDocumentActions) { mutableStateOf(false) }
     val processingDescription = stringResource(R.string.document_processing)
@@ -75,6 +76,7 @@ internal fun DocumentViewerTopBar(
             }
         },
         actions = {
+            additionalActions()
             if (document != null && showDocumentActions) {
                 if (toolsState.signatureDraft == null && (toolsState.canUndo || toolsState.canRedo)) {
                     IconButton(

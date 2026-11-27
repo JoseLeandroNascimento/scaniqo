@@ -3,8 +3,10 @@ package com.joseleandro.scaniqo.ui.tags
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import com.joseleandro.scaniqo.feature.library.R
 
+import com.joseleandro.scaniqo.ui.components.ScaniqoCardDefaults
 import com.joseleandro.scaniqo.ui.components.color
 import com.joseleandro.scaniqo.ui.components.labelRes
+import com.joseleandro.scaniqo.ui.components.drawableRes
 
 import androidx.compose.ui.graphics.toArgb
 
@@ -13,6 +15,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -28,7 +31,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,17 +47,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,9 +84,15 @@ fun TagsScreen(
     modifier: Modifier = Modifier,
     uiState: TagsUiState,
     onEvent: (TagsEvent) -> Unit,
+    onCreateTag: () -> Unit = {},
+    onEditTag: (Long) -> Unit = {},
 ) {
     val dimensions = MaterialTheme.dimensions
+    val density = LocalDensity.current
+    var createButtonHeightPx by remember { mutableIntStateOf(0) }
+    val createButtonClearance = with(density) { createButtonHeightPx.toDp() } + 32.dp
     val toastState = rememberAppToastState()
+    val createLabel = stringResource(R.string.nova_tag)
     val message = when (uiState.message) {
         TagsMessage.SAVED -> stringResource(R.string.tag_saved)
         TagsMessage.DELETED -> stringResource(R.string.tag_deleted)
@@ -112,11 +125,14 @@ fun TagsScreen(
         snackbarHost = { AppToastHost(state = toastState) },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { onEvent(TagsEvent.CreateTag) },
+                onClick = onCreateTag,
+                modifier = Modifier
+                    .onSizeChanged { createButtonHeightPx = it.height }
+                    .semantics { contentDescription = createLabel },
                 icon = {
                     Icon(painterResource(CoreResourcesR.drawable.add_24px), contentDescription = null)
                 },
-                text = { Text(stringResource(R.string.nova_tag)) },
+                text = { Text(createLabel) },
             )
         },
     ) { innerPadding ->
@@ -131,7 +147,7 @@ fun TagsScreen(
                     start = dimensions.screenPadding,
                     end = dimensions.screenPadding,
                     top = dimensions.spacingMd,
-                    bottom = 104.dp,
+                    bottom = maxOf(104.dp, createButtonClearance),
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -151,7 +167,7 @@ fun TagsScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                            ScaniqoLoadingIndicator()
                             Text(
                                 stringResource(CoreResourcesR.string.tags_loading),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -168,20 +184,13 @@ fun TagsScreen(
                     else -> items(uiState.tags, key = { it.id }) { tag ->
                         TagItemCard(
                             tag = tag,
-                            onEdit = { onEvent(TagsEvent.EditTag(tag)) },
+                            onEdit = { onEditTag(tag.id) },
                             onDelete = { onEvent(TagsEvent.RequestDelete(tag)) },
                         )
                     }
                 }
             }
         }
-    }
-
-    uiState.editor?.let { editor ->
-        TagEditorSheet(
-            editor = editor,
-            onEvent = onEvent,
-        )
     }
 
     uiState.pendingDeletion?.let { tag ->
@@ -203,23 +212,36 @@ private fun TagsHeader(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        FlowRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
-                text = stringResource(R.string.suas_tags),
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold,
-            )
+            Row(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(
+                    painter = painterResource(TagIcon.LABEL.drawableRes),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp),
+                )
+                Text(
+                    text = stringResource(R.string.suas_tags),
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
             if (showCount) {
                 Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    color = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     shape = MaterialTheme.shapes.extraLarge,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 ) {
                     Text(
                         text = pluralStringResource(R.plurals.tags_count, count, count),
@@ -229,11 +251,13 @@ private fun TagsHeader(
                 }
             }
         }
-        Text(
-            text = stringResource(R.string.tags_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (count > 0) {
+            Text(
+                text = stringResource(R.string.tags_edit_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -243,75 +267,112 @@ private fun TagItemCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
 ) {
-    var showMenu by remember(tag.id) { mutableStateOf(false) }
+    val largeText = LocalDensity.current.fontScale >= 1.5f
 
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        shape = MaterialTheme.shapes.large,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+        onClick = onEdit,
+        color = ScaniqoCardDefaults.containerColor,
+        shape = ScaniqoCardDefaults.shape,
+        border = ScaniqoCardDefaults.border,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-        ) {
-            TagIconBadge(icon = tag.icon, color = tag.color)
+        if (largeText) {
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Text(
-                    text = tag.name,
-                    style = MaterialTheme.typography.titleMedium.copy(textDirection = TextDirection.ContentOrLtr),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = stringResource(tag.icon.labelRes),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Box {
-                IconButton(onClick = { showMenu = true }) {
-                    Icon(
-                        painter = painterResource(CoreResourcesR.drawable.more_vert_24px),
-                        contentDescription = stringResource(R.string.tag_actions, bidiArgument(tag.name)),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false },
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(CoreResourcesR.string.editar)) },
-                        leadingIcon = {
-                            Icon(painterResource(CoreResourcesR.drawable.edit_24px), contentDescription = null)
-                        },
-                        onClick = {
-                            showMenu = false
-                            onEdit()
-                        },
-                    )
-                    DropdownMenuItem(
-                        text = {
-                            Text(stringResource(R.string.excluir), color = MaterialTheme.colorScheme.error)
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painterResource(CoreResourcesR.drawable.delete_24px),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                            )
-                        },
-                        onClick = {
-                            showMenu = false
-                            onDelete()
-                        },
-                    )
+                    TagIconBadge(icon = tag.icon, color = tag.color)
+                    TagActionsMenu(tag = tag, onEdit = onEdit, onDelete = onDelete)
                 }
+                TagCardName(tag = tag, maxLines = Int.MAX_VALUE)
             }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                TagIconBadge(icon = tag.icon, color = tag.color)
+                TagCardName(tag = tag, modifier = Modifier.weight(1f))
+                TagActionsMenu(tag = tag, onEdit = onEdit, onDelete = onDelete)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TagCardName(
+    tag: TagModel,
+    modifier: Modifier = Modifier,
+    maxLines: Int = 2,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Text(
+            text = tag.name,
+            style = MaterialTheme.typography.titleMedium.copy(textDirection = TextDirection.ContentOrLtr),
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = stringResource(tag.icon.labelRes),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun TagActionsMenu(
+    tag: TagModel,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    var showMenu by remember(tag.id) { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { showMenu = true }) {
+            Icon(
+                painter = painterResource(CoreResourcesR.drawable.more_vert_24px),
+                contentDescription = stringResource(R.string.tag_actions, bidiArgument(tag.name)),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false },
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(CoreResourcesR.string.editar)) },
+                leadingIcon = {
+                    Icon(painterResource(CoreResourcesR.drawable.edit_24px), contentDescription = null)
+                },
+                onClick = {
+                    showMenu = false
+                    onEdit()
+                },
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(stringResource(R.string.excluir), color = MaterialTheme.colorScheme.error)
+                },
+                leadingIcon = {
+                    Icon(
+                        painterResource(CoreResourcesR.drawable.delete_24px),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                },
+                onClick = {
+                    showMenu = false
+                    onDelete()
+                },
+            )
         }
     }
 }

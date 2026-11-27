@@ -3,6 +3,7 @@ package com.joseleandro.scaniqo.ui.documentEditor
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -133,78 +134,86 @@ fun DocumentReaderScreen(
             }
         },
     ) { padding ->
-        LazyColumn(
-            state = listState,
+        BoxWithConstraints(
             modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
-            contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, top = 16.dp,
-                bottom = if (ready) 104.dp else 24.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            when {
-                uiState.isLoading -> item(key = "loading") {
-                    ToolProgress(stringResource(R.string.reader_loading))
-                }
-                uiState.loadError -> item(key = "error") {
-                    DocumentStatus(
-                        title = stringResource(CoreResourcesR.string.documents_error_title),
-                        description = stringResource(CoreResourcesR.string.documents_error_body),
-                        actionLabel = stringResource(CoreResourcesR.string.documents_retry),
-                        onAction = onRetryLoad,
-                    )
-                }
-                document == null -> item(key = "missing") {
-                    DocumentStatus(
-                        title = stringResource(R.string.document_not_found_title),
-                        description = stringResource(R.string.document_not_found_body),
-                        actionLabel = stringResource(R.string.document_return),
-                        onAction = onNavigationBack,
-                    )
-                }
-                locked -> item(key = "locked") {
-                    DocumentStatus(
-                        title = stringResource(R.string.tools_locked_title),
-                        description = stringResource(
-                            if (readerState.recoveryRequired) R.string.tools_recovery_description
-                            else R.string.tools_locked_description,
-                        ),
-                        actionLabel = stringResource(
-                            if (readerState.recoveryRequired) R.string.tools_recovery_action
-                            else CoreResourcesR.string.tools_unlock,
-                        ),
-                        onAction = onUnlock,
-                    )
-                }
-                sameSession && readerState.loadError -> item(key = "read_error") {
-                    DocumentStatus(
-                        title = stringResource(R.string.reader_load_error),
-                        description = stringResource(CoreResourcesR.string.documents_error_body),
-                        actionLabel = stringResource(CoreResourcesR.string.documents_retry),
-                        onAction = onRetryLoad,
-                    )
-                }
-                ready -> {
-                    item(key = "details") {
-                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            DocumentViewerHeader(
-                                document = document,
-                                tag = uiState.actions.tags.firstOrNull { it.id == document.tagId },
-                                pageCount = readable.pageCount,
-                                hasChanges = false,
-                                modifier = Modifier.widthIn(max = 840.dp),
+            val pageMaxWidth = if (maxWidth >= 600.dp) {
+                ((maxHeight - 88.dp).coerceAtLeast(120.dp) * (595f / 842f)).coerceAtMost(840.dp)
+            } else 840.dp
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp, end = 16.dp, top = 16.dp,
+                    bottom = if (ready) 104.dp else 24.dp,
+                ),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                when {
+                    uiState.isLoading -> item(key = "loading") {
+                        ToolProgress(stringResource(R.string.reader_loading))
+                    }
+                    uiState.loadError -> item(key = "error") {
+                        DocumentStatus(
+                            title = stringResource(CoreResourcesR.string.documents_error_title),
+                            description = stringResource(CoreResourcesR.string.documents_error_body),
+                            actionLabel = stringResource(CoreResourcesR.string.documents_retry),
+                            onAction = onRetryLoad,
+                        )
+                    }
+                    document == null -> item(key = "missing") {
+                        DocumentStatus(
+                            title = stringResource(R.string.document_not_found_title),
+                            description = stringResource(R.string.document_not_found_body),
+                            actionLabel = stringResource(R.string.document_return),
+                            onAction = onNavigationBack,
+                        )
+                    }
+                    locked -> item(key = "locked") {
+                        DocumentStatus(
+                            title = stringResource(R.string.tools_locked_title),
+                            description = stringResource(
+                                if (readerState.recoveryRequired) R.string.tools_recovery_description
+                                else R.string.tools_locked_description,
+                            ),
+                            actionLabel = stringResource(
+                                if (readerState.recoveryRequired) R.string.tools_recovery_action
+                                else CoreResourcesR.string.tools_unlock,
+                            ),
+                            onAction = onUnlock,
+                        )
+                    }
+                    sameSession && readerState.loadError -> item(key = "read_error") {
+                        DocumentStatus(
+                            title = stringResource(R.string.reader_load_error),
+                            description = stringResource(CoreResourcesR.string.documents_error_body),
+                            actionLabel = stringResource(CoreResourcesR.string.documents_retry),
+                            onAction = onRetryLoad,
+                        )
+                    }
+                    ready -> {
+                        item(key = "details") {
+                            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                DocumentViewerHeader(
+                                    document = document,
+                                    tag = uiState.actions.tags.firstOrNull { it.id == document.tagId },
+                                    pageCount = readable.pageCount,
+                                    hasChanges = false,
+                                    modifier = Modifier.widthIn(max = 840.dp),
+                                )
+                            }
+                        }
+                        items(readable.pageCount, key = { "read_page_$it" }) { pageIndex ->
+                            DocumentSavedPage(
+                                document = document.copy(pdfUri = readable.pdfUri, pageCount = readable.pageCount),
+                                pageIndex = pageIndex,
+                                maxPageWidth = pageMaxWidth,
                             )
                         }
                     }
-                    items(readable.pageCount, key = { "read_page_$it" }) { pageIndex ->
-                        DocumentSavedPage(
-                            document = document.copy(pdfUri = readable.pdfUri, pageCount = readable.pageCount),
-                            pageIndex = pageIndex,
-                        )
+                    else -> item(key = "preparing") {
+                        ToolProgress(stringResource(R.string.reader_loading))
                     }
-                }
-                else -> item(key = "preparing") {
-                    ToolProgress(stringResource(R.string.reader_loading))
                 }
             }
         }
@@ -288,6 +297,8 @@ private fun DocumentReaderTopBar(
     )
 }
 
+@Preview(name = "Leitura tablet paisagem", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Leitura janela dividida", widthDp = 600, heightDp = 800, locale = "pt-rBR")
 @Preview(name = "Leitura do documento", widthDp = 390, heightDp = 850, locale = "pt-rBR")
 @Preview(
     name = "Leitura escura", widthDp = 390, heightDp = 850,

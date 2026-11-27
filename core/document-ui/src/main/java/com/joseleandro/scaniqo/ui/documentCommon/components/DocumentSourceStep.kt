@@ -7,20 +7,16 @@ import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,7 +32,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,19 +46,17 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
@@ -71,8 +64,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.domain.model.DocumentModel
@@ -108,37 +99,18 @@ fun DocumentSourceStep(
             hero = { SourcePagesIllustration(it) },
         )
         if (currentDocument != null) {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            ) {
-                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        DocumentThumbnail(
-                            currentDocument,
-                            Modifier.width(36.dp).aspectRatio(1f / 1.4142f)
-                                .clip(MaterialTheme.shapes.extraSmall),
-                        )
-                        Column(Modifier.weight(1f)) {
-                            Text(currentDocument.name, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.titleSmall)
-                            Text(
-                                pluralStringResource(CoreResourcesR.plurals.document_page_count,
-                                    currentDocument.pageCount, currentDocument.pageCount),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+            PdfSelectionCard(
+                name = currentDocument.name,
+                metadata = pdfSelectionMetadata(currentDocument.pageCount, currentDocument.sizeBytes),
+                thumbnail = { DocumentThumbnail(currentDocument, it) },
+                footer = {
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                        TextButton(onClick = onResume, enabled = enabled, modifier = Modifier.heightIn(min = 48.dp)) {
+                            Text(stringResource(R.string.tool_source_resume))
                         }
                     }
-                    TextButton(onClick = onResume, enabled = enabled,
-                        modifier = Modifier.align(Alignment.End).heightIn(min = 48.dp)) {
-                        Text(stringResource(R.string.tool_source_resume))
-                    }
-                }
-            }
+                },
+            )
         }
         DocumentSourceOrigins(
             enabled = enabled,
@@ -273,57 +245,7 @@ private fun SourceOriginCard(
     compact: Boolean,
     onClick: () -> Unit,
 ) {
-    val interactions = remember { MutableInteractionSource() }
-    val pressed by interactions.collectIsPressedAsState()
-    val scale by animateFloatAsState(if (pressed) .975f else 1f, label = "Source card press")
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        interactionSource = interactions,
-        modifier = modifier.fillMaxWidth().graphicsLayer { scaleX = scale; scaleY = scale },
-        shape = MaterialTheme.shapes.extraLarge,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-    ) {
-        if (compact) {
-            Row(
-                Modifier.heightIn(min = 88.dp).padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                SourceOriginIcon(icon)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(title, style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold)
-                    Text(hint, style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
-        } else {
-            Column(
-                Modifier.heightIn(min = 136.dp).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                SourceOriginIcon(icon)
-                Text(title, style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold)
-                Text(hint, style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-    }
-}
-
-@Composable
-private fun SourceOriginIcon(@DrawableRes icon: Int, modifier: Modifier = Modifier) {
-    Surface(modifier = modifier, shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.primaryContainer) {
-        Icon(
-            painterResource(icon), null,
-            Modifier.padding(10.dp).size(26.dp),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-        )
-    }
+    PdfSelectAction(title, hint, onClick, modifier, enabled, icon, vertical = !compact)
 }
 
 @Composable
@@ -434,77 +356,36 @@ private fun DocumentSourceLibrarySheet(
                         }
                     },
                     singleLine = true,
-                    shape = MaterialTheme.shapes.large,
+                    shape = ScaniqoFieldDefaults.shape,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { focus.clearFocus() }),
                 )
             }
             when {
-                isLoading -> Box(Modifier.fillMaxWidth().heightIn(min = 112.dp), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-                loadError -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(CoreResourcesR.string.documents_error_title),
-                        style = MaterialTheme.typography.bodyMedium)
-                    TextButton(onClick = onRetryDocuments, enabled = enabled) {
-                        Text(stringResource(CoreResourcesR.string.documents_retry))
-                    }
-                }
+                isLoading -> PdfSelectionFeedback("", loading = true)
+                loadError -> PdfSelectionFeedback(
+                    stringResource(CoreResourcesR.string.documents_error_title),
+                    onRetry = onRetryDocuments, enabled = enabled,
+                )
                 documents.isEmpty() -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        stringResource(R.string.tool_source_library_empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    PdfSelectionFeedback(stringResource(R.string.tool_source_library_empty))
                     OutlinedButton(onClick = onPickDevice, enabled = enabled) {
                         Text(stringResource(R.string.merge_source_device))
                     }
                 }
-                matches.isEmpty() -> Text(
-                    stringResource(R.string.merge_app_no_results),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                matches.isEmpty() -> PdfSelectionFeedback(stringResource(R.string.merge_app_no_results))
                 else -> LazyColumn(
                     Modifier.fillMaxWidth().heightIn(max = 440.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(matches, key = { it.id }) { document ->
-                        Surface(
-                            onClick = { onSelectDocument(document) },
+                        PdfSelectionCard(
+                            name = document.name,
+                            metadata = pdfSelectionMetadata(document.pageCount, document.sizeBytes),
+                            thumbnail = { DocumentThumbnail(document, it) },
                             enabled = enabled,
-                            shape = MaterialTheme.shapes.medium,
-                            color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        ) {
-                            Row(
-                                Modifier.fillMaxWidth().heightIn(min = 68.dp)
-                                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            ) {
-                                DocumentThumbnail(
-                                    document,
-                                    Modifier.width(44.dp).aspectRatio(1f / 1.4142f)
-                                        .clip(MaterialTheme.shapes.extraSmall),
-                                )
-                                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                    Text(
-                                        document.name,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.titleSmall.copy(
-                                            textDirection = TextDirection.ContentOrLtr,
-                                        ),
-                                    )
-                                    Text(
-                                        pluralStringResource(CoreResourcesR.plurals.document_page_count,
-                                            document.pageCount, document.pageCount),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            }
-                        }
+                            onClick = { onSelectDocument(document) },
+                        )
                     }
                 }
             }

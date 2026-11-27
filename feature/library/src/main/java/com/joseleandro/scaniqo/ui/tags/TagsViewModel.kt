@@ -25,9 +25,29 @@ class TagsViewModel(
     val uiState: StateFlow<TagsUiState> = mutableUiState.asStateFlow()
 
     private var observationJob: Job? = null
+    private var editorInitialized = false
 
     init {
         observeTags()
+    }
+
+    /** Initializes this navigation entry once; repository updates must not overwrite the draft. */
+    internal fun initializeEditor(tagId: Long?) {
+        val state = uiState.value
+        if (editorInitialized) return
+        // A new tag has no stored data to load. Only editing waits for the repository.
+        if (tagId != null && (state.isLoading || state.loadError)) return
+        editorInitialized = true
+        if (tagId == null) {
+            onEvent(TagsEvent.CreateTag)
+        } else {
+            val tag = state.tags.firstOrNull { it.id == tagId }
+            if (tag == null) {
+                mutableUiState.update { it.copy(editorTagNotFound = true) }
+            } else {
+                onEvent(TagsEvent.EditTag(tag))
+            }
+        }
     }
 
     fun onEvent(event: TagsEvent) {
@@ -105,7 +125,7 @@ class TagsViewModel(
     private fun openEditor(editor: TagEditorUiState) {
         if (isBusy()) return
         mutableUiState.update {
-            it.copy(editor = editor, pendingDeletion = null, message = null)
+            it.copy(editor = editor, editorTagNotFound = false, pendingDeletion = null, message = null)
         }
     }
 

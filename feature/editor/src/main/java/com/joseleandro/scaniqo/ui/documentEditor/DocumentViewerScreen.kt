@@ -6,27 +6,38 @@ import com.joseleandro.scaniqo.feature.editor.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -46,10 +57,16 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joseleandro.scaniqo.domain.model.DocumentModel
+import com.joseleandro.scaniqo.domain.model.PdfPagePreview
+import com.joseleandro.scaniqo.domain.model.PdfPageSpec
+import com.joseleandro.scaniqo.domain.model.PdfWorkspace
+import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentPagePreviewState
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import com.joseleandro.scaniqo.core.security.SecureWindow
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
-import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentActionOverlays
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPreviewZoom
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
@@ -71,7 +88,6 @@ import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentToolsUiState
 import com.joseleandro.scaniqo.ui.documentEditor.state.DocumentViewerUiState
 import kotlinx.coroutines.flow.first
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentViewerScreen(
     documentId: Long,
@@ -159,286 +175,357 @@ fun DocumentViewerScreen(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.surfaceDim,
-        topBar = {
-            DocumentViewerTopBar(
-                document = document,
-                showDocumentActions = sameSession && !locked && workspace != null,
-                toolsState = toolsState,
-                onDocumentAction = onDocumentAction,
-                onToolsEvent = onToolsEvent,
-                documentBusy = documentBusy,
-                isBusy = isBusy,
+    val scannerAction: @Composable () -> Unit = {
+        if (showScanner) {
+            val scanLabel = stringResource(
+                when {
+                    toolsState.isScanning -> CoreResourcesR.string.documents_scanning
+                    toolsState.isAppending -> CoreResourcesR.string.documents_preparing
+                    else -> R.string.pages_scan
+                },
             )
-        },
-        snackbarHost = { AppToastHost(toastState) },
-        floatingActionButton = {
-            if (showScanner) {
-                ExtendedFloatingActionButton(
-                    onClick = { if (canScan) onToolsEvent(DocumentToolsEvent.AddPages) },
-                    modifier = Modifier.semantics { if (!canScan) disabled() },
-                    containerColor = if (canScan || scanning) {
-                        MaterialTheme.colorScheme.primaryContainer
-                    } else MaterialTheme.colorScheme.surfaceContainerHigh,
-                    contentColor = if (canScan || scanning) {
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    } else MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
-                    icon = {
-                        if (scanning) {
-                            CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
-                        } else {
-                            Icon(
-                                painterResource(CoreResourcesR.drawable.ic_document_scan),
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    text = {
-                        Text(
-                            stringResource(
-                                when {
-                                    toolsState.isScanning -> CoreResourcesR.string.documents_scanning
-                                    toolsState.isAppending -> CoreResourcesR.string.documents_preparing
-                                    else -> R.string.pages_scan
-                                },
-                            )
+            ExtendedFloatingActionButton(
+                onClick = { if (canScan) onToolsEvent(DocumentToolsEvent.AddPages) },
+                modifier = Modifier.semantics {
+                    contentDescription = scanLabel
+                    if (!canScan) disabled()
+                },
+                containerColor = if (canScan || scanning) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = if (canScan || scanning) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else MaterialTheme.colorScheme.onSurface.copy(alpha = .38f),
+                icon = {
+                    if (scanning) {
+                        CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                    } else {
+                        Icon(
+                            painterResource(CoreResourcesR.drawable.ic_document_scan),
+                            contentDescription = null
                         )
-                    },
-                )
-            }
-        },
-        bottomBar = {
-            if (workspace != null && !locked) {
-                Column {
-                    // The banner is a separate measured row; it never covers the PDF or controls.
-                    if (showBanner) banner()
-                    DocumentToolsBar(
-                        toolsState, onToolsEvent, enabled = !documentBusy && !saveInProgress,
-                        onSave = onSave, saveShowsVideo = saveShowsVideo, saveInProgress = saveInProgress,
-                    )
-                }
-            }
-        },
-    ) { innerPadding ->
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
-            // Reserva espaço para rolar a última folha acima do botão de captura.
-            contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, top = 16.dp,
-                bottom = if (showScanner) 104.dp else 24.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            when {
-                toolsState.isLoading && sameSession && document != null && !document.isProtected &&
-                        workspace == null && !toolsState.loadError && !locked -> {
-                    item(key = "details") {
-                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            Column(
-                                modifier = Modifier
-                                    .widthIn(max = 840.dp)
-                                    .fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                    }
+                },
+                text = { Text(scanLabel) },
+            )
+        }
+    }
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val useToolPanel = maxWidth >= 840.dp && workspace != null && !locked
+        val fitPageToHeight = maxWidth >= 600.dp
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = MaterialTheme.colorScheme.surfaceDim,
+            topBar = {
+                DocumentViewerTopBar(
+                    document = document,
+                    showDocumentActions = sameSession && !locked && workspace != null,
+                    toolsState = toolsState,
+                    onDocumentAction = onDocumentAction,
+                    onToolsEvent = onToolsEvent,
+                    documentBusy = documentBusy,
+                    isBusy = isBusy,
+                    additionalActions = {
+                        if (useToolPanel && showScanner) {
+                            FilledTonalButton(
+                                onClick = { onToolsEvent(DocumentToolsEvent.AddPages) },
+                                enabled = canScan,
+                                modifier = Modifier.padding(end = 12.dp).heightIn(min = 48.dp),
                             ) {
-                                DocumentViewerHeader(
-                                    document = document,
-                                    tag = uiState.actions.tags.firstOrNull { it.id == document.tagId },
-                                    pageCount = document.pageCount,
-                                    hasChanges = false,
-                                )
-                                Text(
-                                    stringResource(R.string.viewer_preparing_tools),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                                LinearProgressIndicator(Modifier.fillMaxWidth())
-                            }
-                        }
-                    }
-                    items(document.pageCount, key = { "saved_page_$it" }) { pageIndex ->
-                        DocumentSavedPage(document, pageIndex)
-                    }
-                }
-
-                toolsState.isLoading && sameSession -> item(key = "loading") {
-                    ToolProgress(stringResource(R.string.tools_loading))
-                }
-
-                locked -> item(key = "locked") {
-                    DocumentStatus(
-                        title = stringResource(R.string.tools_locked_title),
-                        description = stringResource(if (toolsState.recoveryRequired) R.string.tools_recovery_description else R.string.tools_locked_description),
-                        actionLabel = stringResource(if (toolsState.recoveryRequired) R.string.tools_recovery_action else CoreResourcesR.string.tools_unlock),
-                        onAction = {
-                            onToolsEvent(if (toolsState.recoveryRequired) DocumentToolsEvent.RequestPasswordRecovery else DocumentToolsEvent.Unlock)
-                        },
-                    )
-                }
-
-                toolsState.loadError && sameSession -> item(key = "load_error") {
-                    DocumentStatus(
-                        title = stringResource(R.string.tools_load_error),
-                        description = stringResource(CoreResourcesR.string.documents_error_body),
-                        actionLabel = stringResource(R.string.tools_retry),
-                        onAction = { onToolsEvent(DocumentToolsEvent.Retry) },
-                    )
-                }
-
-                document != null && workspace != null -> {
-                    item(key = "details") {
-                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            DocumentViewerHeader(
-                                document = document,
-                                tag = uiState.actions.tags.firstOrNull { it.id == document.tagId },
-                                pageCount = workspace.pages.size,
-                                hasChanges = toolsState.hasChanges,
-                                modifier = Modifier.widthIn(max = 840.dp),
-                            )
-                        }
-                    }
-                    itemsIndexed(workspace.pages, key = { _, page -> page.id }) { pageIndex, page ->
-                        DisposableEffect(workspace.workspaceId, page.id) {
-                            onToolsEvent(DocumentToolsEvent.PageVisibility(page.id, true))
-                            onDispose {
-                                onToolsEvent(
-                                    DocumentToolsEvent.PageVisibility(
-                                        page.id,
-                                        false
-                                    )
-                                )
-                            }
-                        }
-                        val pagePreview = toolsState.pagePreviews[page.id]
-                        var signatureBeforeGesture by remember(page.id) { mutableStateOf(toolsState.signatureDraft) }
-                        val selected = page.id == toolsState.selectedPageId
-                        val pageDescription =
-                            stringResource(R.string.tools_select_page, pageIndex + 1)
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 4.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .widthIn(max = 840.dp)
-                                    .fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                DocumentPagePreviewHeader(
-                                    pageNumber = pageIndex + 1,
-                                    pageCount = workspace.pages.size,
-                                    selected = selected,
-                                    updating = pagePreview?.isRendering == true,
-                                )
-                                if (pagePreview?.error == true) {
-                                    DocumentPreviewError(
-                                        enabled = !isBusy && !pagePreview.isRendering,
-                                        onRetry = {
-                                            onToolsEvent(
-                                                DocumentToolsEvent.RetryPagePreview(
-                                                    page.id
-                                                )
-                                            )
-                                        },
+                                if (scanning) {
+                                    CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                                } else {
+                                    Icon(
+                                        painterResource(CoreResourcesR.drawable.ic_document_scan),
+                                        contentDescription = null, modifier = Modifier.size(20.dp),
                                     )
                                 }
-                                // A folha mantém a proporção A4, sem cabeçalho ou margens artificiais no PDF.
-                                Surface(
-                                    onClick = { onToolsEvent(DocumentToolsEvent.SelectPage(page.id)) },
-                                    enabled = toolsState.canEdit && !documentBusy && toolsState.signatureDraft == null,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .aspectRatio(595f / 842f)
-                                        .semantics {
-                                            contentDescription = pageDescription
-                                            this.selected = selected
-                                        },
-                                    shape = RectangleShape,
-                                    color = Color.White,
-                                    contentColor = Color.Black,
-                                    shadowElevation = 6.dp,
-                                    border = BorderStroke(0.5.dp, Color.Black.copy(alpha = .12f)),
-                                ) {
-                                    DocumentPreviewZoom(
-                                        modifier = Modifier.fillMaxSize(), contentKey = page.id,
-                                        singleFingerPan = toolsState.signatureDraft == null,
-                                        contentAspectRatio = 595f / 842f,
-                                        onGestureStart = {
-                                            signatureBeforeGesture = toolsState.signatureDraft
-                                                ?.takeIf { toolsState.signaturePageId == page.id }
-                                        },
-                                        onTransformStart = {
-                                            signatureBeforeGesture?.takeIf { it.id == toolsState.signatureDraft?.id }
-                                                ?.let { original ->
-                                                    onToolsEvent(DocumentToolsEvent.TransformSignature(
-                                                        x = original.x, y = original.y, width = original.width,
-                                                        height = original.height, rotationDegrees = original.rotationDegrees,
-                                                        stretchToBounds = original.stretchToBounds,
-                                                    ))
-                                                }
-                                        },
-                                    ) {
-                                        val preview = pagePreview?.preview
-                                        if (preview != null) {
-                                            DocumentPdfPage(
-                                                pdfUri = preview.uri,
-                                                pageIndex = preview.pageIndex,
-                                                contentKey = page.id,
-                                                modifier = Modifier.fillMaxSize(),
+                                Text(
+                                    stringResource(when {
+                                        toolsState.isScanning -> CoreResourcesR.string.documents_scanning
+                                        toolsState.isAppending -> CoreResourcesR.string.documents_preparing
+                                        else -> R.string.pages_scan
+                                    }),
+                                    modifier = Modifier.padding(start = 8.dp),
+                                )
+                            }
+                        }
+                    },
+                )
+            },
+            snackbarHost = { AppToastHost(toastState) },
+            floatingActionButton = {
+                if (!useToolPanel) scannerAction()
+            },
+            bottomBar = {
+                if (workspace != null && !locked) {
+                    Column(
+                        modifier = if (useToolPanel) {
+                            Modifier.windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+                            )
+                        } else Modifier,
+                    ) {
+                        // The banner is a separate measured row; it never covers the PDF or controls.
+                        if (showBanner) banner()
+                        if (!useToolPanel) {
+                            DocumentToolsBar(
+                                toolsState, onToolsEvent, enabled = !documentBusy && !saveInProgress,
+                                onSave = onSave, saveShowsVideo = saveShowsVideo, saveInProgress = saveInProgress,
+                            )
+                        }
+                    }
+                }
+            },
+        ) { innerPadding ->
+            Row(
+                modifier = Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding),
+            ) {
+                BoxWithConstraints(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                    val pageMaxWidth = if (fitPageToHeight) {
+                        ((maxHeight - 112.dp).coerceAtLeast(120.dp) * (595f / 842f)).coerceAtMost(840.dp)
+                    } else 840.dp
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        // Reserva espaço para rolar a última folha acima do botão de captura.
+                        contentPadding = PaddingValues(
+                            start = 16.dp, end = 16.dp, top = 16.dp,
+                            bottom = if (showScanner && !useToolPanel) 104.dp else 24.dp,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        when {
+                            toolsState.isLoading && sameSession && document != null && !document.isProtected &&
+                                    workspace == null && !toolsState.loadError && !locked -> {
+                                item(key = "details") {
+                                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        Column(
+                                            modifier = Modifier
+                                                .widthIn(max = 840.dp)
+                                                .fillMaxWidth(),
+                                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                                        ) {
+                                            DocumentViewerHeader(
+                                                document = document,
+                                                tag = uiState.actions.tags.firstOrNull { it.id == document.tagId },
+                                                pageCount = document.pageCount,
+                                                hasChanges = false,
                                             )
-                                        } else if (pagePreview?.error != true) {
-                                            Box(
-                                                Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                CircularProgressIndicator(
-                                                    Modifier.size(28.dp),
-                                                    strokeWidth = 2.dp
+                                            Text(
+                                                stringResource(R.string.viewer_preparing_tools),
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                            LinearProgressIndicator(Modifier.fillMaxWidth())
+                                        }
+                                    }
+                                }
+                                items(document.pageCount, key = { "saved_page_$it" }) { pageIndex ->
+                                    DocumentSavedPage(document, pageIndex, maxPageWidth = pageMaxWidth)
+                                }
+                            }
+
+                            toolsState.isLoading && sameSession -> item(key = "loading") {
+                                ToolProgress(stringResource(R.string.tools_loading))
+                            }
+
+                            locked -> item(key = "locked") {
+                                DocumentStatus(
+                                    title = stringResource(R.string.tools_locked_title),
+                                    description = stringResource(if (toolsState.recoveryRequired) R.string.tools_recovery_description else R.string.tools_locked_description),
+                                    actionLabel = stringResource(if (toolsState.recoveryRequired) R.string.tools_recovery_action else CoreResourcesR.string.tools_unlock),
+                                    onAction = {
+                                        onToolsEvent(if (toolsState.recoveryRequired) DocumentToolsEvent.RequestPasswordRecovery else DocumentToolsEvent.Unlock)
+                                    },
+                                )
+                            }
+
+                            toolsState.loadError && sameSession -> item(key = "load_error") {
+                                DocumentStatus(
+                                    title = stringResource(R.string.tools_load_error),
+                                    description = stringResource(CoreResourcesR.string.documents_error_body),
+                                    actionLabel = stringResource(R.string.tools_retry),
+                                    onAction = { onToolsEvent(DocumentToolsEvent.Retry) },
+                                )
+                            }
+
+                            document != null && workspace != null -> {
+                                item(key = "details") {
+                                    if (!useToolPanel) Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        DocumentViewerHeader(
+                                            document = document,
+                                            tag = uiState.actions.tags.firstOrNull { it.id == document.tagId },
+                                            pageCount = workspace.pages.size,
+                                            hasChanges = toolsState.hasChanges,
+                                            modifier = Modifier.widthIn(max = 840.dp),
+                                        )
+                                    }
+                                }
+                                itemsIndexed(workspace.pages, key = { _, page -> page.id }) { pageIndex, page ->
+                                    DisposableEffect(workspace.workspaceId, page.id) {
+                                        onToolsEvent(DocumentToolsEvent.PageVisibility(page.id, true))
+                                        onDispose {
+                                            onToolsEvent(
+                                                DocumentToolsEvent.PageVisibility(
+                                                    page.id,
+                                                    false
+                                                )
+                                            )
+                                        }
+                                    }
+                                    val pagePreview = toolsState.pagePreviews[page.id]
+                                    var signatureBeforeGesture by remember(page.id) { mutableStateOf(toolsState.signatureDraft) }
+                                    val selected = page.id == toolsState.selectedPageId
+                                    val pageDescription =
+                                        stringResource(R.string.tools_select_page, pageIndex + 1)
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 4.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .widthIn(max = pageMaxWidth)
+                                                .fillMaxWidth(),
+                                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        ) {
+                                            DocumentPagePreviewHeader(
+                                                pageNumber = pageIndex + 1,
+                                                pageCount = workspace.pages.size,
+                                                selected = selected,
+                                                updating = pagePreview?.isRendering == true,
+                                            )
+                                            if (pagePreview?.error == true) {
+                                                DocumentPreviewError(
+                                                    enabled = !isBusy && !pagePreview.isRendering,
+                                                    onRetry = {
+                                                        onToolsEvent(
+                                                            DocumentToolsEvent.RetryPagePreview(
+                                                                page.id
+                                                            )
+                                                        )
+                                                    },
                                                 )
                                             }
-                                        }
-                                        if (toolsState.signaturePageId == page.id && toolsState.signatureDraft != null &&
-                                            preview != null && !pagePreview.isRendering && !pagePreview.error
-                                        ) {
-                                            DocumentSignatureOverlay(
-                                                toolsState.signatureDraft,
-                                                onToolsEvent,
-                                                Modifier.fillMaxSize()
-                                            )
+                                            // A folha mantém a proporção A4, sem cabeçalho ou margens artificiais no PDF.
+                                            Surface(
+                                                onClick = { onToolsEvent(DocumentToolsEvent.SelectPage(page.id)) },
+                                                enabled = toolsState.canEdit && !documentBusy && toolsState.signatureDraft == null,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(595f / 842f)
+                                                    .semantics {
+                                                        contentDescription = pageDescription
+                                                        this.selected = selected
+                                                    },
+                                                shape = RectangleShape,
+                                                color = Color.White,
+                                                contentColor = Color.Black,
+                                                shadowElevation = 6.dp,
+                                                border = BorderStroke(0.5.dp, Color.Black.copy(alpha = .12f)),
+                                            ) {
+                                                DocumentPreviewZoom(
+                                                    modifier = Modifier.fillMaxSize(), contentKey = page.id,
+                                                    singleFingerPan = toolsState.signatureDraft == null,
+                                                    contentAspectRatio = 595f / 842f,
+                                                    onGestureStart = {
+                                                        signatureBeforeGesture = toolsState.signatureDraft
+                                                            ?.takeIf { toolsState.signaturePageId == page.id }
+                                                    },
+                                                    onTransformStart = {
+                                                        signatureBeforeGesture?.takeIf { it.id == toolsState.signatureDraft?.id }
+                                                            ?.let { original ->
+                                                                onToolsEvent(DocumentToolsEvent.TransformSignature(
+                                                                    x = original.x, y = original.y, width = original.width,
+                                                                    height = original.height, rotationDegrees = original.rotationDegrees,
+                                                                    stretchToBounds = original.stretchToBounds,
+                                                                ))
+                                                            }
+                                                    },
+                                                ) {
+                                                    val preview = pagePreview?.preview
+                                                    if (preview != null) {
+                                                        DocumentPdfPage(
+                                                            pdfUri = preview.uri,
+                                                            pageIndex = preview.pageIndex,
+                                                            contentKey = page.id,
+                                                            modifier = Modifier.fillMaxSize(),
+                                                        )
+                                                    } else if (pagePreview?.error != true) {
+                                                        Box(
+                                                            Modifier.fillMaxSize(),
+                                                            contentAlignment = Alignment.Center
+                                                        ) {
+                                                            CircularProgressIndicator(
+                                                                Modifier.size(28.dp),
+                                                                strokeWidth = 2.dp
+                                                            )
+                                                        }
+                                                    }
+                                                    if (toolsState.signaturePageId == page.id && toolsState.signatureDraft != null &&
+                                                        preview != null && !pagePreview.isRendering && !pagePreview.error
+                                                    ) {
+                                                        DocumentSignatureOverlay(
+                                                            toolsState.signatureDraft,
+                                                            onToolsEvent,
+                                                            Modifier.fillMaxSize()
+                                                        )
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
+
+                            uiState.isLoading || document != null -> item(key = "loading") {
+                                ToolProgress(stringResource(R.string.tools_loading))
+                            }
+
+                            uiState.loadError -> item(key = "error") {
+                                DocumentStatus(
+                                    title = stringResource(CoreResourcesR.string.documents_error_title),
+                                    description = stringResource(CoreResourcesR.string.documents_error_body),
+                                    actionLabel = stringResource(CoreResourcesR.string.documents_retry),
+                                    onAction = onRetryLoad,
+                                )
+                            }
+
+                            else -> item(key = "not_found") {
+                                DocumentStatus(
+                                    title = stringResource(R.string.document_not_found_title),
+                                    description = stringResource(R.string.document_not_found_body),
+                                    actionLabel = stringResource(R.string.document_return),
+                                    onAction = onNavigationBack,
+                                )
+                            }
                         }
                     }
                 }
-
-                uiState.isLoading || document != null -> item(key = "loading") {
-                    ToolProgress(stringResource(R.string.tools_loading))
-                }
-
-                uiState.loadError -> item(key = "error") {
-                    DocumentStatus(
-                        title = stringResource(CoreResourcesR.string.documents_error_title),
-                        description = stringResource(CoreResourcesR.string.documents_error_body),
-                        actionLabel = stringResource(CoreResourcesR.string.documents_retry),
-                        onAction = onRetryLoad,
-                    )
-                }
-
-                else -> item(key = "not_found") {
-                    DocumentStatus(
-                        title = stringResource(R.string.document_not_found_title),
-                        description = stringResource(R.string.document_not_found_body),
-                        actionLabel = stringResource(R.string.document_return),
-                        onAction = onNavigationBack,
+                if (useToolPanel) {
+                    VerticalDivider()
+                    DocumentToolsBar(
+                        state = toolsState,
+                        onEvent = onToolsEvent,
+                        enabled = !documentBusy && !saveInProgress,
+                        modifier = Modifier.width(320.dp).fillMaxHeight(),
+                        vertical = true,
+                        header = {
+                            if (document != null && toolsState.signatureDraft == null) {
+                                DocumentViewerHeader(
+                                    document = document,
+                                    tag = uiState.actions.tags.firstOrNull { it.id == document.tagId },
+                                    pageCount = workspace.pages.size,
+                                    hasChanges = toolsState.hasChanges,
+                                    modifier = Modifier.padding(12.dp),
+                                )
+                            }
+                        },
+                        onSave = onSave,
+                        saveShowsVideo = saveShowsVideo,
+                        saveInProgress = saveInProgress,
                     )
                 }
             }
@@ -448,5 +535,52 @@ fun DocumentViewerScreen(
         DocumentToolsSheets(toolsState, onToolsEvent)
     } else if (toolsState.confirmDiscard) {
         DocumentToolsSheets(toolsState.copy(tool = null), onToolsEvent)
+    }
+}
+
+@Preview(name = "Editor celular", widthDp = 390, heightDp = 850, locale = "pt-rBR")
+@Preview(name = "Editor tablet paisagem", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Editor tablet retrato", widthDp = 800, heightDp = 1280, locale = "pt-rBR")
+@Preview(name = "Editor janela dividida", widthDp = 600, heightDp = 800, locale = "pt-rBR")
+@Composable
+private fun DocumentViewerAdaptivePreview() {
+    DocumentViewerPreviewContent()
+}
+
+@Preview(name = "Filtros tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Filtros janela curta", widthDp = 900, heightDp = 480, locale = "pt-rBR", fontScale = 1.5f)
+@Composable
+private fun DocumentViewerFiltersAdaptivePreview() {
+    DocumentViewerPreviewContent(tool = DocumentTool.FILTERS, hasChanges = true)
+}
+
+@Composable
+private fun DocumentViewerPreviewContent(tool: DocumentTool? = null, hasChanges: Boolean = false) {
+    val document = DocumentModel(
+        id = 1, name = "Contrato de aluguel", pdfUri = "preview.pdf",
+        pageCount = 2, createdAt = 1781431200000L, sizeBytes = 248_000L,
+    )
+    val pages = (1..2).map {
+        PdfPageSpec(id = "page-$it", sourceUri = document.pdfUri, sourcePageIndex = it - 1)
+    }
+    ScaniqoTheme {
+        DocumentViewerScreen(
+            documentId = document.id,
+            uiState = DocumentViewerUiState(document = document, isLoading = false),
+            toolsState = DocumentToolsUiState(
+                document = document,
+                workspace = PdfWorkspace(
+                    documentId = document.id, workspaceId = "preview",
+                    directoryUri = "preview", pages = pages,
+                ),
+                selectedPageId = pages.first().id,
+                tool = tool,
+                hasChanges = hasChanges,
+                pagePreviews = pages.associate { page ->
+                    page.id to DocumentPagePreviewState(preview = PdfPagePreview(document.pdfUri))
+                },
+            ),
+            onDocumentAction = {}, onRetryLoad = {}, onNavigationBack = {}, onToolsEvent = {},
+        )
     }
 }

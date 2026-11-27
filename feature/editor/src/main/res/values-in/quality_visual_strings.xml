@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">Untuk mencetak dan menjaga detail.</string>
+    <string name="quality_visual_balanced_use">Untuk dibaca dan dibagikan sehari-hari.</string>
+    <string name="quality_visual_small_use">Untuk mengirim file yang lebih ringan.</string>
+    <string name="quality_visual_ocr_description">Temukan kata dalam halaman yang dipindai.</string>
+</resources>

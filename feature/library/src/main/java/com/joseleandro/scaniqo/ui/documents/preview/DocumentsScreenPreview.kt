@@ -23,6 +23,8 @@ import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 @Preview(name = "Documentos tela externa", widthDp = 320, heightDp = 720, locale = "pt-rBR")
 @Preview(name = "Documentos dobrável", widthDp = 673, heightDp = 841, locale = "pt-rBR")
 @Preview(name = "Documentos tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Documentos tablet retrato", widthDp = 800, heightDp = 1280, locale = "pt-rBR")
+@Preview(name = "Documentos janela redimensionada", widthDp = 600, heightDp = 480, locale = "pt-rBR")
 @Preview(name = "Documentos texto grande", widthDp = 320, heightDp = 640, fontScale = 2f, locale = "pt-rBR")
 @Composable
 private fun DocumentsScreenPreview() {
@@ -67,6 +69,7 @@ private fun DocumentsScreenPreview() {
 
 @Preview(name = "Biblioteca vazia", widthDp = 390, heightDp = 780, locale = "pt-rBR")
 @Preview(name = "Biblioteca vazia tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Preview(name = "Biblioteca vazia paisagem", widthDp = 840, heightDp = 480, locale = "pt-rBR")
 @Preview(name = "Biblioteca vazia fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
 @Composable
 private fun DocumentsEmptyPreview() {

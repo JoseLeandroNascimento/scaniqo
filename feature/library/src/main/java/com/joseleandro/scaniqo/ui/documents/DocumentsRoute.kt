@@ -21,6 +21,7 @@ fun DocumentsRoute(
     onAllTools: () -> Unit,
     modifier: Modifier = Modifier,
     adsEnabled: Boolean = true,
+    showNavigationMenu: Boolean = true,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val actionsState by actionsViewModel.uiState.collectAsStateWithLifecycle()
@@ -41,5 +42,6 @@ fun DocumentsRoute(
         onAllTools = onAllTools,
         modifier = modifier,
         adsEnabled = adsEnabled,
+        showNavigationMenu = showNavigationMenu,
     )
 }

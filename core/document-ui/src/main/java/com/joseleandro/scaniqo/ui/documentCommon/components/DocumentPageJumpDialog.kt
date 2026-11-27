@@ -16,9 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
+
 @Composable
 fun DocumentPageJumpDialog(
     pageCount: Int,
@@ -41,6 +45,7 @@ fun DocumentPageJumpDialog(
                         value = next
                 },
                 modifier = Modifier.fillMaxWidth(), singleLine = true,
+                shape = ScaniqoFieldDefaults.shape,
                 label = { Text(stringResource(CoreResourcesR.string.utility_pages)) },
                 supportingText = { Text(stringResource(R.string.pages_v2_jump_hint, pageCount)) },
                 isError = value.isNotEmpty() && !valid,
@@ -55,4 +60,11 @@ fun DocumentPageJumpDialog(
             TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) }
         },
     )
+}
+
+@Preview(name = "Ir para página", widthDp = 390, locale = "pt-rBR")
+@Preview(name = "Ir para página fonte ampliada", widthDp = 320, locale = "pt-rBR", fontScale = 2f)
+@Composable
+private fun DocumentPageJumpDialogPreview() {
+    ScaniqoTheme { DocumentPageJumpDialog(pageCount = 20, onDismiss = {}, onPage = {}) }
 }

@@ -33,6 +33,21 @@ class NavigationViewModelTest {
     }
 
     @Test
+    fun tagCreateAndEditRestoreTheirIdentityAndReturnToTheList() {
+        viewModel.navigateTo(AppRoute.Tags)
+        val serializer = NavBackStackSerializer(AppRoute.serializer())
+        for (editor in listOf(AppRoute.TagEditor(), AppRoute.TagEditor(Long.MAX_VALUE - 1))) {
+            viewModel.navigateTo(editor)
+            val restored = Json.decodeFromString(serializer, Json.encodeToString(
+                serializer, NavBackStack<AppRoute>(*viewModel.backStack.toTypedArray()),
+            ))
+            assertEquals(listOf(AppRoute.Documents, AppRoute.Tags, editor), restored.toList())
+            viewModel.goBack()
+            assertEquals(AppRoute.Tags, viewModel.backStack.last())
+        }
+    }
+
+    @Test
     fun documentsIsTheInitialDestinationAndCannotBeRemoved() {
         assertEquals(listOf(AppRoute.Documents), viewModel.backStack)
 

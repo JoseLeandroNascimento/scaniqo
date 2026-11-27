@@ -41,8 +41,8 @@
     <string name="tools_signature_down">تحريك التوقيع إلى أسفل</string>
     <string name="tools_discard_title">تجاهل التغييرات؟</string>
     <string name="tools_discard_body">لم تُحفظ تغييرات هذا التعديل في PDF بعد.</string>
-    <string name="tools_keep_editing">متابعة التعديل</string>
-    <string name="tools_discard">تجاهل وخروج</string>
+    <string name="tools_keep_editing">متابعة</string>
+    <string name="tools_discard">تجاهل</string>
     <string name="tools_cleanup_error">تعذر إغلاق المحرر بأمان. أعد المحاولة.</string>
     <string name="tools_export_save_first">احفظ التغييرات قبل التنزيل أو المشاركة.</string>
     <string name="tools_recovery_description">كلمة مرور هذا PDF غير متاحة في خزنة كلمات المرور. استخدم كلمة مرور الملف الأصلية لاستعادة الوصول.</string>

@@ -44,6 +44,8 @@ import com.joseleandro.scaniqo.domain.model.SignatureFont
 import com.joseleandro.scaniqo.domain.model.SignaturePoint
 import com.joseleandro.scaniqo.domain.model.SignatureStroke
 import com.joseleandro.scaniqo.ui.components.DialogActions
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
+import com.joseleandro.scaniqo.ui.theme.DocumentPaperColors
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,48 +63,58 @@ fun SignatureEditorScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            Column {
-                TopAppBar(
-                    title = {
-                        Text(
-                            stringResource(if (editor.editingId == null) CoreResourcesR.string.runtime_signature_create else R.string.runtime_signature_edit),
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            enabled = !editor.isSaving,
-                            onClick = { onEvent(SignaturesEvent.EditorBack) },
-                        ) {
-                            Icon(painterResource(CoreResourcesR.drawable.arrow_back_24px), stringResource(CoreResourcesR.string.runtime_back))
-                        }
-                    },
-                    actions = {
-                        Button(
-                            onClick = { onEvent(SignaturesEvent.RequestSave) },
-                            enabled = editor.canSave && !editor.showSaveDialog && (!editor.input.isImage || previewReady),
-                            modifier = Modifier.padding(end = 12.dp).heightIn(min = 48.dp)
-                                .testTag("signature_save")
-                                .semantics { contentDescription = saveDescription },
-                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
-                        ) {
-                            if (editor.isSaving) {
-                                CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-                            } else {
-                                Icon(painterResource(CoreResourcesR.drawable.ic_check_24), null, Modifier.size(18.dp))
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                val iconOnlySave = maxWidth < 600.dp && LocalDensity.current.fontScale > 1.3f
+                Column {
+                    TopAppBar(
+                        expandedHeight = if (iconOnlySave) {
+                            with(LocalDensity.current) { MaterialTheme.typography.titleMedium.lineHeight.toDp() * 2 } + 16.dp
+                        } else 64.dp,
+                        title = {
+                            Text(
+                                stringResource(if (editor.editingId == null) CoreResourcesR.string.runtime_signature_create else R.string.runtime_signature_edit),
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                enabled = !editor.isSaving,
+                                onClick = { onEvent(SignaturesEvent.EditorBack) },
+                            ) {
+                                Icon(painterResource(CoreResourcesR.drawable.arrow_back_24px), stringResource(CoreResourcesR.string.runtime_back))
                             }
-                            Spacer(Modifier.width(6.dp))
-                            Text(stringResource(CoreResourcesR.string.runtime_save), maxLines = 1)
-                        }
-                    },
-                )
-                SignatureInputTabs(
-                    selectedInput = editor.input,
-                    onSelect = { onEvent(SignaturesEvent.InputChanged(it)) },
-                    enabled = !busy && !editor.showSaveDialog,
-                )
+                        },
+                        actions = {
+                            Button(
+                                onClick = { onEvent(SignaturesEvent.RequestSave) },
+                                enabled = editor.canSave && !editor.showSaveDialog && (!editor.input.isImage || previewReady),
+                                modifier = Modifier.padding(end = 12.dp)
+                                    .then(if (iconOnlySave) Modifier.size(48.dp) else Modifier.heightIn(min = 48.dp))
+                                    .testTag("signature_save")
+                                    .semantics { contentDescription = saveDescription },
+                                contentPadding = if (iconOnlySave) PaddingValues(12.dp)
+                                    else PaddingValues(horizontal = 14.dp, vertical = 8.dp),
+                            ) {
+                                if (editor.isSaving) {
+                                    CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                                } else {
+                                    Icon(painterResource(CoreResourcesR.drawable.ic_check_24), null, Modifier.size(18.dp))
+                                }
+                                if (!iconOnlySave) {
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(stringResource(CoreResourcesR.string.runtime_save), maxLines = 1)
+                                }
+                            }
+                        },
+                    )
+                    SignatureInputTabs(
+                        selectedInput = editor.input,
+                        onSelect = { onEvent(SignaturesEvent.InputChanged(it)) },
+                        enabled = !busy && !editor.showSaveDialog,
+                    )
+                }
             }
         },
     ) { padding ->
@@ -148,6 +160,7 @@ fun SignatureEditorScreen(
                         onValueChange = { onEvent(SignaturesEvent.TextChanged(it)) },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(CoreResourcesR.string.runtime_signature_text)) },
+                        shape = ScaniqoFieldDefaults.shape,
                         singleLine = true,
                         enabled = !editor.isSaving,
                     )
@@ -171,6 +184,9 @@ fun SignatureEditorScreen(
                         }
                     }
                     Text(stringResource(R.string.runtime_signature_font), style = MaterialTheme.typography.titleSmall)
+                    val fontLabelStyle = MaterialTheme.typography.labelMedium
+                    val fontLabelMeasurer = rememberTextMeasurer()
+                    val density = LocalDensity.current
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         items(listOf(
                             SignatureFont.CURSIVE,
@@ -182,10 +198,14 @@ fun SignatureEditorScreen(
                             SignatureFont.MONOSPACED,
                         )) { font ->
                             val selected = editor.font == font
+                            val fontLabel = font.label()
+                            val cardWidth = with(density) {
+                                fontLabelMeasurer.measure(AnnotatedString(fontLabel), fontLabelStyle).size.width.toDp() + 24.dp
+                            }.coerceAtLeast(152.dp)
                             Card(
                                 onClick = { onEvent(SignaturesEvent.FontChanged(font)) },
                                 enabled = !editor.isSaving,
-                                modifier = Modifier.width(152.dp).height(98.dp),
+                                modifier = Modifier.width(cardWidth).heightIn(min = 98.dp),
                                 border = BorderStroke(
                                     if (selected) 2.dp else 1.dp,
                                     if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
@@ -195,8 +215,8 @@ fun SignatureEditorScreen(
                                 ),
                             ) {
                                 Column(
-                                    Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 10.dp),
-                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     Text(
                                         text = editor.text.ifBlank { stringResource(CoreResourcesR.string.runtime_signature_placeholder) },
@@ -207,8 +227,8 @@ fun SignatureEditorScreen(
                                         color = MaterialTheme.colorScheme.onSurface,
                                     )
                                     Text(
-                                        text = font.label(),
-                                        style = MaterialTheme.typography.labelMedium,
+                                        text = fontLabel,
+                                        style = fontLabelStyle,
                                         color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                 }
@@ -308,6 +328,7 @@ private fun SignatureSaveDialog(
                     value = editor.name,
                     onValueChange = { onEvent(SignaturesEvent.NameChanged(it)) },
                     label = { Text(stringResource(CoreResourcesR.string.runtime_library_name)) },
+                    shape = ScaniqoFieldDefaults.shape,
                     singleLine = true,
                     enabled = !editor.isSaving,
                     modifier = Modifier.fillMaxWidth().testTag("signature_name"),
@@ -368,7 +389,7 @@ private fun SignatureDrawingPad(editor: SignatureEditorState, onEvent: (Signatur
     ) {
         Box(Modifier.fillMaxWidth().aspectRatio(2f)) {
             if (editor.strokes.isEmpty() && currentPoints.isEmpty()) {
-                Text(stringResource(CoreResourcesR.string.runtime_draw_here), Modifier.align(Alignment.Center), color = Color(0xFF72808A))
+                Text(stringResource(CoreResourcesR.string.runtime_draw_here), Modifier.align(Alignment.Center), color = DocumentPaperColors.supportingText)
             }
             Canvas(
                 Modifier.fillMaxSize().pointerInput(editor.isSaving) {
@@ -432,6 +453,7 @@ private fun SignatureDrawingPad(editor: SignatureEditorState, onEvent: (Signatur
 @Preview(name = "Criar assinatura dobrável", widthDp = 673, heightDp = 841, locale = "pt-rBR")
 @Preview(name = "Criar assinatura estreita", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")
 @Preview(name = "Criar assinatura escuro", showBackground = true, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Criar assinatura fonte 2", widthDp = 320, heightDp = 800, fontScale = 2f, locale = "pt-rBR")
 @Composable
 private fun SignatureEditorPreview() {
     ScaniqoTheme {
@@ -440,5 +462,15 @@ private fun SignatureEditorPreview() {
             onEvent = {},
             onPickImage = {},
         )
+    }
+}
+
+@Preview(name = "Papel de assinatura claro", widthDp = 320, locale = "pt-rBR")
+@Preview(name = "Papel de assinatura escuro", widthDp = 320, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Papel de assinatura fonte 2", widthDp = 320, locale = "pt-rBR", fontScale = 2f)
+@Composable
+private fun SignatureDrawingPadPreview() {
+    ScaniqoTheme {
+        SignatureDrawingPad(SignatureEditorState(input = SignatureInput.DRAW), onEvent = {})
     }
 }

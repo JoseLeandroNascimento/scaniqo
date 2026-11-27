@@ -7,6 +7,7 @@ import com.joseleandro.scaniqo.core.ads.RewardedTool
 import com.joseleandro.scaniqo.core.ads.ToolAdAccessPolicy
 import com.joseleandro.scaniqo.core.ads.ToolAdPermit
 import com.joseleandro.scaniqo.core.security.PasswordAccess
+import com.joseleandro.scaniqo.core.security.isDocumentPasswordKey
 import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultRecoveryException
 import com.joseleandro.scaniqo.core.security.PasswordVersionMissingException
@@ -184,7 +185,8 @@ class DocumentQuickMergeViewModel(
                             supplied != null -> supplied
                             item.uri in manualUris -> throw PdfMergePasswordRequiredException(item.uri)
                             key == null -> null
-                            !passwords.state.value.isConfigured || passwords.state.value.recoveryRequired ->
+                            !passwords.isPasswordAvailable(key) &&
+                                (isDocumentPasswordKey(key) || !passwords.state.value.isConfigured || passwords.state.value.recoveryRequired) ->
                                 throw PdfMergePasswordRequiredException(item.uri)
                             else -> try {
                                 passwords.withPassword(key) { it }

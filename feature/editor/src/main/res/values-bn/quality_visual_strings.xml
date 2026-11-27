@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">প্রিন্ট করতে ও সূক্ষ্ম বিবরণ রাখতে।</string>
+    <string name="quality_visual_balanced_use">প্রতিদিন পড়া ও শেয়ার করার জন্য।</string>
+    <string name="quality_visual_small_use">ছোট আকারের ফাইল পাঠাতে।</string>
+    <string name="quality_visual_ocr_description">স্ক্যান করা পৃষ্ঠায় শব্দ খুঁজুন।</string>
+</resources>

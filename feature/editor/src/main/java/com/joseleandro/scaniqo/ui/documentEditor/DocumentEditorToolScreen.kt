@@ -5,11 +5,14 @@ import com.joseleandro.scaniqo.feature.editor.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
@@ -50,7 +53,10 @@ import com.joseleandro.scaniqo.domain.model.PdfPageSpec
 import com.joseleandro.scaniqo.domain.model.PdfWorkspace
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentLayoutSheetContent
+import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentProtectionOptions
+import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentQualitySheetContent
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentPagesSheetContent
+import com.joseleandro.scaniqo.ui.documentEditor.components.PageManagementMaxWidth
 import com.joseleandro.scaniqo.ui.documentEditor.components.DocumentOverlayEditor
 import com.joseleandro.scaniqo.ui.documentEditor.event.DocumentToolsEvent
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentTool
@@ -183,12 +189,35 @@ internal fun DocumentEditorToolScreen(
                             registerPrimaryAction = registerPrimaryAction,
                             registerOverflowMenu = registerOverflowMenu,
                         )
-                        DocumentTool.PAGES -> Column(
-                            Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp),
+                        DocumentTool.QUALITY -> DocumentQualitySheetContent(
+                            interactive, onEvent, Modifier.fillMaxSize(), onDraftChanged, onFinish,
+                        )
+                        DocumentTool.PROTECTION -> DocumentProtectionOptions(
+                            interactive, onEvent, Modifier.fillMaxSize(),
+                            onDraftChanged = onDraftChanged, onFinish = onFinish,
+                        )
+                        DocumentTool.PAGES -> BoxWithConstraints(
+                            Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.TopCenter,
                         ) {
-                            DocumentPagesSheetContent(interactive, onEvent, Modifier.weight(1f))
-                            Button(onClick = onBack, enabled = canBack, modifier = Modifier.fillMaxWidth()) {
-                                Text(stringResource(R.string.editor_tool_done))
+                            val wideLayout = maxWidth >= 600.dp
+                            Column(
+                                Modifier.widthIn(max = PageManagementMaxWidth).fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                DocumentPagesSheetContent(interactive, onEvent, Modifier.weight(1f))
+                                Button(
+                                    onClick = onBack,
+                                    enabled = canBack,
+                                    modifier = if (wideLayout) {
+                                        Modifier.align(Alignment.End).widthIn(min = 160.dp, max = 320.dp)
+                                            .heightIn(min = 48.dp)
+                                    } else {
+                                        Modifier.fillMaxWidth()
+                                    },
+                                ) {
+                                    Text(stringResource(R.string.editor_tool_done))
+                                }
                             }
                         }
                         DocumentTool.FORMS, DocumentTool.ANNOTATIONS, DocumentTool.WATERMARK, DocumentTool.REDACTION ->
@@ -209,8 +238,20 @@ private fun DocumentLayoutScreenPreview() = DocumentEditorToolPreview(DocumentTo
 
 @Preview(name = "Páginas — tela", widthDp = 390, heightDp = 780, showBackground = true)
 @Preview(name = "Páginas — fonte ampliada", widthDp = 360, heightDp = 780, fontScale = 1.3f, showBackground = true)
+@Preview(name = "Páginas — tablet", widthDp = 1280, heightDp = 800, showBackground = true, locale = "pt-rBR")
+@Preview(name = "Páginas — janela curta", widthDp = 840, heightDp = 480, showBackground = true, locale = "pt-rBR")
 @Composable
 private fun DocumentPagesScreenPreview() = DocumentEditorToolPreview(DocumentTool.PAGES)
+
+@Preview(name = "Qualidade — tela", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Preview(name = "Qualidade — tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Composable
+private fun DocumentQualityScreenPreview() = DocumentEditorToolPreview(DocumentTool.QUALITY)
+
+@Preview(name = "Proteção — tela", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Preview(name = "Proteção — tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
+@Composable
+private fun DocumentProtectionScreenPreview() = DocumentEditorToolPreview(DocumentTool.PROTECTION)
 
 @Preview(name = "Preencher — tela", widthDp = 390, heightDp = 780, locale = "pt-rBR")
 @Preview(name = "Preencher — fonte ampliada", widthDp = 320, heightDp = 640, fontScale = 1.5f, locale = "pt-rBR")

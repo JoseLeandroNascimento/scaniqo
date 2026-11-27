@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import com.joseleandro.scaniqo.ui.components.DialogActions
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.OutlinedTextField
@@ -46,10 +47,8 @@ import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 internal fun PdfImportDialogs(
     state: PdfImportUiState,
     password: String,
-    isPasswordConfigured: Boolean,
     onPasswordChange: (String) -> Unit,
     onSubmitPassword: () -> Unit,
-    onPasswordSettings: () -> Unit,
     onCancel: () -> Unit,
 ) {
     if (state.isLoading) {
@@ -71,17 +70,14 @@ internal fun PdfImportDialogs(
                     Text(stringResource(CoreResourcesR.string.runtime_pdf_password_body))
                     OutlinedTextField(
                         password,
-                        onValueChange = { onPasswordChange(it.take(127)) },
+                        onValueChange = onPasswordChange,
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(CoreResourcesR.string.runtime_pdf_password)) },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         singleLine = true,
+                        shape = ScaniqoFieldDefaults.shape,
                     )
-                    if (!isPasswordConfigured) {
-                        Text(stringResource(CoreResourcesR.string.runtime_pdf_password_setup))
-                        TextButton(onClick = onPasswordSettings) { Text(stringResource(CoreResourcesR.string.runtime_password_manage)) }
-                    }
                     state.error?.let { Text(localizedRuntimeMessage(it), color = MaterialTheme.colorScheme.error) }
                 }
             },
@@ -91,7 +87,7 @@ internal fun PdfImportDialogs(
                     onConfirm = onSubmitPassword,
                     dismissText = stringResource(CoreResourcesR.string.runtime_cancel),
                     onDismiss = onCancel,
-                    confirmEnabled = isPasswordConfigured && password.isNotEmpty(),
+                    confirmEnabled = password.isNotEmpty(),
                 )
             },
         )
@@ -185,10 +181,22 @@ private fun PdfImportPreparingPreview() {
         PdfImportDialogs(
             state = PdfImportUiState(isActive = true, isLoading = true),
             password = "",
-            isPasswordConfigured = false,
             onPasswordChange = {},
             onSubmitPassword = {},
-            onPasswordSettings = {},
+            onCancel = {},
+        )
+    }
+}
+
+@Preview(name = "Senha para importar PDF", widthDp = 390, heightDp = 780, locale = "pt-rBR")
+@Composable
+private fun PdfImportPasswordPreview() {
+    ScaniqoTheme {
+        PdfImportDialogs(
+            state = PdfImportUiState(isActive = true, needsPassword = true),
+            password = "senha",
+            onPasswordChange = {},
+            onSubmitPassword = {},
             onCancel = {},
         )
     }
@@ -201,10 +209,8 @@ private fun PdfImportSavingPreview() {
         PdfImportDialogs(
             state = PdfImportUiState(isActive = true, isLoading = true, isSavingToLibrary = true),
             password = "",
-            isPasswordConfigured = false,
             onPasswordChange = {},
             onSubmitPassword = {},
-            onPasswordSettings = {},
             onCancel = {},
         )
     }

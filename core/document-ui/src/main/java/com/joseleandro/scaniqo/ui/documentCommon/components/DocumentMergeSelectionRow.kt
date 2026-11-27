@@ -3,26 +3,17 @@ package com.joseleandro.scaniqo.ui.documentCommon.components
 import com.joseleandro.scaniqo.core.documentui.R
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,14 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.core.localization.bidiArgument
 import com.joseleandro.scaniqo.domain.model.DocumentModel
@@ -55,6 +44,8 @@ internal fun DocumentMergeSelectionRow(
     onMove: (Int) -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
+    document: DocumentModel? = null,
+    floating: Boolean = false,
 ) {
     val up = stringResource(R.string.merge_selection_move_up, bidiArgument(item.name))
     val down = stringResource(R.string.merge_selection_move_down, bidiArgument(item.name))
@@ -66,46 +57,20 @@ internal fun DocumentMergeSelectionRow(
     }
     var menuExpanded by remember(item.key) { mutableStateOf(false) }
     LaunchedEffect(enabled) { if (!enabled) menuExpanded = false }
-    Surface(
-        modifier = modifier.fillMaxWidth().semantics { customActions = actions },
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .6f)),
-        shape = MaterialTheme.shapes.large,
-    ) {
-        Row(
-            Modifier.fillMaxWidth().heightIn(min = 72.dp).padding(start = 14.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .65f),
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            ) {
-                Box(Modifier.size(32.dp), contentAlignment = Alignment.Center) {
-                    Text("${index + 1}", style = MaterialTheme.typography.labelLarge.copy(textDirection = TextDirection.Ltr))
-                }
+    val pages = pdfSelectionMetadata(item.pageCount, document?.sizeBytes)
+    PdfSelectionCard(
+        name = item.name,
+        metadata = if (item.isCurrentDocument) stringResource(CoreResourcesR.string.merge_selection_current, pages) else pages,
+        thumbnail = { DocumentMergeThumbnail(item, it, document) },
+        modifier = modifier.semantics { customActions = actions },
+        selected = floating,
+        leading = {
+            Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
+                Text("${index + 1}", style = MaterialTheme.typography.labelLarge.copy(textDirection = TextDirection.Ltr),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    item.name,
-                    style = MaterialTheme.typography.titleSmall.copy(textDirection = TextDirection.ContentOrLtr),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                val pages = item.pageCount?.let { pluralStringResource(CoreResourcesR.plurals.document_page_count, it, it) }
-                    ?: stringResource(CoreResourcesR.string.merge_selection_external)
-                Text(
-                    if (item.isCurrentDocument) stringResource(CoreResourcesR.string.merge_selection_current, pages) else pages,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (item.protectionKeyId != null) {
-                Icon(painterResource(CoreResourcesR.drawable.ic_document_lock),
-                    stringResource(CoreResourcesR.string.merge_app_protected), Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
+        },
+        trailing = {
             Box {
                 IconButton(onClick = { menuExpanded = true }, enabled = enabled) {
                     Icon(
@@ -139,8 +104,8 @@ internal fun DocumentMergeSelectionRow(
                     }
                 }
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
@@ -151,41 +116,31 @@ internal fun DocumentMergeAvailableRow(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
 ) {
-    val background by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = .45f)
-        else MaterialTheme.colorScheme.surfaceContainerLow,
-        animationSpec = tween(180), label = "Document selection",
-    )
-    Surface(
-        modifier = modifier.fillMaxWidth().toggleable(
+    PdfSelectionCard(
+        name = document.name,
+        metadata = pdfSelectionMetadata(document.pageCount, document.sizeBytes),
+        thumbnail = { DocumentThumbnail(document, it) },
+        modifier = modifier.toggleable(
             value = selected, enabled = enabled, role = Role.Checkbox, onValueChange = { onSelect() },
         ),
-        shape = MaterialTheme.shapes.large,
-        color = background,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().heightIn(min = 68.dp).padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Icon(painterResource(CoreResourcesR.drawable.ic_tag_document), null, Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.primary)
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(document.name, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleSmall.copy(textDirection = TextDirection.ContentOrLtr))
-                Text(
-                    pluralStringResource(CoreResourcesR.plurals.document_page_count, document.pageCount, document.pageCount),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (document.isProtected) {
-                Icon(painterResource(CoreResourcesR.drawable.ic_document_lock),
-                    stringResource(CoreResourcesR.string.merge_app_protected), Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            Icon(painterResource(if (selected) CoreResourcesR.drawable.ic_check_24 else CoreResourcesR.drawable.add_24px), null,
-                Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
+        selected = selected,
+        trailing = { Checkbox(checked = selected, onCheckedChange = null, enabled = enabled) },
+    )
+}
+
+@Composable
+fun DocumentMergeThumbnail(
+    item: DocumentMergeItem,
+    modifier: Modifier = Modifier,
+    document: DocumentModel? = null,
+) {
+    when {
+        document != null -> DocumentThumbnail(document, modifier)
+        item.protectionKeyId != null -> Box(modifier, contentAlignment = Alignment.Center) {
+            Icon(painterResource(CoreResourcesR.drawable.ic_document_lock),
+                stringResource(CoreResourcesR.string.merge_app_protected),
+                Modifier.size(24.dp), tint = MaterialTheme.colorScheme.primary)
         }
+        else -> DocumentPageThumbnail(item.uri, 0, modifier)
     }
 }

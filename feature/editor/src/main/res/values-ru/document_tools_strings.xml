@@ -41,8 +41,8 @@
     <string name="tools_signature_down">Сдвинуть подпись вниз</string>
     <string name="tools_discard_title">Отменить изменения?</string>
     <string name="tools_discard_body">Изменения ещё не сохранены в PDF.</string>
-    <string name="tools_keep_editing">Продолжить редактирование</string>
-    <string name="tools_discard">Отменить и выйти</string>
+    <string name="tools_keep_editing">Продолжить</string>
+    <string name="tools_discard">Отменить</string>
     <string name="tools_cleanup_error">Не удалось безопасно закрыть редактор. Повторите попытку.</string>
     <string name="tools_export_save_first">Сохраните изменения перед скачиванием или отправкой.</string>
     <string name="tools_recovery_description">Пароль этого PDF недоступен в хранилище. Используйте исходный пароль файла для восстановления доступа.</string>

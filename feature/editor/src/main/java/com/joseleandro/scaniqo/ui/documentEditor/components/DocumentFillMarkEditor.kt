@@ -10,7 +10,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -422,27 +424,12 @@ internal fun DocumentFillMarkEditor(
             if (transformVisible) {
                 Spacer(Modifier.height(reservedHeight))
             } else {
-                Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    Column(
-                        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        if (errorRes != 0) Text(
-                            stringResource(errorRes),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                        DocumentEditorPrimaryActions(
-                            insertLabel = stringResource(R.string.fill_context_insert),
-                            doneLabel = stringResource(R.string.editor_tool_done),
-                            onInsert = { stopTyping(); showInsert = true },
-                            onDone = ::finishTool,
-                            enabled = editable && !finishInProgress,
-                            insertTag = "fill_insert",
-                            doneTag = "fill_finish",
-                        )
-                    }
-                }
+                DocumentFillMarkActions(
+                    onInsert = { stopTyping(); showInsert = true },
+                    onDone = ::finishTool,
+                    enabled = editable && !finishInProgress,
+                    errorText = errorRes.takeIf { it != 0 }?.let { stringResource(it) },
+                )
             }
         }
         property?.let { current ->
@@ -542,7 +529,7 @@ internal fun DocumentFillMarkEditor(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.overlay_save_value_hint))
                 OutlinedTextField(valueLabel, { if (it.length <= 60) valueLabel = it },
-                    label = { Text(stringResource(R.string.overlay_value_label)) }, singleLine = true)
+                    label = { Text(stringResource(R.string.overlay_value_label)) }, singleLine = true, shape = ScaniqoFieldDefaults.shape)
             }
         },
         confirmButton = {
@@ -555,4 +542,40 @@ internal fun DocumentFillMarkEditor(
             )
         },
     )
+}
+
+@Composable
+internal fun DocumentFillMarkActions(
+    onInsert: () -> Unit,
+    onDone: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    errorText: String? = null,
+) {
+    Surface(modifier = modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.surfaceContainerLow) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            if (errorText != null) {
+                Text(
+                    text = errorText,
+                    modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            DocumentEditorPrimaryActions(
+                insertLabel = stringResource(R.string.fill_context_insert),
+                doneLabel = stringResource(R.string.editor_tool_done),
+                onInsert = onInsert,
+                onDone = onDone,
+                enabled = enabled,
+                modifier = Modifier.widthIn(max = 480.dp),
+                insertTag = "fill_insert",
+                doneTag = "fill_finish",
+            )
+        }
+    }
 }

@@ -17,8 +17,8 @@
     <string name="signature_crop">اقتصاص</string>
     <string name="signature_cancel_title">تجاهل موضع التوقيع؟</string>
     <string name="signature_cancel_body">لم يُطبّق هذا التوقيع بعد. ستُحفظ بقية التغييرات في المستند.</string>
-    <string name="signature_cancel_confirm">تجاهل التوقيع</string>
-    <string name="signature_keep_editing">متابعة الضبط</string>
+    <string name="signature_cancel_confirm">تجاهل</string>
+    <string name="signature_keep_editing">متابعة</string>
     <string name="signature_back">العودة إلى المحرر</string>
     <string name="signature_edit_placed">تعديل التوقيع %1$d</string>
     <string name="signature_retry">إعادة المحاولة</string>

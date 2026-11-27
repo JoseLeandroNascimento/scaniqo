@@ -2,14 +2,22 @@ package com.joseleandro.scaniqo.ui.signatures
 
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -25,6 +33,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import androidx.core.net.toUri
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -97,8 +109,44 @@ fun SignatureImage(
     Box(modifier, contentAlignment = Alignment.Center) {
         when {
             image != null -> Image(image, stringResource(CoreResourcesR.string.runtime_signature_placeholder), Modifier.fillMaxSize(), contentScale = contentScale)
-            current == null -> CircularProgressIndicator()
-            else -> Text(stringResource(CoreResourcesR.string.runtime_image_unavailable))
+            else -> SignatureImageFeedback(loading = current == null, modifier = Modifier.fillMaxSize())
+        }
+    }
+}
+
+@Composable
+private fun SignatureImageFeedback(loading: Boolean, modifier: Modifier = Modifier) {
+    Surface(
+        modifier,
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        shape = MaterialTheme.shapes.small,
+    ) {
+        Box(Modifier.padding(8.dp), contentAlignment = Alignment.Center) {
+            if (loading) {
+                ScaniqoLoadingIndicator()
+            } else {
+                Text(
+                    stringResource(CoreResourcesR.string.runtime_image_unavailable),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
+@Preview(name = "Assinatura — feedback claro", widthDp = 320, locale = "pt-rBR")
+@Preview(name = "Assinatura — feedback escuro", widthDp = 320, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Assinatura — feedback fonte 2", widthDp = 320, locale = "pt-rBR", fontScale = 2f)
+@Composable
+private fun SignatureImageFeedbackPreview() {
+    ScaniqoTheme {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                SignatureImageFeedback(true, Modifier.fillMaxWidth().heightIn(min = 96.dp))
+                SignatureImageFeedback(false, Modifier.fillMaxWidth().heightIn(min = 96.dp))
+            }
         }
     }
 }

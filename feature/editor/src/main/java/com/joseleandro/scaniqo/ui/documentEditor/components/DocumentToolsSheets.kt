@@ -43,17 +43,7 @@ internal fun DocumentToolsSheets(
     state: DocumentToolsUiState,
     onEvent: (DocumentToolsEvent) -> Unit,
 ) {
-    val tool = state.tool
-    if ((tool == DocumentTool.QUALITY || tool == DocumentTool.PROTECTION) &&
-        state.workspace != null && !state.isLocked) {
-        ModalBottomSheet(
-            onDismissRequest = { if (!state.isBusy) onEvent(DocumentToolsEvent.DismissTool) },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            containerColor = MaterialTheme.colorScheme.surface,
-        ) {
-            DocumentToolSheetContent(state, onEvent)
-        }
-    }
+    // Editor tools use dedicated destinations; only confirmations are shown here.
     if (state.pendingDeletePageId != null) {
         AlertDialog(
             onDismissRequest = { onEvent(DocumentToolsEvent.DismissPageDeletion) },

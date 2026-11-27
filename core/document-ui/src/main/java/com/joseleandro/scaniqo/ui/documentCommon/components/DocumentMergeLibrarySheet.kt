@@ -5,7 +5,6 @@ import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,14 +17,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -91,33 +89,24 @@ fun DocumentMergeLibrarySheet(
                     leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_search), null, Modifier.size(20.dp)) },
                     singleLine = true, enabled = enabled,
                     modifier = Modifier.fillMaxWidth().semantics { contentDescription = searchLabel },
-                    shape = MaterialTheme.shapes.large,
+                    shape = ScaniqoFieldDefaults.shape,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { focus.clearFocus() }),
                 )
             }
             when {
-                isLoading -> Box(Modifier.fillMaxWidth().heightIn(min = 112.dp),
-                    contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-                loadError -> Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        stringResource(CoreResourcesR.string.documents_error_title),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    TextButton(onClick = onRetry, enabled = enabled) {
-                        Text(stringResource(CoreResourcesR.string.documents_retry))
-                    }
-                }
+                isLoading -> PdfSelectionFeedback("", loading = true)
+                loadError -> PdfSelectionFeedback(
+                    stringResource(CoreResourcesR.string.documents_error_title),
+                    onRetry = onRetry, enabled = enabled,
+                )
                 else -> LazyColumn(
                     Modifier.fillMaxWidth().heightIn(min = 96.dp, max = 360.dp).weight(1f, fill = false),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     if (matches.isEmpty()) item {
-                        Text(stringResource(if (documents.isEmpty()) R.string.merge_selection_library_empty
-                            else R.string.merge_app_no_results), Modifier.padding(vertical = 20.dp),
-                            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        PdfSelectionFeedback(stringResource(if (documents.isEmpty()) R.string.merge_selection_library_empty
+                            else R.string.merge_app_no_results))
                     }
                     items(matches, key = { it.id }) { document ->
                         DocumentMergeAvailableRow(

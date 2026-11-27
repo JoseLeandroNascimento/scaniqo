@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">सेव करें</string>
+    <string name="tag_unavailable">यह टैग अब उपलब्ध नहीं है।</string>
+    <string name="trash_actions">ट्रैश के विकल्प</string>
+    <string name="trash_restore_all">सभी वापस लाएँ</string>
+    <string name="trash_restored_all">दस्तावेज़ लाइब्रेरी में वापस लाए गए</string>
+    <string name="trash_restore_all_error">कुछ दस्तावेज़ वापस नहीं लाए जा सके। वे अभी भी ट्रैश में हैं। फिर कोशिश करें।</string>
+    <string name="trash_information">जानकारी</string>
+</resources>

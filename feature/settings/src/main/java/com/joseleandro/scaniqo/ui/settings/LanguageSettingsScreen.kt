@@ -4,6 +4,7 @@ import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import com.joseleandro.scaniqo.feature.settings.R
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,6 +33,7 @@ import com.joseleandro.scaniqo.core.localization.AppLanguages
 import com.joseleandro.scaniqo.core.localization.localizedDateTime
 import com.joseleandro.scaniqo.core.localization.withLocale
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
+import com.joseleandro.scaniqo.domain.model.AppColorTheme
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -109,15 +111,23 @@ internal fun LanguageSettingsScreen(
                         )),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Button(
-                        onClick = { onApply(selectedTag) },
-                        enabled = selectedTag != currentTag,
-                        modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 12.dp)
-                            .heightIn(min = 48.dp),
-                        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-                    ) {
-                        Text(stringResource(R.string.localization_apply))
+                    BoxWithConstraints(Modifier.widthIn(max = 720.dp).fillMaxWidth()) {
+                        val compact = maxWidth < 600.dp
+                        Box(
+                            Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
+                            contentAlignment = Alignment.CenterEnd,
+                        ) {
+                            Button(
+                                onClick = { onApply(selectedTag) },
+                                enabled = selectedTag != currentTag,
+                                modifier = (if (compact) Modifier.fillMaxWidth()
+                                    else Modifier.widthIn(min = 160.dp, max = 320.dp))
+                                    .heightIn(min = 48.dp),
+                                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+                            ) {
+                                Text(stringResource(R.string.localization_apply))
+                            }
+                        }
                     }
                 }
             }
@@ -191,6 +201,7 @@ private fun LanguageChoice(
             .selectable(selected, role = Role.RadioButton, onClick = onClick),
         shape = MaterialTheme.shapes.medium,
         color = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface,
+        border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -198,7 +209,8 @@ private fun LanguageChoice(
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(name, style = MaterialTheme.typography.titleSmall.copy(textDirection = TextDirection.Content))
                 if (name != subtitle) Text(subtitle, style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    color = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                        else MaterialTheme.colorScheme.onSurfaceVariant)
             }
             RadioButton(selected, onClick = null)
         }
@@ -212,4 +224,12 @@ private fun LanguageChoice(
 @Composable
 private fun LanguageSettingsPreview() {
     ScaniqoTheme { LanguageSettingsScreen("pt-BR", {}, {}) }
+}
+
+@Preview(name = "Idiomas Rose escuro", widthDp = 390, heightDp = 840, locale = "pt-rBR", fontScale = 1.5f)
+@Composable
+private fun LanguageSettingsRoseDarkPreview() {
+    ScaniqoTheme(darkTheme = true, colorTheme = AppColorTheme.ROSE) {
+        LanguageSettingsScreen("en-US", {}, {})
+    }
 }

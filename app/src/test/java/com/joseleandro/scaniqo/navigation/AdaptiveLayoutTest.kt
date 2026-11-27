@@ -6,23 +6,46 @@ import com.joseleandro.scaniqo.core.navigation.AppRoute
 import com.joseleandro.scaniqo.core.navigation.NavigationViewModel
 import com.joseleandro.scaniqo.core.navigation.SeparatingFold
 import com.joseleandro.scaniqo.core.navigation.foldSafeBounds
-import com.joseleandro.scaniqo.core.navigation.showNavigationRail
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.computeWindowSizeClass
+import com.joseleandro.scaniqo.core.navigation.navigationSuiteType
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AdaptiveLayoutTest {
+    private fun navigationType(width: Int, height: Int, route: AppRoute = AppRoute.Documents) =
+        navigationSuiteType(
+            WindowSizeClass.BREAKPOINTS_V2.computeWindowSizeClass(width.toFloat(), height.toFloat()),
+            route,
+        )
+
     @Test
-    fun railFollowsAvailableWidthAndLeavesDocumentWorkspacesFullScreen() {
-        assertFalse(showNavigationRail(599, AppRoute.Documents))
-        assertTrue(showNavigationRail(600, AppRoute.Documents))
-        assertTrue(showNavigationRail(840, AppRoute.Settings))
-        assertFalse(showNavigationRail(599, AppRoute.LanguageSettings))
-        assertTrue(showNavigationRail(600, AppRoute.LanguageSettings))
-        assertFalse(showNavigationRail(1200, AppRoute.DocumentReader(1)))
-        assertFalse(showNavigationRail(1200, AppRoute.DocumentViewer(1)))
-        assertFalse(showNavigationRail(1200, AppRoute.DocumentSignature(1)))
+    fun navigationAdaptsToWindowBoundariesAndShortWindows() {
+        assertEquals(NavigationSuiteType.None, navigationType(599, 800))
+        assertEquals(NavigationSuiteType.NavigationRail, navigationType(600, 800))
+        assertEquals(NavigationSuiteType.NavigationRail, navigationType(1199, 800))
+        assertEquals(NavigationSuiteType.NavigationDrawer, navigationType(1200, 800))
+        assertEquals(NavigationSuiteType.None, navigationType(1200, 479))
+        assertEquals(NavigationSuiteType.NavigationDrawer, navigationType(1200, 480))
+        assertEquals(NavigationSuiteType.NavigationRail, navigationType(840, 800, AppRoute.LanguageSettings))
+    }
+
+    @Test
+    fun documentWorkspacesKeepTheEntireWindowForTheirContent() {
+        listOf(
+            AppRoute.DocumentReader(1), AppRoute.DocumentViewer(1), AppRoute.DocumentSignature(1),
+        ).forEach { route ->
+            assertEquals(NavigationSuiteType.None, navigationType(1600, 900, route))
+        }
+    }
+
+    @Test
+    fun resizingBetweenTabletAndSplitScreenRestoresTheAppropriateNavigation() {
+        assertEquals(NavigationSuiteType.NavigationDrawer, navigationType(1280, 800))
+        assertEquals(NavigationSuiteType.None, navigationType(500, 800))
+        assertEquals(NavigationSuiteType.NavigationRail, navigationType(800, 1280))
+        assertEquals(NavigationSuiteType.NavigationDrawer, navigationType(1280, 800))
     }
 
     @Test

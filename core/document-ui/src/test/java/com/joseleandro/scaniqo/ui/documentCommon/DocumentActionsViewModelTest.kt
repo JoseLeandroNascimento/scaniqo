@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelStore
 import com.joseleandro.scaniqo.domain.model.DOCUMENT_NAME_MAX_LENGTH
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.TagModel
+import com.joseleandro.scaniqo.domain.repository.DocumentRepository
 import com.joseleandro.scaniqo.ui.documentCommon.effect.DocumentActionEffect
 import com.joseleandro.scaniqo.ui.documentCommon.event.DocumentActionEvent
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMessage
@@ -385,6 +386,7 @@ class DocumentActionsViewModelTest {
 
     @Test
     fun sharingPreparesAContentUriAndEmitsASingleEffect() = runTest(dispatcher) {
+        repository.documents.value = listOf(document)
         val effects = collectEffects()
         repository.writeGate = CompletableDeferred()
         viewModel.onDocumentAction(DocumentActionEvent.Share(document))
@@ -403,7 +405,86 @@ class DocumentActionsViewModelTest {
     }
 
     @Test
+    fun sharingResolvesTheLatestSavedPdfAndNameInsteadOfTheStaleLibrarySnapshot() = runTest(dispatcher) {
+        repository.documents.value = listOf(document)
+        val effects = collectEffects()
+        viewModel.onDocumentAction(DocumentActionEvent.Share(document))
+        val savedForm = document.copy(
+            name = "Formulário/preenchido.pdf",
+            pdfUri = "file:///documents/form-filled.pdf",
+            pageCount = 4,
+            sizeBytes = 8192,
+            thumbnailUri = "file:///documents/form-filled.jpg",
+        )
+        repository.documents.value = listOf(savedForm)
+        runCurrent()
+
+        assertEquals(listOf(savedForm), repository.shared)
+        assertEquals(listOf(DocumentActionEffect.SharePdf("content://shared/7.pdf", "Formulário_preenchido.pdf")), effects)
+        assertNull(viewModel.uiState.value.busyDocumentId)
+        assertNull(viewModel.uiState.value.message)
+    }
+
+    @Test
+    fun sharingARemovedDocumentDoesNotUseItsOldFileAndCanRetryAfterRestoration() = runTest(dispatcher) {
+        repository.trashedDocuments.value = listOf(document.copy(deletedAt = 10L))
+        val effects = collectEffects()
+        viewModel.onDocumentAction(DocumentActionEvent.Share(document))
+        runCurrent()
+
+        assertTrue(repository.shared.isEmpty())
+        assertTrue(effects.isEmpty())
+        assertNull(viewModel.uiState.value.busyDocumentId)
+        assertEquals(DocumentMessage.SHARE_ERROR, viewModel.uiState.value.message)
+
+        val restored = document.copy(name = "Restaurado", pdfUri = "file:///documents/restored.pdf")
+        repository.documents.value = listOf(restored)
+        viewModel.onDocumentAction(DocumentActionEvent.Share(document))
+        runCurrent()
+
+        assertEquals(listOf(restored), repository.shared)
+        assertEquals(listOf(DocumentActionEffect.SharePdf("content://shared/7.pdf", "Restaurado.pdf")), effects)
+        assertNull(viewModel.uiState.value.message)
+        assertNull(viewModel.uiState.value.busyDocumentId)
+    }
+
+    @Test
+    fun shareLookupFailureReportsAnErrorWithoutPreparingOrLaunchingAStalePdf() = runTest(dispatcher) {
+        val failingRepository = object : DocumentRepository by repository {
+            override suspend fun findById(id: Long): DocumentModel? = error("Falha de leitura")
+        }
+        val model = DocumentActionsViewModel(failingRepository, tagRepository, SavedStateHandle())
+            .also { viewModelStore.put("lookup-failure", it) }
+        val effects = collectEffects(model)
+        model.onDocumentAction(DocumentActionEvent.Share(document))
+        runCurrent()
+
+        assertTrue(repository.shared.isEmpty())
+        assertTrue(effects.isEmpty())
+        assertEquals(DocumentMessage.SHARE_ERROR, model.uiState.value.message)
+        assertNull(model.uiState.value.busyDocumentId)
+    }
+
+    @Test
+    fun cancelledShareLookupReleasesBusyStateWithoutReportingAnError() = runTest(dispatcher) {
+        val cancellingRepository = object : DocumentRepository by repository {
+            override suspend fun findById(id: Long): DocumentModel? = throw CancellationException("Cancelado")
+        }
+        val model = DocumentActionsViewModel(cancellingRepository, tagRepository, SavedStateHandle())
+            .also { viewModelStore.put("lookup-cancelled", it) }
+        val effects = collectEffects(model)
+        model.onDocumentAction(DocumentActionEvent.Share(document))
+        runCurrent()
+
+        assertTrue(repository.shared.isEmpty())
+        assertTrue(effects.isEmpty())
+        assertNull(model.uiState.value.message)
+        assertNull(model.uiState.value.busyDocumentId)
+    }
+
+    @Test
     fun sharePreparationAndLauncherFailuresAreReported() = runTest(dispatcher) {
+        repository.documents.value = listOf(document)
         repository.shareFailure = IllegalStateException("Arquivo ausente")
         viewModel.onDocumentAction(DocumentActionEvent.Share(document))
         runCurrent()
@@ -774,10 +855,10 @@ class DocumentActionsViewModelTest {
         runCurrent()
     }
 
-    private fun TestScope.collectEffects(): List<DocumentActionEffect> {
+    private fun TestScope.collectEffects(model: DocumentActionsViewModel = viewModel): List<DocumentActionEffect> {
         val captured = mutableListOf<DocumentActionEffect>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.effects.collect { captured += it }
+            model.effects.collect { captured += it }
         }
         return captured
     }

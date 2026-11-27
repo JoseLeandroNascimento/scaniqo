@@ -23,6 +23,7 @@ import com.joseleandro.scaniqo.domain.model.PdfMergeLimitException
 import com.joseleandro.scaniqo.domain.model.PdfMergePasswordRequiredException
 import com.joseleandro.scaniqo.domain.model.PdfMergeSource
 import com.joseleandro.scaniqo.domain.model.PdfPageSpec
+import com.joseleandro.scaniqo.domain.model.PdfPageLayout
 import com.joseleandro.scaniqo.domain.model.PdfPagePreview
 import com.joseleandro.scaniqo.domain.model.PdfPasswordRequiredException
 import com.joseleandro.scaniqo.domain.model.PdfSignaturePlacement
@@ -92,18 +93,23 @@ class AndroidPdfEditorRepository(
                         it.isFile && it.canonicalFile.parentFile == project.canonicalFile
                     }
                     val recipe = project?.let(::readRecipe)
+                    val useSavedDocument = recipe?.useSavedDocumentAsSource == true
                     val defaults = settingsRepository?.settings?.value ?: AppSettings()
-                    if (recipe != null && original == null) {
+                    if (recipe != null && !useSavedDocument && original == null) {
                         throw PdfImportException("As fontes originais deste documento não estão disponíveis.")
                     }
                     val source = File(directory, "source_${UUID.randomUUID()}.pdf")
-                    val pageCount = if (original != null && recipe != null && !document.isProtected) {
+                    val pageCount = if (original != null && recipe != null &&
+                        !useSavedDocument && !document.isProtected
+                    ) {
                         // Fontes do projeto já foram validadas; não regravamos o PDF ao abrir.
                         files.copy(files.uri(original), source)
                         countPreviewPages(source)
                     } else {
                         val input = File(directory, "incoming.pdf")
-                        files.copy(original?.let(files::uri) ?: document.pdfUri, input)
+                        val inputUri = if (useSavedDocument) document.pdfUri
+                            else original?.let(files::uri) ?: document.pdfUri
+                        files.copy(inputUri, input)
                         try {
                             composer.load(input, password).use { loaded ->
                                 if (document.isProtected != loaded.isEncrypted) {
@@ -120,9 +126,14 @@ class AndroidPdfEditorRepository(
                     }
                     files.checkSize(source)
                     sourcePageCounts[PdfSourceStamp.from(source)] = pageCount
-                    val pages = if (recipe == null) {
+                    val pages = if (recipe == null || useSavedDocument) {
                         (0 until pageCount).map { index ->
-                            PdfPageSpec(UUID.randomUUID().toString(), files.uri(source), index)
+                            // O PDF final já contém layout, assinaturas, marcações e números de página.
+                            // Reaplicar a receita antiga duplicaria esses elementos.
+                            PdfPageSpec(
+                                UUID.randomUUID().toString(), files.uri(source), index,
+                                layout = PdfPageLayout(edgeToEdge = useSavedDocument),
+                            )
                         }
                     } else {
                         restorePages(recipe, requireNotNull(project), directory, source, pageCount)
@@ -133,13 +144,13 @@ class AndroidPdfEditorRepository(
                         workspaceId = directory.name,
                         directoryUri = files.uri(directory),
                         pages = pages,
-                        showPageNumbers = recipe?.showPageNumbers ?: defaults.pageNumbers,
+                        showPageNumbers = !useSavedDocument && (recipe?.showPageNumbers ?: defaults.pageNumbers),
                         exportQuality = recipe?.exportQuality ?: defaults.exportQuality,
-                        ocrEnabled = recipe?.ocrEnabled ?: defaults.ocrEnabled,
+                        ocrEnabled = !useSavedDocument && (recipe?.ocrEnabled ?: defaults.ocrEnabled),
                         isProtected = document.isProtected,
                         protectionKeyId = document.protectionKeyId
                     )
-                    if (original != null && recipe != null) {
+                    if (recipe != null) {
                         seedPreview(document.pdfUri, document.isProtected, workspace, password)
                     }
                     workspace
@@ -932,9 +943,7 @@ class AndroidPdfEditorRepository(
         val recipe = File(directory, "recipe.json")
         if (!recipe.isFile) return null
         require(recipe.length() <= PdfProjectRecipe.MAX_BYTES) { "A receita do documento é inválida." }
-        return json.decodeFromString<PdfProjectRecipe>(recipe.readText()).also {
-            it.validate()
-        }
+        return PdfProjectRecipe.decodeForEditing(json, recipe.readText())
     }
 
     private suspend fun restorePages(

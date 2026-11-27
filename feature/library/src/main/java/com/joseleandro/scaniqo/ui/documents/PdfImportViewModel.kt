@@ -3,7 +3,8 @@ package com.joseleandro.scaniqo.ui.documents
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joseleandro.scaniqo.core.security.PasswordVault
+import com.joseleandro.scaniqo.core.security.PasswordAccess
+import com.joseleandro.scaniqo.core.security.newDocumentPasswordKey
 import com.joseleandro.scaniqo.domain.model.PdfPasswordRequiredException
 import com.joseleandro.scaniqo.domain.model.ScannedDocument
 import com.joseleandro.scaniqo.domain.repository.DocumentRepository
@@ -29,7 +30,7 @@ import kotlinx.coroutines.withContext
 class PdfImportViewModel(
     private val repository: PdfEditorRepository,
     private val documents: DocumentRepository,
-    private val vault: PasswordVault,
+    private val vault: PasswordAccess,
     private val savedState: SavedStateHandle,
     private val defaultName: () -> String = { "Imported document" },
 ) : ViewModel() {
@@ -49,7 +50,6 @@ class PdfImportViewModel(
     val effects = channel.receiveAsFlow()
     private var uri: String? = null
     private var name = defaultName()
-    private var pendingPassword: String? = null
     private var job: Job? = null
     private var generation = 0
 
@@ -96,7 +96,6 @@ class PdfImportViewModel(
         savedState.remove<Long>("tool_document_id")
         savedState.remove<String>("tool_destination")
         uri = null
-        pendingPassword = null
         state.value = PdfImportUiState()
     }
 
@@ -115,23 +114,7 @@ class PdfImportViewModel(
             state.update { it.copy(error = "Informe a senha deste PDF.") }
             return
         }
-        if (!vault.state.value.isConfigured) {
-            state.update { it.copy(error = "Configure a senha geral para guardar a senha deste PDF com segurança.") }
-            return
-        }
-        pendingPassword = password
-        if (!vault.state.value.isUnlocked) state.update { it.copy(needsUnlock = true) }
-        else import(password)
-    }
-
-    fun unlocked() {
-        state.update { it.copy(needsUnlock = false) }
-        pendingPassword?.let { import(it) }
-    }
-
-    fun unlockDismissed() {
-        pendingPassword = null
-        state.update { it.copy(needsUnlock = false) }
+        import(password)
     }
 
     /** A entrega só termina depois que o cadastro assumiu e persistiu o rascunho. */
@@ -139,7 +122,6 @@ class PdfImportViewModel(
         if (state.value.destination != null || state.value.pending?.scan?.pdfUri != pdfUri) return
         clearPending()
         uri = null
-        pendingPassword = null
         state.value = PdfImportUiState()
     }
 
@@ -148,7 +130,7 @@ class PdfImportViewModel(
         generation++
         job?.cancel()
         val pending = state.value.pending
-        pendingPassword = null
+        pending?.scan?.protectionKeyId?.let(vault::forgetDocumentPassword)
         uri = null
         savedState["awaiting_picker"] = false
         savedState.remove<String>("tool_destination")
@@ -175,16 +157,19 @@ class PdfImportViewModel(
                         .ifBlank { defaultName() }.take(100)
                 }
                 currentCoroutineContext().ensureActive()
-                val keyId = password?.let { vault.rememberDocumentPassword(it) }
+                val keyId = password?.let { newDocumentPasswordKey() }
                 prepared = repository.importPdf(source, password, keyId)
                 currentCoroutineContext().ensureActive()
                 if (request != generation) return@launch
+                // Only retain a credential after the PDF has successfully authenticated.
+                prepared.protectionKeyId?.let { validatedKey ->
+                    if (password != null) vault.rememberDocumentPassword(password, validatedKey)
+                }
                 val pending = PendingPdfImport(prepared, name)
                 persistPending(pending)
                 state.update { it.copy(pending = pending, needsPassword = false) }
                 prepared = null
-                pendingPassword = null
-            } catch (cancelled: CancellationException) { throw cancelled }
+                    } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: Exception) {
                 currentCoroutineContext().ensureActive()
                 if (request == generation) {
@@ -197,8 +182,7 @@ class PdfImportViewModel(
                     withContext(NonCancellable) { runCatching { documents.discardScan(scan) } }
                 }
                 if (request == generation) {
-                    pendingPassword = null
-                    state.update { it.copy(isLoading = false) }
+                                state.update { it.copy(isLoading = false) }
                 }
             }
         }

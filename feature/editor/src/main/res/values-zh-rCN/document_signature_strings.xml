@@ -17,8 +17,8 @@
     <string name="signature_crop">裁剪</string>
     <string name="signature_cancel_title">放弃此次放置？</string>
     <string name="signature_cancel_body">此签名尚未应用，文档的其他更改会保留。</string>
-    <string name="signature_cancel_confirm">放弃签名</string>
-    <string name="signature_keep_editing">继续调整</string>
+    <string name="signature_cancel_confirm">放弃</string>
+    <string name="signature_keep_editing">继续</string>
     <string name="signature_back">返回编辑器</string>
     <string name="signature_edit_placed">编辑签名 %1$d</string>
     <string name="signature_retry">重试</string>

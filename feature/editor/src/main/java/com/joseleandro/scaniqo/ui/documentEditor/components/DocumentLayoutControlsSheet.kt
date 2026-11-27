@@ -3,9 +3,9 @@ package com.joseleandro.scaniqo.ui.documentEditor.components
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 import com.joseleandro.scaniqo.feature.editor.R
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,11 +21,14 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPreviewZoom
 import com.joseleandro.scaniqo.ui.documentEditor.model.DocumentLayoutControl
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -213,18 +216,33 @@ private fun LayoutControlTabs(
         DocumentLayoutControl.SIZE,
         DocumentLayoutControl.ROTATION,
     )
-    PrimaryTabRow(
-        selectedTabIndex = tabs.indexOf(control).coerceAtLeast(0),
-        modifier = modifier.fillMaxWidth().testTag("layout_control_tabs"),
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        divider = {},
-    ) {
-        tabs.forEach { option ->
+    val labels = tabs.map { option ->
+        stringResource(when (option) {
+            DocumentLayoutControl.POSITION -> R.string.layout_interactive_position
+            DocumentLayoutControl.ROTATION -> R.string.layout_interactive_rotate
+            else -> R.string.tools_size_compact
+        })
+    }
+    val textStyle = MaterialTheme.typography.labelLarge
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val horizontal = compact && density.fontScale <= 1.3f
+    val labelLayouts = labels.map { textMeasurer.measure(AnnotatedString(it), textStyle) }
+    val minimumTabWidth = with(density) {
+        labelLayouts.maxOf { it.size.width }.toDp()
+    }.plus(if (horizontal) 52.dp else 8.dp).coerceAtLeast(72.dp)
+    val minimumTabHeight = with(density) {
+        labelLayouts.maxOf { it.size.height }.toDp()
+    }.plus(if (horizontal) 17.dp else 47.dp)
+        .coerceAtLeast(if (horizontal) 52.dp else 72.dp)
+    val tabContent: @Composable () -> Unit = {
+        tabs.forEachIndexed { index, option ->
             Tab(
                 selected = control == option,
                 enabled = enabled,
                 onClick = { onControlChange(option) },
-                modifier = Modifier.testTag("layout_control_${option.name}"),
+                // Scrollable tabs measure with unbounded width; give centered text finite bounds.
+                modifier = Modifier.widthIn(max = minimumTabWidth).testTag("layout_control_${option.name}"),
             ) {
                 val icon: @Composable () -> Unit = {
                     Icon(
@@ -239,20 +257,16 @@ private fun LayoutControlTabs(
                 }
                 val label: @Composable () -> Unit = {
                     Text(
-                        stringResource(when (option) {
-                            DocumentLayoutControl.POSITION -> R.string.layout_interactive_position
-                            DocumentLayoutControl.ROTATION -> R.string.layout_interactive_rotate
-                            else -> R.string.tools_size_compact
-                        }),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.Center,
+                        labels[index],
+                        modifier = if (horizontal) Modifier else Modifier.fillMaxWidth(),
+                        style = textStyle,
+                        textAlign = if (horizontal) TextAlign.Start else TextAlign.Center,
                         maxLines = 1,
-                        autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = 14.sp),
                     )
                 }
-                if (compact) {
+                if (horizontal) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = 52.dp).padding(horizontal = 12.dp, vertical = 8.dp),
+                        Modifier.fillMaxWidth().heightIn(min = minimumTabHeight).padding(horizontal = 12.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -261,7 +275,7 @@ private fun LayoutControlTabs(
                     }
                 } else {
                     Column(
-                        Modifier.fillMaxWidth().heightIn(min = 72.dp).padding(horizontal = 4.dp, vertical = 10.dp),
+                        Modifier.fillMaxWidth().heightIn(min = minimumTabHeight).padding(horizontal = 4.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
@@ -270,6 +284,27 @@ private fun LayoutControlTabs(
                     }
                 }
             }
+        }
+    }
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        if (maxWidth / tabs.size >= minimumTabWidth) {
+            PrimaryTabRow(
+                selectedTabIndex = tabs.indexOf(control).coerceAtLeast(0),
+                modifier = Modifier.fillMaxWidth().testTag("layout_control_tabs"),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                divider = {},
+                tabs = tabContent,
+            )
+        } else {
+            PrimaryScrollableTabRow(
+                selectedTabIndex = tabs.indexOf(control).coerceAtLeast(0),
+                modifier = Modifier.fillMaxWidth().testTag("layout_control_tabs"),
+                edgePadding = 0.dp,
+                minTabWidth = minimumTabWidth,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                divider = {},
+                tabs = tabContent,
+            )
         }
     }
 }
@@ -285,4 +320,14 @@ private fun LayoutControlsBody(
         modifier.verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = if (compactHeight) 8.dp else 16.dp),
     ) { controls(compactHeight, shortHeight) }
+}
+
+@Preview(name = "Abas de ajuste compactas", widthDp = 640, locale = "pt-rBR")
+@Preview(name = "Abas de ajuste fonte 2", widthDp = 320, fontScale = 2f, locale = "pt-rBR")
+@Preview(name = "Abas de ajuste fonte 2 escuro", widthDp = 320, fontScale = 2f, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun LayoutControlTabsPreview() {
+    ScaniqoTheme {
+        LayoutControlTabs(DocumentLayoutControl.POSITION, enabled = true, onControlChange = {}, compact = true)
+    }
 }

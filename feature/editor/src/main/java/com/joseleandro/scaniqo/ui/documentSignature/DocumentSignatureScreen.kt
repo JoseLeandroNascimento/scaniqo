@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
 import com.joseleandro.scaniqo.ui.components.toast.AppToastHost
 import com.joseleandro.scaniqo.ui.components.toast.rememberAppToastState
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentStatus
@@ -134,9 +135,9 @@ internal fun DocumentSignatureScreen(
                     actionLabel = stringResource(R.string.signature_retry),
                     onAction = onRetry,
                 )
-                isLoadingDocument || !sameSession || page == null -> Box(
-                    Modifier.fillMaxSize(), contentAlignment = Alignment.Center,
-                ) { CircularProgressIndicator() }
+                isLoadingDocument || !sameSession || page == null -> ScaniqoLoadingIndicator(
+                    Modifier.fillMaxSize(),
+                )
                 else -> Column(Modifier.fillMaxSize()) {
                     pageStateHolder.SaveableStateProvider("${workspace.workspaceId}:${page.id}") {
                         DocumentSignaturePage(
@@ -171,14 +172,19 @@ internal fun DocumentSignatureScreen(
                             Column(
                                 Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 if (state.signatureAwaitingPlacement && draft != null) {
                                     Text(
                                         stringResource(R.string.signature_place_hint),
+                                        modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth(),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
-                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    Row(
+                                        modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    ) {
                                         TextButton(
                                             onClick = cancelEdit,
                                             enabled = state.canEdit,
@@ -200,6 +206,7 @@ internal fun DocumentSignatureScreen(
                                         },
                                         onDone = if (draft == null) onDone else applyEdit,
                                         enabled = state.canEdit,
+                                        modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth(),
                                         doneEnabled = state.canEdit && (draft == null || !state.isRendering),
                                         insertTag = if (draft == null) "signature_open_picker" else "signature_open_adjustments",
                                         doneTag = if (draft == null) "signature_finish_tool" else "signature_apply_adjustments",

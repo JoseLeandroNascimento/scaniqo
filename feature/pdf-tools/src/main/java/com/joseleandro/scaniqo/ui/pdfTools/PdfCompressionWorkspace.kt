@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,14 +47,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -73,7 +70,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.ui.ads.ToolAdActionContent
@@ -81,7 +77,7 @@ import com.joseleandro.scaniqo.ui.ads.PremiumAdFreeButton
 import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfCompressionLevel
-import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.components.PdfSourceSelection
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -188,6 +184,7 @@ internal fun PdfCompressionWorkspace(
                     if (document != null) {
                         if (document.isProtected) {
                             OutlinedTextField(
+                                shape = ScaniqoFieldDefaults.shape,
                                 value = password, onValueChange = onPassword,
                                 modifier = Modifier.fillMaxWidth(), enabled = enabled, singleLine = true,
                                 label = { Text(stringResource(R.string.utility_password)) },
@@ -346,35 +343,15 @@ private fun CompressionSource(
     onChoose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        onClick = onChoose, enabled = enabled, modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-    ) {
-        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (document != null) {
-                DocumentThumbnail(document, Modifier.width(40.dp).aspectRatio(595f / 842f).clip(MaterialTheme.shapes.small))
-            } else {
-                Icon(painterResource(CoreResourcesR.drawable.ic_tag_document), null,
-                    Modifier.size(40.dp), tint = MaterialTheme.colorScheme.primary)
-            }
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(document?.name ?: stringResource(R.string.utility_select_pdf),
-                    style = MaterialTheme.typography.titleSmall.copy(textDirection = TextDirection.ContentOrLtr),
-                    maxLines = 2, overflow = TextOverflow.Ellipsis)
-                Text(if (document == null) stringResource(R.string.compression_from_library) else
-                    stringResource(R.string.utility_source_pages, document.pageCount) + " · " +
-                        Formatter.formatShortFileSize(LocalContext.current, document.sizeBytes),
-                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            if (enabled) Icon(
-                painterResource(if (document == null) CoreResourcesR.drawable.add_24px else CoreResourcesR.drawable.ic_symbol_swap_horiz),
-                stringResource(R.string.utility_change_pdf), Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-    }
+    PdfSourceSelection(
+        document = document,
+        emptyTitle = stringResource(R.string.utility_select_pdf),
+        emptyHint = stringResource(R.string.compression_from_library),
+        changeLabel = stringResource(R.string.utility_change_pdf),
+        onChoose = onChoose,
+        modifier = modifier,
+        enabled = enabled,
+    )
 }
 
 @Composable

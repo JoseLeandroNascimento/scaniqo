@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tags_edit_hint">Toque em uma tag para editar.</string>
+    <string name="tag_original_color">Cor original</string>
+</resources>

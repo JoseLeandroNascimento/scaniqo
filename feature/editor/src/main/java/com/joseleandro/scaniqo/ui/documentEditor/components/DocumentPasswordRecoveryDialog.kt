@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -89,6 +90,7 @@ internal fun DocumentPasswordRecoveryDialog(
                     enabled = !saving,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    shape = ScaniqoFieldDefaults.shape,
                 )
                 if (!state.isConfigured || state.recoveryRequired) {
                     Text(stringResource(CoreResourcesR.string.runtime_recovery_setup))

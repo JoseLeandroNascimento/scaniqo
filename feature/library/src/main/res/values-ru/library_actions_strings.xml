@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tag_editor_save">Сохранить</string>
+    <string name="tag_unavailable">Этот тег больше недоступен.</string>
+    <string name="trash_actions">Параметры корзины</string>
+    <string name="trash_restore_all">Восстановить всё</string>
+    <string name="trash_restored_all">Документы восстановлены в библиотеке</string>
+    <string name="trash_restore_all_error">Некоторые документы не удалось восстановить. Они остались в корзине. Повторите попытку.</string>
+    <string name="trash_information">Информация</string>
+</resources>

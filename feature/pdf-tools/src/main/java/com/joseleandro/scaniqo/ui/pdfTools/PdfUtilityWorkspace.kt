@@ -16,7 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.pluralStringResource
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPageJumpDialog
 import kotlinx.coroutines.launch
-import android.text.format.Formatter
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,10 +62,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.joseleandro.scaniqo.ui.components.ScaniqoFieldDefaults
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
@@ -76,7 +74,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -91,7 +88,7 @@ import com.joseleandro.scaniqo.domain.model.PdfUtility
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPageThumbnail
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPdfPage
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentPreviewZoom
-import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.components.PdfSourceSelection
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 /** Os seletores e as operações continuam na Route; aqui ficam somente os controles do rascunho. */
@@ -236,6 +233,7 @@ internal fun PdfUtilityWorkspace(
                         }
                         if (document.isProtected) {
                             OutlinedTextField(
+                                shape = ScaniqoFieldDefaults.shape,
                                 value = password, onValueChange = onPassword, modifier = Modifier.fillMaxWidth(),
                                 singleLine = true, enabled = enabled, label = { Text(stringResource(R.string.utility_password)) },
                                 leadingIcon = { Icon(painterResource(CoreResourcesR.drawable.ic_document_lock), null) },
@@ -275,28 +273,21 @@ internal fun PdfUtilityWorkspace(
 }
 
 @Composable
-private fun WorkspaceSource(document: DocumentModel?, enabled: Boolean, onChoose: () -> Unit) {
-    Surface(onClick = onChoose, enabled = enabled, shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainer, border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
-        Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            if (document != null) DocumentThumbnail(document, Modifier.width(48.dp).aspectRatio(595f / 842f)
-                .clip(MaterialTheme.shapes.small))
-            else Icon(painterResource(CoreResourcesR.drawable.ic_symbol_file_open), null,
-                Modifier.size(40.dp), tint = MaterialTheme.colorScheme.primary)
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(document?.name ?: stringResource(R.string.utility_select_pdf),
-                    style = MaterialTheme.typography.titleSmall.copy(textDirection = TextDirection.ContentOrLtr),
-                    maxLines = 2, overflow = TextOverflow.Ellipsis)
-                Text(if (document == null) stringResource(R.string.utility_workspace_choose_hint)
-                    else stringResource(R.string.utility_source_pages, document.pageCount) + " · " +
-                        Formatter.formatShortFileSize(LocalContext.current, document.sizeBytes),
-                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                if (document != null && enabled) Text(stringResource(R.string.utility_change_pdf),
-                    style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-            }
-        }
-    }
+private fun WorkspaceSource(
+    document: DocumentModel?,
+    enabled: Boolean,
+    onChoose: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    PdfSourceSelection(
+        document = document,
+        emptyTitle = stringResource(R.string.utility_select_pdf),
+        emptyHint = stringResource(R.string.utility_workspace_choose_hint),
+        changeLabel = stringResource(R.string.utility_change_pdf),
+        onChoose = onChoose,
+        modifier = modifier,
+        enabled = enabled,
+    )
 }
 
 @Composable

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">For printing and preserving detail.</string>
+    <string name="quality_visual_balanced_use">For everyday reading and sharing.</string>
+    <string name="quality_visual_small_use">For sending a lighter file.</string>
+    <string name="quality_visual_ocr_description">Find words in scanned pages.</string>
+</resources>

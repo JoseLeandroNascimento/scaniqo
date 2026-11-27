@@ -2,14 +2,22 @@ package com.joseleandro.scaniqo.ui
 
 import com.joseleandro.scaniqo.feature.editor.R
 
+import android.content.Context
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -25,7 +33,9 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
 import com.joseleandro.scaniqo.domain.model.DocumentModel
 import com.joseleandro.scaniqo.domain.model.PdfContentPosition
@@ -44,11 +54,13 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import java.util.Locale
 import kotlin.math.abs
 
 class LayoutPositionInteractionTest {
     @get:Rule val compose = createComposeRule()
-    private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
+    private var localizedContext: Context? = null
+    private val context get() = localizedContext ?: InstrumentationRegistry.getInstrumentation().targetContext
     private fun text(id: Int) = context.getString(id)
 
     @Test fun accessibleAlignmentActionsPreviewEachAxisAndKeepTheDraftWhenReopened() {
@@ -209,14 +221,18 @@ class LayoutPositionInteractionTest {
     }
 
     @Test fun largeFontsKeepControlsAndCloseActionReachable() {
-        val events = showEditor(fontScale = 2f)
+        val events = showEditor(fontScale = 2f, narrowWindow = true, locale = Locale.forLanguageTag("pt-BR"))
         compose.onNodeWithTag("layout_open_controls").assertIsDisplayed().performClick()
         compose.onNodeWithTag("layout_close_controls").assertIsDisplayed()
         compose.onNodeWithTag("layout_control_POSITION").assertIsSelected()
-        assertTabsFillWidth()
+        assertCompleteLabel(R.string.layout_interactive_position)
         selectAlignment("vertical", 2)
-        compose.onNodeWithTag("layout_control_SIZE").assertIsDisplayed().performClick().assertIsSelected()
-        compose.onNodeWithTag("layout_control_ROTATION").assertIsDisplayed().performClick().assertIsSelected()
+        compose.onNodeWithTag("layout_control_SIZE").scrollToIfScrollable().assertIsDisplayed().performClick().assertIsSelected()
+        assertCompleteLabel(R.string.tools_size_compact)
+        listOf(R.string.layout_with_margin, R.string.layout_v3_without_margin, R.string.tools_fill_compact)
+            .forEach { assertCompleteLabel(it) }
+        compose.onNodeWithTag("layout_control_ROTATION").scrollToIfScrollable().assertIsDisplayed().performClick().assertIsSelected()
+        assertCompleteLabel(R.string.layout_interactive_rotate)
         closeControls()
         compose.onNodeWithTag("layout_open_controls").assertIsDisplayed()
         compose.runOnIdle {
@@ -230,7 +246,13 @@ class LayoutPositionInteractionTest {
     private fun showEditor(
         fontScale: Float = 1f,
         initialPosition: PdfContentPosition? = null,
+        narrowWindow: Boolean = false,
+        locale: Locale? = null,
     ): MutableList<DocumentToolsEvent> {
+        localizedContext = locale?.let {
+            val base = InstrumentationRegistry.getInstrumentation().targetContext
+            base.createConfigurationContext(Configuration(base.resources.configuration).apply { setLocale(it) })
+        }
         val events = mutableListOf<DocumentToolsEvent>()
         val pages = (1..3).map {
             PdfPageSpec(
@@ -251,22 +273,26 @@ class LayoutPositionInteractionTest {
         compose.setContent {
             val density = LocalDensity.current.density
             CompositionLocalProvider(
+                LocalContext provides (localizedContext ?: LocalContext.current),
+                LocalConfiguration provides (localizedContext?.resources?.configuration ?: LocalConfiguration.current),
                 LocalInspectionMode provides true,
                 LocalDensity provides Density(density, fontScale = fontScale),
             ) {
                 ScaniqoTheme {
-                    DocumentEditorToolScreen(
-                        documentId = 1,
-                        tool = DocumentTool.LAYOUT,
-                        state = state,
-                        documentLoading = false,
-                        documentError = false,
-                        enabled = true,
-                        onEvent = { events += it },
-                        onDraftChanged = {},
-                        onBack = {},
-                        onRetry = {},
-                    )
+                    Box(if (narrowWindow) Modifier.width(320.dp) else Modifier) {
+                        DocumentEditorToolScreen(
+                            documentId = 1,
+                            tool = DocumentTool.LAYOUT,
+                            state = state,
+                            documentLoading = false,
+                            documentError = false,
+                            enabled = true,
+                            onEvent = { events += it },
+                            onDraftChanged = {},
+                            onBack = {},
+                            onRetry = {},
+                        )
+                    }
                 }
             }
         }
@@ -302,6 +328,30 @@ class LayoutPositionInteractionTest {
         compose.runOnIdle { assertTrue(actions[actionIndex].action()) }
     }
 
+    private fun assertCompleteLabel(labelRes: Int) {
+        val layouts = mutableListOf<TextLayoutResult>()
+        compose.onNodeWithText(text(labelRes), useUnmergedTree = true)
+            .scrollToIfScrollable().assertIsDisplayed()
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        val layout = layouts.single()
+        assertEquals("Label must remain on one line: ${text(labelRes)}", 1, layout.lineCount)
+        assertFalse(
+            "Label must not be clipped: ${text(labelRes)}; " +
+                "widthOverflow=${layout.didOverflowWidth}, heightOverflow=${layout.didOverflowHeight}, " +
+                "size=${layout.size}, constraints=${layout.layoutInput.constraints}, " +
+                "lineRight=${layout.getLineRight(0)}, lineBottom=${layout.getLineBottom(0)}, " +
+                "fontScale=${layout.layoutInput.density.fontScale}, style=${layout.layoutInput.style}",
+            layout.hasVisualOverflow,
+        )
+    }
+
+    private fun SemanticsNodeInteraction.scrollToIfScrollable(): SemanticsNodeInteraction {
+        val node = fetchSemanticsNode()
+        val canScroll = generateSequence(node.parent) { it.parent }
+            .any { it.config.getOrNull(SemanticsActions.ScrollBy) != null }
+        return if (canScroll) performScrollTo() else this
+    }
+
     private fun assertTabsFillWidth() {
         val row = compose.onNodeWithTag("layout_control_tabs")
             .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
@@ -309,9 +359,12 @@ class LayoutPositionInteractionTest {
             compose.onNodeWithTag("layout_control_$control")
                 .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
         }
+        // Material 3 PrimaryTabRow divides its pixel width using integer arithmetic.
+        // A 1280px row has three 426px tabs and leaves the 2px remainder at the end.
+        val tabWidth = (row.width.toInt() / tabs.size).toFloat()
         assertEquals(row.left, tabs.first().left, 1f)
-        assertEquals(row.right, tabs.last().right, 1f)
-        tabs.forEach { assertEquals(row.width / tabs.size, it.width, 1f) }
+        assertEquals(row.left + tabWidth * tabs.size, tabs.last().right, 1f)
+        tabs.forEach { assertEquals(tabWidth, it.width, 1f) }
         tabs.zipWithNext().forEach { (left, right) ->
             assertEquals(left.right, right.left, 1f)
         }

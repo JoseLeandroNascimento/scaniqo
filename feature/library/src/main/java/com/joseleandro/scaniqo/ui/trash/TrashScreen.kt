@@ -8,6 +8,8 @@ import android.text.format.DateFormat
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,16 +25,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.CircularProgressIndicator
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -50,6 +55,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -88,9 +94,13 @@ internal fun TrashScreen(
     onRequestClearAll: () -> Unit,
     onConfirmClearAll: () -> Unit,
     onDismissClearAll: () -> Unit,
+    onRestoreAll: () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
 ) {
     var showHelp by rememberSaveable { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
+    val canBatch = state.documents.isNotEmpty() && !state.isBusy && !state.isLoading &&
+        !state.loadError && !state.pendingClearAll && state.pendingDeletion == null
 
     Scaffold(
         snackbarHost = snackbarHost,
@@ -106,11 +116,38 @@ internal fun TrashScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { showHelp = true }) {
-                        Icon(
-                            painterResource(CoreResourcesR.drawable.ic_toast_info),
-                            contentDescription = stringResource(R.string.trash_info),
-                        )
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(
+                                painterResource(CoreResourcesR.drawable.more_vert_24px),
+                                contentDescription = stringResource(R.string.trash_actions),
+                            )
+                        }
+                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.trash_clear_all)) },
+                                leadingIcon = {
+                                    Icon(painterResource(CoreResourcesR.drawable.ic_symbol_delete_forever), contentDescription = null)
+                                },
+                                enabled = canBatch,
+                                onClick = { showMenu = false; onRequestClearAll() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.trash_restore_all)) },
+                                leadingIcon = {
+                                    Icon(painterResource(CoreResourcesR.drawable.ic_symbol_restore_from_trash), contentDescription = null)
+                                },
+                                enabled = canBatch,
+                                onClick = { showMenu = false; onRestoreAll() },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.trash_information)) },
+                                leadingIcon = {
+                                    Icon(painterResource(CoreResourcesR.drawable.ic_toast_info), contentDescription = null)
+                                },
+                                onClick = { showMenu = false; showHelp = true },
+                            )
+                        }
                     }
                 },
             )
@@ -120,14 +157,14 @@ internal fun TrashScreen(
             modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
             contentAlignment = Alignment.TopCenter,
         ) {
-            val contentWidth = minOf(maxWidth, 720.dp)
+            val contentWidth = minOf(maxWidth, 1120.dp)
             val availableHeight = maxHeight
             when {
                 state.isLoading && state.documents.isEmpty() -> TrashCenteredStatus(
                     modifier = Modifier.width(contentWidth).fillMaxHeight(),
                     minHeight = availableHeight,
                     title = stringResource(R.string.trash_loading),
-                    visual = { CircularProgressIndicator() },
+                    visual = { ScaniqoLoadingIndicator() },
                 )
                 state.loadError && state.documents.isEmpty() -> TrashCenteredStatus(
                     modifier = Modifier.width(contentWidth).fillMaxHeight(),
@@ -167,12 +204,14 @@ internal fun TrashScreen(
                         illustration = EmptyStateIllustration.TRASH,
                     )
                 }
-                else -> LazyColumn(
+                else -> LazyVerticalGrid(
+                    columns = GridCells.Adaptive(340.dp * LocalDensity.current.fontScale.coerceAtLeast(1f)),
                     modifier = Modifier.width(contentWidth).fillMaxHeight(),
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    item {
+                    item(key = "count", span = { GridItemSpan(maxLineSpan) }) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
                                 pluralStringResource(
@@ -183,28 +222,13 @@ internal fun TrashScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                             )
-                            TextButton(
-                                onClick = onRequestClearAll,
-                                enabled = !state.isBusy && !state.loadError &&
-                                    !state.pendingClearAll && state.pendingDeletion == null,
-                                colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.error,
-                                ),
-                            ) {
-                                Icon(
-                                    painterResource(CoreResourcesR.drawable.ic_symbol_delete_forever),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Text(stringResource(R.string.trash_clear_all))
-                            }
+
                         }
                     }
-                    if (state.isLoading) item {
+                    if (state.isLoading || state.isRestoringAll) item(key = "progress", span = { GridItemSpan(maxLineSpan) }) {
                         LinearProgressIndicator(Modifier.fillMaxWidth())
                     }
-                    if (state.loadError) item {
+                    if (state.loadError) item(key = "load_error", span = { GridItemSpan(maxLineSpan) }) {
                         Surface(
                             shape = MaterialTheme.shapes.medium,
                             color = MaterialTheme.colorScheme.errorContainer,
@@ -417,16 +441,16 @@ private fun TrashDocumentCard(
     val size = documentFileSize(document)
     val restoreLabel = stringResource(R.string.trash_restore_document, bidiArgument(document.name))
     val deleteLabel = stringResource(R.string.trash_delete_document, bidiArgument(document.name))
-    val stackedActions = LocalDensity.current.fontScale >= 1.3f
+    val dark = MaterialTheme.colorScheme.surface.luminance() < .5f
 
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)),
+        color = if (dark) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = if (dark) 0.4f else 1f)),
     ) {
         Column(
-            modifier = Modifier.padding(14.dp),
+            modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Row(
@@ -434,9 +458,9 @@ private fun TrashDocumentCard(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 Surface(
-                    modifier = Modifier.width(72.dp).aspectRatio(595f / 842f),
+                    modifier = Modifier.width(64.dp).aspectRatio(595f / 842f),
                     shape = MaterialTheme.shapes.small,
-                    shadowElevation = 2.dp,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)),
                 ) {
                     DocumentThumbnail(document = document, modifier = Modifier.fillMaxSize())
                 }
@@ -472,44 +496,22 @@ private fun TrashDocumentCard(
                 }
             }
 
-            BoxWithConstraints {
-                val stackButtons = stackedActions || maxWidth < 300.dp
-                if (stackButtons) {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        TrashRestoreButton(
-                            enabled = enabled,
-                            restoring = restoring,
-                            label = restoreLabel,
-                            onClick = onRestore,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        TrashDeleteButton(
-                            enabled = enabled,
-                            label = deleteLabel,
-                            onClick = onDelete,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        TrashRestoreButton(
-                            enabled = enabled,
-                            restoring = restoring,
-                            label = restoreLabel,
-                            onClick = onRestore,
-                            modifier = Modifier.weight(1f),
-                        )
-                        TrashDeleteButton(
-                            enabled = enabled,
-                            label = deleteLabel,
-                            onClick = onDelete,
-                        )
-                    }
-                }
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                TrashRestoreButton(
+                    enabled = enabled,
+                    restoring = restoring,
+                    label = restoreLabel,
+                    onClick = onRestore,
+                )
+                TrashDeleteButton(
+                    enabled = enabled,
+                    label = deleteLabel,
+                    onClick = onDelete,
+                )
             }
         }
     }
@@ -523,10 +525,10 @@ private fun TrashRestoreButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    FilledTonalButton(
+    TextButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.semantics {
+        modifier = modifier.heightIn(min = 48.dp).semantics {
             contentDescription = label
         },
     ) {
@@ -569,6 +571,7 @@ private fun TrashDeleteButton(
 @Preview(name = "Lixeira escura", widthDp = 390, heightDp = 780, locale = "pt-rBR", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Lixeira fonte ampliada", widthDp = 320, heightDp = 640, locale = "pt-rBR", fontScale = 1.5f)
 @Preview(name = "Lixeira árabe", widthDp = 390, heightDp = 780, locale = "ar")
+@Preview(name = "Lixeira tablet", widthDp = 1280, heightDp = 800, locale = "pt-rBR")
 @Composable
 private fun TrashPreview() {
     ScaniqoTheme {

@@ -4,6 +4,7 @@ import com.joseleandro.scaniqo.core.documentui.R
 import com.joseleandro.scaniqo.core.resources.R as CoreResourcesR
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfRenderer
@@ -18,8 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,9 +48,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.joseleandro.scaniqo.domain.model.DocumentModel
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
+import com.joseleandro.scaniqo.ui.theme.DocumentPaperColors
+import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -205,18 +212,11 @@ private fun DocumentPageImage(
     }
 
     Box(
-        modifier = modifier.background(Color.White),
+        modifier = modifier.background(DocumentPaperColors.background),
         contentAlignment = Alignment.Center,
     ) {
         when (val current = state) {
-            PageImageState.Loading -> {
-                val loadingDescription = stringResource(R.string.document_pdf_loading)
-                CircularProgressIndicator(
-                    modifier = Modifier.size(if (compact) 20.dp else 32.dp)
-                        .semantics { contentDescription = loadingDescription },
-                    strokeWidth = 2.dp,
-                )
-            }
+            PageImageState.Loading -> DocumentPageLoading(compact)
             is PageImageState.Ready -> Image(
                 bitmap = current.bitmap.asImageBitmap(),
                 contentDescription = if (compact) {
@@ -238,17 +238,23 @@ private fun DocumentPageImage(
                 }
                 val retryDescription = stringResource(CoreResourcesR.string.document_pdf_retry)
                 if (compact) {
-                    IconButton(onClick = { retry++ }) {
+                    FilledIconButton(
+                        onClick = { retry++ },
+                        modifier = Modifier.size(48.dp),
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = DocumentPaperColors.background.copy(alpha = .96f),
+                            contentColor = DocumentPaperColors.supportingText,
+                        ),
+                    ) {
                         Icon(
                             painter = painterResource(CoreResourcesR.drawable.ic_symbol_refresh),
                             contentDescription = retryDescription,
-                            tint = Color(0xFF495461),
                         )
                     }
                 } else {
                     Column(
                         modifier = Modifier.padding(24.dp)
-                            .background(Color.White.copy(alpha = .96f), MaterialTheme.shapes.medium)
+                            .background(DocumentPaperColors.background.copy(alpha = .96f), MaterialTheme.shapes.medium)
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -256,16 +262,31 @@ private fun DocumentPageImage(
                         Text(
                             text = stringResource(CoreResourcesR.string.document_pdf_error),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFF495461),
+                            color = DocumentPaperColors.onBackground,
                             textAlign = TextAlign.Center,
                         )
                         TextButton(onClick = { retry++ }) {
-                            Text(text = retryDescription, color = Color(0xFF315E80))
+                            Text(text = retryDescription, color = DocumentPaperColors.indicator)
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun DocumentPageLoading(compact: Boolean) {
+    val loadingDescription = stringResource(R.string.document_pdf_loading)
+    val modifier = Modifier.semantics { contentDescription = loadingDescription }
+    if (compact) {
+        CircularProgressIndicator(
+            modifier = modifier.size(20.dp),
+            color = DocumentPaperColors.indicator,
+            strokeWidth = 2.dp,
+        )
+    } else {
+        ScaniqoLoadingIndicator(modifier = modifier, color = DocumentPaperColors.indicator)
     }
 }
 
@@ -307,10 +328,26 @@ private fun decodeThumbnail(context: Context, uri: String): Bitmap? {
     }
 }
 
+@Preview(name = "PDF carregando claro", widthDp = 220, heightDp = 300)
+@Preview(name = "PDF carregando escuro", widthDp = 220, heightDp = 300, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun DocumentPageLoadingPreview() {
+    ScaniqoTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(16.dp).background(DocumentPaperColors.background),
+                contentAlignment = Alignment.Center,
+            ) {
+                DocumentPageLoading(compact = false)
+            }
+        }
+    }
+}
+
 /** Ilustração exclusiva dos previews; em execução sempre usamos o arquivo persistido. */
 @Composable
 private fun DocumentPaperPreview(modifier: Modifier) {
-    Canvas(modifier = modifier.background(Color.White)) {
+    Canvas(modifier = modifier.background(DocumentPaperColors.background)) {
         val left = size.width * 0.18f
         val top = size.height * 0.28f
         repeat(8) { line ->

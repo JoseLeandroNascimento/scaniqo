@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality_visual_high_use">Pour imprimer et préserver les détails.</string>
+    <string name="quality_visual_balanced_use">Pour lire et partager au quotidien.</string>
+    <string name="quality_visual_small_use">Pour envoyer un fichier plus léger.</string>
+    <string name="quality_visual_ocr_description">Retrouvez des mots dans les pages numérisées.</string>
+</resources>

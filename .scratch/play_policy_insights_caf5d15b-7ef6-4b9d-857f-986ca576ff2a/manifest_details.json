@@ -1,0 +1,19 @@
+{
+    "app_dir": "C:\\Users\\leandro\\Desktop\\projetos\\pessoais\\projetos\\Scaniqo",
+    "app_label": "app_name",
+    "foreground_services": [
+        {
+            "name": "androidx.work.impl.foreground.SystemForegroundService",
+            "type": "dataSync"
+        }
+    ],
+    "package_name": "com.joseleandro.scaniqo",
+    "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_DATA_SYNC",
+        "android.permission.INTERNET",
+        "com.android.vending.BILLING"
+    ],
+    "target_sdk": 37
+}

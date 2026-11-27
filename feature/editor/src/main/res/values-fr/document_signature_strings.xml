@@ -17,8 +17,8 @@
     <string name="signature_crop">Rogner</string>
     <string name="signature_cancel_title">Abandonner le placement ?</string>
     <string name="signature_cancel_body">Cette signature n’a pas encore été appliquée. Les autres modifications du document seront conservées.</string>
-    <string name="signature_cancel_confirm">Abandonner la signature</string>
-    <string name="signature_keep_editing">Continuer à ajuster</string>
+    <string name="signature_cancel_confirm">Abandonner</string>
+    <string name="signature_keep_editing">Continuer</string>
     <string name="signature_back">Retour à l’éditeur</string>
     <string name="signature_edit_placed">Modifier la signature %1$d</string>
     <string name="signature_retry">Réessayer</string>

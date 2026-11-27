@@ -6,19 +6,15 @@ import com.joseleandro.scaniqo.feature.merge.R
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -26,7 +22,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +31,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -44,8 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.core.localization.bidiArgument
@@ -54,7 +46,9 @@ import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentMergeIllustr
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentMergeLibrarySheet
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentSourceHeader
 import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentSourceOrigins
-import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.components.DocumentMergeThumbnail
+import com.joseleandro.scaniqo.ui.documentCommon.components.PdfSelectionCard
+import com.joseleandro.scaniqo.ui.documentCommon.components.pdfSelectionMetadata
 import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentMergeItem
 import com.joseleandro.scaniqo.ui.documentCommon.model.toMergeItem
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMergeSelectionState
@@ -177,52 +171,13 @@ private fun MergeChosenSourceRow(
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .6f)),
-    ) {
-        Row(
-            Modifier.fillMaxWidth().heightIn(min = 68.dp)
-                .padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            if (document != null) {
-                DocumentThumbnail(
-                    document,
-                    Modifier.width(36.dp).aspectRatio(1f / 1.4142f).clip(MaterialTheme.shapes.extraSmall),
-                )
-            } else {
-                Surface(
-                    shape = MaterialTheme.shapes.small,
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                ) {
-                    Icon(
-                        painterResource(CoreResourcesR.drawable.ic_symbol_file_open),
-                        contentDescription = null,
-                        modifier = Modifier.padding(12.dp).size(24.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-                }
-            }
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    item.name,
-                    style = MaterialTheme.typography.titleSmall.copy(textDirection = TextDirection.ContentOrLtr),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                val pages = item.pageCount?.let { pluralStringResource(CoreResourcesR.plurals.document_page_count, it, it) }
-                    ?: stringResource(CoreResourcesR.string.merge_selection_external)
-                Text(
-                    if (item.isCurrentDocument) stringResource(CoreResourcesR.string.merge_selection_current, pages) else pages,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                )
-            }
+    val pages = pdfSelectionMetadata(item.pageCount, document?.sizeBytes)
+    PdfSelectionCard(
+        name = item.name,
+        metadata = if (item.isCurrentDocument) stringResource(CoreResourcesR.string.merge_selection_current, pages) else pages,
+        thumbnail = { DocumentMergeThumbnail(item, it, document) },
+        modifier = modifier,
+        trailing = {
             if (!item.isCurrentDocument) {
                 IconButton(onClick = onRemove, enabled = enabled) {
                     Icon(
@@ -231,8 +186,8 @@ private fun MergeChosenSourceRow(
                     )
                 }
             }
-        }
-    }
+        },
+    )
 }
 
 @Preview(name = "Mesclar · escolher", widthDp = 390, heightDp = 780, locale = "pt-rBR")

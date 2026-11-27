@@ -1,6 +1,7 @@
 package com.joseleandro.scaniqo.ui.documentEditor.coordinator
 
 import com.joseleandro.scaniqo.core.security.PasswordAccess
+import com.joseleandro.scaniqo.core.security.isDocumentPasswordKey
 import com.joseleandro.scaniqo.core.security.PasswordVaultLockedException
 import com.joseleandro.scaniqo.core.security.PasswordVaultRecoveryException
 import com.joseleandro.scaniqo.core.security.PasswordVersionMissingException
@@ -181,7 +182,7 @@ internal class DocumentMergeCoordinator(
 
     /** Retorna true se uma seleção pendente consumiu a retomada da sessão. */
     fun resumeAfterUnlock(): Boolean {
-        if (!passwords.state.value.isUnlocked) return false
+        if (needsUnlock(context())) return false
         if (state == DocumentMergeUiState.AwaitingUnlock) transition(DocumentMergeUiState.Idle)
         return when {
             pendingPicker -> {
@@ -215,16 +216,23 @@ internal class DocumentMergeCoordinator(
         transition(DocumentMergeUiState.Idle)
     }
 
-    private fun sourcesNeedUnlock(): Boolean = passwords.state.value.let {
-        hasProtectedSources && it.isConfigured && !it.recoveryRequired && !it.isUnlocked
+    private fun sourcesNeedUnlock(): Boolean = passwords.state.value.let { state ->
+        state.isConfigured && !state.recoveryRequired && protectionKeys.values.any {
+            !isDocumentPasswordKey(it) && !passwords.isPasswordAvailable(it)
+        }
     }
 
     private fun needsUnlock(current: DocumentMergeContext): Boolean =
-        current.isLocked || (current.requiresAuthentication && !passwords.state.value.isUnlocked)
+        current.isLocked || (current.requiresAuthentication &&
+            !passwords.isPasswordAvailable(current.workspace?.protectionKeyId ?: current.document?.protectionKeyId))
 
     private fun requestUnlock() {
         transition(DocumentMergeUiState.AwaitingUnlock)
-        onEffect(DocumentToolsEffect.NeedUnlock)
+        val current = context()
+        val key = current.workspace?.protectionKeyId ?: current.document?.protectionKeyId
+        val manual = current.requiresAuthentication && !passwords.isPasswordAvailable(key) &&
+            (isDocumentPasswordKey(key) || !passwords.state.value.isConfigured || passwords.state.value.recoveryRequired)
+        onEffect(if (manual) DocumentToolsEffect.NeedDocumentPassword else DocumentToolsEffect.NeedUnlock)
     }
 
     private fun appendSources() {
@@ -252,7 +260,9 @@ internal class DocumentMergeCoordinator(
                     val resolved = selected.map { source ->
                         val key = keys[source.uri]
                         if (key == null || source.password != null) source else {
-                            if (!passwords.state.value.isConfigured || passwords.state.value.recoveryRequired) {
+                            if (!passwords.isPasswordAvailable(key) &&
+                                (isDocumentPasswordKey(key) || !passwords.state.value.isConfigured ||
+                                    passwords.state.value.recoveryRequired)) {
                                 throw PdfMergePasswordRequiredException(source.uri)
                             }
                             try {

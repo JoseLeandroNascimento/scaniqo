@@ -37,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -45,11 +46,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -72,8 +76,8 @@ import com.joseleandro.scaniqo.ui.documentCommon.model.DocumentReorderDrag
 import com.joseleandro.scaniqo.ui.documentCommon.model.toMergeItem
 import com.joseleandro.scaniqo.ui.documentCommon.state.DocumentMergeSelectionState
 import com.joseleandro.scaniqo.ui.documentCommon.util.documentDragScrollSpeed
+import com.joseleandro.scaniqo.ui.documentCommon.util.documentDragPreviewTop
 import com.joseleandro.scaniqo.ui.documentCommon.util.moveDocumentOrder
-import kotlin.math.roundToInt
 import kotlinx.coroutines.isActive
 
 private enum class MergeSelectionHeader { HERO, SOURCES, ORDER }
@@ -108,6 +112,7 @@ fun DocumentMergeSelectionContent(
     val edgeSize = with(density) { 56.dp.toPx() }
     val maxScrollSpeed = with(density) { 720.dp.toPx() }
     var drag by remember(selection) { mutableStateOf<DocumentReorderDrag?>(null) }
+    var dragViewportHeight by remember { mutableIntStateOf(0) }
     val latestKeys by rememberUpdatedState(selectedKeys)
     val latestEnabled by rememberUpdatedState(enabled)
     val order = drag?.order ?: selectedKeys
@@ -173,6 +178,8 @@ fun DocumentMergeSelectionContent(
         ) {
             Box(
                 Modifier.fillMaxWidth().weight(1f).clipToBounds()
+                    .testTag("merge_reorder_viewport")
+                    .onSizeChanged { dragViewportHeight = it.height }
                     .pointerInput(selection, enabled, selectedKeys.size > 1) {
                         if (enabled && selectedKeys.size > 1) detectDragGesturesAfterLongPress(
                             onDragStart = { pointer ->
@@ -202,7 +209,7 @@ fun DocumentMergeSelectionContent(
             ) {
                 LazyColumn(
                     state = listState, modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = 12.dp),
+                    contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     userScrollEnabled = drag == null,
                 ) {
@@ -267,6 +274,7 @@ fun DocumentMergeSelectionContent(
                             )
                             DocumentMergeSelectionRow(
                                 item = item, index = index, count = order.size,
+                                document = documents.firstOrNull { it.id == item.documentId },
                                 enabled = controlsEnabled,
                                 onMove = { selection.reorder(moveDocumentOrder(selectedKeys, key, it)) },
                                 onRemove = { selection.remove(key) },
@@ -282,14 +290,14 @@ fun DocumentMergeSelectionContent(
                         DocumentMergeSelectionRow(
                             item = item, index = moving.order.indexOf(moving.itemId),
                             count = moving.order.size, enabled = false, onMove = {}, onRemove = {},
+                            document = documents.firstOrNull { it.id == item.documentId },
+                            floating = true,
                             modifier = Modifier
-                                .offset { IntOffset(0, (moving.centerY - moving.height / 2f).roundToInt()) }
+                                .padding(horizontal = 8.dp)
+                                .offset { IntOffset(0, documentDragPreviewTop(moving.centerY, moving.height, dragViewportHeight)) }
                                 .height(with(density) { moving.height.toDp() })
-                                .graphicsLayer {
-                                    shadowElevation = 8.dp.toPx()
-                                    scaleX = 1.015f
-                                    scaleY = 1.015f
-                                }
+                                .zIndex(1f)
+                                .testTag("merge_reorder_drag_preview")
                                 .clearAndSetSemantics {},
                         )
                     }

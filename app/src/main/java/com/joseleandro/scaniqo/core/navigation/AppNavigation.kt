@@ -25,6 +25,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.joseleandro.scaniqo.R
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.joseleandro.scaniqo.core.ads.RewardedTool
 import com.joseleandro.scaniqo.core.security.PasswordVault
@@ -64,10 +66,10 @@ import com.joseleandro.scaniqo.ui.documentEditor.DocumentViewerViewModel
 import com.joseleandro.scaniqo.ui.documents.event.DocumentsEvent
 import com.joseleandro.scaniqo.ui.documents.platform.PdfImportHandler
 import com.joseleandro.scaniqo.ui.backup.DriveBackupRoute
-import com.joseleandro.scaniqo.ui.security.PasswordSettingsScreen
 import com.joseleandro.scaniqo.ui.settings.LanguageSettingsRoute
 import com.joseleandro.scaniqo.ui.settings.SettingsSection
 import com.joseleandro.scaniqo.ui.signatures.SignaturesScreen
+import com.joseleandro.scaniqo.ui.tags.TagEditorRoute
 import com.joseleandro.scaniqo.ui.tags.TagsRoute
 import com.joseleandro.scaniqo.ui.trash.TrashRoute
 import kotlinx.coroutines.launch
@@ -245,18 +247,33 @@ internal fun AppNavigation(
         navigationEnabled = canStartDocumentAction,
         onNavigate = viewModel::navigateToTopLevel,
         onImportPdf = importPdf,
-        drawerContent = {
+        drawerContent = { permanent ->
             AppNavigationDrawer(
                 currentRoute = currentRoute,
-                onClose = { scope.launch { drawerState.close() } },
+                onClose = {
+                    if (canStartDocumentAction) scope.launch {
+                        drawerState.close()
+                        viewModel.navigateToTopLevel(AppRoute.Documents)
+                    }
+                },
                 onImportPdf = importPdf,
-                onNavigate = navigate,
+                onNavigate = { route ->
+                    if (canStartDocumentAction) {
+                        if (permanent) viewModel.navigateToTopLevel(route) else navigate(route)
+                    }
+                },
+                permanent = permanent,
+                navigationEnabled = canStartDocumentAction,
             )
         },
-    ) {
+    ) { hasPersistentNavigation ->
         Box(Modifier.fillMaxSize()) {
         NavDisplay(
             backStack = viewModel.backStack,
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
             modifier = Modifier.fillMaxSize(),
             onBack = {
                 if (currentRoute is AppRoute.DocumentViewer) toolsViewModel.onEvent(DocumentToolsEvent.RequestBack)
@@ -268,6 +285,7 @@ internal fun AppNavigation(
                         viewModel = documentsViewModel,
                         actionsViewModel = actionsViewModel,
                         onOpenMenu = { scope.launch { drawerState.open() } },
+                        showNavigationMenu = !hasPersistentNavigation,
                         onImportPdf = importPdf,
                         onSearch = { viewModel.navigateTo(AppRoute.DocumentSearch) },
                         onAllTools = { if (canStartDocumentAction) viewModel.navigateTo(AppRoute.Tools) },
@@ -418,7 +436,16 @@ internal fun AppNavigation(
                     )
                 }
                 entry<AppRoute.Trash> { TrashRoute(onBack = viewModel::goBack) }
-                entry<AppRoute.Tags> { TagsRoute(onNavigationBack = viewModel::goBack) }
+                entry<AppRoute.Tags> {
+                    TagsRoute(
+                        onNavigationBack = viewModel::goBack,
+                        onCreateTag = { viewModel.navigateTo(AppRoute.TagEditor()) },
+                        onEditTag = { id -> viewModel.navigateTo(AppRoute.TagEditor(id)) },
+                    )
+                }
+                entry<AppRoute.TagEditor> { route ->
+                    TagEditorRoute(tagId = route.tagId, onBack = viewModel::goBack)
+                }
                 entry<AppRoute.Signatures> { SignaturesScreen(onBack = viewModel::goBack) }
                 entry<AppRoute.Premium> { PremiumRoute(onBack = viewModel::goBack) }
                 entry<AppRoute.Settings> {
@@ -427,7 +454,6 @@ internal fun AppNavigation(
                         onPersonalization = { viewModel.navigateTo(AppRoute.Personalization) },
                         onPdf = { viewModel.navigateTo(AppRoute.PdfPreferences) },
                         onBackup = { viewModel.navigateTo(AppRoute.DriveBackup) },
-                        onPasswords = { viewModel.navigateTo(AppRoute.PasswordSettings) },
                         onLanguage = { viewModel.navigateTo(AppRoute.LanguageSettings) },
                         onPremium = { viewModel.navigateTo(AppRoute.Premium) },
                     )
@@ -442,7 +468,10 @@ internal fun AppNavigation(
                         onPremium = { viewModel.navigateTo(AppRoute.Premium) },
                     )
                 }
-                entry<AppRoute.PasswordSettings> { PasswordSettingsScreen(onBack = viewModel::goBack) }
+                // Older saved back stacks can still contain this retired destination.
+                entry<AppRoute.PasswordSettings> {
+                    LaunchedEffect(Unit) { viewModel.goBack() }
+                }
                 entry<AppRoute.DriveBackup> {
                     DriveBackupRoute(
                         onBack = viewModel::goBack,

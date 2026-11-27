@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.joseleandro.scaniqo.core.localization.localizedRuntimeMessage
 import com.joseleandro.scaniqo.domain.model.PdfSignatureCrop
 import com.joseleandro.scaniqo.ui.signatures.crop.SignatureCropEditor
+import com.joseleandro.scaniqo.ui.components.ScaniqoLoadingIndicator
 import com.joseleandro.scaniqo.ui.theme.ScaniqoTheme
 
 @Composable
@@ -138,7 +139,7 @@ internal fun SignatureImageFlowScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            CircularProgressIndicator(Modifier.size(32.dp), strokeWidth = 3.dp)
+                            ScaniqoLoadingIndicator()
                             Text(
                                 stringResource(R.string.signature_import_processing),
                                 style = MaterialTheme.typography.titleSmall,

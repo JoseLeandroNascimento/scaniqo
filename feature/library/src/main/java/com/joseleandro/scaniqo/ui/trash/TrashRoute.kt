@@ -23,11 +23,14 @@ fun TrashRoute(onBack: () -> Unit, viewModel: TrashViewModel = koinViewModel()) 
             TrashMessage.DELETED -> R.string.trash_deleted
             TrashMessage.RESTORE_ERROR -> R.string.trash_restore_error
             TrashMessage.CLEARED -> R.string.trash_cleared
+            TrashMessage.RESTORED_ALL -> R.string.trash_restored_all
+            TrashMessage.RESTORE_ALL_ERROR -> R.string.trash_restore_all_error
         })
     }
     LaunchedEffect(state.message) {
         if (message != null) {
-            toast.show(message, if (state.message == TrashMessage.RESTORE_ERROR) AppToastType.ERROR else AppToastType.SUCCESS)
+            val isError = state.message == TrashMessage.RESTORE_ERROR || state.message == TrashMessage.RESTORE_ALL_ERROR
+            toast.show(message, if (isError) AppToastType.ERROR else AppToastType.SUCCESS)
             viewModel.dismissMessage()
         }
     }
@@ -37,6 +40,7 @@ fun TrashRoute(onBack: () -> Unit, viewModel: TrashViewModel = koinViewModel()) 
         onBack = onBack,
         onRetry = viewModel::load,
         onRestore = viewModel::restore,
+        onRestoreAll = viewModel::restoreAll,
         onRequestDeletion = viewModel::requestDeletion,
         onConfirmDeletion = viewModel::confirmDeletion,
         onDismissDeletion = viewModel::dismissDeletion,
